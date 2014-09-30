@@ -7,14 +7,14 @@ require "whenever/capistrano"
 set :rvm_ruby_string, '1.9.3'
 set :rvm_type, :system
 set :application, "resource_map"
-set :repository,  "https://bitbucket.org/ilab/resource_map_sea"
+set :repository,  "https://bitbucket.org/ilab/resourcemap_wfp"
 set :scm, :mercurial
 set :user, 'ubuntu'
 set :group, 'ubuntu'
 set :deploy_via, :remote_cache
 set :branch, `hg branch`.strip
 
-server 'resmap-stg-ilab.instedd.org', :app, :web, :db, primary: true
+server 'resmap_wfp.instedd.org', :app, :web, :db, primary: true
 
 default_run_options[:pty] = true
 default_environment['TERM'] = ENV['TERM']
