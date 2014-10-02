@@ -55,6 +55,7 @@ onCollections ->
           thresholds.push(threshold_new)
       thresholds
 
+
     findSitesByThresholds: (thresholds) =>
       b = false
       for site in this.sites()
@@ -80,7 +81,6 @@ onCollections ->
         if condition.valueType().code() is 'percentage'
 
           percentage = (site.properties()[condition.compareField()] * condition.value())/100
-          # percentage = (site.properties()[condition.field()] * 100)/site.properties()[condition.compareField()]
           compareField = percentage
 
         else

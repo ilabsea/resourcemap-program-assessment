@@ -184,4 +184,3 @@ onCollections ->
           @alert_legend(false)
         else
           @alert_legend(true)
-
