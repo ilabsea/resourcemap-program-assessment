@@ -1,3 +1,3 @@
 # Resourcemap
 
-[Roadmap](https://bitbucket.org/ilab/resource_map_sea/wiki/Roadmap)
+[Roadmap](https://bitbucket.org/ilab/resourcemap_wfp/wiki/Roadmap)
