@@ -15,7 +15,7 @@ class Collection < ActiveRecord::Base
   has_many :users, through: :memberships
   has_many :sites, dependent: :delete_all
   has_many :layers, order: 'ord', dependent: :destroy
-  has_many :fields, order: 'ord'
+  has_many :fields
   has_many :thresholds, dependent: :destroy
   has_many :reminders, dependent: :destroy
   has_many :share_channels, dependent: :destroy
@@ -152,6 +152,8 @@ class Collection < ActiveRecord::Base
           config: field.config,
           ord: field.ord,
           is_mandatory: field.is_mandatory,
+          is_enable_field_logic: field.is_enable_field_logic,
+          # field_logic_value: field.field_logic_value,
           writeable: user.is_guest ? false : !lms || lms[field.layer_id].write
         }
       end

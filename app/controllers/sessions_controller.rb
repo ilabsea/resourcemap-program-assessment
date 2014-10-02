@@ -1,6 +1,7 @@
 class SessionsController < Devise::SessionsController
   include Concerns::MobileDeviceDetection
-
+  include RecaptchaSetting
+  
   before_filter :prepare_for_mobile, :only => [:new]
   def new
     ip = meet_alert_ip
@@ -46,4 +47,9 @@ class SessionsController < Devise::SessionsController
     number_of_failed = LoginFailedTracker.find_all_by_ip_address(request.remote_ip)
     return (number_of_failed || [])
   end
+  
+  def after_sign_in_path_for(resource)
+    session[:previous_url] || root_path
+  end
+
 end

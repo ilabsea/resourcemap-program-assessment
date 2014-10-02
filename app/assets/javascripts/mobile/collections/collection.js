@@ -1,6 +1,7 @@
 //= require mobile/events
 //= require mobile/field
 //= require mobile/option
+//= require mobile/field_logic
 //= require mobile/sub_hierarchy
 
 function Collection (collection) {
@@ -219,10 +220,19 @@ Collection.prototype.validateData = function(collectionId){
               break;
             case "numeric":
               value = $("#" + field["code"]).val();
+              range = field["config"]["range"];
               if(Collection.prototype.validateNumeric(value) == false){
                 Collection.prototype.showErrorMessage(field["name"] + " is not valid numeric value.");
                 return false;
-              }  
+              }else{
+                if(range){                  
+                  if(Collection.prototype.validateRange(value, range) == false){
+                    Collection.prototype.showErrorMessage("Invalid number range");
+                    Collection.setFieldStyleFailed(field["code"]);
+                    return false;
+                  }
+                }
+              }
               state =  Collection.valiateMandatoryText(field);
               break;
             case "date":
@@ -253,11 +263,11 @@ Collection.prototype.validateData = function(collectionId){
           }
           if(!state){
             Collection.prototype.showErrorMessage(field["name"] + " is mandatory.");
-            Collection.setFieldStyleFailed(field["code"])
+            Collection.setFieldStyleFailed(field["code"]);
             return false
           }
           else{
-            Collection.setFieldStyleSuccess(field["code"])
+            Collection.setFieldStyleSuccess(field["code"]);
           }
         }
       }
@@ -265,6 +275,80 @@ Collection.prototype.validateData = function(collectionId){
   }
 
   return true;
+}
+
+Collection.setFocusOnField = function(fieldId){
+  els = $(".field_" + fieldId);
+  selected_options = []
+  for(var i=0; i<els.length; i++){
+    if(els[i].checked)
+      selected_options.push(els[i].value);
+  }
+  id = Collection.findNextFieldId(fieldId, selected_options);
+  if(id){
+    fieldFocus = Collection.prototype.findFieldById(id); 
+    Collection.prototype.setFieldFocusStyleByKind(fieldFocus);
+  }
+}
+
+Collection.findNextFieldId = function(fieldId, options){
+  layers = Collection.getSchemaByCollectionId(window.currentCollectionId).layers;
+  field = null;
+  for(var i=0; i<layers.length; i++){
+    fields = layers[i].fields
+    for(var j=0; j<fields.length; j++){
+      if(fields[j].id == fieldId)
+        field = fields[j];
+    }
+  }
+  if(field.is_enable_field_logic){
+    field_logics = field.config["field_logics"]
+    for(var j=0; j<field_logics.length; j++){
+      if(field_logics[j].condition_type == "all"){
+        valid = Collection.checkAllConditionFieldLogic(field_logics[j]["selected_options"], options);
+        if(valid){
+          return field_logics[j]["field_id"];
+        }
+      }
+      else{
+        valid = Collection.checkAnyConditionFieldLogic(field_logics[j]["selected_options"], options);
+        if(valid){
+          return field_logics[j]["field_id"];
+        }
+      }
+    }
+    return null;
+  }
+  else{
+    return null;
+  }
+}
+
+Collection.checkAllConditionFieldLogic = function(selectedOptions, options){
+  for(op in selectedOptions){
+    meet_condition = false
+    for(var j=0; j<options.length; j++){
+      if(selectedOptions[op]["value"] == options[j]){
+        meet_condition = true;
+      }
+    }
+    if(meet_condition == false){
+      return false
+    }
+  }
+  return true;
+}
+
+Collection.checkAnyConditionFieldLogic = function(selectedOptions, options){
+  meet_condition = false
+  for(op in selectedOptions){
+    for(var j=0; j<options.length; j++){
+      if(selectedOptions[op]["value"] == options[j]){
+        meet_condition = true;
+      }
+    }
+  }
+  return meet_condition;
 }
 
 Collection.setFieldStyleSuccess = function(id){
@@ -308,7 +392,7 @@ Collection.valiateMandatoryText = function(field){
   return true
 }
 
-Collection.prototype.validateEmail = function(email) { 
+Collection.prototype.validateEmail = function(email) {
   if(email == ""){
     return true;
   }
@@ -318,7 +402,7 @@ Collection.prototype.validateEmail = function(email) {
   }
 }
 
-Collection.prototype.validateNumeric = function(number) { 
+Collection.prototype.validateNumeric = function(number) {
   if(number == ""){
     return true;
   }
@@ -326,6 +410,30 @@ Collection.prototype.validateNumeric = function(number) {
     var RE = /^-{0,1}\d*\.{0,1}\d+$/;
     return (RE.test(number));
   }
+}
+
+Collection.prototype.validateRange = function(number, range){
+  if(range["minimum"] && range["maximum"]){
+    if(parseInt(number) >= parseInt(range["minimum"]) && parseInt(number) <= parseInt(range["maximum"]))
+      return true;
+    else
+      return false;
+  }
+  else{
+    if(range["maximum"]){
+      if(parseInt(number) <= parseInt(range["maximum"]))
+        return true;
+      else
+        return false;      
+    }
+    if(range["minimum"]){
+      if(parseInt(value) >= parseInt(range["minimum"]))
+        return true;
+      else
+        return false;      
+    }
+  }
+  return true;
 }
 
 Collection.prototype.showErrorMessage = function(text){
@@ -345,8 +453,8 @@ Collection.prototype.addLayerForm = function(schema){
   for(i=0; i<schema["layers"].length;i++){
     form = form + '<div><h5>' + schema["layers"][i]["name"] + '</h5>';
     for(j=0; j<schema["layers"][i]["fields"].length; j++){
-      var field = schema["layers"][i]["fields"][j]
-      myField = new Field(field)
+      var field = schema["layers"][i]["fields"][j];
+      myField = new Field(field);
       form = form + myField.getField();
     }
     form = form + "</div>";
@@ -358,8 +466,8 @@ Collection.prototype.handleFieldUI = function(schema){
   
   for(i=0; i<schema["layers"].length;i++){
     for(j=0; j<schema["layers"][i]["fields"].length; j++){
-      var field = schema["layers"][i]["fields"][j]
-      myField = new Field(field)
+      var field = schema["layers"][i]["fields"][j];
+      myField = new Field(field);
       myField.completeFieldRequirement();
     }
     form = form + "</div>";
@@ -466,6 +574,70 @@ Collection.prototype.getLocation = function(){
   }
   else{
     x.innerHTML="Geolocation is not supported by this browser.";
+  }
+}
+
+Collection.prototype.setFieldFocus = function(fieldId,fieldCode, fieldKind){
+  $("div,span").removeClass('ui-focus');
+  fieldValue = Collection.prototype.setFieldValueByKind(fieldKind, fieldCode);
+  fieldLogics = Collection.prototype.getFieldLogicByFieldId(fieldId);
+
+  for(i=0; i<fieldLogics.length; i++){
+    if(fieldLogics[i]["field_id"] != null){
+      if(fieldLogics[i]["value"] == fieldValue){       
+        fieldFocus = Collection.prototype.findFieldById(fieldLogics[i]["field_id"]); 
+        Collection.prototype.setFieldFocusStyleByKind(fieldFocus);
+        return;
+      }
+    }
+  }
+}
+
+Collection.prototype.setFieldFocusStyleByKind = function(fieldFocus){
+  if(fieldFocus['kind'] == 'select_many'){
+    $("[name='properties["+fieldFocus['id']+"][]']").first().parent().addClass('ui-focus');
+    $("[name='properties["+fieldFocus['id']+"][]']").first().focus();
+  }else{
+    $('#'+fieldFocus["code"]).parent().addClass('ui-focus');
+    $('#'+fieldFocus["code"]).focus();    
+  }
+}
+
+Collection.prototype.setFieldValueByKind = function(fieldKind, fieldCode){
+  if(fieldKind == 'yes_no'){
+    if($( "#"+fieldCode+":checked").length == 1){
+      value = 0;
+    }else{
+      value = 1;
+    }    
+  }else if(fieldKind == 'select_one'){
+    value = fieldCode;
+  }  
+
+  return value;
+}
+
+Collection.prototype.findFieldById = function(fieldId){
+  schema = Collection.getSchemaByCollectionId(window.currentCollectionId);
+  for(i=0; i<schema["layers"].length;i++){
+    for(j=0; j<schema["layers"][i]["fields"].length; j++){
+      var field = schema["layers"][i]["fields"][j];   
+      if(field["id"] == fieldId){
+        return field;
+      }
+    }
+  }
+}
+
+Collection.prototype.getFieldLogicByFieldId = function(fieldId){
+  schema = Collection.getSchemaByCollectionId(window.currentCollectionId);
+  for(i=0; i<schema["layers"].length;i++){
+    for(j=0; j<schema["layers"][i]["fields"].length; j++){
+      var field = schema["layers"][i]["fields"][j];   
+      if(field["id"] == fieldId){
+        return field["config"]["field_logics"];
+      }
+    }
   }
 }
 
