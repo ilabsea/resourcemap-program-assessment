@@ -34,6 +34,13 @@ onLayers ->
           "#{margin}px"
         else
           0
+          
+      @tmpSelectedField = ko.observable()
+
+      @fields = ko.observableArray()
+      for layer in layers
+        for field in layer.fields
+          @fields.push(field)
 
       @savingLayer = ko.observable(false)
 
@@ -57,6 +64,12 @@ onLayers ->
           return false
         return false
 
+    addDependentField: (field) =>
+      field_id =$("#calculation_field").val()
+      for f in @fields()
+        if parseInt(f["id"]) == parseInt(field_id)
+          @currentField().impl().addDependentField(f)
+          break
     newLayer: =>
       layer = new Layer ord: (@layers().length + 1)
       @layers.push(layer)

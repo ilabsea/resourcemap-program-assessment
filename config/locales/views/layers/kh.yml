@@ -29,6 +29,7 @@ kh:
         identifier: "អត្តសញ្ញាណ"
         email: "អ៊ុីមែល"
         phone: "លេខទូរស័ព្ធ"
+        calculation: "គណនា"
       form:
         remove_field: "លុបហ្វៀល"
         move_field_up: "រំកិលហ្វៀលឡើង"
@@ -80,3 +81,4 @@ kh:
           is_select_then_skip_form_to: "ត្រូវបានជ្រើសរើស រំលងទៅកាន់"
           add_skip_logic: "បន្ថែមរបៀបកំណត់ការរំលង"
           enable_skip_logic_for_this_field: "បើកអោយដំណើរការសំរាប់រំលងហ្វៀល"
+          dependent_field: "ហ្វៀល ដែលអាស្រ័យ"

@@ -1,0 +1,23 @@
+<!-- ko with: impl() -->
+%select{ko(options: '$root.fields()', optionsText: 'function(item) { return item.name }', optionsValue: 'function(item) { return item.id }', value: '$root.tmpSelectedField'), style: 'width:240px !important;', id: 'calculation_field'}
+%button.clist-add{ko(click: '$root.addDependentField'), title: 'Add another option'}
+/ko if: dependent_fields().length > 0
+.superblyTagfieldDiv{style: "border: 0 solid #dddddd; border-radius: 0; box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3) inset;"}
+  %ul.superblyTagItems
+    /ko foreach: dependent_fields
+    %li.superblyTagItem
+      %span{ko(text: 'name')}
+      %a{ko(click: '$parent.removeDependentField')}x
+    //ko
+//ko
+%br
+%label
+  = t('views.layers.form.field.dependent_field')
+.superblyTagfieldDiv{style: "border: 0 solid #dddddd; border-radius: 0; box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3) inset;"}
+  %ul.superblyTagItems
+    /ko foreach: dependent_fields
+    %li.superblyTagItem
+      %a{ko(text: 'name', click: '$parent.addFieldToCodeCalculation')}
+    //ko
+%textarea.ux-wajbar{ko(value: :codeCalculation, valueUpdate: :afterkeydown), maxlength: 140, rows: 4, style: "width:275px !important;"}
+<!-- /ko -->

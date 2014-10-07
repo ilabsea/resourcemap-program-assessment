@@ -1,0 +1,12 @@
+- if mobile
+  - if single_editing_mode
+    = ko_calculation_field_tag :value, hasfocus: true, event: {keydown: :keyPress, blur: :save}, attr: {id: "'text-input-' + code"}
+  - else
+    = ko_calculation_field_tag :value, html: {class: 'right w20'}, attr: {id: "'text-input-' + code"}
+    .clear
+- else
+  - if single_editing_mode
+    = ko_calculation_field_tag :value, hasfocus: true, event: {keydown: :keyPress, blur: :save}, css: { error: :error }, attr: {id: "'text-input-' + code"}
+  - else
+    = ko_calculation_field_tag :value, html: {class: 'right w20'}, css: {error: :error}, attr: {id: "'text-input-' + code"}
+    .clear

@@ -272,3 +272,25 @@ onLayers ->
   class @Field_user extends @FieldImpl
 
   class @Field_photo extends @FieldImpl
+
+  class @Field_calculation extends @FieldImpl
+    constructor: (field) ->
+      super(field)
+      @dependent_fields = if field.config?.dependent_fields?
+                            ko.observableArray(
+                              $.map(field.config.dependent_fields, (x) -> x)
+                            )
+                          else
+                            ko.observableArray()
+      @field = ko.observable()
+      @codeCalculation = ko.observable(field.config?.code_calculation)
+    addDependentField: (field) =>
+      @dependent_fields.push field
+
+    removeDependentField: (field) =>
+      @dependent_fields.remove field
+
+    addFieldToCodeCalculation: (field) =>
+      @codeCalculation(@codeCalculation() + '[' + field["name"] + ']')
+    toJSON: (json) =>
+      json.config = {code_calculation: @codeCalculation(), dependent_fields : @dependent_fields()}

@@ -108,6 +108,13 @@
 
   //ko
 
+  /ko if: kind() == 'calculation'
+  %hr/
+  %label
+    = t('views.layers.form.field.dependent_field')
+  = render :partial => "field_calculation"
+  //ko
+
   /ko if: kind() == 'hierarchy'
   %hr/
   %label{ko(css: {error: 'impl().hierarchyError'})}= t('views.layers.form.field.hierarchy')
