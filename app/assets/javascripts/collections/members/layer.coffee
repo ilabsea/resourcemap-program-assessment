@@ -1,5 +1,5 @@
 class @Layer
   constructor: (data) ->
-    console.log("Layer Class")
+    console.log 'Member Layer'
     @id = ko.observable data?.id
     @name = ko.observable data?.name

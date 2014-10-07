@@ -24,9 +24,13 @@ ResourceMap::Application.routes.draw do
     post :register_gateways
     get  :message_quota
     get :sites_by_term
+
+    resources :queries    
+
     resources :sites do
       get :visible_layers_for
     end
+
     resources :layers do
       member do
         put :set_order
@@ -50,6 +54,7 @@ ResourceMap::Application.routes.draw do
     get 'members'
     get 'settings'
     get 'quotas'
+    
     get 'csv_template'
     get 'max_value_of_property'
 
@@ -96,6 +101,8 @@ ResourceMap::Application.routes.draw do
     post 'status', :on => :member
     post 'try'
   end
+  
+  # resources :can_queries
 
   match 'terms_and_conditions' => redirect("http://instedd.org/terms-of-service/")
 

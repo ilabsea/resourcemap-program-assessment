@@ -1,0 +1,55 @@
+onQueries ->
+  class @MainViewModel
+    constructor: (collectionId) ->
+      @collectionId = collectionId
+      @newQuery = ko.observable()
+      @isEditing = ko.observable(false)
+      @layers = ko.observableArray()
+      @queries = ko.observableArray()
+      @currentQuery = ko.observable()
+      @sites = ko.observableArray()
+
+
+    findFieldById: (id) =>
+      for layer in @layers()
+        for field in layer.fields
+          if field.id == id
+            return field
+    removeQuery: (query) =>
+      if window.confirm 'Are you sure to delete this query?'
+        @deleteQuery = query
+        $.post "/collections/#{@collectionId}/queries/#{query.id()}.json", { _method: 'delete' }, @removeQueryCallback
+
+    removeQueryCallback: =>
+      @queries.remove @deleteQuery
+      delete @deleteQuery
+
+    cancelQuery: =>
+      @isEditing(false)
+      @newQuery(null)
+      @currentQuery().isEditing(false)
+    editQuery: (query) =>
+      @newQuery(null)
+      @currentQuery query
+      @isEditing(true)
+      @currentQuery().isEditing(true)
+
+    addQuery: =>
+      @newQuery(new Query)
+      @currentQuery(@newQuery())
+      @isEditing(true)
+
+    saveQuery: =>
+      @isEditing(false)
+      @queries.push(@currentQuery())
+      json = {query: @currentQuery().toJSON()}
+      if @currentQuery().id()
+        json._method = 'put'
+        $.post "/collections/#{@collectionId}/queries/#{@currentQuery().id()}.json", json, @saveQueryCallback
+      else
+        $.post "/collections/#{@collectionId}/queries.json", json, @saveQueryCallback
+    
+    saveQueryCallback: (data) =>
+      @currentQuery().id(data?.id)
+      @currentQuery null
+      @newQuery null
