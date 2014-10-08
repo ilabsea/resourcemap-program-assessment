@@ -37,6 +37,9 @@ onCollections ->
         @editingSite().startEditLocationInMap()
         window.model.initDatePicker()
         window.model.initAutocomplete()
+        if window.model.newSiteProperties
+          for esCode, value of window.model.newSiteProperties
+            console.log(esCode)
 
     @editSite: (site) ->
       initialized = @initMap()

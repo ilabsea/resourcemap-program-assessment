@@ -291,6 +291,6 @@ onLayers ->
       @dependent_fields.remove field
 
     addFieldToCodeCalculation: (field) =>
-      @codeCalculation(@codeCalculation() + '[' + field["name"] + ']')
+      @codeCalculation(@codeCalculation() + '$' + field["name"])
     toJSON: (json) =>
       json.config = {code_calculation: @codeCalculation(), dependent_fields : @dependent_fields()}

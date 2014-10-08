@@ -81,7 +81,7 @@ onCollections ->
       @expanded = ko.observable false # For select_many
       @errorMessage = ko.observable()
       @error = ko.computed => !!@errorMessage()
-     
+
     setFieldFocus: =>
       if window.model.newOrEditSite() 
         if @kind == 'yes_no'
@@ -92,37 +92,38 @@ onCollections ->
           return
 
         b = false
-        for field_logic in @field_logics
-          if field_logic.field_id?
-            if @kind == 'yes_no' || 'select_one'
-              if value == field_logic.value                          
-                @setFocusStyleByField(field_logic.field_id)
+        if @field_logics
+          for field_logic in @field_logics
+            if field_logic.field_id?
+              if @kind == 'yes_no' || 'select_one'
+                if value == field_logic.value                          
+                  @setFocusStyleByField(field_logic.field_id)
 
-            if @kind == 'select_many'
-              if field_logic.condition_type == 'any'
-                if value.length == 1
-                  for field_value in value
-                    for field_logic_value in field_logic.selected_options
-                      if field_value == parseInt(field_logic_value.value)
-                        b = true
-                        @setFocusStyleByField(field_logic.field_id)
+              if @kind == 'select_many'
+                if field_logic.condition_type == 'any'
+                  if value.length == 1
+                    for field_value in value
+                      for field_logic_value in field_logic.selected_options
+                        if field_value == parseInt(field_logic_value.value)
+                          b = true
+                          @setFocusStyleByField(field_logic.field_id)
+                          break
+                      if b
                         break
-                    if b
-                      break
-              else
-                if field_logic.selected_options.length == value.length
-                  for field_value in value
-                    for field_logic_value in field_logic.selected_options
-                      if field_value == parseInt(field_logic_value.value)
-                        b = true
-                        field_id = field_logic.field_id
+                else
+                  if field_logic.selected_options.length == value.length
+                    for field_value in value
+                      for field_logic_value in field_logic.selected_options
+                        if field_value == parseInt(field_logic_value.value)
+                          b = true
+                          field_id = field_logic.field_id
+                          break
+                        else
+                          b = false
+                      if !b
                         break
-                      else
-                        b = false
-                    if !b
-                      break
-                  if b && field_id?
-                    @setFocusStyleByField(field_id)
+                    if b && field_id?
+                      @setFocusStyleByField(field_id)
 
     setFocusStyleByField: (field_id) =>
       field = window.model.newOrEditSite().findFieldByEsCode(field_id)
