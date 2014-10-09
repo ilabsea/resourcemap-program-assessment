@@ -20,3 +20,4 @@ onQueries -> if $('#queries-main').length > 0
       queries = $.map queries, (query) -> new Query(query)
       window.model.queries(queries)      
       $('.hidden-until-loaded').show()
+      window.model.initDatePicker()

@@ -1,19 +1,27 @@
 onQueries ->
   class @Condition
     constructor: (data) ->
-      @selectedField = ko.observable(data?.field_id)
+      @fieldId = ko.observable(data?.field_id)
       @operator = ko.observable(data?.operator)
-      @field = ko.computed => if window.model? && @selectedField()
-                                window.model.findFieldById(@selectedField()[0])
-      @operatorValue = ko.observable(data?.operatorValue)
+      @field = ko.computed => if window.model? && @fieldId()
+                                window.model.findFieldById(parseInt(@fieldId()))
+      @fieldDateFrom = ko.observable(data?.field_date_from)
+      @fieldDateTo = ko.observable(data?.field_date_to)  
+      @fieldValue = ko.observable(data?.field_value)
       # @field.subscribe =>
       #   if @field()?.kind == 'date'
-      #     @startDate = ko.observable()
-      #     @endDate = ko.observable()
+      #     @fieldDateFrom = ko.observable(data?.field_date_from)
+      #     @fieldDateTo = ko.observable(data?.field_date_to)
       #   else
-      @fieldValue = ko.observable(data?.field_value)
+      #     @fieldValue = ko.observable(data?.field_value)
 
     toJSON: =>
-      field_id: @field().id
-      operator: @operator()
-      field_value: @fieldValue()     
+      if @field()?.kind == 'date'
+        field_id: @fieldId()
+        operator: @operator()     
+        field_date_from: @fieldDateFrom()
+        field_date_to: @fieldDateTo()
+      else
+        field_id: @fieldId()
+        operator: @operator()
+        field_value: @fieldValue()

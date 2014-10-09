@@ -14,7 +14,7 @@
     /ko template: {name: 'hierarchy-items-template', foreach: hierarchyItems}
     //ko
     //ko
-
+= render 'queries/refine_hierarchy_items_template'
 .tabsline
   #queries-main.hidden-until-loaded
     %h2 Queries
@@ -32,78 +32,22 @@
         %br 
         %input{ko(value: :name),type: :text, style: 'width:240px'}
         %br
-        
-        Apply this alert to
         %br
-        %input{"data-bind" => "checked: isAllSite", :value => "true", :name => "site", :type => "radio"}
-        %label All sites
-        %input{"data-bind" => "checked: isAllSite", :value => "false", :name => "site", :type => "radio"}
-        %label Some sites
-        %br
-        .middlebuttons{ko(visible: 'isAllSite() == "false"' )}
-          %input.sites
-        %br
-        %h1.header_text Conditions
-        %input{"data-bind" => "checked: isAllCondition", :value => "true", :name => "condition", :type => "radio"}
-        %label All of following conditions
-        %input{"data-bind" => "checked: isAllCondition", :value => "false", :name => "condition", :type => "radio"}
-        %label Any of the following conditions
-        %br
-
-        /ko foreach :conditions
-        %ul{style: 'padding:0px; list-style:none'}
+        Find all site where :
+        %ul          
+          /ko foreach :conditions
           %li
-            %select{'data-bind' => 'foreach: $root.layers(), value: selectedField, selectedOptions: selectedField', style: 'max-width:135px;font-size:12px;padding: auto 0;margin:0'}
-              %optgroup{"data-bind" => "attr: {label: name}, foreach: fields"}
-                %option{"data-bind" => "text: name, option: name, value: parseInt(id)"}                 
-            /ko if:field()
-            /ko if: field().kind == 'text' || field().kind == 'user' || field().kind == 'email' || field().kind == 'phone'
-            %select{'data-bind' => 'value: operator',style: 'font-size:12px;padding: auto 0;margin:0'}
-              %option{value: '='} starts with
-              %option{value: 'empty'} has no value
-
-            %input{(ko value: :fieldValue)}
-            //ko
-
-            /ko if: field().kind == 'site'
-            %select{'data-bind' => 'value: operator',style: ''}
-              %option{value: '='} is
-              %option{value: 'empty'} has no value            
-            %input.autocomplete-site-input{(ko value: :fieldValue)}
-            //ko
-
-            /ko if: field().kind == 'yes_no'
-            %select{'data-bind' => 'value: operator',style: ''}
-              %option{value: 'yes'} is 'yes'
-              %option{value: 'no'} is 'no'
-            //ko
-
-            /ko if: field().kind == 'numeric'
-            %select{'data-bind' => 'value: operator',style: 'font-size:12px;padding: auto 0;margin:0'}
-              %option{value: '='} equals
-              %option{value: '<'} is less than
-              %option{value: '<='} is less than or equal to
-              %option{value: '>'} is greater than
-              %option{value: '>='} is greater than or equal to
-              %option{value: 'empty'} has no value           
-            %input{(ko value: :fieldValue)}
-            //ko
-
-            /ko if: field().kind == 'date'
-            %select{'data-bind' => 'value: operator',style: ''}
-              %option{value: '='} is between
-              %option{value: 'empty'} has no value            
-            %input.ux-datepicker#range_from{ko(value: :startDate, valueUpdate: :afterkeydown, hasfocus: true), type: :text}
-            and
-            %input.ux-datepicker#range_to{ko(value: :endDate, valueUpdate: :afterkeydown, hasfocus: true), type: :text}
-            //ko
+            = render 'queries/condition_template'
             %button.premove{ ko(click: '$parent.removeCondition') }
-            //ko
-        //ko
+          //ko
 
-        %button.fadd{ko(click: :addCondition) }
-          Add another condition        
+        %div
+          Refine query
+          %button.farrow{ko(click: '$root.refineQuery') }        
         %br        
+        /ko if: isRefineQuery
+        = render 'queries/refine_query_template'
+        //ko        
         .bottom-actions
           %button.white{ ko(click: '$root.saveQuery', enable: :valid) } Save
           %a.tgrey{ ko(click: '$root.cancelQuery'), href: 'javascript:void(0)' } Cancel
@@ -117,7 +61,19 @@
       .box.grey.w60
         .rightbuttons
           %button.fdelete{ ko(click: '$root.removeQuery') }
-        %span{ko(text: :name)} 
+        .toptitle
+          %span{ko(text: :name)} 
+          %span &rarr; find all sites where : 
+          /ko foreach :conditions
+          %span       
+            /ko if: $index() == $parent.conditions().length-1 && $parent.conditions().length > 1
+            and
+            //ko          
+            = render 'queries/condition_template'
+            /ko if: $index() < $parent.conditions().length-1 && $parent.conditions().length > 1
+            ,
+            //ko   
+          //ko        
         %button.farrow{ ko(click: '$root.editQuery') } Edit
       %br
       //ko
@@ -132,83 +88,35 @@
           %br 
           %input{ko(value: :name),type: :text, style: 'width:240px'}
           %br
-          
-          Apply this alert to
           %br
-          %input{"data-bind" => "checked: isAllSite", :value => "true", :name => "site", :type => "radio"}
-          %label All sites
-          %input{"data-bind" => "checked: isAllSite", :value => "false", :name => "site", :type => "radio"}
-          %label Some sites
+          %div
+            %div
+              /ko if: conditions().length > 0             
+              Find all sites where :
+              %ul          
+                /ko foreach :conditions
+                %li
+                  = render 'queries/condition_template'
+                  %button.premove{ ko(click: '$parent.removeCondition') }
+                //ko
+              //ko                
+            %div
+              Refine query
+              %button.farrow{ko(click: '$root.refineQuery') }                
+
+            /ko if: isRefineQuery
+            = render 'queries/refine_query_template'
+            //ko
           %br
-          .middlebuttons{ko(visible: 'isAllSite() == "false"' )}
-            %input
-          %br
-          %h1.header_text Conditions
-          %input{"data-bind" => "checked: isAllCondition", :value => "true", :name => "condition", :type => "radio"}
-          %label All of following conditions
-          %input{"data-bind" => "checked: isAllCondition", :value => "false", :name => "condition", :type => "radio"}
-          %label Any of the following conditions
-          %br
-
-          /ko foreach :conditions
-          %ul{style: 'padding:0px; list-style:none'}
-            %li
-              %select{'data-bind' => 'foreach: $root.layers(), value: selectedField, selectedOptions: selectedField', style: 'max-width:135px;font-size:12px;padding: auto 0;margin:0'}
-                %optgroup{"data-bind" => "attr: {label: name}, foreach: fields"}
-                  %option{"data-bind" => "text: name, option: name, value: parseInt(id)"}                 
-              /ko if:field()
-              /ko if: field().kind == 'text' || field().kind == 'user' || field().kind == 'email' || field().kind == 'phone'
-              %select{'data-bind' => 'value: operator',style: 'font-size:12px;padding: auto 0;margin:0'}
-                %option{value: '='} starts with
-                %option{value: 'empty'} has no value
-
-              %input{(ko value: :fieldValue)}
-              //ko
-
-              /ko if: field().kind == 'site'
-              %select{'data-bind' => 'value: operator',style: ''}
-                %option{value: '='} is
-                %option{value: 'empty'} has no value            
-              %input.autocomplete-site-input{(ko value: :fieldValue)}
-              //ko
-
-              /ko if: field().kind == 'yes_no'
-              %select{'data-bind' => 'value: operator',style: ''}
-                %option{value: 'yes'} is 'yes'
-                %option{value: 'no'} is 'no'
-              //ko
-
-              /ko if: field().kind == 'numeric'
-              %select{'data-bind' => 'value: operator',style: 'font-size:12px;padding: auto 0;margin:0'}
-                %option{value: '='} equals
-                %option{value: '<'} is less than
-                %option{value: '<='} is less than or equal to
-                %option{value: '>'} is greater than
-                %option{value: '>='} is greater than or equal to
-                %option{value: 'empty'} has no value           
-              %input{(ko value: :fieldValue)}
-              //ko
-
-              /ko if: field().kind == 'date'
-              %select{'data-bind' => 'value: operator',style: ''}
-                %option{value: '='} is between
-                %option{value: 'empty'} has no value            
-              %input.ux-datepicker#range_from{(ko value: :fieldValue)}
-              and
-              %input.ux-datepicker#range_to
-              //ko
-              %button.premove{ ko(click: '$parent.removeCondition') }
-              //ko
-          //ko
-          %button.fadd{ko(click: :addCondition) }
-            Add another condition        
-          %br        
+          %br{clear: :all}       
           .bottom-actions
             %button.white{ ko(click: '$root.saveQuery', enable: :valid) } Save
             %a.tgrey{ ko(click: '$root.cancelQuery'), href: 'javascript:void(0)' } Cancel
             /ko if: !valid()
             %span{ ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:20px' } Can't save
-            //ko        
+            //ko
+
+
       //ko
       
 
