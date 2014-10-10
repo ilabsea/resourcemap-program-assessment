@@ -17,7 +17,7 @@ describe "collections" do
     find(:xpath, '//div[@id="collections-main"]/div[1]/div[2]/table/tbody/tr[1]/td/button').click
     click_link 'Edit Site'
     sleep 5
-    select('first option', :from => 'select-one-input-selone')
+    select('first option', :from => 'select_one-input-selone')
     click_button 'Done'
     sleep 3 
     page.should_not have_content 'second option'

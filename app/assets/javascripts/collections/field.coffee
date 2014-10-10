@@ -77,6 +77,10 @@ onCollections ->
       else
         @filter = ->
 
+      if @kind == 'calculation'
+        @codeCalculation = data.config?.code_calculation
+        @dependentFields = data.config?.dependent_fields
+
       @editing = ko.observable false
       @expanded = ko.observable false # For select_many
       @errorMessage = ko.observable()
@@ -128,7 +132,7 @@ onCollections ->
     setFocusStyleByField: (field_id) =>
       field = window.model.newOrEditSite().findFieldByEsCode(field_id)
       if field.kind == "select_one"
-        $('#select-one-input-'+field.code).focus()  
+        $('#select_one-input-'+field.code).focus()  
       else if field.kind == "select_many"
         field.expanded(true)
         $('#select-many-input-'+field.code).focus()
