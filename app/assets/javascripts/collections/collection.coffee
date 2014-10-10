@@ -22,6 +22,8 @@ onCollections ->
           defaultOptions =[window.model.defaultGroupBy]
         defaultOptions.concat(@fields().filter((f) -> f.showInGroupBy))
 
+    isSearch: => false
+    
     sitesUrl: -> "/collections/#{@id}/sites.json"
 
     fetchLocation: => $.get "/collections/#{@id}.json", {}, (data) =>
