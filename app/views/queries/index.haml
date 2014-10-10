@@ -1,0 +1,130 @@
+- content_for :head do
+  :css
+    .error { color: red; }
+
+= render '/tabs'
+
+-# Hierarchy item template
+%script{type: "text/html", id: "hierarchy-items-template"}
+  %div
+    %a{ko(click: :toggleExpand, style: {marginLeft: "'' + (level() * 20) + 'px'"}), href: 'javascript:void(0)'}
+      %img{ko(attr: {src: "'#{InsteddRails.url}/theme/images/icons/18/black/folder' + (expanded() ? '_open' : '') + '.png'"}), style: 'position:relative;top:2px'}
+      %span{ko(text: :name)}
+    /ko if: expanded
+    /ko template: {name: 'hierarchy-items-template', foreach: hierarchyItems}
+    //ko
+    //ko
+= render 'queries/refine_hierarchy_items_template'
+.tabsline
+  #queries-main.hidden-until-loaded
+    %h2 Queries
+    %p Manage queries of this collection's sites
+
+    - if current_user_snapshot.at_present? && collection_admin?
+      
+      /ko foreach: queries   
+
+      /ko if: isEditing
+      .box.w90
+        %h1.header_text Properties
+        .middlebuttons
+        %label{ko(css: {error: 'nameError'})} Name
+        %br 
+        %input{ko(value: :name),type: :text, style: 'width:240px'}
+        %br
+        %br
+        Find all site where :
+        %ul          
+          /ko foreach :conditions
+          %li
+            = render 'queries/condition_template'
+            %button.premove{ ko(click: '$parent.removeCondition') }
+          //ko
+
+        %div
+          Refine query
+          %button.farrow{ko(click: '$root.refineQuery') }        
+        %br        
+        /ko if: isRefineQuery
+        = render 'queries/refine_query_template'
+        //ko        
+        .bottom-actions
+          %button.white{ ko(click: '$root.saveQuery', enable: :valid) } Save
+          %a.tgrey{ ko(click: '$root.cancelQuery'), href: 'javascript:void(0)' } Cancel
+          /ko if: !valid()
+          %span{ ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:20px' } Can't save
+          //ko          
+      %br
+      //ko
+
+      /ko ifnot: isEditing
+      .box.grey.w60
+        .rightbuttons
+          %button.fdelete{ ko(click: '$root.removeQuery') }
+        .toptitle
+          %span{ko(text: :name)} 
+          %span &rarr; find all sites where : 
+          /ko foreach :conditions
+          %span       
+            /ko if: $index() == $parent.conditions().length-1 && $parent.conditions().length > 1
+            and
+            //ko          
+            = render 'queries/condition_template'
+            /ko if: $index() < $parent.conditions().length-1 && $parent.conditions().length > 1
+            ,
+            //ko   
+          //ko        
+        %button.farrow{ ko(click: '$root.editQuery') } Edit
+      %br
+      //ko
+
+      //ko
+    
+      /ko with: newQuery
+      .box.w90        
+        %h1.header_text Properties
+        .middlebuttons
+          %label{ko(css: {error: 'nameError'})} Name
+          %br 
+          %input{ko(value: :name),type: :text, style: 'width:240px'}
+          %br
+          %br
+          %div
+            %div
+              /ko if: conditions().length > 0             
+              Find all sites where :
+              %ul          
+                /ko foreach :conditions
+                %li
+                  = render 'queries/condition_template'
+                  %button.premove{ ko(click: '$parent.removeCondition') }
+                //ko
+              //ko                
+            %div
+              Refine query
+              %button.farrow{ko(click: '$root.refineQuery') }                
+
+            /ko if: isRefineQuery
+            = render 'queries/refine_query_template'
+            //ko
+          %br
+          %br{clear: :all}       
+          .bottom-actions
+            %button.white{ ko(click: '$root.saveQuery', enable: :valid) } Save
+            %a.tgrey{ ko(click: '$root.cancelQuery'), href: 'javascript:void(0)' } Cancel
+            /ko if: !valid()
+            %span{ ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:20px' } Can't save
+            //ko
+
+
+      //ko
+      
+
+      /ko ifnot: isEditing
+      .box.grey.add{ ko(click: 'addQuery')}
+        %span
+          Add Query
+        %button.cadd.right
+        %br{clear: :all}
+      //ko
+

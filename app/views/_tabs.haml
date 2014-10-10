@@ -15,11 +15,6 @@
     = tab t('views.collections.tab.import_wizard'), collection_import_wizard_path(collection)
     = tab t('views.collections.tab.settings'), collection_settings_path(collection)
     = render_hook collection, :collection_tab, :collection => collection
-    - if Settings.is_on? :channels  
+    - if Settings.is_on? :channels
       = tab t('views.collections.tab.quotas'), collection_quotas_path(collection)
-
-
-
-
-
-
+    = tab "Can queries", collection_queries_path(collection)

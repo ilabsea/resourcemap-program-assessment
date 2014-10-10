@@ -33,10 +33,7 @@ onCollections ->
           @addSite @createSite(site)    
 
     loadAllSites: =>
-      @allSites = ko.observable()
-      # $.get @sitesUrl(), (data) =>
-      #   for site in data
-      #     @addSite @createSite(site)  
+      @allSites = ko.observable() 
 
     findSiteNameById: (value) =>
       allSites = window.model.currentCollection().allSites()

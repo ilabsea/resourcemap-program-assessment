@@ -1,0 +1,1 @@
+window.onQueries ?= (callback) -> $(-> callback() if $('#queries-main').length > 0)

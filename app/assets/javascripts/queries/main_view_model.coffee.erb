@@ -1,0 +1,146 @@
+onQueries ->
+  class @MainViewModel
+    constructor: (collectionId) ->
+      @collectionId = collectionId
+      @newQuery = ko.observable()
+      @newCondition = ko.observable()
+      @isEditing = ko.observable(false)
+      @layers = ko.observableArray()
+      @queries = ko.observableArray()
+      @currentQuery = ko.observable()
+      @sites = ko.observableArray()
+      @expandedRefineProperty = ko.observable()
+      @expandedRefinePropertyValue = ko.observable()
+      @expandedRefinePropertyOperator = ko.observable()
+      
+      @expandedRefinePropertyDateFrom = ko.observable()
+      @expandedRefinePropertyDateTo = ko.observable()
+      @expandedRefinePropertyHierarchy = ko.observable()
+      @expandedRefinePropertyHierarchy.subscribe (item) -> item?.select()
+      @isRefineQuery = ko.observable(false)
+
+    bindHierarchyLabel: (field, value) ->
+      for key,item of field.fieldHierarchyItemsMap
+        if key == value
+          return item
+
+
+    bindOptionLabel: (field, value) ->
+      for option in field.config.options
+        if option.id == parseInt(value)
+          return option.label
+
+    toggleRefineProperty: (property) ->
+      if @expandedRefineProperty() == property
+        @expandedRefineProperty(null)
+        @newCondition(null)
+      else
+        @expandedRefineProperty(null)
+        @expandedRefinePropertyValue(null)
+        @expandedRefineProperty(property)
+        @newCondition(new Condition)
+        window.model.initDatePicker (p, inst) =>
+          id = inst.id
+          $("##{id}").change()
+
+    refineQuery: =>
+      @currentQuery().isRefineQuery(true)
+
+    saveCondition: =>
+      condition = new Condition()
+      condition.fieldId(@expandedRefineProperty())
+      field = @findFieldById(@expandedRefineProperty())
+      if field?
+        if field.kind == 'date'
+          condition.fieldDateFrom(@expandedRefinePropertyDateFrom())
+          condition.fieldDateTo(@expandedRefinePropertyDateTo())
+        else if field.kind == 'hierarchy'
+          condition.fieldValue(@expandedRefinePropertyHierarchy().id)
+        else
+          condition.fieldValue(@expandedRefinePropertyValue())
+      else if @expandedRefineProperty() == 'update'
+        condition.fieldValue(@expandedRefinePropertyValue())
+
+      condition.operator(@expandedRefinePropertyOperator())
+      @currentQuery().conditions.push(condition)
+      @toggleRefineProperty(@expandedRefineProperty()) unless @expandedRefineProperty() == 'location_missing'
+      condition
+
+    findFieldById: (id) =>
+      for layer in @layers()
+        for field in layer.fields
+          if field.id == id
+            return field
+    removeQuery: (query) =>
+      if window.confirm 'Are you sure to delete this query?'
+        @deleteQuery = query
+        $.post "/collections/#{@collectionId}/queries/#{query.id()}.json", { _method: 'delete' }, @removeQueryCallback
+
+    removeQueryCallback: =>
+      @queries.remove @deleteQuery
+      delete @deleteQuery
+    cancelEditingQuery: =>
+      for query in @queries()
+        if query.isEditing()
+          @queries.replace query, @originalQuery
+        else
+          query.isEditing(false)
+    clearUnsavedQuery: (query) =>
+      @queries.replace query, @originalQuery
+    cancelQuery: =>
+      @isEditing(false)
+      @newQuery(null)
+      @currentQuery().isEditing(false)
+      if @currentQuery().id()
+        @queries.replace @currentQuery(), @originalQuery
+      else
+        @queries.remove @currentQuery()
+
+    editQuery: (query) =>
+      @clearUnsavedQuery(@currentQuery())  if @originalQuery
+      @originalQuery = new Query(query.toJSON())
+      @expandedRefineProperty(null)
+      @expandedRefinePropertyValue(null)      
+      @newQuery(null)
+            
+      @cancelEditingQuery()
+      @currentQuery query
+      @isEditing(true)
+      @currentQuery().isEditing(true)
+
+    addQuery: =>
+      @newQuery(new Query)
+      @currentQuery(@newQuery())
+      @isEditing(true)
+
+    saveQuery: =>
+      @isEditing(false)
+      json = {query: @currentQuery().toJSON()}
+      if @currentQuery().id()
+        json._method = 'put'
+        $.post "/collections/#{@collectionId}/queries/#{@currentQuery().id()}.json", json, @saveQueryCallback
+      else
+        @queries.push(@currentQuery())
+        $.post "/collections/#{@collectionId}/queries.json", json, @saveQueryCallback
+    
+    saveQueryCallback: (data) =>
+      @currentQuery().id(data?.id)
+      @currentQuery().isEditing(false)
+      @currentQuery null
+      @newQuery null
+
+    afterkeydown: =>
+      alert 'down'    
+
+    initInsteddPlatform:  ->
+      $.instedd.init_components() if $.instedd
+
+    initDatePicker: (options = {}) =>
+      @initInsteddPlatform()
+      # fix dinamic DOM
+      # http://stackoverflow.com/questions/1059107/why-does-jquery-uis-datepicker-break-with-a-dynamic-dom
+      $(".ux-datepicker").removeClass('hasDatepicker').datepicker(
+                                                                    yearRange: "-100:+5",
+                                                                    changeMonth: true,
+                                                                    changeYear: true
+                                                                  )      

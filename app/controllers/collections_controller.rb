@@ -18,7 +18,7 @@ class CollectionsController < ApplicationController
 
   before_filter :show_collections_breadcrumb, :only => [:index, :new]
   before_filter :show_collection_breadcrumb, :except => [:index, :new, :create, :render_breadcrumbs]
-  before_filter :show_properties_breadcrumb, :only => [:members, :settings, :reminders, :quotas]
+  before_filter :show_properties_breadcrumb, :only => [:members, :settings, :reminders, :quotas, :can_queries]
 
   
 
@@ -107,6 +107,10 @@ class CollectionsController < ApplicationController
     add_breadcrumb I18n.t('views.collections.tab.quotas'), collection_settings_path(collection)
   end
 
+  def can_queries
+    add_breadcrumb "Can queries", collection_can_queries_path(collection)
+  end
+  
   def destroy
     if params[:only_sites]
       collection.delete_sites_and_activities

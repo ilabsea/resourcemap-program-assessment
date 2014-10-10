@@ -96,8 +96,9 @@ onCollections ->
     @filterByProperty: ->
       field = @currentCollection().findFieldByEsCode @expandedRefineProperty()
       return if field.kind != 'select_one' && field.kind != 'select_many' && @notValueSelected()
-
+      console.log field
       filter = @filterFor(field)
+      console.log filter
       if field.kind == 'numeric'
         @addOrReplaceFilter(filter, (f) => f.operator == @expandedRefinePropertyOperator())
       else

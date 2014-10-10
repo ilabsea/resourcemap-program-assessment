@@ -21,9 +21,9 @@ onCollections ->
         if window.model
           defaultOptions =[window.model.defaultGroupBy]
         defaultOptions.concat(@fields().filter((f) -> f.showInGroupBy))
-      
-    isSearch: => false
 
+    isSearch: => false
+    
     sitesUrl: -> "/collections/#{@id}/sites.json"
 
     fetchLocation: => $.get "/collections/#{@id}.json", {}, (data) =>
@@ -42,10 +42,5 @@ onCollections ->
         )
       else if @position()
         window.model.map.panTo @position()
-
-    # loadSites: =>
-    #   $.get @sitesUrl(), (data) =>
-    #     for site in data
-    #       @addSite @createSite(site)
 
 
