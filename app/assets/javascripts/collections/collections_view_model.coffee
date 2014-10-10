@@ -6,7 +6,7 @@ onCollections ->
       @collections = ko.observableArray $.map(collections, (x) -> new Collection(x))
       @currentCollection = ko.observable()
       @alert_legend = ko.observable(false)
-      @showingLegend = ko.observable(true)
+      @showingLegend = ko.observable(false)
       @fullscreen = ko.observable(false)
       @fullscreenExpanded = ko.observable(false)
       @currentSnapshot = ko.computed =>
@@ -16,10 +16,10 @@ onCollections ->
     
     @goToRoot: ->
       @queryParams = $.url().param()
+      @currentCollection(null)
       @showingAlert(false)
       @cancelFilterAlertedSites()
       @exitSite() if @editingSite()
-      @currentCollection(null)
       @unselectSite() if @selectedSite()
       @search('')
       @lastSearch(null)
@@ -62,7 +62,7 @@ onCollections ->
       @currentCollection collection
       @unselectSite() if @selectedSite()
       @exitSite() if @editingSite()   
-      
+
       if @showingAlert()
         $.get "/collections/#{@currentCollection().id}/sites_by_term.json", _alert: true, (sites) =>
           @currentCollection().allSites(sites)
@@ -72,7 +72,7 @@ onCollections ->
         $.get "/collections/#{@currentCollection().id}/sites_by_term.json", (sites) =>
           @currentCollection().allSites(sites)
           window.adjustContainerSize()
-          
+
       initialized = @initMap()
       collection.panToPosition(true) unless initialized
 
@@ -152,14 +152,13 @@ onCollections ->
 
     @createCollection: -> window.location = "/collections/new"
 
-    @setThresholds: ->     
+    @setThresholds: ->
       if @currentCollection()
         @currentCollection().thresholds([])  
         $.get "/plugin/alerts/collections/#{@currentCollection().id}/thresholds.json", (data) =>  
           thresholds = @currentCollection().fetchThresholds(data)     
           @currentCollection().thresholds(@currentCollection().findSitesByThresholds(thresholds))
-          if @currentCollection().thresholds().length > 0
-            @showingLegend(true)
+          @showLegendState()
       else
         $.get "/plugin/alerts/thresholds.json", (data) =>
           for collection in @collections()
@@ -167,16 +166,23 @@ onCollections ->
               thresholds = collection.fetchThresholds(data)
               collection.thresholds(collection.findSitesByThresholds(thresholds))
               thresholds = []
-
           @showLegendState()
 
     @showLegendState: ->
-      for collection in @collections()
-        if collection.checked() == true && collection.thresholds().length > 0
-          @showingLegend(true)
-          break
-        else
-          @showingLegend(false)
+      if @currentCollection()
+        for threshold in @currentCollection().thresholds()
+          if threshold.alertedSitesNum() > 0
+            @showingLegend(true)
+            break
+          else
+            @showingLegend(false)
+      else
+        for collection in @collections()
+          if collection.checked() == true && collection.thresholds().length > 0
+            @showingLegend(true)
+            break
+          else
+            @showingLegend(false)
 
     @toggleAlertLegend: ->
       if @showingLegend() == true
@@ -185,3 +191,5 @@ onCollections ->
         else
           @alert_legend(true)
 
+    @hideDatePicker: ->
+      $("input").datepicker "hide"

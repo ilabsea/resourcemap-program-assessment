@@ -33,10 +33,7 @@ onCollections ->
           @addSite @createSite(site)    
 
     loadAllSites: =>
-      @allSites = ko.observable()
-      # $.get @sitesUrl(), (data) =>
-      #   for site in data
-      #     @addSite @createSite(site)  
+      @allSites = ko.observable() 
 
     findSiteNameById: (value) =>
       allSites = window.model.currentCollection().allSites()
@@ -54,6 +51,7 @@ onCollections ->
           threshold_new = new Threshold(threshold, this.icon)
           thresholds.push(threshold_new)
       thresholds
+
 
     findSitesByThresholds: (thresholds) =>
       b = false
@@ -80,7 +78,6 @@ onCollections ->
         if condition.valueType().code() is 'percentage'
 
           percentage = (site.properties()[condition.compareField()] * condition.value())/100
-          # percentage = (site.properties()[condition.field()] * 100)/site.properties()[condition.compareField()]
           compareField = percentage
 
         else
@@ -137,10 +134,6 @@ onCollections ->
 
         @fields(fields)
         @refineFields(fields)
-        @refineFields.sort (f1, f2) ->
-          lowerF1 = f1.name.toLowerCase()
-          lowerF2 = f2.name.toLowerCase()
-          if lowerF1 == lowerF2 then 0 else (if lowerF1 > lowerF2 then 1 else -1)
         callback() if callback && typeof(callback) == 'function'
 
     findFieldByEsCode: (esCode) => (field for field in @fields() when field.esCode == esCode)[0]

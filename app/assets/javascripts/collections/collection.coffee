@@ -14,16 +14,13 @@ onCollections ->
       @title = ko.observable()
       @thresholds = ko.observableArray()
       @refineFields = ko.observableArray()
-      @checked = ko.observable true
+      @checked = ko.observable if window.currentUserIsGuest then false else true
       @fieldsInitialized = false
-      # @loadSites()
       @groupByOptions = ko.computed =>
         defaultOptions = []
         if window.model
           defaultOptions =[window.model.defaultGroupBy]
         defaultOptions.concat(@fields().filter((f) -> f.showInGroupBy))
-      
-    isSearch: => false
 
     sitesUrl: -> "/collections/#{@id}/sites.json"
 
@@ -43,10 +40,5 @@ onCollections ->
         )
       else if @position()
         window.model.map.panTo @position()
-
-    # loadSites: =>
-    #   $.get @sitesUrl(), (data) =>
-    #     for site in data
-    #       @addSite @createSite(site)
 
 

@@ -15,7 +15,7 @@ class Collection < ActiveRecord::Base
   has_many :users, through: :memberships
   has_many :sites, dependent: :delete_all
   has_many :layers, order: 'ord', dependent: :destroy
-  has_many :fields, order: 'ord'
+  has_many :fields
   has_many :thresholds, dependent: :destroy
   has_many :reminders, dependent: :destroy
   has_many :share_channels, dependent: :destroy
@@ -98,7 +98,7 @@ class Collection < ActiveRecord::Base
     site_ids.uniq
   end
 
-  def visible_fields_for(user, options)
+  def visible_fields_for(user, options, language = nil)
     if user.try(:is_guest)
       return fields.includes(:layer).all
     end
@@ -125,8 +125,8 @@ class Collection < ActiveRecord::Base
     target_fields
   end
 
-  def visible_layers_for(user, options = {})
-    target_fields = visible_fields_for(user, options)
+  def visible_layers_for(user, options = {}, language = nil)
+    target_fields = visible_fields_for(user, options, language)
     layers = target_fields.map(&:layer).uniq.map do |layer|
       {
         id: layer.id,
@@ -154,6 +154,8 @@ class Collection < ActiveRecord::Base
           config: field.config,
           ord: field.ord,
           is_mandatory: field.is_mandatory,
+          is_enable_field_logic: field.is_enable_field_logic,
+          # field_logic_value: field.field_logic_value,
           writeable: user.is_guest ? false : !lms || lms[field.layer_id].write
         }
       end

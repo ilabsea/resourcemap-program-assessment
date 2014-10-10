@@ -82,7 +82,7 @@ ActiveRecord::Schema.define(:version => 20141009080140) do
     t.datetime "updated_at",                                                     :null => false
     t.binary   "config",                :limit => 2147483647
     t.integer  "ord"
-    t.text     "metadata"
+    t.text     "metadata",              :limit => 16777215
     t.boolean  "is_mandatory",                                :default => false
     t.boolean  "is_enable_field_logic",                       :default => false
     t.boolean  "is_enable_range",                             :default => false
