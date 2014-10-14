@@ -2,9 +2,11 @@
 .left{ko(with: :currentCollection), style: 'margin-right:8px'}
   = t('views.collections.index.group_by')
   %select{ko(value: '$root.groupBy', options: :groupByOptions, optionsText: "'name'")}
+  <!-- ko if: queries().length > 1 -->
   &nbsp;
   %select{ko(value: '$root.selectedQuery', options: :queries, optionsText: "'name'", optionsCaption: "\'None\'"), style: 'max-width:200px'}
   %button{ko(click: '$root.refineFilters')} Execute
+  <!-- /ko -->
 <!-- /ko -->
 
 .right
