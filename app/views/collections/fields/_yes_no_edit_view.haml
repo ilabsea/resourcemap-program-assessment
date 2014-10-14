@@ -1,5 +1,5 @@
 - if single_editing_mode
-  %input{ko(checked: 'value', attr: {id: "'yes-no-input-' + code"}), type: 'checkbox'}
+  %input{ko(checked: 'value', attr: {id: "'yes_no-input-' + code"}), type: 'checkbox'}
   %button{ko(click: :save)}= t('views.collections.index.ok')
   %button{ko(click: :exit)}= t('views.collections.index.cancel')
 - else
@@ -9,6 +9,6 @@
     %input{ko(checked: 'value'), type: 'checkbox', class: 'right w20'}
     %br
   - else
-    %input{ko(checked: 'value', attr: {id: "'yes-no-input-' + code"}), type: 'checkbox', class: 'right w20', id: 'yesno'}
+    %input{ko(checked: 'value', attr: {id: "'yes_no-input-' + code"}), type: 'checkbox', class: 'right w20', id: 'yesno'}
   .clear
 
