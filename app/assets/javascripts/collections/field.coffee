@@ -138,7 +138,7 @@ onCollections ->
       else if field.kind == "hierarchy"           
         $('#'+field.esCode)[0].scrollIntoView(true)
       else if field.kind == "yes_no"
-        $('#yes-no-input-'+field.code).focus()
+        $('#yes_no-input-'+field.code).focus()
       else if field.kind == "photo"
         $('#'+field.code).focus()
       else if field.kind == "date"

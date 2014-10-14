@@ -37,37 +37,8 @@ onCollections ->
         @editingSite().startEditLocationInMap()
         window.model.initDatePicker()
         window.model.initAutocomplete()
-        #TODO change it function
-        for layer in window.model.currentCollection().layers()
-          for field in layer.fields
-            if field["kind"] == "calculation"
-              # Replace $field name to actual jQuery object
-              $.map(field["dependentFields"], (f) -> 
-                fieldName = "$" + f["name"]
-                fieldValue = "$" + f["name"]
-                switch f["kind"]
-                  when "text", "numeric", "email", "phone"
-                    fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + "').val()"
-                  when "select_one"
-                    fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + " option:selected').text()"
-                  # when "select_many"
+        @prepareCalculatedField()
 
-                  # when "user"
-                  # when "identifier"
-                  # when "hierarchy"
-                  # when "photo"
-                  when "yes_no"
-                    fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + "').val()"
-                    
-                field["codeCalculation"] = field["codeCalculation"].replace(fieldName, fieldValue)
-              )
-              console.log(field["codeCalculation"])
-              # Add change value to dependent field
-              $.map(field["dependentFields"], (f) -> 
-                $("#" + f["kind"] + "-input-" + f["code"]).on("change", ->
-                  $("#" + field["kind"] + "-input-" + field["code"]).val(eval(field["codeCalculation"]))
-                )
-              )
 
     @editSite: (site) ->
       initialized = @initMap()
@@ -276,3 +247,30 @@ onCollections ->
 
     @unselectSite: ->
       @selectSite(@selectedSite()) if @selectedSite()
+
+    @prepareCalculatedField: ->
+      for layer in window.model.currentCollection().layers()
+        for field in layer.fields
+          if field["kind"] == "calculation"
+            # Replace $field code to actual jQuery object
+            $.map(field["dependentFields"], (f) -> 
+              fieldName = "$" + f["code"]
+              fieldValue = "$" + f["code"]
+              switch f["kind"]
+                when "text", "numeric", "email", "phone"
+                  fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + "').val()"
+                when "select_one"
+                  fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + " option:selected').text()"
+                when "yes_no"
+                  fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + "')[0].checked"
+              field["codeCalculation"] = field["codeCalculation"].replace(new RegExp(fieldName.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'g'), fieldValue);
+
+            )
+            # Add change value to dependent field
+            $.map(field["dependentFields"], (f) -> 
+              element_id = "#" +field["kind"] + "-input-" + field["code"]
+              execute_code = field["codeCalculation"]
+              $("#" + f["kind"] + "-input-" + f["code"]).on("change", ->
+                $(element_id).val(eval(execute_code))
+              )
+            )
