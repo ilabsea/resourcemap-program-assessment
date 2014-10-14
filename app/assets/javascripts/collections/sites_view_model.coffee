@@ -266,7 +266,6 @@ onCollections ->
               field["codeCalculation"] = field["codeCalculation"].replace(new RegExp(fieldName.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'g'), fieldValue);
 
             )
-            console.log(field["codeCalculation"])
             # Add change value to dependent field
             $.map(field["dependentFields"], (f) -> 
               element_id = "#" +field["kind"] + "-input-" + field["code"]

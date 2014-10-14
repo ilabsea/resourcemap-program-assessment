@@ -18,6 +18,9 @@ function Field (field) {
     }
   }else if(this.kind == 'numeric'){
     this.range = field["config"]["range"];
+  }else if(this.kind == 'calculation'){
+    this.codeCalculation = field["config"]["code_calculation"]
+    this.dependentFields = field["config"]["dependent_fields"]
   }
 
   if(field["is_enable_field_logic"] == true){
@@ -63,6 +66,9 @@ Field.prototype.getField = function() {
     case "hierarchy":
       return this.getHierarchyField();
       break;
+    case "calculation":
+      return this.getCalculationField();
+      break;
     default:
       return this.getTextField();
   }
@@ -83,8 +89,41 @@ Field.prototype.completeFieldRequirement = function() {
     case "select_many":
       // $("input[type='checkbox']").prop("checked",true).checkboxradio("refresh");
       break;
+    case "calculation":
+      this.prepareCalculatedField();
+      break;
   }
 }
+
+Field.prototype.prepareCalculatedField = function(){
+  syntaxCalculationCode = this.codeCalculation
+  elementCode = this.code;
+  $.map(this.dependentFields, function(f) {
+    var fieldName = "$" + f["code"];
+    var fieldValue = "$" + f["code"];
+    switch (f["kind"]) {
+      case "text":
+      case "numeric":
+      case "email":
+      case "phone":
+        fieldValue = "$('#" + f["code"] + "').val()";
+        break;
+      case "select_one":
+        fieldValue = "$('#" + f["code"] + " option:selected').text()";
+        break;
+      case "yes_no":
+        fieldValue = "$('#" + f["code"] + "')[0].checked";
+    }
+    syntaxCalculationCode = syntaxCalculationCode.replace(new RegExp(fieldName.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'g'), fieldValue);
+  });
+  $.map(this.dependentFields, function(f) {
+    $("#" + f["code"]).on("change", function() {
+      $("#" + elementCode).val(eval(syntaxCalculationCode));
+    });
+  });
+
+}
+
 Field.prototype.getHierarchyField = function() { 
 
   list = "";
@@ -102,9 +141,6 @@ Field.prototype.getHierarchyField = function() {
           '</div>';
 
 };
-
-
-
 
 Field.prototype.getTextField = function() {  
   return '<div class="ui-corner-all ui-controlgroup ui-controlgroup-vertical" style="margin-left:10px">'+
@@ -255,6 +291,18 @@ Field.prototype.getPhotoField = function() {
         '<input type="hidden" name="properties[' + this.id + ']" value="' + this.value + '" />' +
         '<div class="ui-input-text ui-shadow-inset ui-corner-all ui-btn-shadow ui-body-c">'+
           '<input onchange="Collection.prototype.handleFileUpload(this)" class="ui-input-text ui-body-c" type="file" data-clear-btn="true" name="properties[' + this.id + ']" id="' + this.code + '"  datatype="photo">'+          
+        '</div>'+
+        '<div class="clear"></div>'+
+      '</div>'+
+    '</div>';
+};
+
+Field.prototype.getCalculationField = function() {  
+  return '<div class="ui-corner-all ui-controlgroup ui-controlgroup-vertical" style="margin-left:10px">'+
+      '<div class="ui-controlgroup-controls">'+
+        '<label>' + this.label + '</label>'+
+        '<div id="div_wrapper_' + this.code + '" class="ui-input-text ui-shadow-inset ui-corner-all ui-btn-shadow ui-body-c">'+
+          '<input readonly="readonly" value="' + this.value +'" name="properties[' + this.id + ']" id="' + this.code + '" class="right w20 ui-input-text ui-body-c" type="text" datatype="text">'+
         '</div>'+
         '<div class="clear"></div>'+
       '</div>'+
