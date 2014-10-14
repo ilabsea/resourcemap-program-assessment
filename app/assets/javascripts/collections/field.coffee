@@ -234,10 +234,13 @@ onCollections ->
               @errorMessage('Invalid value, value must greater than '+@range.minimum)
             return
 
-    validate_number_only: (keyCode) =>
+    validate_integer_only: (keyCode) =>
       if keyCode > 31 && (keyCode < 48 || keyCode > 57)
         return false
       return true
+
+    validate_decimal_only: (value, keyCode) =>
+      return true     
 
     keyPress: (field, event) =>
       switch event.keyCode
@@ -245,7 +248,10 @@ onCollections ->
         when 27 then @exit()
         else
           if field.kind == "numeric"
-            return @validate_number_only(event.keyCode)
+            if field.allowsDecimals()
+              return @validate_decimal_only(field.value(), event.keyCode)
+            else
+              return @validate_integer_only(event.keyCode)
           return true     
 
     exit: =>

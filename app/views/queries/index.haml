@@ -40,12 +40,12 @@
         .box.grey.w60{style: 'height:15px; margin-bottom:7px'}
           = render 'queries/condition_template'
           .rightbuttons
-            %button.fclose{ ko(click: '$parent.removeCondition') }
+            %button.fclose{ ko(click: '$parent.removeCondition'), title: 'Remove condition' }
         //ko
 
         
           
-        %button.farrow{ko(click: '$root.refineQuery') } Refine query 
+        %button.farrow{ko(click: '$root.refineQuery'), title: 'Refine query' } Refine query 
         
         /ko if: isRefineQuery
         = render 'queries/refine_query_template'
@@ -62,7 +62,7 @@
       /ko ifnot: isEditing
       .box.grey.w60
         .rightbuttons
-          %button.fdelete{ ko(click: '$root.removeQuery') }
+          %button.fdelete{ ko(click: '$root.removeQuery'), title: 'Remove query' }
         .toptitle
           %span{ko(text: :name)} 
           &rarr; find all sites where : 
@@ -76,7 +76,7 @@
             %span ,
             //ko   
           //ko        
-        %button.farrow{ ko(click: '$root.editQuery') } Edit
+        %button.farrow{ ko(click: '$root.editQuery'), title: 'Edit query' } Edit
       %br
       //ko
 
@@ -99,11 +99,11 @@
                 /ko foreach :conditions
                 %li
                   = render 'queries/condition_template'
-                  %button.premove{ ko(click: '$parent.removeCondition') }
+                  %button.premove{ ko(click: '$parent.removeCondition'), title: 'Remove condition' }
                 //ko
               //ko                
             
-            %button.farrow{ko(click: '$root.refineQuery') } Refine query               
+            %button.farrow{ko(click: '$root.refineQuery'), title: 'Refine query' } Refine query               
 
             /ko if: isRefineQuery
             = render 'queries/refine_query_template'
@@ -118,14 +118,13 @@
             //ko
 
 
-      //ko
-      
+      //ko      
 
       /ko ifnot: isEditing
       .box.grey.add{ ko(click: 'addQuery')}
         %span
           Add Query
-        %button.cadd.right
+        %button.cadd.right{title: 'Add new query'}
         %br{clear: :all}
       //ko
 
