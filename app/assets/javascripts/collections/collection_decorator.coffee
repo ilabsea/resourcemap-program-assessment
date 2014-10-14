@@ -22,6 +22,7 @@ onCollections ->
       @fieldsInitialized = collection.fieldsInitialized
       @refineFields = collection.fields
       @groupByOptions = collection.groupByOptions
+      @queries = collection.queries
       @sitesPermission = collection.sitesPermission
       @thresholds = collection.thresholds
       @allSites(collection.allSites())

@@ -43,7 +43,7 @@
       %option{value: '='} starts with
       %option{value: 'empty'} has no value
 
-    /ko if: $root.expandedRefineProperty() != 'empty' 
+    /ko if: $root.expandedRefinePropertyOperator() != 'empty' 
     %input{ko(value: '$root.expandedRefinePropertyValue', valueUpdate: :afterkeydown, event: {keydown: '$root.expandedRefinePropertyValueKeyPress'}, hasfocus: true)}
     //ko
 
@@ -55,7 +55,7 @@
       %option{value: '='} is
       %option{value: 'empty'} has no value
 
-    /ko if: $root.expandedRefineProperty() != 'empty' -->
+    /ko if: $root.expandedRefinePropertyOperator() != 'empty'
     %input.autocomplete-site-input{ko(value: '$root.expandedRefinePropertyValue', valueUpdate: :afterkeydown, hasfocus: true), type: :text}
     //ko
 
@@ -78,9 +78,9 @@
       %option{value: '>='} is greater than or equal to
       %option{value: 'empty'} has no value
 
-    
+    /ko if: $root.expandedRefinePropertyOperator() != 'empty'
     %input{ko(value: '$root.expandedRefinePropertyValue', valueUpdate: :afterkeydown, event: {keydown: '$root.expandedRefinePropertyValueKeyPress'}, hasfocus: true), type: :number}
-    
+    //ko
 
     %a.button.white{ko(click: '$root.saveCondition')} OK
     //ko
@@ -90,11 +90,11 @@
       %option{value: '='} is between
       %option{value: 'empty'} has no value
 
-    
+    /ko if: $root.expandedRefinePropertyOperator() != 'empty' -->
     %input.ux-datepicker#range_from{ko(value: '$root.expandedRefinePropertyDateFrom', valueUpdate: :afterkeydown, hasfocus: true), type: :text}
     and
     %input.ux-datepicker#range_to{ko(value: '$root.expandedRefinePropertyDateTo', valueUpdate: :afterkeydown, hasfocus: true), type: :text}
-    
+    //ko
 
     %a.button.white{ko(click: '$root.saveCondition')} OK
     //ko

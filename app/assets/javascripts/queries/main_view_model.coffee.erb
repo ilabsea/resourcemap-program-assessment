@@ -24,7 +24,6 @@ onQueries ->
         if key == value
           return item
 
-
     bindOptionLabel: (field, value) ->
       for option in field.config.options
         if option.id == parseInt(value)
@@ -44,7 +43,10 @@ onQueries ->
           $("##{id}").change()
 
     refineQuery: =>
-      @currentQuery().isRefineQuery(true)
+      if @currentQuery().isRefineQuery()
+        @currentQuery().isRefineQuery(false)
+      else
+        @currentQuery().isRefineQuery(true)
 
     saveCondition: =>
       condition = new Condition()

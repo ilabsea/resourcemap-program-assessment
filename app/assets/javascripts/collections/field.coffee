@@ -44,7 +44,6 @@ onCollections ->
                         else
                           []
 
-
       if @kind in ['select_one', 'select_many']
         @options = if data.config?.options?
                     $.map data.config.options, (x) => new Option x

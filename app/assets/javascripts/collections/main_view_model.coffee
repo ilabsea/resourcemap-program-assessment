@@ -35,7 +35,7 @@ onCollections ->
 
       @callModuleConstructors(arguments)
       @groupBy = ko.observable(@defaultGroupBy)
-
+      @selectedQuery = ko.observable()
       @filters.subscribe => @performSearchOrHierarchy()
       @groupBy.subscribe => @performSearchOrHierarchy()
 

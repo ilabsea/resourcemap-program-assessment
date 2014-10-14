@@ -34,17 +34,19 @@
         %br
         %br
         Find all site where :
-        %ul          
-          /ko foreach :conditions
-          %li
-            = render 'queries/condition_template'
-            %button.premove{ ko(click: '$parent.removeCondition') }
-          //ko
+        %br
+        %br
+        /ko foreach :conditions
+        .box.grey.w60{style: 'height:15px; margin-bottom:7px'}
+          = render 'queries/condition_template'
+          .rightbuttons
+            %button.fclose{ ko(click: '$parent.removeCondition') }
+        //ko
 
-        %div
-          Refine query
-          %button.farrow{ko(click: '$root.refineQuery') }        
-        %br        
+        
+          
+        %button.farrow{ko(click: '$root.refineQuery') } Refine query 
+        
         /ko if: isRefineQuery
         = render 'queries/refine_query_template'
         //ko        
@@ -63,15 +65,15 @@
           %button.fdelete{ ko(click: '$root.removeQuery') }
         .toptitle
           %span{ko(text: :name)} 
-          %span &rarr; find all sites where : 
+          &rarr; find all sites where : 
           /ko foreach :conditions
-          %span       
+          %span    
             /ko if: $index() == $parent.conditions().length-1 && $parent.conditions().length > 1
-            and
+            %span and
             //ko          
             = render 'queries/condition_template'
             /ko if: $index() < $parent.conditions().length-1 && $parent.conditions().length > 1
-            ,
+            %span ,
             //ko   
           //ko        
         %button.farrow{ ko(click: '$root.editQuery') } Edit
@@ -100,14 +102,13 @@
                   %button.premove{ ko(click: '$parent.removeCondition') }
                 //ko
               //ko                
-            %div
-              Refine query
-              %button.farrow{ko(click: '$root.refineQuery') }                
+            
+            %button.farrow{ko(click: '$root.refineQuery') } Refine query               
 
             /ko if: isRefineQuery
             = render 'queries/refine_query_template'
             //ko
-          %br
+          
           %br{clear: :all}       
           .bottom-actions
             %button.white{ ko(click: '$root.saveQuery', enable: :valid) } Save
