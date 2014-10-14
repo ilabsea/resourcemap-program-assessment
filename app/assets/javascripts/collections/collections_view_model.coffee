@@ -20,13 +20,13 @@ onCollections ->
       conditions = @selectedQuery()?.conditions ? []
       for condition in conditions
         if condition.field_id == 'update'
-          if field_value == 'last_hour'
+          if condition.field_value == 'last_hour'
             @filters.push(new FilterByLastHour())
-          else if field_value == 'last_day'
+          else if condition.field_value == 'last_day'
             @filters.push(new FilterByLastDay())
-          else if field_value == 'last_week'
+          else if condition.field_value == 'last_week'
             @filters.push(new FilterByLastWeek())
-          else if field_value == 'last_month'
+          else if condition.field_value == 'last_month'
             @filters.push(new FilterByLastMonth())
         else if condition.field_id == 'location_missing'
           @filters.push(new FilterByLocationMissing())
