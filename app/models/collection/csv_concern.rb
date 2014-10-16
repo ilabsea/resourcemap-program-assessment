@@ -13,7 +13,15 @@ module Collection::CsvConcern
     fields = self.fields.all
     CSV.generate do |csv|
       header = ['resmap-id', 'name', 'lat', 'long']
-      fields.each { |field| header << field.code }
+      fields.each do |field| 
+        unless field.kind == "select_many"
+          header << field.code
+        else
+          field.config["options"].each do |option|
+            header << option["label"]
+          end
+        end
+      end
       header << 'last updated'
       csv << header
 
@@ -24,6 +32,14 @@ module Collection::CsvConcern
         fields.each do |field|
           if field.kind == 'yes_no'
             row << (Field.yes?(source['properties'][field.code]) ? 'yes' : 'no')
+          elsif field.kind == "select_many"
+            field.config["options"].each do |option|
+              if source['properties'][field.code] and source['properties'][field.code].include? option["code"]
+                row << "Yes"
+              else
+                row << "No"
+              end
+            end
           else
             row << Array(source['properties'][field.code]).join(", ")
           end

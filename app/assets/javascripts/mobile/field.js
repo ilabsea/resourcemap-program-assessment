@@ -125,7 +125,6 @@ Field.prototype.prepareCalculatedField = function(){
 }
 
 Field.prototype.getHierarchyField = function() { 
-
   list = "";
   for(var i=0; i< this.sub.length; i++){
     if(this.sub[i].id == this.value){
@@ -287,7 +286,7 @@ Field.prototype.getPhotoField = function() {
   }
   return '<div class="ui-corner-all ui-controlgroup ui-controlgroup-vertical" style="margin-left:10px">'+
       '<div class="ui-controlgroup-controls">'+
-        '<label>' + this.label + '</label> <br /><br />'+ displayDiv +
+        '<label>' + this.label + '</label><br />'+ displayDiv +
         '<input type="hidden" name="properties[' + this.id + ']" value="' + this.value + '" />' +
         '<div class="ui-input-text ui-shadow-inset ui-corner-all ui-btn-shadow ui-body-c">'+
           '<input onchange="Collection.prototype.handleFileUpload(this)" class="ui-input-text ui-body-c" type="file" data-clear-btn="true" name="properties[' + this.id + ']" id="' + this.code + '"  datatype="photo">'+          
