@@ -18,7 +18,17 @@ onQueries ->
       @expandedRefinePropertyHierarchy = ko.observable()
       @expandedRefinePropertyHierarchy.subscribe (item) -> item?.select()
       @isRefineQuery = ko.observable(false)
-
+      @validCondition = ko.computed =>
+        field = @findFieldById(@expandedRefineProperty())
+        if field
+          if field.kind == 'date'
+            if @expandedRefinePropertyOperator() != 'empty' && @expandedRefinePropertyDateFrom() && @expandedRefinePropertyDateTo() then return true
+          else
+            if @expandedRefinePropertyOperator() != 'empty' && @expandedRefinePropertyValue() then return true
+          if @expandedRefinePropertyOperator() == 'empty' then return true
+        else if @expandedRefineProperty() == 'update' && @expandedRefinePropertyValue() then return true
+        return false
+      
     bindHierarchyLabel: (field, value) ->
       for key,item of field.fieldHierarchyItemsMap
         if key == value

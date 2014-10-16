@@ -8,6 +8,7 @@ onQueries ->
       @fieldDateFrom = ko.observable(data?.field_date_from)
       @fieldDateTo = ko.observable(data?.field_date_to)  
       @fieldValue = ko.observable(data?.field_value)
+
     toJSON: =>
       if @field()?.kind == 'date'
         field_id: @fieldId()

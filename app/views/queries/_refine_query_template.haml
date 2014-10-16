@@ -16,7 +16,7 @@
     %input#refine-last-month{ko(checked: '$root.expandedRefinePropertyValue'), type: :radio, name: 'refine-update', value: 'last_month'}
     %label{:for => 'refine-last-month'} the last month
     %br/
-    %a.white.button{ko(click: '$root.saveCondition')} OK
+    %button.white{ko(click: '$root.saveCondition', enable: '$root.validCondition')} OK
   //ko
 
 
@@ -47,7 +47,7 @@
     %input{ko(value: '$root.expandedRefinePropertyValue', valueUpdate: :afterkeydown, event: {keydown: '$root.expandedRefinePropertyValueKeyPress'}, hasfocus: true)}
     //ko
 
-    %a.button.white{ko(click: '$root.saveCondition')} OK
+    %button.white{ko(click: '$root.saveCondition', enable: '$root.validCondition')} OK
     //ko
 
     /ko if: kind == 'site'
@@ -59,7 +59,7 @@
     %input.autocomplete-site-input{ko(value: '$root.expandedRefinePropertyValue', valueUpdate: :afterkeydown, hasfocus: true), type: :text}
     //ko
 
-    %a.button.white{ko(click: '$root.saveCondition')} OK
+    %button.white{ko(click: '$root.saveCondition', enable: '$root.validCondition')} OK
     //ko
 
     /ko if: kind == 'yes_no'
@@ -82,7 +82,7 @@
     %input{ko(value: '$root.expandedRefinePropertyValue', valueUpdate: :afterkeydown, event: {keydown: '$root.expandedRefinePropertyValueKeyPress'}, hasfocus: true), type: :number}
     //ko
 
-    %a.button.white{ko(click: '$root.saveCondition')} OK
+    %button.white{ko(click: '$root.saveCondition', enable: '$root.validCondition')} OK
     //ko
 
     /ko if: kind == 'date'
@@ -90,13 +90,13 @@
       %option{value: '='} is between
       %option{value: 'empty'} has no value
 
-    /ko if: $root.expandedRefinePropertyOperator() != 'empty' -->
+    /ko if: $root.expandedRefinePropertyOperator() != 'empty'
     %input.ux-datepicker#range_from{ko(value: '$root.expandedRefinePropertyDateFrom', valueUpdate: :afterkeydown, hasfocus: true), type: :text}
     and
     %input.ux-datepicker#range_to{ko(value: '$root.expandedRefinePropertyDateTo', valueUpdate: :afterkeydown, hasfocus: true), type: :text}
     //ko
 
-    %a.button.white{ko(click: '$root.saveCondition')} OK
+    %button.white{ko(click: '$root.saveCondition', enable: '$root.validCondition')} OK
     //ko
 
     /ko if: kind == 'hierarchy'
