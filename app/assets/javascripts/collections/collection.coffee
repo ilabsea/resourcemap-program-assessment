@@ -11,6 +11,7 @@ onCollections ->
       @maxLng = data?.max_lng
       @layers = ko.observableArray()
       @fields = ko.observableArray()
+      @queries = ko.observableArray()
       @title = ko.observable()
       @thresholds = ko.observableArray()
       @refineFields = ko.observableArray()

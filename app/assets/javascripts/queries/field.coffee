@@ -35,10 +35,6 @@ onQueries ->
         if value then $.map(value, (x) => @labelFor(x)).join(', ') else ''
       else if @kind == 'hierarchy'
         if value then @fieldHierarchyItemsMap[value] else ''
-      else if @kind == 'site'
-        name = window.model.currentCollection()?.findSiteNameById(value)
-        if value && name then name else ''
-
       else
         if value then value else ''
 

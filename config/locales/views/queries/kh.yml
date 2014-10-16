@@ -1,0 +1,15 @@
+kh:
+  views:
+    queries:
+      title: "សំណួរ"
+      description: "គ្រប់គ្រងសំណួររបស់ទិន្នន័យតំបន់នេះ"
+      name: "ឈ្មោះ"
+      refine_query: "បង្កេីតលក្ខខណ្ឌ"
+      properties: "លក្ខណៈសម្បត្តិ"
+      edit: "កែសម្រួល"
+      cancel: "បោះបង់ចោល"
+      save: "រក្សាទុកសំណួរ"
+      cannot_save: "មិនអាចរក្សាទុកសំណួរ"
+      add_new_query: "បន្ថែមសំណួរថ្មី"      
+      conditions:
+        description: "រកតំបន់ទាំងអស់ដែល"      

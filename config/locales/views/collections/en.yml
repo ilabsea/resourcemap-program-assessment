@@ -17,6 +17,7 @@ en:
         report_user_login: "Report of User Login"
         report_user_submited_data: "Report of User Submited Data"
         channels: "Channels"
+        can_queries: "Can queries"
       index:
         'yes': "Yes"
         'no': "No"
@@ -177,3 +178,4 @@ en:
         year: "Year"
         remaining_messages: "this collection remain"
         message_quota: " message quota"
+

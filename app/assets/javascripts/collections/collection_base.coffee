@@ -4,7 +4,9 @@
 #= require collections/sites_membership
 #= require collections/layer
 #= require collections/field
+#= require collections/query
 #= require collections/thresholds/condition
+
 onCollections ->
 
   class @CollectionBase extends Module
@@ -117,6 +119,12 @@ onCollections ->
     loadCurrentSnapshotMessage: =>
       @viewingCurrentSnapshotMessage = ko.observable()
       @viewingCurrentSnapshotMessage("You are currently viewing this collection's data as it was on snapshot " + @currentSnapshot + ".")
+
+    fetchQueries: (callback) =>
+      $.get "/collections/#{@id}/queries.json", {}, (data) =>
+        @queries($.map(data, (x) => new Query(x)))
+
+        callback() if callback && typeof(callback) == 'function'      
 
     fetchFields: (callback) =>
       if @fieldsInitialized

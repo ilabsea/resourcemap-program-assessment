@@ -8,13 +8,6 @@ onQueries ->
       @fieldDateFrom = ko.observable(data?.field_date_from)
       @fieldDateTo = ko.observable(data?.field_date_to)  
       @fieldValue = ko.observable(data?.field_value)
-      # @field.subscribe =>
-      #   if @field()?.kind == 'date'
-      #     @fieldDateFrom = ko.observable(data?.field_date_from)
-      #     @fieldDateTo = ko.observable(data?.field_date_to)
-      #   else
-      #     @fieldValue = ko.observable(data?.field_value)
-
     toJSON: =>
       if @field()?.kind == 'date'
         field_id: @fieldId()
