@@ -99,6 +99,7 @@ en:
         enter_captcha: "Enter captcha"
         leave_this_collection: "Leave this collection"
         confirm_leave_collection: "Are you sure you want to leave this collection?"
+        query: "Query"
       form:
         name: "Name"
         description: "Description"

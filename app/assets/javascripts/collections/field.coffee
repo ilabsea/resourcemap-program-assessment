@@ -104,29 +104,27 @@ onCollections ->
 
               if @kind == 'select_many'
                 if field_logic.condition_type == 'any'
-                  if value.length == 1
-                    for field_value in value
-                      for field_logic_value in field_logic.selected_options
-                        if field_value == parseInt(field_logic_value.value)
-                          b = true
-                          @setFocusStyleByField(field_logic.field_id)
-                          break
-                      if b
+                  for field_value in value
+                    for field_logic_value in field_logic.selected_options
+                      if field_value == parseInt(field_logic_value.value)
+                        b = true
+                        @setFocusStyleByField(field_logic.field_id)
                         break
+                    if b
+                      break
                 else
-                  if field_logic.selected_options.length == value.length
-                    for field_value in value
-                      for field_logic_value in field_logic.selected_options
-                        if field_value == parseInt(field_logic_value.value)
-                          b = true
-                          field_id = field_logic.field_id
-                          break
-                        else
-                          b = false
-                      if !b
+                  for field_value in value
+                    for field_logic_value in field_logic.selected_options
+                      if field_value == parseInt(field_logic_value.value)
+                        b = true
+                        field_id = field_logic.field_id
                         break
-                    if b && field_id?
-                      @setFocusStyleByField(field_id)
+                      else
+                        b = false
+                    if !b
+                      break
+                  if b && field_id? && value.length >= field_logic.selected_options.length
+                    @setFocusStyleByField(field_id)
 
     setFocusStyleByField: (field_id) =>
       field = window.model.newOrEditSite().findFieldByEsCode(field_id)

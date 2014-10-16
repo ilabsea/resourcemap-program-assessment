@@ -5,7 +5,7 @@
   <!-- ko if: queries().length > 1 -->
   %br
   %br
-  Select query
+  = t('views.collections.index.query')
   %select{ko(value: '$root.selectedQuery', options: :queries, optionsText: "'name'", optionsCaption: "\'None\'", event:{ change: '$root.refineFilters'}), style: 'max-width:210px'}
   <!-- /ko -->
 <!-- /ko -->

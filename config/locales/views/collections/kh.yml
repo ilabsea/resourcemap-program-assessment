@@ -99,6 +99,7 @@ kh:
         enter_captcha: "បញ្ចូលលេខផ្ទៀងផ្ទាត់"
         leave_this_collection: "ចាកចេញពីទិន្នន័យ"
         confirm_leave_collection: "តើអ្នពិតជាចង់ចាកចេញពីទិន្នន័យមែនទេ?"
+        query: "សំណួរ"
       form:
         name: "ឈ្មោះ"
         description: "ការពិពណ៌នាសង្ខេប"
