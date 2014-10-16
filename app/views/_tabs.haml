@@ -17,4 +17,4 @@
     = render_hook collection, :collection_tab, :collection => collection
     - if Settings.is_on? :channels
       = tab t('views.collections.tab.quotas'), collection_quotas_path(collection)
-    = tab "Can queries", collection_queries_path(collection)
+    = tab t('views.collections.tab.can_queries'), collection_queries_path(collection)

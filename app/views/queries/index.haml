@@ -17,8 +17,8 @@
 = render 'queries/refine_hierarchy_items_template'
 .tabsline
   #queries-main.hidden-until-loaded
-    %h2 Queries
-    %p Manage queries of this collection's sites
+    %h2= t('views.queries.title')
+    %p= t('views.queries.description')
 
     - if current_user_snapshot.at_present? && collection_admin?
       
@@ -26,14 +26,16 @@
 
       /ko if: isEditing
       .box.w90
-        %h1.header_text Properties
+        %h1.header_text
+          = t('views.queries.properties')
         .middlebuttons
-        %label{ko(css: {error: 'nameError'})} Name
+        %label{ko(css: {error: 'nameError'})}
+          = t('views.queries.name')
         %br 
         %input{ko(value: :name),type: :text, style: 'width:240px'}
         %br
         %br
-        Find all site where :
+        = t('views.queries.conditions.description')
         %br
         %br
         /ko foreach :conditions
@@ -41,20 +43,22 @@
           = render 'queries/condition_template'
           .rightbuttons
             %button.fclose{ ko(click: '$parent.removeCondition'), title: 'Remove condition' }
-        //ko
-
-        
+        //ko        
           
-        %button.farrow{ko(click: '$root.refineQuery'), title: 'Refine query' } Refine query 
+        %button.farrow{ko(click: '$root.refineQuery'), title: 'Refine query' }
+          = t('views.queries.refine_query') 
         
         /ko if: isRefineQuery
         = render 'queries/refine_query_template'
         //ko        
         .bottom-actions
-          %button.white{ ko(click: '$root.saveQuery', enable: :valid) } Save
-          %a.tgrey{ ko(click: '$root.cancelQuery'), href: 'javascript:void(0)' } Cancel
+          %button.white{ ko(click: '$root.saveQuery', enable: :valid) }
+            = t('views.queries.save')
+          %a.tgrey{ ko(click: '$root.cancelQuery'), href: 'javascript:void(0)' }
+            = t('views.queries.cancel')
           /ko if: !valid()
-          %span{ ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:20px' } Can't save
+          %span{ ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:20px' }
+            = t('views.queries.cannot_save')
           //ko          
       %br
       //ko
@@ -65,7 +69,8 @@
           %button.fdelete{ ko(click: '$root.removeQuery'), title: 'Remove query' }
         .toptitle
           %span{ko(text: :name)} 
-          &rarr; find all sites where : 
+          &rarr; 
+          = t('views.queries.conditions.description') 
           /ko foreach :conditions
           %span    
             /ko if: $index() == $parent.conditions().length-1 && $parent.conditions().length > 1
@@ -76,7 +81,8 @@
             %span ,
             //ko   
           //ko        
-        %button.farrow{ ko(click: '$root.editQuery'), title: 'Edit query' } Edit
+        %button.farrow{ ko(click: '$root.editQuery'), title: 'Edit query' }
+          = t('views.queries.edit')
       %br
       //ko
 
@@ -84,9 +90,11 @@
     
       /ko with: newQuery
       .box.w90        
-        %h1.header_text Properties
+        %h1.header_text
+          = t('views.queries.properties')
         .middlebuttons
-          %label{ko(css: {error: 'nameError'})} Name
+          %label{ko(css: {error: 'nameError'})}
+            = t('views.queries.name')
           %br 
           %input{ko(value: :name),type: :text, style: 'width:240px'}
           %br
@@ -94,7 +102,7 @@
           %div
             %div
               /ko if: conditions().length > 0             
-              Find all sites where :
+              = t('views.queries.conditions.description')
               %ul          
                 /ko foreach :conditions
                 %li
@@ -103,7 +111,8 @@
                 //ko
               //ko                
             
-            %button.farrow{ko(click: '$root.refineQuery'), title: 'Refine query' } Refine query               
+            %button.farrow{ko(click: '$root.refineQuery'), title: 'Refine query' } 
+              = t('views.queries.refine_query')              
 
             /ko if: isRefineQuery
             = render 'queries/refine_query_template'
@@ -111,19 +120,20 @@
           
           %br{clear: :all}       
           .bottom-actions
-            %button.white{ ko(click: '$root.saveQuery', enable: :valid) } Save
-            %a.tgrey{ ko(click: '$root.cancelQuery'), href: 'javascript:void(0)' } Cancel
+            %button.white{ ko(click: '$root.saveQuery', enable: :valid) }
+              = t('views.queries.save')
+            %a.tgrey{ ko(click: '$root.cancelQuery'), href: 'javascript:void(0)' }
+              = t('views.queries.cancel')
             /ko if: !valid()
-            %span{ ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:20px' } Can't save
+            %span{ ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:20px' }
+              = t('views.queries.cannot_save')
             //ko
-
-
       //ko      
 
       /ko ifnot: isEditing
       .box.grey.add{ ko(click: 'addQuery')}
         %span
-          Add Query
+          = t('views.queries.add_new_query')
         %button.cadd.right{title: 'Add new query'}
         %br{clear: :all}
       //ko
