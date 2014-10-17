@@ -233,12 +233,18 @@ onCollections ->
             return
 
     validate_integer_only: (keyCode) =>
-      if keyCode > 31 && (keyCode < 48 || keyCode > 57)
+      if keyCode > 31 && (keyCode < 48 || keyCode > 57) && keyCode != 46
         return false
       return true
 
-    validate_decimal_only: (value, keyCode) =>
-      return true     
+    validate_decimal_only: (keyCode) =>
+      value = @value()
+      if (value == null || value == "")&& (keyCode == 229 || keyCode == 190) #prevent dot at the beginning
+        return false
+      if (keyCode != 8 && keyCode != 46) && (keyCode != 190 || value.indexOf('.') != -1) && (keyCode < 48 || keyCode > 57) #prevent multiple dot
+        return false
+      else
+        return true
 
     keyPress: (field, event) =>
       switch event.keyCode
@@ -247,7 +253,7 @@ onCollections ->
         else
           if field.kind == "numeric"
             if field.allowsDecimals()
-              return @validate_decimal_only(field.value(), event.keyCode)
+              return @validate_decimal_only(event.keyCode)
             else
               return @validate_integer_only(event.keyCode)
           return true     

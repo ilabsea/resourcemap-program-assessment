@@ -3,22 +3,22 @@
 %span{ko(text: 'field().name')}
 /ko if: operator() == '='
 %span start with
+%span{ko(text: :fieldValue)}
 //ko 
 /ko if: operator() == 'empty'
 %span has no value
-//ko                 
-%span{ko(text: :fieldValue)}
+//ko
 //ko
 
 /ko if: field().kind == 'site'
 %span{ko(text: 'field().name')}
 /ko if: operator() == '='
 %span is
+%span{ko(text: :fieldValue)}
 //ko 
 /ko if: operator() == 'empty'
 %span has no value
 //ko               
-%span{ko(text: :fieldValue)}
 //ko
 
 
@@ -32,26 +32,31 @@
 %span{ko(text: 'field().name')}
 /ko if: operator() == '='
 %span equals
+%span{ko(text: :fieldValue)}
 //ko
 /ko if: operator() == '<'
 %span is less than
+%span{ko(text: :fieldValue)}
 //ko
 /ko if: operator() == '<='
 %span is less than or equal to
+%span{ko(text: :fieldValue)}
 //ko
 /ko if: operator() == '>'
 %span is less than or equal to
+%span{ko(text: :fieldValue)}
 //ko
 /ko if: operator() == '>='
 %span is greater than
+%span{ko(text: :fieldValue)}
 //ko
 /ko if: operator() == '>='
 %span is greater than or equal to
+%span{ko(text: :fieldValue)}
 //ko
 /ko if: operator() == 'empty'
 %span has no value
 //ko
-%span{ko(text: :fieldValue)}
 //ko
 
 /ko if: field().kind == 'date'
