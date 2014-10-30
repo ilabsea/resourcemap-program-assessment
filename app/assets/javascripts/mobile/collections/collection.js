@@ -598,7 +598,7 @@ Collection.prototype.setFieldFocus = function(fieldId,fieldCode, fieldKind){
 
 Collection.prototype.setFieldFocusStyleByKind = function(fieldFocus){
   if(fieldFocus['kind'] == 'select_many'){
-    $("[name='properties["+fieldFocus['id']+"][]']").first().parent().addClass('ui-focus');
+    $("[name='properties["+fieldFocus['id']+"][]']").first().parent().parent().addClass('ui-focus');
     $("[name='properties["+fieldFocus['id']+"][]']").first().focus();
   }else{
     $('#'+fieldFocus["code"]).parent().addClass('ui-focus');

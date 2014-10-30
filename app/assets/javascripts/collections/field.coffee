@@ -125,6 +125,8 @@ onCollections ->
                       break
                   if b && field_id? && value.length >= field_logic.selected_options.length
                     @setFocusStyleByField(field_id)
+                if b
+                  break
 
     setFocusStyleByField: (field_id) =>
       field = window.model.newOrEditSite().findFieldByEsCode(field_id)
@@ -136,7 +138,7 @@ onCollections ->
         $('#select-many-input-'+field.code).focus()
       else if field.kind == "hierarchy"           
         $('#'+field.esCode)[0].scrollIntoView(true)
-        $('#'+field.esCode).addClass('focus'
+        $('#'+field.esCode).addClass('focus')
       else if field.kind == "yes_no"
         $('#yes_no-input-'+field.code).focus()
       else if field.kind == "photo"
@@ -162,6 +164,9 @@ onCollections ->
     removeFocusStyle: =>
       $('div').removeClass('focus')
       $('input').removeClass('focus')
+      $('select').removeClass('focus')
+      $('select').blur()
+      $('input').blur()
 
     codeForLink: (api = false) =>
       if api then @code else @esCode
