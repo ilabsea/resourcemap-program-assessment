@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141009080140) do
+ActiveRecord::Schema.define(:version => 20140911073733) do
 
   create_table "activities", :force => true do |t|
     t.integer  "user_id"
@@ -82,7 +82,7 @@ ActiveRecord::Schema.define(:version => 20141009080140) do
     t.datetime "updated_at",                                                     :null => false
     t.binary   "config",                :limit => 2147483647
     t.integer  "ord"
-    t.text     "metadata",              :limit => 16777215
+    t.text     "metadata"
     t.boolean  "is_mandatory",                                :default => false
     t.boolean  "is_enable_field_logic",                       :default => false
     t.boolean  "is_enable_range",                             :default => false
@@ -209,14 +209,6 @@ ActiveRecord::Schema.define(:version => 20141009080140) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
     t.text     "rule"
-  end
-
-  create_table "reports", :force => true do |t|
-    t.string   "value"
-    t.integer  "field_id"
-    t.integer  "layer_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
   end
 
   create_table "share_channels", :force => true do |t|

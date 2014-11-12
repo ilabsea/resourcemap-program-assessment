@@ -136,7 +136,8 @@ Field.prototype.getHierarchyField = function() {
   return  '<div class="ui-select" style="margin-left:10px;">' +
               '<label>' + this.label + '</label>'+
               '<select name="properties[' + this.id + ']" id="' + this.code + '"  datatype="hierarchy">' +
-                list +
+                '<option value=""> (no value) </option>'+
++                 list +
               '</select>' +
           '</div>';
 
@@ -212,6 +213,7 @@ Field.prototype.getSelectOneField = function() {
               '<label>' + this.label + '</label>'+
               '<select name="properties[' + this.id + ']" id="' + this.code + '"  datatype="select_one" onchange="Collection.prototype.setFieldFocus('+this.id+',this.value,\''+this.kind+'\')">' +
                 list +
+                '<option value="">(no value)</option>' + list +
               '</select>' +
           '</div>';
 };
@@ -281,20 +283,27 @@ Field.prototype.getEmailField = function() {
 };
 
 Field.prototype.getPhotoField = function() {
-  displayDiv = ""
+  displayDiv = "";
+  protectPhoto = "";
+
   if(this.value != ""){
     displayDiv = "<img style='width:100%;' src='/photo_field/" + this.value + "' alt='" + this.value + "' />";
   }
+
+  if(!window.navigator.onLine)
+    protectPhotoDisplay = '<input type="hidden" name="properties[' + this.id + ']" value="' + this.value + '" />';
+  else 
+    protectPhotoDisplay = '<label>' + this.label + '</label> <br /><br />'+ displayDiv +
+            '<input type="hidden" name="properties[' + this.id + ']" value="' + this.value + '" />' +
+            '<div class="ui-input-text ui-shadow-inset ui-corner-all ui-btn-shadow ui-body-c">'+
+              '<input onchange="Collection.prototype.handleFileUpload(this)" class="ui-input-text ui-body-c" type="file" data-clear-btn="true" name="properties[' + this.id + ']" id="' + this.code + '"  datatype="photo">'+          
+            '</div>';
   return '<div class="ui-corner-all ui-controlgroup ui-controlgroup-vertical" style="margin-left:10px">'+
-      '<div class="ui-controlgroup-controls">'+
-        '<label>' + this.label + '</label> <br /><br />'+ displayDiv +
-        '<input type="hidden" name="properties[' + this.id + ']" value="' + this.value + '" />' +
-        '<div class="ui-input-text ui-shadow-inset ui-corner-all ui-btn-shadow ui-body-c">'+
-          '<input onchange="Collection.prototype.handleFileUpload(this)" class="ui-input-text ui-body-c" type="file" data-clear-btn="true" name="properties[' + this.id + ']" id="' + this.code + '"  datatype="photo">'+          
-        '</div>'+
-        '<div class="clear"></div>'+
-      '</div>'+
-    '</div>';
+            '<div class="ui-controlgroup-controls">'+
+            protectPhotoDisplay +
+            '<div class="clear"></div>'+
+            '</div>'+
+          '</div>'; 
 };
 
 Field.prototype.getCalculationField = function() {  

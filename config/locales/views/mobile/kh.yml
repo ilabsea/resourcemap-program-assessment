@@ -4,7 +4,7 @@ kh:
       collections:
         title: "រាយការណ៍"
         desktop_view: "Desktop View"
-        new_site: "រាយការណ៍ពីសំរាមថ្មី"
+        new_site: "តំបន់ថ្មី"
         name: "ឈ្មោះទីតាំងសំរាម"
         location: "ទីតាំង"
         lat: "រយៈទទឹង"
@@ -13,3 +13,4 @@ kh:
         enter_location_lng: "Enter your location's lng"
         save_site: "រក្សាទុក"
         saving: "កំពុងរក្សាទុក..."
+        unsupport_photo_field: "មិនមានហ្វៀលហ្វូតូពេលនៅក្រៅបណា្តយ"
