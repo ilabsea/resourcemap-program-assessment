@@ -47,7 +47,6 @@ onLayers ->
       @selectLogicLayers = ko.computed =>
         if @currentLayer()
           if @currentLayer().id()
-            # @layers().filter (layer) => layer.id() isnt @currentLayer().id()
             @layers()
           else
             @layers().filter (layer) => typeof layer.id() isnt 'undefined'
@@ -93,9 +92,6 @@ onLayers ->
 
     saveLayer: =>
       @savingLayer(true)
-      # @currentField().impl().field_logics @currentField().impl().field_logics().filter (field_logic) -> typeof field_logic.layer_id() isnt 'undefined'
-      
-
       json = {layer: @currentLayer().toJSON()}
 
       if @currentLayer().id()
@@ -122,7 +118,7 @@ onLayers ->
           #if field is new, we need to set id
           field.id(dataField[0].id)
         else
-          field.layer().fields().push(field)
+          field.layer().fields.push(field)
           layersToReloadOrder.push(field.layer())
           @currentLayer().fields.remove(field)
           # i does not change because we just removed an element
