@@ -111,7 +111,7 @@ onLayers ->
       @minimum = ko.observable field?.config?.range?.minimum
       @maximum = ko.observable field?.config?.range?.maximum
       @error = ko.computed =>
-        if parseInt(@minimum()) > parseInt(@maximum())
+        if (@is_enable_range() && @minimum() && @minimum())&& parseInt(@minimum()) > parseInt(@maximum())
           "Invalid range, maximum must greater than minimum"
     
     validate_number_only: (field,event) =>
