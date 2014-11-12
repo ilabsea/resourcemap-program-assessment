@@ -42,6 +42,7 @@ onLayers ->
 
     selectingLayerClick: =>
       @switchMoveToLayerElements true
+      return
 
     selectingLayerSelect: =>
       return unless @selecting
