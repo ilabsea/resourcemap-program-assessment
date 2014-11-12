@@ -45,7 +45,19 @@ Collection.prototype.fetchFields = function() {
 };
 
 Collection.prototype.createSite = function(id){
+  Collection.hideWhileOffline();
   Collection.prototype.showFormAddSite(Collection.getSchemaByCollectionId(id));
+}
+
+Collection.hideWhileOffline = function(){
+  if(!window.navigator.onLine){
+     $("#linkPageMap").hide();
+    $("#unsupportPhotoField").show();
+  }
+  else{
+    $("#linkPageMap").show();
+    $("#unsupportPhotoField").hide();
+  }
 }
 
 Collection.getSchemaByCollectionId = function(id){
@@ -82,15 +94,23 @@ Collection.prototype.saveSite = function(){
     }
     else{
       var offlineData = Collection.prototype.getFormValue();
-      if(window.currentSiteId){
-        offlineData["id"] = window.currentSiteId;
+      var state;
+       if(window.currentSiteId){
+        offlineData["idSite"] = window.currentSiteId;
+        Collection.prototype.removePreviousSite(collectionId, window.currentSiteId);
+        state = "update";
+      }else{
+        sites = JSON.parse(localStorage.getItem("offlineSites"));
+        if(!sites) offlineData["idSite"] = 1;
+        else offlineData["idSite"] = sites.length + 1;
+        state = "create";
       }
-      Collection.prototype.storeOfflineData(collectionId, offlineData);
+      Collection.prototype.storeOfflineData(collectionId, offlineData, state);
     }
   }
 }
 
-Collection.prototype.storeOfflineData = function(collectionId, formData){
+Collection.prototype.storeOfflineData = function(collectionId, formData, state){
   pendingSites = JSON.parse(window.localStorage.getItem("offlineSites"));
   if(pendingSites != null && pendingSites.length > 0){
     pendingSites.push({"collectionId" : collectionId, "formData" : formData});
@@ -100,12 +120,26 @@ Collection.prototype.storeOfflineData = function(collectionId, formData){
   }
   try {
     window.localStorage.setItem("offlineSites", JSON.stringify(pendingSites));
-    Collection.prototype.goHome();
-    Collection.prototype.showErrorMessage("Offline site saved locally.");
+    if (state == "update") {
+      Collection.prototype.showListSites(collectionId, true);
+      Collection.prototype.showErrorMessage("Offline site updated successfully.");
+    } else{
+      Collection.prototype.goHome();
+      Collection.prototype.showErrorMessage("Offline site saved locally.");
+    }
   }catch (e) {
     Collection.prototype.showErrorMessage("Unable to save record because your data is too big.");
   }
-  
+}
+
+Collection.prototype.removePreviousSite = function(collectionId, siteId){
+  sites = JSON.parse(window.localStorage.getItem("offlineSites"));
+  for(var i=0 ; i<sites.length; i++){
+    if(sites[i].formData["idSite"] == siteId){
+      sites.splice(i, 1);
+      window.localStorage.setItem("offlineSites", JSON.stringify(sites));
+    }
+  }
 }
 
 Collection.prototype.ajaxCreateSite = function(collectionId, formData){
@@ -114,7 +148,7 @@ Collection.prototype.ajaxCreateSite = function(collectionId, formData){
       url: '/mobile/collections/' + collectionId + '/sites',  //Server script to process data
       type: 'POST',
       success: function(){
-        Collection.prototype.showListSites(collectionId);
+        Collection.prototype.showListSites(collectionId , true);
         Collection.prototype.showErrorMessage("Successfully saved.");
       },
       error: function(data){
@@ -141,7 +175,7 @@ Collection.prototype.ajaxUpdateSite = function(collectionId, siteId, formData){
       url: '/mobile/collections/' + collectionId + '/sites/' + siteId + '.json',  //Server script to process data
       type: 'PUT',
       success: function(){
-        Collection.prototype.showListSites(collectionId);
+        Collection.prototype.showListSites(collectionId, true);
         Collection.prototype.showErrorMessage("Successfully updated.");
       },
       error: function(data){
@@ -278,6 +312,7 @@ Collection.prototype.validateData = function(collectionId){
 }
 
 Collection.setFocusOnField = function(fieldId){
+  $("div,span").removeClass('ui-focus');
   els = $(".field_" + fieldId);
   selected_options = []
   for(var i=0; i<els.length; i++){
@@ -498,8 +533,8 @@ Collection.prototype.getListCollectionTemplate = function(collection, classListN
   item = '<li data-corners="false" data-shadow="false" data-iconshadow="true" data-wrapperels="div" data-icon="arrow-r" data-iconpos="right" data-theme="c" class="ui-btn ui-btn-up-c ui-btn-icon-right ui-li-has-arrow ui-li ' + classListName + '" >' + 
             '<div class="ui-btn-inner ui-li">' + 
               '<div class="ui-btn-text">' +
-                '<a style="cursor: pointer;" onclick="Collection.prototype.showListSites(' + collection["id"] + ')"' + ' href="javascript:void(0)" class="ui-link-inherit">' + collection["name"] + '</a>' + 
-              '</div>' + 
+                '<a style="cursor: pointer;" onclick="Collection.prototype.showListSites(' + collection["id"]  + ', ' + true + ')"' + ' href="javascript:void(0)" class="ui-link-inherit">' + collection["name"] + '</a>' + 
+                '</div>' + 
               '<span class="ui-icon ui-icon-arrow-r ui-icon-shadow">&nbsp;</span>' +
             '</div>' +
           '</li>';
@@ -510,65 +545,96 @@ Collection.prototype.getListSiteTemplate = function(collectionId, site, classLis
   item = '<li data-corners="false" data-shadow="false" data-iconshadow="true" data-wrapperels="div" data-icon="arrow-r" data-iconpos="right" data-theme="c" class="ui-btn ui-btn-up-c ui-btn-icon-right ui-li-has-arrow ui-li ' + classListName + '" >' + 
             '<div class="ui-btn-inner ui-li">' + 
               '<div class="ui-btn-text">' +
-                '<a style="cursor: pointer;" onclick="Collection.prototype.showSite(' + collectionId + ',' + site["id"] + ')"' + ' href="javascript:void(0)" class="ui-link-inherit">' + site["name"] + '</a>' + 
-              '</div>' + 
+                '<a style="cursor: pointer;" onclick="Collection.prototype.showSite(' + collectionId + ','+ site["id"] +  ','+ site["idSite"] + ')"' + ' href="javascript:void(0)" class="ui-link-inherit">' + site["name"] + '</a>' + 
+               '</div>' + 
               '<span class="ui-icon ui-icon-arrow-r ui-icon-shadow">&nbsp;</span>' +
             '</div>' +
           '</li>';
   return item;
 }
 
-Collection.prototype.showListSites = function(collectionId){
-  $.mobile.saving('show');
-  $("#listSitesView").html("");
-  window.currentCollectionId = collectionId;
-  Collection.clearFormData();
-  $.ajax({
-    url: "/mobile/collections/" + collectionId + "/sites.json",
-    success: function(sites) {
-      for(var i=0; i< sites.length; i++){
-        if(sites.length > 1 && i == 0){
-          classListName = "ui-first-child" 
-        }
-        else if(sites.length > 1 && i == (sites.length - 1)){
-          classListName = "ui-last-child"
-        }
-        else{
-          classListName = ""
-        }
-        item = Collection.prototype.getListSiteTemplate(collectionId, sites[i], classListName)
-        $("#listSitesView").append(item);
-      }
-      Collection.hidePages();
-      $("#mobile-list-sites-main").show();
-      schema = Collection.getSchemaByCollectionId(collectionId);
-      $("#collectionTitle").html(schema["name"]);
-      $.mobile.saving('hide');
-    }
-  });
+Collection.prototype.addClassToSiteList = function(sites , index){
+  if(sites.length > 1 && index == 0){
+    classListName = "ui-first-child" 
+  }
+  else if(sites.length > 1 && index == (sites.length - 1)){
+    classListName = "ui-last-child"
+  }
+  else{
+    classListName = ""
+  }
+  return classListName;
 }
 
+Collection.prototype.showListSites = function(collectionId, isFromCollectionList){
+  $.mobile.saving('show');
+   window.currentCollectionId = collectionId;
+   Collection.clearFormData();
+  var have_site = false;
+  if(window.navigator.onLine){
+   $.ajax({
+      url: "/mobile/collections/" + collectionId + "/sites.json",
+      success: function(sites) {
+        $("#listSitesView").html("");
+        for(var i=0; i< sites.length; i++){
+          classListName = Collection.prototype.addClassToSiteList(sites, i);
+          item = Collection.prototype.getListSiteTemplate(collectionId, sites[i], classListName)
+          $("#listSitesView").append(item);
+         }
+     }
+    });
+  } else {
+    sites = JSON.parse(localStorage.getItem("offlineSites"));
+    $("#listSitesView").html("");
+    if(sites){
+    for(var i=0; i< sites.length; i++){
+      classListName = Collection.prototype.addClassToSiteList(sites, i);
+      if(sites[i].collectionId == collectionId){
+        item = Collection.prototype.getListSiteTemplate(collectionId, sites[i].formData, classListName);
+         $("#listSitesView").append(item);
+        have_site = true;
+        }
+      }
+    }
+  }
+  if(!have_site && !window.navigator.onLine){
+    Collection.hidePages();
+    if(!isFromCollectionList){
+      Collection.prototype.goHome();
+    }else{
+      $("#mobile-sites-main").show();
+      Collection.prototype.createSite(window.currentCollectionId);
+    }
+    $.mobile.saving('hide');
+  } else {
+    Collection.hidePages();
+    $("#mobile-list-sites-main").show();
+    schema = Collection.getSchemaByCollectionId(collectionId);
+    $("#collectionTitle").html(schema["name"]);
+    $.mobile.saving('hide');
+  }
+}
 
 Collection.prototype.applyBrowserLocation = function(){
   Collection.prototype.getLocation();
 }
 
-Collection.prototype.showError = function(error){
-  switch(error.code){
-    case error.PERMISSION_DENIED:
-      x.innerHTML="User denied the request for Geolocation."
-      break;
-    case error.POSITION_UNAVAILABLE:
-      x.innerHTML="Location information is unavailable."
-      break;
-    case error.TIMEOUT:
-      x.innerHTML="The request to get user location timed out."
-      break;
-    case error.UNKNOWN_ERROR:
-      x.innerHTML="An unknown error occurred."
-      break;
-  }
-}
+ Collection.prototype.showError = function(error){
+   switch(error.code){
+     case error.PERMISSION_DENIED:
+      Collection.prototype.showErrorMessage("User denied the request for Geolocation.")
+       break;
+     case error.POSITION_UNAVAILABLE:
+      Collection.prototype.showErrorMessage("Location information is unavailable.")
+       break;
+     case error.TIMEOUT:
+      Collection.prototype.showErrorMessage("The request to get user location timed out.")
+       break;
+     case error.UNKNOWN_ERROR:
+      Collection.prototype.showErrorMessage("An unknown error occurred.")
+       break;
+   }
+ }
 
 Collection.prototype.getLocation = function(){
   if (navigator.geolocation){
@@ -747,7 +813,10 @@ Collection.createMap = function(canvasId){
 
 Collection.assignSite = function(site){
   Collection.clearFormData();
-  window.currentSiteId = site["id"]
+  if(window.navigator.onLine)
+    window.currentSiteId = site["id"]
+  else
+    window.currentSiteId = site["idSite"]
   $("#name").val(site["name"]);
   $("#lat").val(site["lat"]);
   $("#lng").val(site["lng"]);
@@ -793,19 +862,42 @@ Collection.mapContainer.refresh =  function(){
   }, 500);
 }
 
+Collection.prototype.showSite = function(collectionId, siteIdOnline, siteIdOffline){
+  if(window.navigator.onLine)
+    Collection.prototype.showSiteOnline(collectionId, siteIdOnline);
+  else
+    Collection.prototype.showSiteOffline(collectionId, siteIdOffline);
+}
 
-Collection.prototype.showSite = function(collectionId, siteId){
+Collection.prototype.showSiteOffline = function(collectionId, siteId){
   $.mobile.saving('show');
   $("#listSitesView").html("");
-  $.ajax({
-    url: "/mobile/collections/" + collectionId + "/sites/" + siteId + ".json",
-    success: function(site) {
-      Collection.hidePages();
-      Collection.assignSite(site);
-      $("#mobile-sites-main").show();
-      $.mobile.saving('hide');
+  Collection.hidePages();
+
+  sites = JSON.parse(localStorage.getItem("offlineSites"));
+  for(var i=0; i< sites.length; i++){
+    if(sites[i].formData["idSite"] == siteId){
+     Collection.assignSite(sites[i].formData);
     }
-  });
+  }  
+  Collection.hideWhileOffline();
+  $("#mobile-sites-main").show();
+  $.mobile.saving('hide');
+}
+
+Collection.prototype.showSiteOnline = function(collectionId, siteId){
+   $.mobile.saving('show');
+   $("#listSitesView").html("");
+   $.ajax({
+     url: "/mobile/collections/" + collectionId + "/sites/" + siteId + ".json",
+    success: function(site) {
+       Collection.hidePages();
+        Collection.hideWhileOffline();
+       Collection.assignSite(site);
+       $("#mobile-sites-main").show();
+       $.mobile.saving('hide');
+     }
+   });
 }
 
 Collection.prototype.getFormValue = function(){
