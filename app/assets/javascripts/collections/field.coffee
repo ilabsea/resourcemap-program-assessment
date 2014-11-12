@@ -93,14 +93,15 @@ onCollections ->
           value = @value()
         else
           return
-
-        b = false
+        
         if @field_logics
           for field_logic in @field_logics
+            b = false
             if field_logic.field_id?
               if @kind == 'yes_no' || @kind == 'select_one'
                 if value == field_logic.value                          
                   @setFocusStyleByField(field_logic.field_id)
+                  return
 
               if @kind == 'select_many'
                 if field_logic.condition_type == 'any'
@@ -109,30 +110,27 @@ onCollections ->
                       if field_value == parseInt(field_logic_value.value)
                         b = true
                         @setFocusStyleByField(field_logic.field_id)
-                        break
-                    if b
-                      break
-                else
-                  for field_value in value
+                        return
+
+                if field_logic.condition_type == 'all'
+                  tmp = []
+                  for field_value in value             
                     for field_logic_value in field_logic.selected_options
-                      if field_value == parseInt(field_logic_value.value)
+                      if field_value == parseInt(field_logic_value.value)                        
                         b = true
                         field_id = field_logic.field_id
-                        break
+                        tmp.push field_value
                       else
                         b = false
-                    if !b
-                      break
-                  if b && field_id? && value.length >= field_logic.selected_options.length
+                  if tmp.length == field_logic.selected_options.length
                     @setFocusStyleByField(field_id)
-                if b
-                  break
+                    return
 
     setFocusStyleByField: (field_id) =>
       field = window.model.newOrEditSite().findFieldByEsCode(field_id)
       @removeFocusStyle()
       if field.kind == "select_one"
-        $('#select_one-input-'+field.code).focus()  
+        $('#select-one-input-'+field.code).focus()  
       else if field.kind == "select_many"
         field.expanded(true)
         $('#select-many-input-'+field.code).focus()
@@ -140,7 +138,7 @@ onCollections ->
         $('#'+field.esCode)[0].scrollIntoView(true)
         $('#'+field.esCode).addClass('focus')
       else if field.kind == "yes_no"
-        $('#yes_no-input-'+field.code).focus()
+        $('#yes-no-input-'+field.code).focus()
       else if field.kind == "photo"
         $('#'+field.code).focus()
       else if field.kind == "date"
@@ -160,7 +158,7 @@ onCollections ->
       value = '' unless value
 
       @value(value)
-
+    
     removeFocusStyle: =>
       $('div').removeClass('focus')
       $('input').removeClass('focus')
