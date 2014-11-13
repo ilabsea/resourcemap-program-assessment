@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140911073733) do
+ActiveRecord::Schema.define(:version => 20141006085556) do
 
   create_table "activities", :force => true do |t|
     t.integer  "user_id"
@@ -180,8 +180,10 @@ ActiveRecord::Schema.define(:version => 20140911073733) do
   create_table "queries", :force => true do |t|
     t.string   "name"
     t.text     "conditions"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.boolean  "isAllSite"
+    t.boolean  "isAllCondition"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
     t.integer  "collection_id"
   end
 

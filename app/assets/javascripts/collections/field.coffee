@@ -136,14 +136,14 @@ onCollections ->
         $('#select-many-input-'+field.code).focus()
       else if field.kind == "hierarchy"           
         $('#'+field.esCode)[0].scrollIntoView(true)
-        $('#'+field.esCode).addClass('focus')
+        $('#'+field.esCode).focus() 
       else if field.kind == "yes_no"
         $('#yes-no-input-'+field.code).focus()
       else if field.kind == "photo"
         $('#'+field.code).focus()
       else if field.kind == "date"
         $('#'+field.kind+'-input-'+field.esCode)[0].scrollIntoView(true)
-        $('#'+field.kind+'-input-'+field.esCode).addClass('focus')
+        $('#'+field.kind+'-input-'+field.esCode).focus()
       else
         $('#'+field.kind+'-input-'+field.code).focus() 
 
