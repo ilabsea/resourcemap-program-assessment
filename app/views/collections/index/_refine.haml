@@ -2,14 +2,15 @@
 .left{ko(with: :currentCollection), style: 'margin-right:8px'}
   = t('views.collections.index.group_by')
   %select{ko(value: '$root.groupBy', options: :groupByOptions, optionsText: "'name'")}
-  <!-- ko if: queries().length > 0 -->
-  %br
-  %br
-  = t('views.collections.index.query')
-  %select{ko(value: '$root.selectedQuery', options: :queries, optionsText: "'name'", optionsCaption: "\'None\'", event:{ change: '$root.refineFilters'}), style: 'max-width:210px; margin-left:20px'}
-  <!-- /ko -->
 <!-- /ko -->
-
+<!-- ko if: currentCollection() && currentCollection().queries().length > 0 -->
+%br
+%br
+<!-- ko with: currentCollection() -->
+= t('views.collections.index.query')
+%select{ko(value: '$root.selectedQuery', options: :queries, optionsText: "'name'", optionsCaption: "\'None\'", event:{ change: '$root.refineFilters'}), style: 'max-width:210px; margin-left:20px'}
+<!-- /ko -->
+<!-- /ko -->
 .right
   %form{ko(submit: 'performSearchOrHierarchy'), action: '#/null', method: :post}
     <!-- ko if: lastSearch() -->
