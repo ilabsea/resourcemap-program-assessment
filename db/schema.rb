@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141006085556) do
+ActiveRecord::Schema.define(:version => 20141009080140) do
 
   create_table "activities", :force => true do |t|
     t.integer  "user_id"
@@ -40,7 +40,7 @@ ActiveRecord::Schema.define(:version => 20141006085556) do
 
   create_table "collections", :force => true do |t|
     t.string   "name"
-    t.text     "description", :limit => 16777215
+    t.text     "description"
     t.boolean  "public"
     t.datetime "created_at",                                                :null => false
     t.datetime "updated_at",                                                :null => false
@@ -67,7 +67,7 @@ ActiveRecord::Schema.define(:version => 20141006085556) do
     t.datetime "valid_since"
     t.datetime "valid_to"
     t.integer  "field_id"
-    t.text     "metadata",      :limit => 16777215
+    t.text     "metadata"
   end
 
   add_index "field_histories", ["field_id"], :name => "index_field_histories_on_field_id"
@@ -82,7 +82,7 @@ ActiveRecord::Schema.define(:version => 20141006085556) do
     t.datetime "updated_at",                                                     :null => false
     t.binary   "config",                :limit => 2147483647
     t.integer  "ord"
-    t.text     "metadata",      :limit => 16777215
+    t.text     "metadata"
     t.boolean  "is_mandatory",                                :default => false
     t.boolean  "is_enable_field_logic",                       :default => false
     t.boolean  "is_enable_range",                             :default => false
@@ -96,7 +96,7 @@ ActiveRecord::Schema.define(:version => 20141006085556) do
     t.datetime "updated_at",        :null => false
     t.integer  "user_id"
     t.integer  "collection_id"
-    t.text     "exception",              :limit => 16777215
+    t.text     "exception"
   end
 
   create_table "languages", :force => true do |t|
@@ -179,11 +179,9 @@ ActiveRecord::Schema.define(:version => 20141006085556) do
 
   create_table "queries", :force => true do |t|
     t.string   "name"
-    t.text     "conditions", :limit => 16777215
-    t.boolean  "isAllSite"
-    t.boolean  "isAllCondition"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.text     "conditions"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
     t.integer  "collection_id"
   end
 
@@ -195,9 +193,9 @@ ActiveRecord::Schema.define(:version => 20141006085556) do
     t.datetime "created_at",       :null => false
     t.datetime "updated_at",       :null => false
     t.boolean  "is_all_site"
-    t.text     "schedule",         :limit => 16777215
+    t.text     "schedule"
     t.datetime "next_run"
-    t.text     "sites",         :limit => 16777215
+    t.text     "sites"
     t.boolean  "status"
     t.string   "time_zone"
   end
@@ -237,7 +235,7 @@ ActiveRecord::Schema.define(:version => 20141006085556) do
     t.string   "hierarchy"
     t.datetime "created_at",                                                                           :null => false
     t.datetime "updated_at",                                                                           :null => false
-    t.text     "properties",           :limit => 16777215
+    t.text     "properties"
     t.string   "location_mode",  :limit => 10,                                :default => "automatic"
     t.string   "id_with_prefix"
     t.datetime "valid_since"
@@ -267,7 +265,7 @@ ActiveRecord::Schema.define(:version => 20141006085556) do
     t.string   "hierarchy"
     t.datetime "created_at",                                                                           :null => false
     t.datetime "updated_at",                                                                           :null => false
-    t.text     "properties",           :limit => 16777215
+    t.text     "properties"
     t.string   "location_mode",  :limit => 10,                                :default => "automatic"
     t.string   "id_with_prefix"
     t.string   "uuid"
@@ -277,7 +275,7 @@ ActiveRecord::Schema.define(:version => 20141006085556) do
     t.integer  "membership_id"
     t.string   "type"
     t.boolean  "all_sites",     :default => true
-    t.text     "some_sites",           :limit => 16777215
+    t.text     "some_sites"
     t.datetime "created_at",                      :null => false
     t.datetime "updated_at",                      :null => false
   end
@@ -293,13 +291,13 @@ ActiveRecord::Schema.define(:version => 20141006085556) do
   create_table "thresholds", :force => true do |t|
     t.integer  "ord"
     t.string   "color"
-    t.text     "conditions",           :limit => 16777215
+    t.text     "conditions"
     t.integer  "collection_id"
     t.datetime "created_at",           :null => false
     t.datetime "updated_at",           :null => false
     t.string   "name"
     t.boolean  "is_all_site"
-    t.text     "sites",           :limit => 16777215
+    t.text     "sites"
     t.boolean  "is_all_condition"
     t.boolean  "is_notify"
     t.text     "phone_notification"
