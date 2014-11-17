@@ -68,7 +68,7 @@ onCollections ->
       @refreshTimeago()
       @makeFixedHeaderTable()
       @hideRefindAlertOnMap()
-      @setThresholds()
+      # @setThresholds()
 
       @rewriteUrl()
 
@@ -125,12 +125,12 @@ onCollections ->
           @rewriteUrl()
 
         window.adjustContainerSize()
-
       $('.BreadCrumb').load("/collections/breadcrumbs", { collection_id: collection.id })
       window.adjustContainerSize()
       window.model.updateSitesInfo()
       @showRefindAlertOnMap()
       @setThresholds()
+      @filters([])
 
     @editCollection: (collection) -> window.location = "/collections/#{collection.id}"
 
@@ -191,11 +191,12 @@ onCollections ->
 
     @setThresholds: ->
       if @currentCollection()
-        @currentCollection().thresholds([])  
+        @showingLegend(false)
+        @currentCollection().thresholds([])
+        @currentCollection().showLegend(false) 
         $.get "/plugin/alerts/collections/#{@currentCollection().id}/thresholds.json", (data) =>  
           thresholds = @currentCollection().fetchThresholds(data)     
           @currentCollection().thresholds(@currentCollection().findSitesByThresholds(thresholds))
-          @showLegendState()
       else
         $.get "/plugin/alerts/thresholds.json", (data) =>
           for collection in @collections()
@@ -206,20 +207,12 @@ onCollections ->
           @showLegendState()
 
     @showLegendState: ->
-      if @currentCollection()
-        for threshold in @currentCollection().thresholds()
-          if threshold.alertedSitesNum() > 0
-            @showingLegend(true)
-            break
-          else
-            @showingLegend(false)
-      else
-        for collection in @collections()
-          if collection.checked() == true && collection.thresholds().length > 0
-            @showingLegend(true)
-            break
-          else
-            @showingLegend(false)
+      for collection in @collections()
+        if collection.checked() == true && collection.showLegend()
+          @showingLegend(true)
+          break
+        else
+          @showingLegend(false)
 
     @toggleAlertLegend: ->
       if @showingLegend() == true

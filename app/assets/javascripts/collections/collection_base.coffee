@@ -91,7 +91,7 @@ onCollections ->
       for key, condition of conditions
         operator = condition.op().code()
         if condition.valueType().code() is 'percentage'
-          percentage = (site?.properties()[condition.compareField()] * condition.value())/100
+          percentage = (site.properties()[condition.compareField()] * condition.value())/100
           compareField = percentage
         else
           compareField = condition.value()
