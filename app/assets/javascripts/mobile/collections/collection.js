@@ -645,7 +645,7 @@ Collection.prototype.getLocation = function(){
   }
 }
 
-Collection.prototype.setFieldFocus = function(fieldId,fieldCode, fieldKind){
+Collection.prototype.setFieldFocus = function(fieldId, fieldCode, fieldKind){
   console.log('aaaaaaaaaaaaaaaaaa');
   $("div,span").removeClass('ui-focus');
   fieldValue = Collection.prototype.setFieldValueByKind(fieldKind, fieldCode);
@@ -675,7 +675,7 @@ Collection.prototype.setFieldFocusStyleByKind = function(fieldFocus){
 
 Collection.prototype.setFieldValueByKind = function(fieldKind, fieldCode){
   if(fieldKind == 'yes_no'){
-    if($( "#"+fieldKind+":checked").length == 1){
+    if($( "#"+fieldCode+":checked").length == 1){
       value = 0;
     }else{
       value = 1;
