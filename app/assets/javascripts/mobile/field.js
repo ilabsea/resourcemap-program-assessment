@@ -103,10 +103,12 @@ Field.prototype.prepareCalculatedField = function(){
     var fieldValue = "$" + f["code"];
     switch (f["kind"]) {
       case "text":
-      case "numeric":
       case "email":
       case "phone":
         fieldValue = "$('#" + f["code"] + "').val()";
+        break;
+      case "numeric":
+        fieldValue = "parseInt($('#" + f["code"] + "').val())";
         break;
       case "select_one":
         fieldValue = "$('#" + f["code"] + " option:selected').text()";

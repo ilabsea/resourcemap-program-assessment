@@ -31,13 +31,12 @@ onCollections ->
           for esCode, value of window.model.newSiteProperties
             field = @currentCollection().findFieldByEsCode esCode
             field.setValueFromSite(value) if field
-
         @unselectSite()
         @editingSite site
         @editingSite().startEditLocationInMap()
         window.model.initDatePicker()
         window.model.initAutocomplete()
-        @prepareCalculatedField()
+        site.prepareCalculatedField()
 
 
     @editSite: (site) ->
@@ -257,8 +256,10 @@ onCollections ->
               fieldName = "$" + f["code"]
               fieldValue = "$" + f["code"]
               switch f["kind"]
-                when "text", "numeric", "email", "phone"
+                when "text", "email", "phone"
                   fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + "').val()"
+                when "numeric"
+                  fieldValue = "parseInt($('#" + f["kind"] + "-input-" + f["code"] + "').val())"
                 when "select_one"
                   fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + " option:selected').text()"
                 when "yes_no"
@@ -268,9 +269,16 @@ onCollections ->
             )
             # Add change value to dependent field
             $.map(field["dependentFields"], (f) -> 
-              element_id = "#" +field["kind"] + "-input-" + field["code"]
-              execute_code = field["codeCalculation"]
-              $("#" + f["kind"] + "-input-" + f["code"]).on("change", ->
-                $(element_id).val(eval(execute_code))
+              # element_id = "#" +field["kind"] + "-input-" + field["code"]
+              element_id = field["code"]
+              $.map(window.model.editingSite().fields(), (fi) ->
+                if fi.code == element_id
+                  execute_code = field["codeCalculation"]
+                  $("#" + f["kind"] + "-input-" + f["code"]).on("change", ->
+                    $.map(window.model.editingSite().fields(), (fi) ->
+                      if fi.code == element_id
+                        fi.value(eval(execute_code))
+                    )
+                  )
               )
             )
