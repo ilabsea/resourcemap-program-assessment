@@ -646,7 +646,6 @@ Collection.prototype.getLocation = function(){
 }
 
 Collection.prototype.setFieldFocus = function(fieldId, fieldCode, fieldKind){
-  console.log('aaaaaaaaaaaaaaaaaa');
   $("div,span").removeClass('ui-focus');
   fieldValue = Collection.prototype.setFieldValueByKind(fieldKind, fieldCode);
   fieldLogics = Collection.prototype.getFieldLogicByFieldId(fieldId);
