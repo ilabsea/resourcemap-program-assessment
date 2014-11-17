@@ -42,6 +42,7 @@ onLayers ->
 
     selectingLayerClick: =>
       @switchMoveToLayerElements true
+      return
 
     selectingLayerSelect: =>
       return unless @selecting
@@ -111,7 +112,7 @@ onLayers ->
       @minimum = ko.observable field?.config?.range?.minimum
       @maximum = ko.observable field?.config?.range?.maximum
       @error = ko.computed =>
-        if parseInt(@minimum()) > parseInt(@maximum())
+        if (@is_enable_range() && @minimum() && @minimum())&& parseInt(@minimum()) > parseInt(@maximum())
           "Invalid range, maximum must greater than minimum"
     
     validate_number_only: (field,event) =>
@@ -168,7 +169,6 @@ onLayers ->
 
     toJSON: (json) =>
       json.config = {field_logics: $.map(@field_logics(), (x) ->  x.toJSON())}
-      # json.field_logics_attributes = $.map(@field_logics(), (x) -> x.toJSON())
 
   class @FieldSelect extends @FieldImpl
     constructor: (field) ->
@@ -211,12 +211,13 @@ onLayers ->
                         ko.observableArray()
 
     saveFieldLogic: (field_logic) =>
-      if @field_logics().length > 0
-        id = @field_logics()[@field_logics().length - 1].id() + 1
-      else
-        id = 0
-      field_logic.id id
-      @field_logics.push field_logic
+      if !field_logic.id()?
+        if @field_logics().length > 0
+          id = @field_logics()[@field_logics().length - 1].id() + 1
+        else
+          id = 0
+        field_logic.id id
+        @field_logics.push field_logic
                         
     toJSON: (json) =>
       json.config = {options: $.map(@options(), (x) -> x.toJSON()), next_id: @nextId,field_logics: $.map(@field_logics(), (x) ->  x.toJSON())}

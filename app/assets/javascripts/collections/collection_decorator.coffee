@@ -25,6 +25,7 @@ onCollections ->
       @queries = collection.queries
       @sitesPermission = collection.sitesPermission
       @thresholds = collection.thresholds
+      @showLegend = collection.showLegend
       @allSites(collection.allSites())
 
 

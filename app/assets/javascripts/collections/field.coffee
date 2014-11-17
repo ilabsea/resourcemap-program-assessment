@@ -89,18 +89,19 @@ onCollections ->
       if window.model.newOrEditSite() 
         if @kind == 'yes_no'
           value = if @value() then 1 else 0
-        else if @kind == 'select_one' || 'select_many'
+        else if @kind == 'select_one' || @kind == 'select_many'
           value = @value()
         else
           return
-
-        b = false
+        
         if @field_logics
           for field_logic in @field_logics
+            b = false
             if field_logic.field_id?
-              if @kind == 'yes_no' || 'select_one'
+              if @kind == 'yes_no' || @kind == 'select_one'
                 if value == field_logic.value                          
                   @setFocusStyleByField(field_logic.field_id)
+                  return
 
               if @kind == 'select_many'
                 if field_logic.condition_type == 'any'
@@ -109,25 +110,25 @@ onCollections ->
                       if field_value == parseInt(field_logic_value.value)
                         b = true
                         @setFocusStyleByField(field_logic.field_id)
-                        break
-                    if b
-                      break
-                else
-                  for field_value in value
+                        return
+
+                if field_logic.condition_type == 'all'
+                  tmp = []
+                  for field_value in value             
                     for field_logic_value in field_logic.selected_options
-                      if field_value == parseInt(field_logic_value.value)
+                      if field_value == parseInt(field_logic_value.value)                        
                         b = true
                         field_id = field_logic.field_id
-                        break
+                        tmp.push field_value
                       else
                         b = false
-                    if !b
-                      break
-                  if b && field_id? && value.length >= field_logic.selected_options.length
+                  if tmp.length == field_logic.selected_options.length
                     @setFocusStyleByField(field_id)
+                    return
 
     setFocusStyleByField: (field_id) =>
       field = window.model.newOrEditSite().findFieldByEsCode(field_id)
+      @removeFocusStyle()
       if field.kind == "select_one"
         $('#select_one-input-'+field.code).focus()  
       else if field.kind == "select_many"
@@ -135,12 +136,14 @@ onCollections ->
         $('#select-many-input-'+field.code).focus()
       else if field.kind == "hierarchy"           
         $('#'+field.esCode)[0].scrollIntoView(true)
+        $('#'+field.esCode).focus() 
       else if field.kind == "yes_no"
         $('#yes_no-input-'+field.code).focus()
       else if field.kind == "photo"
         $('#'+field.code).focus()
       else if field.kind == "date"
         $('#'+field.kind+'-input-'+field.esCode)[0].scrollIntoView(true)
+        $('#'+field.kind+'-input-'+field.esCode).focus()
       else
         $('#'+field.kind+'-input-'+field.code).focus() 
 
@@ -155,6 +158,13 @@ onCollections ->
       value = '' unless value
 
       @value(value)
+    
+    removeFocusStyle: =>
+      $('div').removeClass('focus')
+      $('input').removeClass('focus')
+      $('select').removeClass('focus')
+      $('select').blur()
+      $('input').blur()
 
     codeForLink: (api = false) =>
       if api then @code else @esCode
@@ -222,14 +232,14 @@ onCollections ->
             if parseInt(@value()) <= parseInt(@range.maximum)
               @errorMessage('')
             else
-              @errorMessage('Invalid value, value must less than '+@range.maximum)
+              @errorMessage('Invalid value, value must less than or equal '+@range.maximum)
             return
           
           if @range.minimum
             if parseInt(@value()) >= parseInt(@range.minimum)
               @errorMessage('')
             else
-              @errorMessage('Invalid value, value must greater than '+@range.minimum)
+              @errorMessage('Invalid value, value must greater than or equal '+@range.minimum)
             return
 
     validate_integer_only: (keyCode) =>

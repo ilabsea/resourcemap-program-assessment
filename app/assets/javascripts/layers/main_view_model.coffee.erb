@@ -47,7 +47,6 @@ onLayers ->
       @selectLogicLayers = ko.computed =>
         if @currentLayer()
           if @currentLayer().id()
-            # @layers().filter (layer) => layer.id() isnt @currentLayer().id()
             @layers()
           else
             @layers().filter (layer) => typeof layer.id() isnt 'undefined'
@@ -93,9 +92,6 @@ onLayers ->
 
     saveLayer: =>
       @savingLayer(true)
-      # @currentField().impl().field_logics @currentField().impl().field_logics().filter (field_logic) -> typeof field_logic.layer_id() isnt 'undefined'
-      
-
       json = {layer: @currentLayer().toJSON()}
 
       if @currentLayer().id()
@@ -122,7 +118,7 @@ onLayers ->
           #if field is new, we need to set id
           field.id(dataField[0].id)
         else
-          field.layer().fields().push(field)
+          field.layer().fields.push(field)
           layersToReloadOrder.push(field.layer())
           @currentLayer().fields.remove(field)
           # i does not change because we just removed an element
@@ -283,9 +279,9 @@ onLayers ->
         @currentField().impl().field_logics.remove(field_logic)
 
       if @currentField().kind() == 'select_one'
-        if @currentField().config.field_logics?[field_logic.id()]?
-            @currentField().config.field_logics[field_logic.id()].value = field_logic.value()
-            @currentField().config.field_logics[field_logic.id()].field_id = field_logic.field_id()
+        if @currentField().config?.field_logics?[field_logic.id()]?
+          @currentField().config.field_logics[field_logic.id()].value = field_logic.value()
+          @currentField().config.field_logics[field_logic.id()].field_id = field_logic.field_id()
         else
           @currentField().impl().saveFieldLogic(field_logic)
         @isAddNew(false)
@@ -316,12 +312,12 @@ onLayers ->
         field.editing(true)
         @currentField().impl().field_logics([])
         @newFieldLogic(field)
-      if field.condition_type() == "all"
-        $("#all")[0].checked = true
+        if field.condition_type() == "all"
+          $("#all")[0].checked = true
 
     cancelFieldLogic: (field) =>
       if @currentField().kind() == 'select_one'   
-        field_logic =  @currentField().config.field_logics?[field.id()]
+        field_logic =  @currentField().config?.field_logics?[field.id()]
         if field_logic?
           field.value(field_logic.value)
           field.field_id(field_logic.field_id)

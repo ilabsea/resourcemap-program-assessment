@@ -41,7 +41,7 @@ onCollections ->
           else if field.kind == 'date'
             @filters.push(new FilterByDateProperty(field, condition.operator, condition.field_date_from, condition.field_date_to))
           else if field.kind == 'hierarchy'
-            @filters.push(new FilterByHierarchyProperty(field, condition.operator, condition.field_value))
+            @filters.push(new FilterByHierarchyProperty(field, "under", condition.field_value))
           else if field.kind == 'select_one' || field.kind == 'select_many'
             @filters.push(new FilterBySelectProperty(field, condition.field_value))
           else if field.kind == 'site'
