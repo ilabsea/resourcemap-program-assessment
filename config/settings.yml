@@ -6,7 +6,7 @@ plugins:
   public_collection: on
   snapshot: on
   channels: on
-  reminders: on
+  reminders: off
   alerts: on
   account_completeness: on
   fred_api: on
