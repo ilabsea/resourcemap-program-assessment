@@ -65,10 +65,11 @@ onLayers ->
 
     addDependentField: (field) =>
       field_id =$("#calculation_field").val()
-      for f in @fields()
-        if parseInt(f["id"]) == parseInt(field_id)
-          @currentField().impl().addDependentField(f)
-          break
+      for l in @selectLogicLayers()
+        for f in l.fields()
+          if parseInt(f.id()) == parseInt(field_id)
+            @currentField().impl().addDependentField(f)
+            return
     newLayer: =>
       layer = new Layer ord: (@layers().length + 1)
       @layers.push(layer)

@@ -284,7 +284,7 @@ onLayers ->
                           else
                             ko.observableArray()
       @field = ko.observable()
-      @codeCalculation = ko.observable(field.config?.code_calculation)
+      @codeCalculation = ko.observable field.config?.code_calculation ? ""
     addDependentField: (field) =>
       @dependent_fields.push field
 
@@ -292,6 +292,6 @@ onLayers ->
       @dependent_fields.remove field
 
     addFieldToCodeCalculation: (field) =>
-      @codeCalculation(@codeCalculation() + '$' + field["code"])
+      @codeCalculation(@codeCalculation() + '$' + field.code())
     toJSON: (json) =>
       json.config = {code_calculation: @codeCalculation(), dependent_fields : @dependent_fields()}
