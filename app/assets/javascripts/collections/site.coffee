@@ -336,7 +336,6 @@ onCollections ->
       delete @originalLocation
 
     startEditMode: =>
-      console.log("Hello")
       # Keep the original values, in case the user cancels
       @originalName = @name()
       @originalPosition = @position()
