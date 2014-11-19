@@ -1,5 +1,5 @@
 <!-- ko if: currentCollection() && currentCollection().groupByOptions().length > 1 -->
-.left{ko(with: :currentCollection), style: 'margin-right:8px'}
+.left{ko(with: :currentCollection), style: 'margin-right:8px; position:absolute'}
   = t('views.collections.index.group_by')
   %select{ko(value: '$root.groupBy', options: :groupByOptions, optionsText: "'name'")}
 <!-- /ko -->
@@ -7,8 +7,10 @@
 %br
 %br
 <!-- ko with: currentCollection() -->
-= t('views.collections.index.query')
-%select{ko(value: '$root.selectedQuery', options: :queries, optionsText: "'name'", optionsCaption: "\'None\'", event:{ change: '$root.refineFilters'}), style: 'max-width:210px; margin-left:20px'}
+.left{style: 'margin-right:8px; margin-top:2px; position:absolute'}
+  = t('views.collections.index.query')
+  %select{ko(value: '$root.selectedQuery', options: :queries, optionsText: "'name'", optionsCaption: "\'None\'", event:{ change: '$root.refineFilters'}), style: 'max-width:210px; margin-left:20px'}
+.clear
 <!-- /ko -->
 <!-- /ko -->
 .right
