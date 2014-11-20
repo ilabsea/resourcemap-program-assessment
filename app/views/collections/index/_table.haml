@@ -4,8 +4,8 @@
   %div{style: 'padding-top:9px;padding-left:6px;height:29px;width:289px'}= t('views.collections.index.my_collections')
   .mapheader.w60.right
     %button.icon_button.ffullscreen.right{ko(click: '$root.tooglefullscreen') }
-    %button.icon_button.ftable.right{ko(click: '$root.showTable', css: "{active: !$root.showingMap()}")}
-    %button.icon_button.fmap.right{ko(click: '$root.showMap', css: "{active: $root.showingMap()}")}
+    / %button.icon_button.ftable.right{ko(click: '$root.showTable', css: "{active: !$root.showingMap()}")}
+    / %button.icon_button.fmap.right{ko(click: '$root.showMap', css: "{active: $root.showingMap()}")}
     %br{clear: "all"}
 .tablescroll
   %table.GralTable.tableview
@@ -30,7 +30,6 @@
 <!-- /ko -->
 
 -# Collection sites
-<!-- ko if: !editingSite() -->
 <!-- ko with: currentCollection -->
 .tableheader.expanded{style: 'height:34px;'}
   %div{style: "float:left"}
@@ -44,8 +43,8 @@
   = render 'collections/index/export'
   .mapheader.right
     %button.icon_button.ffullscreen.right{ko(click: '$root.tooglefullscreen') }
-    %button.icon_button.ftable.right{ko(click: '$root.showTable', css: {active: "!$root.showingMap()"})}
-    %button.icon_button.fmap.right{ko(click: '$root.showMap', css: {active: "$root.showingMap()"})}
+    / %button.icon_button.ftable.right{ko(click: '$root.showTable', css: {active: "!$root.showingMap()"})}
+    / %button.icon_button.fmap.right{ko(click: '$root.showMap', css: {active: "$root.showingMap()"})}
     %br{clear: "all"}
 .tablescroll.expanded.sites{style:'width:100%;'}
   %table.GralTable.tableview{style: 'table-layout: fixed;'}
@@ -65,10 +64,10 @@
           -# https://developer.mozilla.org/en-US/docs/CSS/float
           %button{ko(style: {background: "'transparent url(#{InsteddRails.url}/theme/images/icons/misc/grey/arrow' + ($root.sortDirection() ? 'Up' : 'Down') + '.png) no-repeat scroll center'", height: "'11px'", cssFloat: "'right'", float: "'right'", borderStyle: "'none'", paddingLeft: "'17px'"})}
           <!-- /ko -->
-        %th
-          %span{style: 'display:inline'}= t('views.collections.index.lat')
-        %th
-          %span{style: 'display:inline'}= t('views.collections.index.long')
+        / %th
+        /   %span{style: 'display:inline'}= t('views.collections.index.lat')
+        / %th
+        /   %span{style: 'display:inline'}= t('views.collections.index.long')
         <!-- ko foreach: $root.currentCollection().fields() -->
         %th{ko(click: '$root.sortBy', style: {maxWidth: 'suggestedWidth()', minWidth: 'suggestedWidth()'}), style: 'overflow:hidden;cursor:pointer'}
           %span{ko(text: :name), style: 'display:inline'}
@@ -98,8 +97,7 @@
   <!-- /ko -->
 .tablebottom
   <!-- ko if: !currentSnapshot-->
-  - if can? :create, Site
+  - if current_user && !current_user.is_guest
     = render 'collections/index/create_site'
   <!-- /ko -->
-<!-- /ko -->
 <!-- /ko -->

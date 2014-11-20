@@ -124,10 +124,10 @@
                   = label_tag :name, t('views.collections.index.name')
                   = text_field_tag :name, '', placeholder: 'Enter new site name', class: 'w20 right', 'data-bind' => kov(value: :name, valueUpdate: :afterkeydown, hasfocus: true), :autofocus => true
                   .clear
-                %div
-                  %label Location:
-                  = ko_text_field_tag :locationText, event: {keydown: :newLocationKeyPress, blur: :moveLocation}, html: {class: 'ux-search right w20', placeholder: t('views.collections.index.search_or_drug_the_pin')}
-                  .clear
+                / %div
+                /   %label Location:
+                /   = ko_text_field_tag :locationText, event: {keydown: :newLocationKeyPress, blur: :moveLocation}, html: {class: 'ux-search right w20', placeholder: t('views.collections.index.search_or_drug_the_pin')}
+                /   .clear
                 / ko if: collection.readable($data)
                 <!-- ko foreach: layers -->
                 %div
@@ -182,23 +182,8 @@
                   <!-- ko if: editingName() -->
                   = ko_text_field_tag :name, visible: 'editingName()', hasfocus: true, event: {keydown: :nameKeyPress, blur: :saveName}
                   <!-- /ko -->
-                %div{style: 'margin-bottom:14px'}
-                  %label= t('views.collections.index.location')
-                  <!-- ko if: !hasLocation() -->
-                  - if current_user.is_guest
-                    %span.value{ko(visible: '!editingLocation()', style: 'color:grey;')}= t('views.collections.index.no_value')
-                  - else
-                    %span.value{ko(visible: '!editingLocation()', click: 'editLocation'), style: 'color:grey;cursor:pointer'}= t('views.collections.index.no_value')
-                  <!-- /ko -->
-                  <!-- ko if: hasLocation() && !editingLocation() -->
-                  - if current_user.is_guest
-                    %span.value{ko(text: :locationText, visible: '!editingLocation()')}
-                  - else
-                    %span.value{ko(text: :locationText, visible: '!editingLocation()', click: 'editLocation'), style: 'cursor: pointer'}
-                  <!-- /ko -->
-                  <!-- ko if: editingLocation() -->
-                  = ko_text_field_tag :locationText, visible: :editingLocation, hasfocus: true, event: {keydown: :locationKeyPress, blur: :saveLocation}, html: {class: 'ux-search'}
-                  <!-- /ko -->
+                
+
                 - if Settings.mobile_id?
                   %div{style: 'margin-bottom:14px'}
                     %label= t('views.collections.index.id_with_prefix')

@@ -2,10 +2,10 @@ module Site::ActivityConcern
   extend ActiveSupport::Concern
 
   included do
-    after_create :create_created_activity, :unless => :mute_activities
-    before_update :record_name_was, :unless => :mute_activities
-    after_update :create_updated_activity, :unless => :mute_activities
-    after_destroy :create_deleted_activity, :unless => :mute_activities, :if => :user
+    # after_create :create_created_activity, :unless => :mute_activities
+    # before_update :record_name_was, :unless => :mute_activities
+    # after_update :create_updated_activity, :unless => :mute_activities
+    # after_destroy :create_deleted_activity, :unless => :mute_activities, :if => :user
   end
 
   def create_created_activity

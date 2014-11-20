@@ -1,0 +1,99 @@
+%div{ class: "box centered w40 rm-show-site-dialog hidden", style: "margin-left: -200px; margin-top: -100px;" }
+  <!-- ko if: showSite -->
+  %form{ko(with: :showSite, submit: '$root.saveSite'), action: '#/null', method: :post, novalidate: 'novalidate', style: 'display:inline;width:100%'}
+    .tableheader
+      %button.pback{ko(click: '$root.exitSite'), type: 'button'}
+      %span
+      %span{ko(text: :name)}
+    .tablescroll{ko(event: { mouseover: '$root.hideDatePicker'})}
+      %table{style: 'width:100%'}
+        %tbody
+          %tr
+            %td
+              %div{style: 'margin-bottom:14px'}
+                %label= t('views.collections.index.name')
+                - if current_user.is_guest
+                  %span.value{ko(text: :name, visible: '!editingName()')}
+                -else
+                  %span.value{ko(text: :name, visible: '!editingName()', click: 'editName'), style: 'cursor: pointer'}
+                <!-- ko if: editingName() -->
+                = ko_text_field_tag :name, visible: 'editingName()', hasfocus: true, event: {keydown: :nameKeyPress, blur: :saveName}
+                <!-- /ko -->
+              
+
+              - if Settings.mobile_id?
+                %div{style: 'margin-bottom:14px'}
+                  %label= t('views.collections.index.id_with_prefix')
+                  %span.value{ko(text: :idWithPrefix), style: 'cursor: pointer'}
+
+              / ko if: collection.readable($data)
+              <!-- ko foreach: layers -->
+              / col = collection
+              %div.coldiv{ko(css: {coldiv: '!expanded()', expdiv: 'expanded()'}), style: 'margin-top:24px;margin-bottom:14px'}
+                %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;color:grey;cursor:pointer'}
+              <!-- ko if: expanded() -->
+              <!-- ko foreach: fields -->
+              %div{style: 'margin-bottom:14px'}
+                %span{ko(text: :errorMessage, validationPopover: :errorMessage), style: 'display: none;'}
+                %label.field-name{ko(html: "name + '<sup>' + code + '</sup>:'", css: { error: :error })}
+                <!-- ko if: kind == 'photo' && hasValue() && !editing() -->
+                %a{ko(attr: {href: "photoPath + value()"}), id: "previewimg"}
+                  %img{ko(attr: {src: "photoPath + value()"}), width: "60px", style: "vertical-align: middle; border: 2px solid #BBB;"}
+                <!-- /ko -->
+                <!-- ko if: hasValue() && !error() -->
+                <!-- ko if: writeable -->
+                <!-- ko if: kind != 'photo' -->
+                %span.value{ko(text: :valueUI, visible: '!editing()', click: 'edit'), style: 'cursor:pointer'}
+                <!-- /ko -->
+                <!-- /ko -->
+                <!-- ko if: !writeable -->
+                %span.value{ko(text: :valueUI)}
+                <!-- /ko -->
+                <!-- ko if: kind == 'site' && !editing() && !error() -->
+                %button.farrow.right{ko(click: 'function(data, event) { $root.editSiteFromId(value(),$root.currentCollection().id) }'), type: "button"}
+                <!-- /ko -->
+                <!-- /ko -->
+                <!-- ko if: !hasValue() &&  !error() -->
+                <!-- ko if: writeable -->
+                <!-- ko if: kind != 'photo' -->
+                %span.value{ko(visible: '!editing()', click: 'edit'), style: 'color:grey;cursor:pointer'}= t('views.collections.index.no_value')
+                <!-- /ko -->
+                <!-- /ko -->
+                <!-- ko if: !writeable -->
+                %span.value{style: 'color:grey'}= t('views.collections.index.no_value')
+                <!-- /ko -->
+                <!-- /ko -->
+                <!-- ko if: editing() || error() -->
+                - Field::kinds.each do |kind|
+                  <!-- ko if: kind == '#{kind}' -->
+                  = render partial: field_edit_view(kind), locals: { single_editing_mode: true, mobile: false }
+                  <!-- /ko -->
+                <!-- /ko -->
+              <!-- /ko -->
+              <!-- /ko -->
+              <!-- /ko -->
+              / /ko
+    <!-- ko if: !$root.currentSnapshot() -->
+    .tablebottom
+      -# if (can? :edit, site)
+      - if current_user && !current_user.is_guest
+        = link_to t('views.collections.index.edit_site'), 'javascript:void()', class: 'icon fedit black', 'data-bind' => kov(click: 'startEditMode')
+        = link_to t('views.collections.index.delete_site'), 'javascript:void()', class: 'icon fdelete black', 'data-bind' => kov(click: '$root.deleteSite')
+    <!-- /ko -->
+
+  <!-- /ko -->
+  <!-- /ko -->
+:javascript
+  $(function(){
+    $.fn.rmShowSiteDialog = function(options){
+        return this.each(function(){
+            $(this).show();
+        });
+    }
+    $(".datepicker").datepicker({
+        dateFormat : "yy-mm-dd",
+        yearRange: "-100:+5",
+        changeMonth: true,
+        changeYear: true
+    });
+  });

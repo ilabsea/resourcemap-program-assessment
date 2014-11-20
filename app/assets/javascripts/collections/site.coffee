@@ -336,7 +336,8 @@ onCollections ->
       delete @originalLocation
 
     startEditMode: =>
-      console.log("Hello")
+      $(".rm-show-site-dialog").hide()
+      $(".rm-create-site-dialog").rmCreateSiteDialog().show()
       # Keep the original values, in case the user cancels
       @originalName = @name()
       @originalPosition = @position()
@@ -345,7 +346,7 @@ onCollections ->
         field.originalValue = field.value()
 
       @inEditMode(true)
-      @startEditLocationInMap()
+      # @startEditLocationInMap()
       @prepareCalculatedField()
       window.model.initDatePicker()
       window.model.initAutocomplete()
@@ -353,7 +354,7 @@ onCollections ->
     exitEditMode: (saved) =>
       @inEditMode(false)
 
-      @endEditLocationInMap(if saved then @position() else @originalLocation)
+      # @endEditLocationInMap(if saved then @position() else @originalLocation)
 
       # Restore original name and position if not saved
       unless saved

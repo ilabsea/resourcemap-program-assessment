@@ -18,30 +18,27 @@ onCollections ->
       params["collection_id"] = @currentCollection().id if @currentCollection()
 
       $('.BreadCrumb').load("/collections/breadcrumbs", params)
-    @editingSiteLocation: ->
-      @editingSite() && (!@editingSite().id() || @editingSite().inEditMode() || @editingSite().editingLocation())
 
     @createSite: ->
-      @goBackToTable = true unless @showingMap()
-      @showMap =>
-        pos = @originalSiteLocation = @map.getCenter()
-        site = new Site(@currentCollection(), lat: pos.lat(), lng: pos.lng())
-        site.copyPropertiesToCollection(@currentCollection())
-        if window.model.newSiteProperties
-          for esCode, value of window.model.newSiteProperties
-            field = @currentCollection().findFieldByEsCode esCode
-            field.setValueFromSite(value) if field
-        @unselectSite()
-        @editingSite site
-        @editingSite().startEditLocationInMap()
-        window.model.initDatePicker()
-        window.model.initAutocomplete()
-        site.prepareCalculatedField()
-
+      $(".rm-create-site-dialog").rmCreateSiteDialog().show()
+      $("#rm-colllection_id").val(@currentCollection().id)
+      site = new Site(@currentCollection(), lat: null, lng: null)
+      site.copyPropertiesToCollection(@currentCollection())
+      if window.model.newSiteProperties
+        for esCode, value of window.model.newSiteProperties
+          field = @currentCollection().findFieldByEsCode esCode
+          field.setValueFromSite(value) if field
+      @unselectSite()
+      @editingSite site
+      window.model.initDatePicker()
+      window.model.initAutocomplete()
+      site.prepareCalculatedField()
 
     @editSite: (site) ->
-      initialized = @initMap()
-      site.collection.panToPosition(true) unless initialized
+      $(".rm-show-site-dialog").rmCreateSiteDialog().show()
+      $("#rm-colllection_id").val(@currentCollection().id)
+      # initialized = @initMap()
+      # site.collection.panToPosition(true) unless initialized
 
       site.collection.fetchSitesMembership()
       site.collection.fetchFields =>
@@ -49,21 +46,21 @@ onCollections ->
           @processURL()
         else
           @goBackToTable = true unless @showingMap()
-          @showMap =>
+          # @showMap =>
 
-            site.copyPropertiesToCollection(site.collection)
+          site.copyPropertiesToCollection(site.collection)
 
-            if @selectedSite() && @selectedSite().id() == site.id()
-              @unselectSite()
+          if @selectedSite() && @selectedSite().id() == site.id()
+            @unselectSite()
 
-            if site.collection.sitesPermission.canUpdate(site) || site.collection.sitesPermission.canRead(site)
-              site.fetchFields()
+          if site.collection.sitesPermission.canUpdate(site) || site.collection.sitesPermission.canRead(site)
+            site.fetchFields()
 
-            @selectSite(site)
-            @editingSite(site)
-            @currentCollection(site.collection)
+          @selectSite(site)
+          @editingSite(site)
+          @currentCollection(site.collection)
 
-            @loadBreadCrumb()
+          @loadBreadCrumb()
 
           $('a#previewimg').fancybox()
 
@@ -181,6 +178,8 @@ onCollections ->
       @rewriteUrl()
 
       $('a#previewimg').fancybox()
+      $(".rm-create-site-dialog").hide()
+      $(".rm-show-site-dialog").hide()
       # Return undefined because otherwise some browsers (i.e. Miss Firefox)
       # would render the Object returned when called from a 'javascript:___'
       # value in an href (and this is done in the breadcrumb links).

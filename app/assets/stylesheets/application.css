@@ -214,6 +214,25 @@
     z-index: 100;
     padding: 10px;
 }
+
+.rm-create-site-dialog{
+    display: block;
+    position: fixed !important;
+    top: 20%;
+    left: 50%;
+    z-index: 100;
+    padding: 10px;
+}
+
+.rm-show-site-dialog{
+    display: block;
+    position: fixed !important;
+    top: 20%;
+    left: 50%;
+    z-index: 100;
+    padding: 10px;
+}
+
 .hidden{
     display: none;
 }
