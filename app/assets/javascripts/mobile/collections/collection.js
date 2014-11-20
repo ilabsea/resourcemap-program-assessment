@@ -158,6 +158,7 @@ Collection.prototype.ajaxCreateSite = function(collectionId, formData){
           error = error + properties[i] + " .";
         }
         Collection.prototype.showErrorMessage("Save new site failed!" + error);
+        return false;
       },
       complete: function() {
         $.mobile.saving('hide');
@@ -179,6 +180,7 @@ Collection.prototype.ajaxUpdateSite = function(collectionId, siteId, formData){
         Collection.prototype.showErrorMessage("Successfully updated.");
       },
       error: function(data){
+        $.mobile.saving('hide');
         var properties = JSON.parse(data.responseText);
         var error = "";
         for(var i=0;i<properties.length; i++){
@@ -258,15 +260,21 @@ Collection.prototype.validateData = function(collectionId){
               if(Collection.prototype.validateNumeric(value) == false){
                 Collection.prototype.showErrorMessage(field["name"] + " is not valid numeric value.");
                 return false;
-              }else{
-                if(range){                  
+              }
+              if(field["config"]["allows_decimals"] == "false"){
+                if(value.indexOf(".") != -1){
+                  Collection.prototype.showErrorMessage("Please enter an integer.");
+                  return false;                  
+                }
+              }
+              if(range){                  
                   if(Collection.prototype.validateRange(value, range) == false){
                     Collection.prototype.showErrorMessage("Invalid number range");
                     Collection.setFieldStyleFailed(field["code"]);
                     return false;
                   }
-                }
               }
+              
               state =  Collection.valiateMandatoryText(field);
               break;
             case "date":
