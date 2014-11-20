@@ -312,7 +312,7 @@ Field.prototype.getCalculationField = function() {
         '<label>' + this.label + '</label> <br />'+ 
         '<input type="hidden" name="properties[' + this.id + ']" value="' + this.value + '" />' +
         '<div class="ui-input-text ui-shadow-inset ui-corner-all ui-btn-shadow ui-body-c">'+
-          '<input value="' + this.value +'" name="properties[' + this.id + ']" id="' + this.code + '" class="right w20 ui-input-text ui-body-c" type="text" datatype="text">'+
+          '<input value="' + this.value +'" name="properties[' + this.id + ']" id="' + this.code + '" class="right w20 ui-input-text ui-body-c" type="text" datatype="text" readonly>'+
         '</div>'+
         '<div class="clear"></div>'+
       '</div>'+
