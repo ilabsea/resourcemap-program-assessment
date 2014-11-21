@@ -286,6 +286,8 @@ onLayers ->
       @field = ko.observable()
       @codeCalculation = ko.observable field.config?.code_calculation ? ""
     addDependentField: (field) =>
+      # fields = @dependent_fields().filter (f) -> f["id"] is field.id() 
+      # if fields.length == 0
       @dependent_fields.push field
 
     removeDependentField: (field) =>

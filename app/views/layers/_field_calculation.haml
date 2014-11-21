@@ -1,7 +1,8 @@
 <!-- ko with: impl() -->
-%select{"data-bind" => 'foreach: $root.selectLogicLayers(), value: $root.tmpSelectedField', style: 'width:240px !important;', id: 'calculation_field'}
-  %optgroup{"data-bind" => "attr: {label: name}, foreach: fields", style: ''}        
-    %option{"data-bind" => "text: name, option: name, value: id"}
+%select{ko(options: '$root.fields()', optionsText: "function(item) { return item.name + '(' + item.code + ')' }", optionsValue: 'function(item) { return item.id }', value: '$root.tmpSelectedField'), style: 'width:240px !important;', id: 'calculation_field'}
+/ %select{"data-bind" => 'foreach: $root.selectLogicLayers(), value: $root.tmpSelectedField', style: 'width:240px !important;', id: 'calculation_field'}
+/   %optgroup{"data-bind" => "attr: {label: name}, foreach: fields", style: ''}        
+/     %option{"data-bind" => "text: name, option: name, value: id"}
 %button.clist-add{ko(click: '$root.addDependentField'), title: 'Add another option'}
 /ko if: dependent_fields().length > 0
 .superblyTagfieldDiv{style: "border: 0 solid #dddddd; border-radius: 0; box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3) inset;"}
