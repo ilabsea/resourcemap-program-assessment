@@ -106,6 +106,7 @@ Field.prototype.prepareCalculatedField = function(){
       case "calculation":
       case "email":
       case "phone":
+      case "date": 
         fieldValue = "$('#" + f["code"] + "').val()";
         break;
       case "numeric":
