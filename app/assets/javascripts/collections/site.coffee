@@ -464,7 +464,7 @@ onCollections ->
               fieldName = "$" + f["code"]
               fieldValue = "$" + f["code"]
               switch f["kind"]
-                when "text", "email", "phone"
+                when "text", "email", "phone", "calculation"
                   fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + "').val()"
                 when "numeric"
                   fieldValue = "parseInt($('#" + f["kind"] + "-input-" + f["code"] + "').val())"
@@ -482,7 +482,8 @@ onCollections ->
               $.map(window.model.editingSite().fields(), (fi) ->
                 if fi.code == element_id
                   execute_code = field["codeCalculation"]
-                  $("#" + f["kind"] + "-input-" + f["code"]).on("change", ->
+                  $("#" + f["kind"] + "-input-" + f["code"]).addClass('calculation')
+                  $(".calculation").on("change keyup click", ->
                     $.map(window.model.editingSite().fields(), (fi) ->
                       if fi.code == element_id
                         fi.value(eval(execute_code))

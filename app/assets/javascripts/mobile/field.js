@@ -96,13 +96,14 @@ Field.prototype.completeFieldRequirement = function() {
 }
 
 Field.prototype.prepareCalculatedField = function(){
-  syntaxCalculationCode = this.codeCalculation
+  syntaxCalculationCode = this.codeCalculation;
   elementCode = this.code;
   $.map(this.dependentFields, function(f) {
     var fieldName = "$" + f["code"];
     var fieldValue = "$" + f["code"];
     switch (f["kind"]) {
       case "text":
+      case "calculation":
       case "email":
       case "phone":
         fieldValue = "$('#" + f["code"] + "').val()";
@@ -119,11 +120,15 @@ Field.prototype.prepareCalculatedField = function(){
     syntaxCalculationCode = syntaxCalculationCode.replace(new RegExp(fieldName.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'g'), fieldValue);
   });
   $.map(this.dependentFields, function(f) {
-    $("#" + f["code"]).on("change", function() {
-      $("#" + elementCode).val(eval(syntaxCalculationCode));
-    });
+    $("#" + f["code"]).addClass("calculation");
+    Field.prototype.calculateDependencyField(elementCode, syntaxCalculationCode);
   });
+}
 
+Field.prototype.calculateDependencyField = function(calculationCode, syntaxCalculationCode) {
+  $(document).delegate(".calculation", 'keyup change click', function() {
+    $("#" + calculationCode).val(eval(syntaxCalculationCode));
+  });
 }
 
 Field.prototype.getHierarchyField = function() { 
