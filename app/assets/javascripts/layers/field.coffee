@@ -279,16 +279,16 @@ onLayers ->
       super(field)
       @dependent_fields = if field.config?.dependent_fields?
                             ko.observableArray(
-                              $.map(field.config.dependent_fields, (x) -> x)
+                              $.map(field.config.dependent_fields, (x) -> new FieldDependant(x))
                             )
                           else
                             ko.observableArray()
       @field = ko.observable()
       @codeCalculation = ko.observable field.config?.code_calculation ? ""
     addDependentField: (field) =>
-      # fields = @dependent_fields().filter (f) -> f["id"] is field.id() 
-      # if fields.length == 0
-      @dependent_fields.push field
+      fields = @dependent_fields().filter (f) -> f.id() is field.id() 
+      if fields.length == 0
+        @dependent_fields.push(new FieldDependant(field.toJSON()))
 
     removeDependentField: (field) =>
       @dependent_fields.remove field
@@ -296,4 +296,4 @@ onLayers ->
     addFieldToCodeCalculation: (field) =>
       @codeCalculation(@codeCalculation() + '$' + field.code())
     toJSON: (json) =>
-      json.config = {code_calculation: @codeCalculation(), dependent_fields : @dependent_fields()}
+      json.config = {code_calculation: @codeCalculation(), dependent_fields: $.map(@dependent_fields(), (x) ->  x.toJSON())}

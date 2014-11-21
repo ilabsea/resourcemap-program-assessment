@@ -63,8 +63,12 @@ onLayers ->
           return false
         return false
 
+    findFieldById: (fieldId) =>
+      return field for field in @fields() when field.id == fieldId
+
     addDependentField: (field) =>
       field_id =$("#calculation_field").val()
+      # @currentField().impl().addDependentField(field_id)
       for l in @selectLogicLayers()
         for f in l.fields()
           if parseInt(f.id()) == parseInt(field_id)
