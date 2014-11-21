@@ -32,12 +32,12 @@
 -# Collection sites
 <!-- ko with: currentCollection -->
 .tableheader.expanded{style: 'height:34px;'}
-  %div{style: "float:left"}
+  %div{style: "float:left; width:337px;"}
     %span{style: "width:auto; float:left"}
       %button.pback{ko(click: '$root.goToRoot'), type: 'button'}
       %span
     %span{style: "float:left;"}
-      %span{ko(text: :name), style: "float:left;  width:225px; text-overflow:ellipsis; white-space:nowrap; overflow:hidden; display:block; vertical-align:middle;  padding-top:10px"}
+      %span{ko(text: :name), style: "float:left;  width:274px; text-overflow:ellipsis; white-space:nowrap; overflow:hidden; display:block; vertical-align:middle;  padding-top:10px"}
       - if !current_user.is_guest
         %button.fconfiguration.right{ko(click: '$root.editCollection'), type: 'button', style: 'margin-right:8px;margin-top:6px;'}
   = render 'collections/index/export'

@@ -151,6 +151,8 @@ onCollections ->
 
       if @editingSite().id()
         @editingSite().update_site(@editingSite().toJSON(), callback, callbackError)
+        $(".rm-create-site-dialog").hide()
+        $(".rm-show-site-dialog").hide()
       else
         @editingSite().create_site(@editingSite().toJSON(), callback, callbackError)
 
