@@ -264,6 +264,7 @@ Collection.prototype.validateData = function(collectionId){
               if(field["config"]["allows_decimals"] == "false"){
                 if(value.indexOf(".") != -1){
                   Collection.prototype.showErrorMessage("Please enter an integer.");
+                  Collection.setFieldStyleFailed(field["code"]);
                   return false;                  
                 }
               }
