@@ -466,6 +466,9 @@ onCollections ->
               switch f["kind"]
                 when "text", "email", "phone", "calculation"
                   fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + "').val()"
+                when "date"
+                  fieldValue = "$('#" + f["kind"] + "-input-" + f["id"] + "').val()"
+                  $("#" + f["kind"] + "-input-" + f["id"]).addClass('calculation')
                 when "numeric"
                   fieldValue = "parseFloat($('#" + f["kind"] + "-input-" + f["code"] + "').val())"
                 when "select_one"
@@ -473,7 +476,6 @@ onCollections ->
                 when "yes_no"
                   fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + "')[0].checked"
               field["codeCalculation"] = field["codeCalculation"].replace(new RegExp(fieldName.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'g'), fieldValue);
-
             )
             # Add change value to dependent field
             $.map(field["dependentFields"], (f) -> 
