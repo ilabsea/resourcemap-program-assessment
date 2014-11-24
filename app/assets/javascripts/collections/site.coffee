@@ -467,7 +467,7 @@ onCollections ->
                 when "text", "email", "phone", "calculation"
                   fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + "').val()"
                 when "numeric"
-                  fieldValue = "parseInt($('#" + f["kind"] + "-input-" + f["code"] + "').val())"
+                  fieldValue = "parseFloat($('#" + f["kind"] + "-input-" + f["code"] + "').val())"
                 when "select_one"
                   fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + " option:selected').text()"
                 when "yes_no"
