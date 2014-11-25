@@ -279,6 +279,10 @@ onLayers ->
 
     saveFieldLogic: (field_logic) =>
       field_logic.editing(false)
+      if @currentField().kind() == 'numeric'
+        @currentField().impl().saveFieldLogic(field_logic)
+        @isAddNew(false)
+
       if @currentField().kind() == 'select_many'
         @currentField().impl().save_field_logic(field_logic)
         @currentField().impl().field_logics.remove(field_logic)
@@ -300,7 +304,7 @@ onLayers ->
       return ""
 
     editFieldLogic: (field) =>
-      if @currentField().kind() == 'select_one'
+      if @currentField().kind() == 'select_one' || @currentField().kind() == 'numeric'
         field.editing(true)
       if @currentField().kind() == 'select_many'      
         for f in @currentField().impl().selected_field_logics()
@@ -321,7 +325,7 @@ onLayers ->
           $("#all")[0].checked = true
 
     cancelFieldLogic: (field) =>
-      if @currentField().kind() == 'select_one'   
+      if @currentField().kind() == 'select_one' || @currentField().kind() == 'numeric'   
         field_logic =  @currentField().config?.field_logics?[field.id()]
         if field_logic?
           field.value(field_logic.value)
