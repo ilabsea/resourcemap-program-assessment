@@ -752,7 +752,12 @@ Collection.showMapPage = function() {
   Collection.hidePages();
   Collection.mapContainer.setLatLng( $("#lat").val(),$("#lng").val());
   $("#map-page").show();
-  Map.loadMap();
+  Collection.reloadMap();
+}
+
+Collection.reloadMap = function(){
+  Collection.mapContainer.createCurrentMarker();
+  Collection.mapContainer.refresh();
 }
 
 Collection.showMainSitePage = function(){
