@@ -1,5 +1,10 @@
 $(function() {
-  if(window.navigator.onLine){
+  Map.loadMap();
+}); 
+
+var Map = {
+  loadMap: function(){
+    if(window.navigator.onLine){
       var canvasId = "#map-canvas" ;
       $canvas =  $(canvasId);
       if($canvas){
@@ -11,4 +16,5 @@ $(function() {
         Collection.createMap(canvasId);
       }
     }
-}); 
+  }
+}
