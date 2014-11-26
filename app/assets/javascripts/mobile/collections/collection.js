@@ -752,6 +752,7 @@ Collection.showMapPage = function() {
   Collection.hidePages();
   Collection.mapContainer.setLatLng( $("#lat").val(),$("#lng").val());
   $("#map-page").show();
+  Map.loadMap();
 }
 
 Collection.showMainSitePage = function(){
@@ -865,10 +866,7 @@ Collection.editLayerForm = function(schema, properties){
 }
 
 Collection.mapContainer.refresh =  function(){
-  setTimeout(function() {
-    google.maps.event.trigger(Collection.mapContainer.map,'resize');
-    $("#map-page").hide();
-  }, 500);
+  google.maps.event.trigger(Collection.mapContainer.map,'resize');
 }
 
 Collection.prototype.showSite = function(collectionId, siteIdOnline, siteIdOffline){
