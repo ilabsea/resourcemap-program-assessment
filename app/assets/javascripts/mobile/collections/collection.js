@@ -811,8 +811,7 @@ Collection.showMapPage = function() {
   Collection.hidePages();
   Collection.mapContainer.setLatLng( $("#lat").val(),$("#lng").val());
   $("#map-page").show();
-  Collection.mapContainer.createCurrentMarker();
-  Collection.mapContainer.refresh();
+  Map.loadMap();
 }
 
 Collection.showMainSitePage = function(){
