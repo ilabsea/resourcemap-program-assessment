@@ -12,6 +12,7 @@ onCollections ->
       @is_enable_field_logic = data.is_enable_field_logic
 
       @photo = '' 
+      @preKeyCode = null
       @photoPath = '/photo_field/'
       @showInGroupBy = @kind in ['select_one', 'select_many', 'hierarchy']
       @writeable = @originalWriteable = data?.writeable
@@ -268,9 +269,15 @@ onCollections ->
             return
 
     validate_integer_only: (keyCode) =>
-      if keyCode > 31 && (keyCode < 48 || keyCode > 57) && keyCode != 46
+      value = $('#'+@kind+'-input-'+@code).val()
+      if keyCode == 189 && (value == null || value == "") && (@preKeyCode != 189 || @preKeyCode == null)
+        @preKeyCode = keyCode
+        return true
+      else if keyCode > 31 && (keyCode < 48 || keyCode > 57) && keyCode != 46 
         return false
-      return true
+      else 
+        @preKeyCode = keyCode
+        return true
 
     validate_decimal_only: (keyCode) =>
       value = $('#'+@kind+'-input-'+@code).val()
