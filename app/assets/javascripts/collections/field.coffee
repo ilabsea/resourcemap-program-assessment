@@ -280,7 +280,8 @@ onCollections ->
           return true
       if keyCode > 31 && (keyCode < 48 || keyCode > 57) && (keyCode != 8 && keyCode != 46) && keyCode != 37 && keyCode != 39  #allow right and left arrow key
         return false
-      else 
+      else
+        @preKeyCode = keyCode 
         return true
 
     validate_decimal_only: (keyCode) =>
