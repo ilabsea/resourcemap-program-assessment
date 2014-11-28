@@ -466,16 +466,18 @@ onCollections ->
               fieldName = "$" + f["code"]
               fieldValue = "$" + f["code"]
               switch f["kind"]
-                when "text", "email", "phone"
+                when "text", "email", "phone", "calculation"
                   fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + "').val()"
+                when "date"
+                  fieldValue = "$('#" + f["kind"] + "-input-" + f["id"] + "').val()"
+                  $("#" + f["kind"] + "-input-" + f["id"]).addClass('calculation')
                 when "numeric"
-                  fieldValue = "parseInt($('#" + f["kind"] + "-input-" + f["code"] + "').val())"
+                  fieldValue = "parseFloat($('#" + f["kind"] + "-input-" + f["code"] + "').val())"
                 when "select_one"
                   fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + " option:selected').text()"
                 when "yes_no"
                   fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + "')[0].checked"
               field["codeCalculation"] = field["codeCalculation"].replace(new RegExp(fieldName.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'g'), fieldValue);
-
             )
             # Add change value to dependent field
             $.map(field["dependentFields"], (f) -> 
@@ -484,7 +486,8 @@ onCollections ->
               $.map(window.model.editingSite().fields(), (fi) ->
                 if fi.code == element_id
                   execute_code = field["codeCalculation"]
-                  $("#" + f["kind"] + "-input-" + f["code"]).on("change", ->
+                  $("#" + f["kind"] + "-input-" + f["code"]).addClass('calculation')
+                  $(".calculation").on("change keyup click", ->
                     $.map(window.model.editingSite().fields(), (fi) ->
                       if fi.code == element_id
                         fi.value(eval(execute_code))

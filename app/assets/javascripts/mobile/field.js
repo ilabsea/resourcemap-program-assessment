@@ -96,15 +96,17 @@ Field.prototype.completeFieldRequirement = function() {
 }
 
 Field.prototype.prepareCalculatedField = function(){
-  syntaxCalculationCode = this.codeCalculation
+  syntaxCalculationCode = this.codeCalculation;
   elementCode = this.code;
   $.map(this.dependentFields, function(f) {
     var fieldName = "$" + f["code"];
     var fieldValue = "$" + f["code"];
     switch (f["kind"]) {
       case "text":
+      case "calculation":
       case "email":
       case "phone":
+      case "date": 
         fieldValue = "$('#" + f["code"] + "').val()";
         break;
       case "numeric":
@@ -119,11 +121,15 @@ Field.prototype.prepareCalculatedField = function(){
     syntaxCalculationCode = syntaxCalculationCode.replace(new RegExp(fieldName.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'g'), fieldValue);
   });
   $.map(this.dependentFields, function(f) {
-    $("#" + f["code"]).on("change", function() {
-      $("#" + elementCode).val(eval(syntaxCalculationCode));
-    });
+    $("#" + f["code"]).addClass("calculation");
+    Field.prototype.calculateDependencyField(elementCode, syntaxCalculationCode);
   });
+}
 
+Field.prototype.calculateDependencyField = function(calculationCode, syntaxCalculationCode) {
+  $(document).delegate(".calculation", 'keyup change click', function() {
+    $("#" + calculationCode).val(eval(syntaxCalculationCode));
+  });
 }
 
 Field.prototype.getHierarchyField = function() { 
@@ -161,7 +167,7 @@ Field.prototype.getNumericField = function() {
       '<div class="ui-controlgroup-controls">'+
         '<label>' + this.label + '</label>'+
         '<div id="div_wrapper_' + this.code + '" class="ui-input-text ui-shadow-inset ui-corner-all ui-btn-shadow ui-body-c">'+
-          '<input value="' + this.value +'" name="properties[' + this.id + ']" id="' + this.code + '" class="right w20 ui-input-text ui-body-c" type="number" datatype="numberic">'+
+          '<input onchange="Collection.setFocusOnFieldFromNumeric('+ this.id+ ',\''+this.code +'\')" value="' + this.value +'" name="properties[' + this.id + ']" id="' + this.code + '" class="right w20 ui-input-text ui-body-c" type="number" datatype="numberic">'+
         '</div>'+
         '<div class="clear"></div>'+
       '</div>'+
@@ -239,7 +245,7 @@ Field.prototype.getSelectManyField = function() {
           '<div class="ui-checkbox" style="padding-top: 10px; height: 25px;" >' +
               '<label for="' + this.id + "-" + this.options[i]["code"] + '"  data-theme="c" style="margin:0px;">' +  
                 '<span style="padding: 10px 100% 5px 40px;;font-weight:normal;height:20px;color: #2f3e46;text-decoration: none !important;" class="ui-link-inherit">' + this.options[i]["name"] + '</span>' +
-                '<input class="field_' + this.id + '" onchange="Collection.setFocusOnField(' + this.id + ')" ' + checked + ' type="checkbox" value="' + this.options[i]["id"] + '" name="properties[' + this.id + '][]" id="' + this.id + "-" + this.options[i]["code"] + '" datatype="select_many">' +
+                '<input class="field_' + this.id + '" onchange="Collection.setFocusOnFieldFromSelectMany(' + this.id + ')" ' + checked + ' type="checkbox" value="' + this.options[i]["id"] + '" name="properties[' + this.id + '][]" id="' + this.id + "-" + this.options[i]["code"] + '" datatype="select_many">' +
               '</label>'+
           '</div>' +
         '</div>' +
@@ -312,7 +318,7 @@ Field.prototype.getCalculationField = function() {
         '<label>' + this.label + '</label> <br />'+ 
         '<input type="hidden" name="properties[' + this.id + ']" value="' + this.value + '" />' +
         '<div class="ui-input-text ui-shadow-inset ui-corner-all ui-btn-shadow ui-body-c">'+
-          '<input value="' + this.value +'" name="properties[' + this.id + ']" id="' + this.code + '" class="right w20 ui-input-text ui-body-c" type="text" datatype="text">'+
+          '<input value="' + this.value +'" name="properties[' + this.id + ']" id="' + this.code + '" class="right w20 ui-input-text ui-body-c" type="text" datatype="text" readonly>'+
         '</div>'+
         '<div class="clear"></div>'+
       '</div>'+

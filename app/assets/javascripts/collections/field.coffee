@@ -12,6 +12,7 @@ onCollections ->
       @is_enable_field_logic = data.is_enable_field_logic
 
       @photo = '' 
+      @preKeyCode = null
       @photoPath = '/photo_field/'
       @showInGroupBy = @kind in ['select_one', 'select_many', 'hierarchy']
       @writeable = @originalWriteable = data?.writeable
@@ -37,7 +38,11 @@ onCollections ->
         @range = if data.config?.range?.minimum? || data.config?.range?.maximum?
                   data.config?.range
         @is_mandatory = if @range then true else data.is_mandatory
-        
+        @field_logics = if data.config?.field_logics?
+                          $.map data.config.field_logics, (x) => new FieldLogic x
+                        else
+                          []
+
       if @kind in ['yes_no', 'select_one', 'select_many']
         @field_logics = if data.config?.field_logics?
                           $.map data.config.field_logics, (x) => new FieldLogic x
@@ -89,7 +94,7 @@ onCollections ->
       if window.model.newOrEditSite() 
         if @kind == 'yes_no'
           value = if @value() then 1 else 0
-        else if @kind == 'select_one' || @kind == 'select_many'
+        else if @kind == 'numeric' || @kind == 'select_one' || @kind == 'select_many'
           value = @value()
         else
           return
@@ -102,6 +107,27 @@ onCollections ->
                 if value == field_logic.value                          
                   @setFocusStyleByField(field_logic.field_id)
                   return
+              if @kind == 'numeric'
+                if field_logic.condition_type == '<'
+                  if parseInt(value) < field_logic.value
+                    @setFocusStyleByField(field_logic.field_id)
+                    return
+                if field_logic.condition_type == '<='
+                  if parseInt(value) <= field_logic.value
+                    @setFocusStyleByField(field_logic.field_id)  
+                    return         
+                if field_logic.condition_type == '='
+                  if parseInt(value) == field_logic.value
+                    @setFocusStyleByField(field_logic.field_id)  
+                    return        
+                if field_logic.condition_type == '>'
+                  if parseInt(value) > field_logic.value
+                    @setFocusStyleByField(field_logic.field_id)
+                    return            
+                if field_logic.condition_type == '>='
+                  if parseInt(value) >= field_logic.value
+                    @setFocusStyleByField(field_logic.field_id)
+                    return
 
               if @kind == 'select_many'
                 if field_logic.condition_type == 'any'
@@ -243,12 +269,18 @@ onCollections ->
             return
 
     validate_integer_only: (keyCode) =>
-      if keyCode > 31 && (keyCode < 48 || keyCode > 57) && keyCode != 46
+      value = $('#'+@kind+'-input-'+@code).val()
+      if keyCode == 189 && (value == null || value == "") && (@preKeyCode != 189 || @preKeyCode == null)
+        @preKeyCode = keyCode
+        return true
+      else if keyCode > 31 && (keyCode < 48 || keyCode > 57) && keyCode != 46 
         return false
-      return true
+      else 
+        @preKeyCode = keyCode
+        return true
 
     validate_decimal_only: (keyCode) =>
-      value = @value()
+      value = $('#'+@kind+'-input-'+@code).val()
       if (value == null || value == "")&& (keyCode == 229 || keyCode == 190) #prevent dot at the beginning
         return false
       if (keyCode != 8 && keyCode != 46) && (keyCode != 190 || value.indexOf('.') != -1) && (keyCode < 48 || keyCode > 57) #prevent multiple dot

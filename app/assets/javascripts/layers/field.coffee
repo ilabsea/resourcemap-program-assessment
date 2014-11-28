@@ -114,7 +114,13 @@ onLayers ->
       @error = ko.computed =>
         if (@is_enable_range() && @minimum() && @minimum())&& parseInt(@minimum()) > parseInt(@maximum())
           "Invalid range, maximum must greater than minimum"
-    
+      @field_logics = if field.config?.field_logics?
+                        ko.observableArray(
+                          $.map(field.config.field_logics, (x) -> new FieldLogic(x))
+                        )
+                      else
+                        ko.observableArray()
+
     validate_number_only: (field,event) =>
       if event.keyCode > 31 && (event.keyCode < 48 || event.keyCode > 57)
         return false
@@ -122,8 +128,17 @@ onLayers ->
 
     toJSON: (json) =>
       json.is_enable_range = @is_enable_range()
-      json.config = {allows_decimals: @allowsDecimals(), range: {minimum: @minimum(), maximum: @maximum()}}      
+      json.config = {allows_decimals: @allowsDecimals(), range: {minimum: @minimum(), maximum: @maximum()}, field_logics: $.map(@field_logics(), (x) ->  x.toJSON())}    
       return json
+
+    saveFieldLogic: (field_logic) =>
+      if !field_logic.id()?
+        if @field_logics().length > 0
+          id = @field_logics()[@field_logics().length - 1].id() + 1
+        else
+          id = 0
+        field_logic.id id
+        @field_logics.push field_logic
 
   class @Field_yes_no extends @FieldImpl
     constructor: (field) ->
@@ -279,19 +294,21 @@ onLayers ->
       super(field)
       @dependent_fields = if field.config?.dependent_fields?
                             ko.observableArray(
-                              $.map(field.config.dependent_fields, (x) -> x)
+                              $.map(field.config.dependent_fields, (x) -> new FieldDependant(x))
                             )
                           else
                             ko.observableArray()
       @field = ko.observable()
-      @codeCalculation = ko.observable(field.config?.code_calculation)
+      @codeCalculation = ko.observable field.config?.code_calculation ? ""
     addDependentField: (field) =>
-      @dependent_fields.push field
+      fields = @dependent_fields().filter (f) -> f.id() is field.id() 
+      if fields.length == 0
+        @dependent_fields.push(new FieldDependant(field.toJSON()))
 
     removeDependentField: (field) =>
       @dependent_fields.remove field
 
     addFieldToCodeCalculation: (field) =>
-      @codeCalculation(@codeCalculation() + '$' + field["code"])
+      @codeCalculation(@codeCalculation() + '$' + field.code())
     toJSON: (json) =>
-      json.config = {code_calculation: @codeCalculation(), dependent_fields : @dependent_fields()}
+      json.config = {code_calculation: @codeCalculation(), dependent_fields: $.map(@dependent_fields(), (x) ->  x.toJSON())}

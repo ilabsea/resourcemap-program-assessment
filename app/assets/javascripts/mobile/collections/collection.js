@@ -158,6 +158,7 @@ Collection.prototype.ajaxCreateSite = function(collectionId, formData){
           error = error + properties[i] + " .";
         }
         Collection.prototype.showErrorMessage("Save new site failed!" + error);
+        return false;
       },
       complete: function() {
         $.mobile.saving('hide');
@@ -179,6 +180,7 @@ Collection.prototype.ajaxUpdateSite = function(collectionId, siteId, formData){
         Collection.prototype.showErrorMessage("Successfully updated.");
       },
       error: function(data){
+        $.mobile.saving('hide');
         var properties = JSON.parse(data.responseText);
         var error = "";
         for(var i=0;i<properties.length; i++){
@@ -258,15 +260,22 @@ Collection.prototype.validateData = function(collectionId){
               if(Collection.prototype.validateNumeric(value) == false){
                 Collection.prototype.showErrorMessage(field["name"] + " is not valid numeric value.");
                 return false;
-              }else{
-                if(range){                  
+              }
+              if(field["config"]["allows_decimals"] == "false"){
+                if(value.indexOf(".") != -1){
+                  Collection.prototype.showErrorMessage("Please enter an integer.");
+                  Collection.setFieldStyleFailed(field["code"]);
+                  return false;                  
+                }
+              }
+              if(range){                  
                   if(Collection.prototype.validateRange(value, range) == false){
                     Collection.prototype.showErrorMessage("Invalid number range");
                     Collection.setFieldStyleFailed(field["code"]);
                     return false;
                   }
-                }
               }
+              
               state =  Collection.valiateMandatoryText(field);
               break;
             case "date":
@@ -311,7 +320,7 @@ Collection.prototype.validateData = function(collectionId){
   return true;
 }
 
-Collection.setFocusOnField = function(fieldId){
+Collection.setFocusOnFieldFromSelectMany = function(fieldId){
   $("div,span").removeClass('ui-focus');
   els = $(".field_" + fieldId);
   selected_options = []
@@ -325,6 +334,65 @@ Collection.setFocusOnField = function(fieldId){
     Collection.prototype.setFieldFocusStyleByKind(fieldFocus);
   }
 }
+
+Collection.setFocusOnFieldFromNumeric = function(fieldId, fieldCode){
+  $("div,span").removeClass('ui-focus');
+  els = $("#" + fieldCode);
+  console.log(els.val());
+  id = Collection.findNextFieldIdByValue(fieldId, els.val());
+  if(id){
+    fieldFocus = Collection.prototype.findFieldById(id); 
+    Collection.prototype.setFieldFocusStyleByKind(fieldFocus);
+  }
+}
+
+Collection.findNextFieldIdByValue = function(fieldId, value){
+  layers = Collection.getSchemaByCollectionId(window.currentCollectionId).layers;
+  field = null;
+  for(var i=0; i<layers.length; i++){
+    fields = layers[i].fields
+    for(var j=0; j<fields.length; j++){
+      if(fields[j].id == fieldId)
+        field = fields[j];
+    }
+  }
+  if(field.is_enable_field_logic){
+    field_logics = field.config["field_logics"]
+    if (field_logics != undefined) {
+      for(var j=0; j<field_logics.length; j++){
+        valid = Collection.checkNumericConditionFieldLogic(field_logics[j], value);
+        if(valid){
+          return field_logics[j]["field_id"];
+        }
+      }
+    }
+    return null;
+  }
+  else{
+    return null;
+  }
+}
+
+Collection.checkNumericConditionFieldLogic = function(fieldLogic, value){
+  switch(fieldLogic["condition_type"]){
+    case "=":
+      return (fieldLogic["value"] == value);     
+      break;
+    case "<":
+      return (value < fieldLogic["value"]);
+      break;
+    case ">":
+      return (value > fieldLogic["value"]);
+      break;
+    case "<=":
+      return (value <= fieldLogic["value"]);
+      break;
+    case ">=":
+      return (value >= fieldLogic["value"]);    
+      break;        
+  }
+}
+
 
 Collection.findNextFieldId = function(fieldId, options){
   layers = Collection.getSchemaByCollectionId(window.currentCollectionId).layers;
@@ -743,6 +811,7 @@ Collection.showMapPage = function() {
   Collection.hidePages();
   Collection.mapContainer.setLatLng( $("#lat").val(),$("#lng").val());
   $("#map-page").show();
+  Map.loadMap();
 }
 
 Collection.showMainSitePage = function(){
@@ -856,10 +925,7 @@ Collection.editLayerForm = function(schema, properties){
 }
 
 Collection.mapContainer.refresh =  function(){
-  setTimeout(function() {
-    google.maps.event.trigger(Collection.mapContainer.map,'resize');
-    $("#map-page").hide();
-  }, 500);
+  google.maps.event.trigger(Collection.mapContainer.map,'resize');
 }
 
 Collection.prototype.showSite = function(collectionId, siteIdOnline, siteIdOffline){
