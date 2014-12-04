@@ -68,7 +68,7 @@ onCollections ->
       @refreshTimeago()
       @makeFixedHeaderTable()
       @hideRefindAlertOnMap()
-      # @setThresholds()
+      @setThresholds()
 
       @rewriteUrl()
 

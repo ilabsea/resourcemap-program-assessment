@@ -462,39 +462,40 @@ onCollections ->
         for field in layer.fields
           if field["kind"] == "calculation"
             # Replace $field code to actual jQuery object
-            $.map(field["dependentFields"], (f) -> 
-              fieldName = "$" + f["code"]
-              fieldValue = "$" + f["code"]
-              switch f["kind"]
-                when "text", "email", "phone", "calculation"
-                  fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + "').val()"
-                when "date"
-                  fieldValue = "$('#" + f["kind"] + "-input-" + f["id"] + "').val()"
-                  $("#" + f["kind"] + "-input-" + f["id"]).addClass('calculation')
-                when "numeric"
-                  fieldValue = "parseFloat($('#" + f["kind"] + "-input-" + f["code"] + "').val())"
-                when "select_one"
-                  fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + " option:selected').text()"
-                when "yes_no"
-                  fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + "')[0].checked"
-              field["codeCalculation"] = field["codeCalculation"].replace(new RegExp(fieldName.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'g'), fieldValue);
-            )
-            # Add change value to dependent field
-            $.map(field["dependentFields"], (f) -> 
-              # element_id = "#" +field["kind"] + "-input-" + field["code"]
-              element_id = field["code"]
-              $.map(window.model.editingSite().fields(), (fi) ->
-                if fi.code == element_id
-                  execute_code = field["codeCalculation"]
-                  $("#" + f["kind"] + "-input-" + f["code"]).addClass('calculation')
-                  $(".calculation").on("change keyup click", ->
-                    $.map(window.model.editingSite().fields(), (fi) ->
-                      if fi.code == element_id
-                        fi.value(eval(execute_code))
-                    )
-                  )
+            if(field["dependentFields"])
+              $.map(field["dependentFields"], (f) -> 
+                fieldName = "$" + f["code"]
+                fieldValue = "$" + f["code"]
+                switch f["kind"]
+                  when "text", "email", "phone", "calculation"
+                    fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + "').val()"
+                  when "date"
+                    fieldValue = "$('#" + f["kind"] + "-input-" + f["id"] + "').val()"
+                    $("#" + f["kind"] + "-input-" + f["id"]).addClass('calculation')
+                  when "numeric"
+                    fieldValue = "parseFloat($('#" + f["kind"] + "-input-" + f["code"] + "').val())"
+                  when "select_one"
+                    fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + " option:selected').text()"
+                  when "yes_no"
+                    fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + "')[0].checked"
+                field["codeCalculation"] = field["codeCalculation"].replace(new RegExp(fieldName.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'g'), fieldValue);
               )
-            )
+              # Add change value to dependent field
+              $.map(field["dependentFields"], (f) -> 
+                # element_id = "#" +field["kind"] + "-input-" + field["code"]
+                element_id = field["code"]
+                $.map(window.model.editingSite().fields(), (fi) ->
+                  if fi.code == element_id
+                    execute_code = field["codeCalculation"]
+                    $("#" + f["kind"] + "-input-" + f["code"]).addClass('calculation')
+                    $(".calculation").on("change keyup click", ->
+                      $.map(window.model.editingSite().fields(), (fi) ->
+                        if fi.code == element_id
+                          fi.value(eval(execute_code))
+                      )
+                    )
+                )
+              )
 
     # Ary: I have no idea why, but without this here toJSON() doesn't work
     # in Firefox. It seems a problem with the bindings caused by the fat arrow
