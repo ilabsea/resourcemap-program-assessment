@@ -98,32 +98,34 @@ Field.prototype.completeFieldRequirement = function() {
 Field.prototype.prepareCalculatedField = function(){
   syntaxCalculationCode = this.codeCalculation;
   elementCode = this.code;
-  $.map(this.dependentFields, function(f) {
-    var fieldName = "$" + f["code"];
-    var fieldValue = "$" + f["code"];
-    switch (f["kind"]) {
-      case "text":
-      case "calculation":
-      case "email":
-      case "phone":
-      case "date": 
-        fieldValue = "$('#" + f["code"] + "').val()";
-        break;
-      case "numeric":
-        fieldValue = "parseInt($('#" + f["code"] + "').val())";
-        break;
-      case "select_one":
-        fieldValue = "$('#" + f["code"] + " option:selected').text()";
-        break;
-      case "yes_no":
-        fieldValue = "$('#" + f["code"] + "')[0].checked";
-    }
-    syntaxCalculationCode = syntaxCalculationCode.replace(new RegExp(fieldName.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'g'), fieldValue);
-  });
-  $.map(this.dependentFields, function(f) {
-    $("#" + f["code"]).addClass("calculation");
-    Field.prototype.calculateDependencyField(elementCode, syntaxCalculationCode);
-  });
+  if(this.dependentFields){
+    $.map(this.dependentFields, function(f) {
+      var fieldName = "$" + f["code"];
+      var fieldValue = "$" + f["code"];
+      switch (f["kind"]) {
+        case "text":
+        case "calculation":
+        case "email":
+        case "phone":
+        case "date": 
+          fieldValue = "$('#" + f["code"] + "').val()";
+          break;
+        case "numeric":
+          fieldValue = "parseInt($('#" + f["code"] + "').val())";
+          break;
+        case "select_one":
+          fieldValue = "$('#" + f["code"] + " option:selected').text()";
+          break;
+        case "yes_no":
+          fieldValue = "$('#" + f["code"] + "')[0].checked";
+      }
+      syntaxCalculationCode = syntaxCalculationCode.replace(new RegExp(fieldName.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'g'), fieldValue);
+    });
+    $.map(this.dependentFields, function(f) {
+      $("#" + f["code"]).addClass("calculation");
+      Field.prototype.calculateDependencyField(elementCode, syntaxCalculationCode);
+    });
+  }
 }
 
 Field.prototype.calculateDependencyField = function(calculationCode, syntaxCalculationCode) {
