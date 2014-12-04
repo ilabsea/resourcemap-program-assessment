@@ -122,6 +122,7 @@ Field.prototype.prepareCalculatedField = function(){
       syntaxCalculationCode = syntaxCalculationCode.replace(new RegExp(fieldName.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'g'), fieldValue);
     });
     $.map(this.dependentFields, function(f) {
+      $("#" + f["code"]).addClass("calculation");
       Field.prototype.calculateDependencyField(elementCode, f["code"] , syntaxCalculationCode);
     });
   }
