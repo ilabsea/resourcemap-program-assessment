@@ -10,9 +10,13 @@ set :application, "resourcemap_wfp"
 set :repository,  "https://bitbucket.org/ilab/resourcemap_wfp"
 set :scm, :mercurial
 set :user, 'ilab'
+set :use_sudo, false
 set :group, 'ilab'
 set :deploy_via, :remote_cache
 set :branch, `hg branch`.strip
+
+#run rvm for current user
+set :default_shell, "/bin/bash -l"
 
 server '192.168.1.95', :app, :web, :db, primary: true
 
