@@ -45,4 +45,15 @@ module ApplicationHelper
     end
     languages.join(' | ').html_safe
   end
+  
+  def add_relative_root(path)
+    root = Rails.application.config.relative_url_root
+    if root.nil?
+      path
+    else
+      uri = URI(path)
+      uri.path = File.join(root, uri.path)
+      uri.to_s
+    end
+  end  
 end
