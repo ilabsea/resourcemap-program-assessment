@@ -72,7 +72,8 @@ module Field::Base
         return value
       end
     elsif hierarchy?
-      return find_hierarchy_name_by_id(value)
+      return value
+      # return find_hierarchy_name_by_id(value)
     elsif date?
       return Site.iso_string_to_mdy(value)
     else
