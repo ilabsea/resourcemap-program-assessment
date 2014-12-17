@@ -15,9 +15,6 @@ set :group, 'ilab'
 set :deploy_via, :remote_cache
 set :branch, `hg branch`.strip
 
-#run rvm for current user
-set :default_shell, "/bin/bash -l"
-
 server '192.168.1.95', :app, :web, :db, primary: true
 
 default_run_options[:pty] = true
