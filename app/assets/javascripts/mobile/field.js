@@ -123,14 +123,15 @@ Field.prototype.prepareCalculatedField = function(){
     });
     $.map(this.dependentFields, function(f) {
       $("#" + f["code"]).addClass("calculation");
-      Field.prototype.calculateDependencyField(elementCode, syntaxCalculationCode);
+      Field.prototype.calculateDependencyField(elementCode, f["code"] , syntaxCalculationCode);
     });
   }
 }
 
-Field.prototype.calculateDependencyField = function(calculationCode, syntaxCalculationCode) {
+Field.prototype.calculateDependencyField = function(calculationCode, element, syntaxCalculationCode) {
   $(document).delegate(".calculation", 'keyup change click', function() {
-    $("#" + calculationCode).val(eval(syntaxCalculationCode));
+    if(element == this.id)
+      $("#" + calculationCode).val(eval(syntaxCalculationCode));
   });
 }
 
