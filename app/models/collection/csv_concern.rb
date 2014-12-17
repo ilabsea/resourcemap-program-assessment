@@ -43,6 +43,7 @@ module Collection::CsvConcern
 
       elastic_search_api_results.each do |result|
         source = result['_source']
+        p source
         row = [source['id'], source['name'], source['location'].try(:[], 'lat'), source['location'].try(:[], 'lon')]
         fields.each do |field|
           if field.kind == 'yes_no'
@@ -60,7 +61,7 @@ module Collection::CsvConcern
             level = 0
             arr_level = []
             if source['properties'][field.code]
-              item = field.find_hierarchy_by_name source['properties'][field.code]
+              item = field.find_hierarchy_by_id source['properties'][field.code]
               while item
                 arr_level.insert(0, item[:name])
                 item = field.find_hierarchy_by_id item[:parent_id]
