@@ -47,8 +47,8 @@ onCollections ->
 
       @countDownListener = google.maps.event.addDomListener @countClick, 'mousedown', listenerDownCallback
       @countUpListener = google.maps.event.addDomListener @countClick, 'mouseup', listenerUpCallback
-      @setMarkerIcon(@div, @data.icon, @data.color, @data.alert) 
-    
+      @setMarkerIcon(@div, @data.icon, @data.color, @data.alert)
+
     draw: =>
       pos = @getProjection().fromLatLngToDivPixel @position
       @div.style.left = @divClick.style.left = "#{pos.x - 17}px"
