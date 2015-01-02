@@ -155,6 +155,7 @@ onCollections ->
 
         @fields(fields)
         @refineFields(fields)
+        callback() if callback && typeof(callback) == 'function'
 
     findFieldByEsCode: (esCode) => (field for field in @fields() when field.esCode == esCode)[0]
 
