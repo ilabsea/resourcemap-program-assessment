@@ -49,8 +49,6 @@
 .tablescroll.expanded.sites{style:'width:100%;'}
   %table.GralTable.tableview{style: 'table-layout: fixed;'}
     %col{width: '300'}
-    %col{width: '100'}
-    %col{width: '100'}
     <!-- ko foreach: $root.currentCollection().fields() -->
     %col{ko(attr: { width: 'suggestedWidth()' })}
     <!-- /ko -->
