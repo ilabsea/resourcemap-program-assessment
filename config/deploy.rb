@@ -15,7 +15,7 @@ set :group, 'ilab'
 set :deploy_via, :remote_cache
 set :branch, `hg branch`.strip
 
-server '192.168.1.95', :app, :web, :db, primary: true
+server '54.169.173.164', :app, :web, :db, primary: true
 
 default_run_options[:pty] = true
 default_environment['TERM'] = ENV['TERM']
