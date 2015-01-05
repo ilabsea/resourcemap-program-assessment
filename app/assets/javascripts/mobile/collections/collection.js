@@ -742,9 +742,9 @@ Collection.prototype.setFieldFocusStyleByKind = function(fieldFocus){
 Collection.prototype.setFieldValueByKind = function(fieldKind, fieldCode){
   if(fieldKind == 'yes_no'){
     if($( "#"+fieldCode+":checked").length == 1){
-      value = 0;
-    }else{
       value = 1;
+    }else{
+      value = 0;
     }    
   }else if(fieldKind == 'select_one'){
     value = fieldCode;
