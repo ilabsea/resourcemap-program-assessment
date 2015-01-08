@@ -2,3 +2,7 @@
 .invalid_field{
   box-shadow: 0 0 12px red;
 }
+
+.no_background{
+	background: none;
+}
