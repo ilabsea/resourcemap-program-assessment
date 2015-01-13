@@ -201,31 +201,27 @@ onCollections ->
     enableSkippedField: (field_id) =>
       layers = window.model.currentCollection().layers()
       flag = false
-      $.map(window.model.currentCollection().layers(), (l) =>
-        $.map(l.fields, (f) =>
-          if f.esCode == field_id
-            flag = true
-            return true
-          if flag
-            @enableField f
-        )
+      $.map(window.model.editingSite().fields(), (f) =>
+        if f.esCode == field_id
+          flag = true
+          return true
+        if flag
+          @enableField f
       )
 
     disableSkippedField: (from_field_id, to_field_id) =>
       layers = window.model.currentCollection().layers()
       flag = false
-      $.map(window.model.currentCollection().layers(), (l) =>
-        $.map(l.fields, (f) =>
-          if f.esCode == from_field_id
-            flag = true
-            return true
-          if f.esCode == to_field_id
-            flag = false
-          if flag
-            @disableField f
-          else
-            @enableField f
-        )
+      $.map(window.model.editingSite().fields(), (f) =>
+        if f.esCode == from_field_id
+          flag = true
+          return true
+        if f.esCode == to_field_id
+          flag = false
+        if flag
+          @disableField f
+        else
+          @enableField f
       )
 
     disableField: (field) =>
