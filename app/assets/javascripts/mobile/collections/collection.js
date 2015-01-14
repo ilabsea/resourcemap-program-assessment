@@ -331,7 +331,11 @@ Collection.setFocusOnFieldFromSelectMany = function(fieldId){
   id = Collection.findNextFieldId(fieldId, selected_options);
   if(id){
     fieldFocus = Collection.prototype.findFieldById(id); 
+    Collection.disableFieldFrom(fieldId, fieldFocus.id);
     Collection.prototype.setFieldFocusStyleByKind(fieldFocus);
+  }
+  else{
+    Collection.enableFieldFrom(fieldId);
   }
 }
 
@@ -341,7 +345,11 @@ Collection.setFocusOnFieldFromNumeric = function(fieldId, fieldCode){
   id = Collection.findNextFieldIdByValue(fieldId, els.val());
   if(id){
     fieldFocus = Collection.prototype.findFieldById(id); 
+    Collection.disableFieldFrom(fieldId, fieldFocus.id);
     Collection.prototype.setFieldFocusStyleByKind(fieldFocus);
+  }
+  else{
+    Collection.enableFieldFrom(fieldId);
   }
 }
 
@@ -371,6 +379,123 @@ Collection.findNextFieldIdByValue = function(fieldId, value){
     return null;
   }
 }
+
+Collection.enableFieldFrom = function(fromFieldId){
+  layers = Collection.getSchemaByCollectionId(window.currentCollectionId).layers;
+  flag = false;
+  for(var i=0; i<layers.length; i++){
+    fields = layers[i].fields
+    for(var j=0; j<fields.length; j++){
+      if(fields[j].id == fromFieldId){
+        flag = true;
+        continue;
+      }
+      if(flag){
+        Collection.enableField(fields[j]);
+      }
+    }
+  }
+}
+
+Collection.disableFieldFrom = function(fromFieldId, toFieldId){
+  layers = Collection.getSchemaByCollectionId(window.currentCollectionId).layers;
+  flag = false;
+  for(var i=0; i<layers.length; i++){
+    fields = layers[i].fields
+    for(var j=0; j<fields.length; j++){
+      if(fields[j].id == fromFieldId){
+        flag = true;
+        continue;
+      }
+      if(fields[j].id == toFieldId){
+        flag = false;
+      }
+      if(flag){
+        Collection.disableField(fields[j]);
+      }
+      else{
+        Collection.enableField(fields[j]);
+      }
+    }
+  }
+}
+
+Collection.disableField = function(field){
+  switch(field.kind)
+  {
+    case "yes_no":
+      Collection.disableSelectOneField(field.code);
+      break;
+    case "select_many":
+      Collection.disableSelectManyField(field);
+      break;
+    default:
+      Collection.disableSingleField(field.code);
+  }
+}
+
+Collection.disableSingleField = function(fieldCode){
+  $("#" + fieldCode + "").parent().addClass("no_background");
+  $("#" + fieldCode + "").parent().removeClass("ui-shadow");
+  $("#" + fieldCode + "").attr("disabled", "disabled");
+}
+
+
+Collection.disableSelectManyField = function(field){
+  $("#" + field.code + "").removeClass("ui-shadow");
+  el = $("#" + field.code);
+  for(var j=0; j<el[0].children.length; j++){
+    li_id = el[0].children[j]["id"];
+    checkbox_id = field.id + "-" + $("#" + li_id).attr("data-value");
+    $("#" + li_id).addClass("no_background");
+    $("#" + checkbox_id).attr("disabled", "disabled");
+  }
+}
+
+Collection.disableSelectOneField = function(fieldCode){
+  $("#" + fieldCode).parent().parent().addClass("no_background");
+  $("#" + fieldCode).parent().parent().removeClass("ui-shadow");
+  $("#" + fieldCode).attr("disabled", "disabled");
+}
+
+Collection.enableField = function(field){
+  switch(field.kind)
+  {
+    case "yes_no":
+      Collection.enableSelectOneField(field.code);
+      break;
+    case "select_many":
+      Collection.enableSelectManyField(field);
+      break;
+    default:
+      Collection.enableSingleField(field.code);
+  }
+}
+
+Collection.enableSingleField = function(fieldCode){
+  $("#" + fieldCode + "").parent().addClass("ui-shadow");
+  $("#" + fieldCode + "").parent().removeClass("no_background");
+  $("#" + fieldCode + "").removeAttr("disabled");
+}
+
+
+Collection.enableSelectManyField = function(field){
+  $("#" + field.code + "").addClass("ui-shadow");
+  el = $("#" + field.code);
+  for(var j=0; j<el[0].children.length; j++){
+    li_id = el[0].children[j]["id"];
+    checkbox_id = field.id + "-" + $("#" + li_id).attr("data-value");
+    $("#" + li_id).removeClass("no_background");
+    $("#" + checkbox_id).removeAttr("disabled");
+  }
+}
+
+Collection.enableSelectOneField = function(fieldCode){
+  $("#" + fieldCode).parent().parent().addClass("ui-shadow");
+  $("#" + fieldCode).parent().parent().removeClass("no_background");
+  $("#" + fieldCode).removeAttr("disabled");
+}
+
 
 Collection.checkNumericConditionFieldLogic = function(fieldLogic, value){
   switch(fieldLogic["condition_type"]){
@@ -721,8 +846,12 @@ Collection.prototype.setFieldFocus = function(fieldId, fieldCode, fieldKind){
       if(fieldLogics[i]["field_id"] != null){
         if(fieldLogics[i]["value"] == fieldValue){       
           fieldFocus = Collection.prototype.findFieldById(fieldLogics[i]["field_id"]); 
+          Collection.disableFieldFrom(fieldId, fieldFocus.id);
           Collection.prototype.setFieldFocusStyleByKind(fieldFocus);
           return;
+        }
+        else{
+          Collection.enableFieldFrom(fieldId);
         }
       }
     }

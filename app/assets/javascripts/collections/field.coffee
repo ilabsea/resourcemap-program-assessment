@@ -104,30 +104,48 @@ onCollections ->
             b = false
             if field_logic.field_id?
               if @kind == 'yes_no' || @kind == 'select_one'
-                if value == field_logic.value                          
+                if value == field_logic.value       
                   @setFocusStyleByField(field_logic.field_id)
                   return
+                else
+                  @enableSkippedField(@esCode)
+                  return 
               if @kind == 'numeric'
                 if field_logic.condition_type == '<'
                   if parseInt(value) < field_logic.value
                     @setFocusStyleByField(field_logic.field_id)
                     return
+                  else
+                    @enableSkippedField(@esCode)
+                    return 
                 if field_logic.condition_type == '<='
                   if parseInt(value) <= field_logic.value
                     @setFocusStyleByField(field_logic.field_id)  
-                    return         
+                    return
+                  else
+                    @enableSkippedField(@esCode)
+                    return 
                 if field_logic.condition_type == '='
                   if parseInt(value) == field_logic.value
                     @setFocusStyleByField(field_logic.field_id)  
-                    return        
+                    return
+                  else
+                    @enableSkippedField(@esCode)
+                    return   
                 if field_logic.condition_type == '>'
                   if parseInt(value) > field_logic.value
                     @setFocusStyleByField(field_logic.field_id)
-                    return            
+                    return
+                  else
+                    @enableSkippedField(@esCode)
+                    return         
                 if field_logic.condition_type == '>='
                   if parseInt(value) >= field_logic.value
                     @setFocusStyleByField(field_logic.field_id)
                     return
+                  else
+                    @enableSkippedField(@esCode)
+                    return 
 
               if @kind == 'select_many'
                 if field_logic.condition_type == 'any'
@@ -137,6 +155,9 @@ onCollections ->
                         b = true
                         @setFocusStyleByField(field_logic.field_id)
                         return
+                      else
+                        @enableSkippedField(@esCode)
+                        return 
 
                 if field_logic.condition_type == 'all'
                   tmp = []
@@ -151,8 +172,12 @@ onCollections ->
                   if tmp.length == field_logic.selected_options.length
                     @setFocusStyleByField(field_id)
                     return
+                  else
+                    @enableSkippedField(@esCode)
+                    return 
 
     setFocusStyleByField: (field_id) =>
+      @disableSkippedField(@esCode, field_id)
       field = window.model.newOrEditSite().findFieldByEsCode(field_id)
       @removeFocusStyle()
       if field.kind == "select_one"
@@ -171,7 +196,80 @@ onCollections ->
         $('#'+field.kind+'-input-'+field.esCode)[0].scrollIntoView(true)
         $('#'+field.kind+'-input-'+field.esCode).focus()
       else
-        $('#'+field.kind+'-input-'+field.code).focus() 
+        $('#'+field.kind+'-input-'+field.code).focus()
+
+    enableSkippedField: (field_id) =>
+      layers = window.model.currentCollection().layers()
+      flag = false
+      $.map(window.model.editingSite().fields(), (f) =>
+        if f.esCode == field_id
+          flag = true
+          return true
+        if flag
+          @enableField f
+      )
+
+    disableSkippedField: (from_field_id, to_field_id) =>
+      layers = window.model.currentCollection().layers()
+      flag = false
+      $.map(window.model.editingSite().fields(), (f) =>
+        if f.esCode == from_field_id
+          flag = true
+          return true
+        if f.esCode == to_field_id
+          flag = false
+        if flag
+          @disableField f
+        else
+          @enableField f
+      )
+
+    disableField: (field) =>
+      unless field.is_mandatory
+        field.value(null)
+        switch field.kind
+          when 'select_one'
+            field.value("")
+            field_id = field.kind + "-input-" + field.code
+            field_object = $("#" + field_id).parent()
+          when 'select_many'
+            field.expanded(true)
+            field_id = "select-many-input-" + field.code
+            field_object = $("#" + field_id).parent().parent()
+          when 'hierarchy'
+            field_id = field.esCode
+            field_object = $("#" + field_id).parent()
+            console.log(field_object)
+          when 'date'
+            field_id = "date-input-" + field.esCode
+            field_object = $("#" + field_id).parent()
+          when 'photo'
+            field_id = field.code
+            field_object = $("#" + field_id).parent()
+          else
+            field_id = field.kind + "-input-" + field.code
+            field_object = $("#" + field_id).parent()
+        field_object.block({message: ""})
+
+    enableField: (field) =>
+      switch field.kind
+        when 'select_many'
+          field.expanded(true)
+          field_id = "select-many-input-" + field.code
+          field_object = $("#" + field_id).parent().parent()
+        when 'hierarchy'
+          field_id = field.esCode
+          field_object = $("#" + field_id).parent()
+        when 'date'
+          field_id = "date-input-" + field.esCode
+          field_object = $("#" + field_id).parent()
+        when 'photo'
+          field_id = field.code
+          field_object = $("#" + field_id).parent()
+        else
+          field_id = field.kind + "-input-" + field.code
+          field_object = $("#" + field_id).parent()
+      field_object.unblock()
 
     setValueFromSite: (value) =>
       if @kind == 'date' && $.trim(value).length > 0

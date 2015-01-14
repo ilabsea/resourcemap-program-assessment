@@ -198,7 +198,7 @@ Field.prototype.getYesNoField = function() {
   }
   return '<div class="ui-controlgroup-controls">' +
       '<div class="ui-checkbox " style="margin-left:10px;margin-top:10px">' + 
-          '<label for="' + this.code + '" data-theme="c" class="ui-btn ui-btn-icon-left ui-corner-all ui-btn-up-c">' +
+          '<label for="' + this.code + '" data-theme="c" class="ui-btn ui-shadow ui-btn-icon-left ui-corner-all ui-btn-up-c">' +
             '<span class="ui-btn-inner">'+
               '<span style="font-weight:normal;">' + this.label + '</span>' +
               '<input ' + checked + ' type="checkbox" name="properties[' + this.id + ']" id="' + this.code + '" class="custom"  datatype="yes_no" onchange="Collection.prototype.setFieldFocus('+this.id+',\''+this.code+'\',\''+this.kind+'\')">' +
@@ -243,7 +243,7 @@ Field.prototype.getSelectManyField = function() {
     }else{
       classListName = ""
     }
-    list = list + '<li data-corners="false" data-shadow="false" data-iconshadow="true" data-wrapperels="div" data-icon="arrow-r" data-iconpos="right" data-theme="c" class="ui-btn ui-btn-up-c ui-btn-icon-right ui-li-has-arrow ui-li ' + classListName + '" >' + 
+    list = list + '<li id="' + this.code + "-" + this.options[i]["code"] + '" data-corners="false" data-shadow="false" data-iconshadow="true" data-wrapperels="div" data-icon="arrow-r" data-iconpos="right" data-theme="c" class="ui-btn ui-btn-up-c ui-btn-icon-right ui-li-has-arrow ui-li ' + classListName + '" data-value=' + this.options[i]["code"] + ' >' + 
         '<div class="ui-btn-inner ui-li">' + 
           '<div class="ui-checkbox" style="padding-top: 10px; height: 25px;" >' +
               '<label for="' + this.id + "-" + this.options[i]["code"] + '"  data-theme="c" style="margin:0px;">' +  
@@ -260,7 +260,7 @@ Field.prototype.getSelectManyField = function() {
               '<label>' + this.label + '</label>'+ 
             '</div>'+
             '<div class="ui-controlgroup-controls">' + 
-              '<ul id="listSitesView" class="ui-listview ui-listview-inset ui-corner-all ui-shadow" data-role="listSitesView" data-inset="true">' +
+              '<ul id="' + this.code + '" class="ui-listview ui-listview-inset ui-corner-all ui-shadow" data-role="listSitesView" data-inset="true">' +
                 list + 
               '</ul>' +
             '</div>'+
