@@ -120,4 +120,7 @@ class Site < ActiveRecord::Base
       end
     end
   end
+    # fields_mandatory.each do |f|
+    #   errors.add(:properties, {f.id.to_s => "#{f.code} is required."})
+    # end
 end

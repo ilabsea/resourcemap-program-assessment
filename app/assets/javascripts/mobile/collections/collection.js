@@ -401,7 +401,7 @@ Collection.disableFieldFrom = function(fromFieldId, toFieldId){
   layers = Collection.getSchemaByCollectionId(window.currentCollectionId).layers;
   flag = false;
   for(var i=0; i<layers.length; i++){
-    fields = layers[i].fields
+    fields = layers[i].fields;
     for(var j=0; j<fields.length; j++){
       if(fields[j].id == fromFieldId){
         flag = true;
@@ -413,7 +413,7 @@ Collection.disableFieldFrom = function(fromFieldId, toFieldId){
       if(flag){
         Collection.disableField(fields[j]);
       }
-      else{
+      else if(fields[j].id > fromFieldId){
         Collection.enableField(fields[j]);
       }
     }
@@ -421,6 +421,7 @@ Collection.disableFieldFrom = function(fromFieldId, toFieldId){
 }
 
 Collection.disableField = function(field){
+  field.is_mandatory = false
   switch(field.kind)
   {
     case "yes_no":
@@ -437,6 +438,7 @@ Collection.disableField = function(field){
 Collection.disableSingleField = function(fieldCode){
   $("#" + fieldCode + "").parent().addClass("no_background");
   $("#" + fieldCode + "").parent().removeClass("ui-shadow");
+  $("#" + fieldCode + "").parent().removeClass("ui-shadow-inset");
   $("#" + fieldCode + "").attr("disabled", "disabled");
 }
 
@@ -455,6 +457,7 @@ Collection.disableSelectManyField = function(field){
 Collection.disableSelectOneField = function(fieldCode){
   $("#" + fieldCode).parent().parent().addClass("no_background");
   $("#" + fieldCode).parent().parent().removeClass("ui-shadow");
+  $("#" + fieldCode + "").parent().removeClass("ui-shadow-inset");
   $("#" + fieldCode).attr("disabled", "disabled");
 }
 
@@ -474,6 +477,7 @@ Collection.enableField = function(field){
 
 Collection.enableSingleField = function(fieldCode){
   $("#" + fieldCode + "").parent().addClass("ui-shadow");
+  $("#" + fieldCode + "").parent().addClass("ui-shadow-inset");
   $("#" + fieldCode + "").parent().removeClass("no_background");
   $("#" + fieldCode + "").removeAttr("disabled");
 }
@@ -1023,6 +1027,7 @@ Collection.assignSite = function(site){
   fieldHtml = Collection.editLayerForm(currentSchemaData, site["properties"]);
   $("#fields").html(fieldHtml);
   Collection.prototype.handleFieldUI(currentSchemaData);
+  Collection.handleDisableFieldSkip(currentSchemaData, site["properties"])
 }
 
 Collection.clearFormData = function(){
@@ -1031,6 +1036,36 @@ Collection.clearFormData = function(){
   $("#lat").val("");
   $("#lng").val("");
   window.currentSiteId = null;
+}
+
+Collection.handleDisableFieldSkip = function(schema, properties){
+  for(i=0; i<schema["layers"].length;i++){
+    for(j=0; j<schema["layers"][i]["fields"].length; j++){
+      var field = schema["layers"][i]["fields"][j]
+      for(var key in properties){
+        if(key == schema["layers"][i]["fields"][j]["id"]){
+          if(field["is_enable_field_logic"] == true){
+            switch(field["kind"])
+            {
+              case "numeric":
+                Collection.setFocusOnFieldFromNumeric(field["id"],field["code"]);
+                break;
+              case "yes_no":
+                Collection.prototype.setFieldFocus(field["id"],field["code"],field["kind"]);
+                break;
+              case "select_one":
+                Collection.prototype.setFieldFocus(field["id"],properties[key],field["kind"]);
+                break;
+              case "select_many":
+                Collection.setFocusOnFieldFromSelectMany(field["id"]);
+                break;
+            }
+          }
+        }
+      }
+      myField = new Field(field);
+    }
+  }
 }
 
 Collection.editLayerForm = function(schema, properties){
