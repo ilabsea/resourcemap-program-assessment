@@ -9,7 +9,6 @@ onCollections ->
       @kind = data.kind
       @ord = data.ord
       @is_mandatory = ko.observable data?.is_mandatory ? false 
-
       @is_enable_field_logic = data.is_enable_field_logic
 
       @photo = '' 
@@ -19,7 +18,7 @@ onCollections ->
       @writeable = @originalWriteable = data?.writeable
       
       @allowsDecimals = ko.observable data?.config?.allows_decimals == 'true'
-
+      @originalIsMandatory = data.is_mandatory
       @value = ko.observable()
       @value.subscribe => @setFieldFocus()
 
@@ -221,10 +220,9 @@ onCollections ->
         if f.esCode == to_field_id
           flag = false
         if flag
-          window.model.currentCollection().skippedFields.push(f.esCode)
           @disableField f
         else
-          if f.ord > @ord 
+          if f.ord > @ord
             @enableField f
       )
 
@@ -256,6 +254,7 @@ onCollections ->
         field_object.block({message: ""})
 
     enableField: (field) =>
+      field.is_mandatory(field.originalIsMandatory)
       switch field.kind
         when 'select_many'
           field.expanded(true)
