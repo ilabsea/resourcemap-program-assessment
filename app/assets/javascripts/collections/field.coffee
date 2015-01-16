@@ -178,8 +178,6 @@ onCollections ->
           if noSkipField
             @enableSkippedField(@esCode)
 
-    skipLogicFieldNumber: (field_logic, value) =>
-
     setFocusStyleByField: (field_id) =>
       @disableSkippedField(@esCode, field_id)
       field = window.model.newOrEditSite().findFieldByEsCode(field_id)
@@ -202,13 +200,6 @@ onCollections ->
       else
         $('#'+field.kind+'-input-'+field.code).focus()
 
-    clearSkippedField: =>
-      layers = window.model.currentCollection().layers()
-      flag = false
-      $.map(window.model.editingSite().fields(), (f) =>
-          @enableField f
-      )
-
     enableSkippedField: (field_id) =>
       layers = window.model.currentCollection().layers()
       flag = false
@@ -221,7 +212,6 @@ onCollections ->
       )
 
     disableSkippedField: (from_field_id, to_field_id) =>
-      skippedFields = []
       layers = window.model.currentCollection().layers()
       flag = false
       $.map(window.model.editingSite().fields(), (f) =>
@@ -231,15 +221,12 @@ onCollections ->
         if f.esCode == to_field_id
           flag = false
         if flag
-          # skippedFields.push(f.esCode)
           window.model.currentCollection().skippedFields.push(f.esCode)
           @disableField f
         else
           if f.ord > @ord 
             @enableField f
       )
-
-      # window.model.currentCollection().skippedFields[@esCode] = skippedFields
 
     disableField: (field) =>
       field.is_mandatory(false) 
