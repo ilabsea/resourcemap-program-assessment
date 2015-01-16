@@ -7,7 +7,8 @@ onCollections ->
       @code = data.code
       @name = data.name
       @kind = data.kind
-      @is_mandatory = data.is_mandatory 
+      @ord = data.ord
+      @is_mandatory = ko.observable data?.is_mandatory ? false 
 
       @is_enable_field_logic = data.is_enable_field_logic
 
@@ -20,7 +21,6 @@ onCollections ->
       @allowsDecimals = ko.observable data?.config?.allows_decimals == 'true'
 
       @value = ko.observable()
-      
       @value.subscribe => @setFieldFocus()
 
       @hasValue = ko.computed =>
@@ -37,7 +37,7 @@ onCollections ->
       if @kind == 'numeric'
         @range = if data.config?.range?.minimum? || data.config?.range?.maximum?
                   data.config?.range
-        @is_mandatory = if @range then true else data.is_mandatory
+        if @range then @is_mandatory(true) else @is_mandatory(data.is_mandatory)
         @field_logics = if data.config?.field_logics?
                           $.map data.config.field_logics, (x) => new FieldLogic x
                         else
@@ -91,7 +91,7 @@ onCollections ->
       @error = ko.computed => !!@errorMessage()
 
     setFieldFocus: =>
-      if window.model.newOrEditSite() 
+      if window.model.newOrEditSite()
         if @kind == 'yes_no'
           value = if @value() then 1 else 0
         else if @kind == 'numeric' || @kind == 'select_one' || @kind == 'select_many'
@@ -102,14 +102,15 @@ onCollections ->
         if @field_logics
           for field_logic in @field_logics
             b = false
+            noSkipField = false
             if field_logic.field_id?
               if @kind == 'yes_no' || @kind == 'select_one'
-                if value == field_logic.value       
+                if value == field_logic.value     
                   @setFocusStyleByField(field_logic.field_id)
                   return
                 else
-                  @enableSkippedField(@esCode)
-                  return 
+                  noSkipField = true
+
               if @kind == 'numeric'
                 if field_logic.condition_type == '<'
                   if parseInt(value) < field_logic.value
@@ -117,64 +118,68 @@ onCollections ->
                     return
                   else
                     @enableSkippedField(@esCode)
-                    return 
+
                 if field_logic.condition_type == '<='
                   if parseInt(value) <= field_logic.value
                     @setFocusStyleByField(field_logic.field_id)  
                     return
                   else
                     @enableSkippedField(@esCode)
-                    return 
+
                 if field_logic.condition_type == '='
                   if parseInt(value) == field_logic.value
                     @setFocusStyleByField(field_logic.field_id)  
                     return
                   else
                     @enableSkippedField(@esCode)
-                    return   
+
                 if field_logic.condition_type == '>'
                   if parseInt(value) > field_logic.value
                     @setFocusStyleByField(field_logic.field_id)
                     return
                   else
                     @enableSkippedField(@esCode)
-                    return         
+
                 if field_logic.condition_type == '>='
                   if parseInt(value) >= field_logic.value
                     @setFocusStyleByField(field_logic.field_id)
-                    return
+                    return 
                   else
                     @enableSkippedField(@esCode)
-                    return 
 
               if @kind == 'select_many'
                 if field_logic.condition_type == 'any'
-                  for field_value in value
-                    for field_logic_value in field_logic.selected_options
-                      if field_value == parseInt(field_logic_value.value)
-                        b = true
-                        @setFocusStyleByField(field_logic.field_id)
-                        return
-                      else
-                        @enableSkippedField(@esCode)
-                        return 
+                  if value?
+                    for field_value in value
+                      for field_logic_value in field_logic.selected_options
+                        if field_value == parseInt(field_logic_value.value)
+                          b = true
+                          @setFocusStyleByField(field_logic.field_id)
+                          return
+                        else
+                          @enableSkippedField(@esCode)
 
                 if field_logic.condition_type == 'all'
                   tmp = []
-                  for field_value in value             
-                    for field_logic_value in field_logic.selected_options
-                      if field_value == parseInt(field_logic_value.value)                        
-                        b = true
-                        field_id = field_logic.field_id
-                        tmp.push field_value
-                      else
-                        b = false
+                  if value?
+                    for field_value in value
+                      console.log 'test'
+                      for field_logic_value in field_logic.selected_options
+                        if field_value == parseInt(field_logic_value.value)                        
+                          b = true
+                          field_id = field_logic.field_id
+                          tmp.push field_value
+                        else
+                          b = false
                   if tmp.length == field_logic.selected_options.length
                     @setFocusStyleByField(field_id)
                     return
                   else
                     @enableSkippedField(@esCode)
-                    return 
+          if noSkipField
+            @enableSkippedField(@esCode)
+
+    skipLogicFieldNumber: (field_logic, value) =>
 
     setFocusStyleByField: (field_id) =>
       @disableSkippedField(@esCode, field_id)
@@ -198,18 +203,26 @@ onCollections ->
       else
         $('#'+field.kind+'-input-'+field.code).focus()
 
+    clearSkippedField: =>
+      layers = window.model.currentCollection().layers()
+      flag = false
+      $.map(window.model.editingSite().fields(), (f) =>
+          @enableField f
+      )
+
     enableSkippedField: (field_id) =>
       layers = window.model.currentCollection().layers()
       flag = false
       $.map(window.model.editingSite().fields(), (f) =>
         if f.esCode == field_id
           flag = true
-          return true
+          return
         if flag
           @enableField f
       )
 
     disableSkippedField: (from_field_id, to_field_id) =>
+      skippedFields = []
       layers = window.model.currentCollection().layers()
       flag = false
       $.map(window.model.editingSite().fields(), (f) =>
@@ -219,13 +232,19 @@ onCollections ->
         if f.esCode == to_field_id
           flag = false
         if flag
+          # skippedFields.push(f.esCode)
+          window.model.currentCollection().skippedFields.push(f.esCode)
           @disableField f
         else
-          @enableField f
+          if f.ord > @ord 
+            @enableField f
       )
 
+      # window.model.currentCollection().skippedFields[@esCode] = skippedFields
+
     disableField: (field) =>
-      unless field.is_mandatory
+      field.is_mandatory(false) 
+      unless field.is_mandatory()
         field.value(null)
         switch field.kind
           when 'select_one'
@@ -239,7 +258,6 @@ onCollections ->
           when 'hierarchy'
             field_id = field.esCode
             field_object = $("#" + field_id).parent()
-            console.log(field_object)
           when 'date'
             field_id = "date-input-" + field.esCode
             field_object = $("#" + field_id).parent()

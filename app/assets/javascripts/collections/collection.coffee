@@ -23,6 +23,8 @@ onCollections ->
           defaultOptions =[window.model.defaultGroupBy]
         defaultOptions.concat(@fields().filter((f) -> f.showInGroupBy))
 
+      @skippedFields = ko.observableArray()
+
     isSearch: => false
     
     sitesUrl: -> "/collections/#{@id}/sites.json"
