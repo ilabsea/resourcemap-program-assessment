@@ -117,17 +117,10 @@ class Site < ActiveRecord::Base
         rescue => ex
           errors.add(:properties, {field.es_code => ex.message})
         end
-
-        fields_mandatory.each do |f|
-          if f.id.to_s == es_code.to_s
-            fields_mandatory.delete f
-          end
-        end
       end
     end
-    fields_mandatory.each do |f|
-      errors.add(:properties, {f.id.to_s => "#{f.code} is required."})
-    end
-
   end
+    # fields_mandatory.each do |f|
+    #   errors.add(:properties, {f.id.to_s => "#{f.code} is required."})
+    # end
 end
