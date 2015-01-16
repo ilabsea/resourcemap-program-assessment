@@ -163,7 +163,6 @@ onCollections ->
                   tmp = []
                   if value?
                     for field_value in value
-                      console.log 'test'
                       for field_logic_value in field_logic.selected_options
                         if field_value == parseInt(field_logic_value.value)                        
                           b = true
