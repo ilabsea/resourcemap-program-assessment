@@ -39,13 +39,15 @@ onCollections ->
       @highlightedName = ko.computed => window.model.highlightSearch(@name())
       @inEditMode = ko.observable(false)
 
+      
+
     hasLocation: => @position() != null
 
     hasName: => $.trim(@name()).length > 0
 
     hasInputMendatoryProperties: =>
       for field in @fields()
-        if field.is_mandatory and !field.value()
+        if field.is_mandatory() and !field.value()
           return false
       return true
 
@@ -339,16 +341,15 @@ onCollections ->
       # Keep the original values, in case the user cancels
       @originalName = @name()
       @originalPosition = @position()
-      for field in @fields()
-        field.editing(false)
-        field.originalValue = field.value()
-
       @inEditMode(true)
       @startEditLocationInMap()
       @prepareCalculatedField()
       window.model.initDatePicker()
       window.model.initAutocomplete()
-
+      for field in @fields()
+        field.editing(false)
+        field.originalValue = field.value()
+        field.setFieldFocus()
     exitEditMode: (saved) =>
       @inEditMode(false)
 
@@ -440,6 +441,7 @@ onCollections ->
         for layer in @layers()
           for field in layer.fields
             fields.push(field)
+            field.disableField field
         @fields(fields)
 
         @copyPropertiesToFields()
