@@ -174,7 +174,7 @@ onCollections ->
                     return
                   else
                     @enableSkippedField(@esCode)
-          if noSkipField
+          if @value() != "" && noSkipField
             @enableSkippedField(@esCode)
             return
 
