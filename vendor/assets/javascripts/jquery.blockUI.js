@@ -89,7 +89,6 @@
 			return this.each(function() {
 				if ($.css(this,'position') == 'static') {
 					this.style.position = 'relative';
-					$(this).data('blockUI.static', true);
 				}
 				this.style.zoom = 1; // force 'hasLayout' in ie
 				install(this, opts);

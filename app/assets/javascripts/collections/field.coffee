@@ -176,6 +176,7 @@ onCollections ->
                     @enableSkippedField(@esCode)
           if noSkipField
             @enableSkippedField(@esCode)
+            return
 
     setFocusStyleByField: (field_id) =>
       @disableSkippedField(@esCode, field_id)
