@@ -104,7 +104,7 @@ onCollections ->
             noSkipField = false
             if field_logic.field_id?
               if @kind == 'yes_no' || @kind == 'select_one'
-                if value == field_logic.value     
+                if value == field_logic.value && @value() != null
                   @setFocusStyleByField(field_logic.field_id)
                   return
                 else
@@ -236,6 +236,7 @@ onCollections ->
             field_id = field.kind + "-input-" + field.code
             field_object = $("#" + field_id).parent()
           when 'select_many'
+            field.expanded(true)
             field_id = "select-many-input-" + field.code
             field_object = $("#" + field_id).parent().parent()
           when 'hierarchy'
