@@ -214,16 +214,18 @@ onCollections ->
     disableSkippedField: (from_field_id, to_field_id) =>
       layers = window.model.currentCollection().layers()
       flag = false
+      after_skip = false
       $.map(window.model.editingSite().fields(), (f) =>
         if f.esCode == from_field_id
           flag = true
+          after_skip = true
           return true
         if f.esCode == to_field_id
           flag = false
         if flag
           @disableField f
         else
-          if f.ord > @ord
+          if after_skip
             @enableField f
       )
 
