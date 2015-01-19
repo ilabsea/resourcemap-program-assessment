@@ -236,7 +236,6 @@ onCollections ->
             field_id = field.kind + "-input-" + field.code
             field_object = $("#" + field_id).parent()
           when 'select_many'
-            field.expanded(true)
             field_id = "select-many-input-" + field.code
             field_object = $("#" + field_id).parent().parent()
           when 'hierarchy'
@@ -257,7 +256,6 @@ onCollections ->
       field.is_mandatory(field.originalIsMandatory)
       switch field.kind
         when 'select_many'
-          field.expanded(true)
           field_id = "select-many-input-" + field.code
           field_object = $("#" + field_id).parent().parent()
         when 'hierarchy'
