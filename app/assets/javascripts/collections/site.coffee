@@ -441,7 +441,6 @@ onCollections ->
         for layer in @layers()
           for field in layer.fields
             fields.push(field)
-            field.disableField field
         @fields(fields)
 
         @copyPropertiesToFields()
