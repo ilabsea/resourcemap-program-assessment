@@ -90,6 +90,7 @@
 				if ($.css(this,'position') == 'static') {
 					this.style.position = 'relative';
 				}
+				
 				this.style.zoom = 1; // force 'hasLayout' in ie
 				install(this, opts);
 			});
