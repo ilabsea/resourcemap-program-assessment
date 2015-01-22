@@ -97,11 +97,10 @@ onCollections ->
           value = @value()
         else
           return
-        
+        noSkipField = false
         if @field_logics.length > 0
           for field_logic in @field_logics
             b = false
-            noSkipField = false
             if field_logic.field_id?
               if @kind == 'yes_no' || @kind == 'select_one'
                 if value == field_logic.value && @value() != null
@@ -174,6 +173,7 @@ onCollections ->
                     return
                   else
                     @enableSkippedField(@esCode) if @value() != null
+          
           if noSkipField
             @enableSkippedField(@esCode)
             return
