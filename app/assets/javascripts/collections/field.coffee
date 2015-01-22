@@ -88,7 +88,7 @@ onCollections ->
       @expanded = ko.observable false # For select_many
       @errorMessage = ko.observable()
       @error = ko.computed => !!@errorMessage()
-
+    
     setFieldFocus: =>
       if window.model.newOrEditSite()
         if @kind == 'yes_no'
@@ -98,7 +98,7 @@ onCollections ->
         else
           return
         
-        if @field_logics
+        if @field_logics.length > 0
           for field_logic in @field_logics
             b = false
             noSkipField = false
@@ -156,7 +156,7 @@ onCollections ->
                           @setFocusStyleByField(field_logic.field_id)
                           return
                         else
-                          @enableSkippedField(@esCode)
+                          @enableSkippedField(@esCode) if @value() != null
 
                 if field_logic.condition_type == 'all'
                   tmp = []
@@ -173,8 +173,8 @@ onCollections ->
                     @setFocusStyleByField(field_id)
                     return
                   else
-                    @enableSkippedField(@esCode)
-          if @value() != "" && noSkipField
+                    @enableSkippedField(@esCode) if @value() != null
+          if noSkipField
             @enableSkippedField(@esCode)
             return
 
@@ -290,7 +290,7 @@ onCollections ->
     
     removeFocusStyle: =>
       $('div').removeClass('focus')
-      $('input').removeClass('focus')
+      $('input:not(#name)').removeClass('focus')
       $('select').removeClass('focus')
       $('select').blur()
       $('input').blur()
