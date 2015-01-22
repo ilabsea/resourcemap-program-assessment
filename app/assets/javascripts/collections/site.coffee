@@ -463,6 +463,21 @@ onCollections ->
           if field["kind"] == "calculation"
             # Replace $field code to actual jQuery object
             if(field["dependentFields"])
+              length = 0
+              $.map(field["dependentFields"], (f) ->
+                length = length + 1
+              )
+              tmp = ""
+              i = 0
+              while i < (length - 1)
+                j = i + 1
+                while j < (length)
+                  if field["dependentFields"][i]["code"].length < field["dependentFields"][j]["code"].length
+                    tmp = field["dependentFields"][i]
+                    field["dependentFields"][i] = field["dependentFields"][j]
+                    field["dependentFields"][j] = tmp
+                  j++
+                i++
               $.map(field["dependentFields"], (f) -> 
                 fieldName = "$" + f["code"]
                 fieldValue = "$" + f["code"]
