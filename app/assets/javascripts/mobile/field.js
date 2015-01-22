@@ -99,6 +99,20 @@ Field.prototype.prepareCalculatedField = function(){
   syntaxCalculationCode = this.codeCalculation;
   elementCode = this.code;
   if(this.dependentFields){
+    // tmp = ""
+    // i = 0
+    // while(i < (length - 1)){
+    //   j = i + 1
+    //   while(j < (length)){
+    //     if(field["dependentFields"][i]["code"].length < field["dependentFields"][j]["code"].length){
+    //       tmp = field["dependentFields"][i]
+    //       field["dependentFields"][i] = field["dependentFields"][j]
+    //       field["dependentFields"][j] = tmp
+    //     }
+    //     j++
+    //   }
+    //   i++
+    // }
     $.map(this.dependentFields, function(f) {
       var fieldName = "$" + f["code"];
       var fieldValue = "$" + f["code"];
