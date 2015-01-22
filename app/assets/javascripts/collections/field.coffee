@@ -36,7 +36,7 @@ onCollections ->
       if @kind == 'numeric'
         @range = if data.config?.range?.minimum? || data.config?.range?.maximum?
                   data.config?.range
-        if @range then @is_mandatory(true) else @is_mandatory(data.is_mandatory)
+        
         @field_logics = if data.config?.field_logics?
                           $.map data.config.field_logics, (x) => new FieldLogic x
                         else
@@ -88,7 +88,7 @@ onCollections ->
       @expanded = ko.observable false # For select_many
       @errorMessage = ko.observable()
       @error = ko.computed => !!@errorMessage()
-
+    
     setFieldFocus: =>
       if window.model.newOrEditSite()
         if @kind == 'yes_no'
@@ -97,11 +97,10 @@ onCollections ->
           value = @value()
         else
           return
-        
-        if @field_logics
+        noSkipField = false
+        if @field_logics.length > 0
           for field_logic in @field_logics
             b = false
-            noSkipField = false
             if field_logic.field_id?
               if @kind == 'yes_no' || @kind == 'select_one'
                 if value == field_logic.value && @value() != null
@@ -156,7 +155,7 @@ onCollections ->
                           @setFocusStyleByField(field_logic.field_id)
                           return
                         else
-                          @enableSkippedField(@esCode)
+                          @enableSkippedField(@esCode) if @value() != null
 
                 if field_logic.condition_type == 'all'
                   tmp = []
@@ -173,7 +172,8 @@ onCollections ->
                     @setFocusStyleByField(field_id)
                     return
                   else
-                    @enableSkippedField(@esCode)
+                    @enableSkippedField(@esCode) if @value() != null
+          
           if noSkipField
             @enableSkippedField(@esCode)
             return
@@ -290,7 +290,7 @@ onCollections ->
     
     removeFocusStyle: =>
       $('div').removeClass('focus')
-      $('input').removeClass('focus')
+      $('input:not(#name)').removeClass('focus')
       $('select').removeClass('focus')
       $('select').blur()
       $('input').blur()
