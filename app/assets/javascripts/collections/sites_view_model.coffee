@@ -38,7 +38,6 @@ onCollections ->
         window.model.initAutocomplete()
         site.prepareCalculatedField()
 
-
     @editSite: (site) ->
       initialized = @initMap()
       site.collection.panToPosition(true) unless initialized
@@ -158,6 +157,7 @@ onCollections ->
         @editingSite().create_site(@editingSite().toJSON(), callback, callbackError)
 
     @exitSite: ->
+      @editingSite().scrollable(false)
       if !@editingSite()?.inEditMode()
         @performSearchOrHierarchy()
 

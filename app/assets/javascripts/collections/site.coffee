@@ -38,7 +38,7 @@ onCollections ->
       @valid = ko.computed => @hasName() and @hasInputMendatoryProperties()
       @highlightedName = ko.computed => window.model.highlightSearch(@name())
       @inEditMode = ko.observable(false)
-
+      @scrollable = ko.observable(false)
       
 
     hasLocation: => @position() != null
@@ -349,10 +349,11 @@ onCollections ->
       for field in @fields()
         field.editing(false)
         field.originalValue = field.value()
-        field.setFieldFocus()
+        field.setFieldFocus() if field.kind in ["yes_no", "numeric", "select_one", "select_many"]
+
     exitEditMode: (saved) =>
       @inEditMode(false)
-
+      @scrollable(false)
       @endEditLocationInMap(if saved then @position() else @originalLocation)
 
       # Restore original name and position if not saved
