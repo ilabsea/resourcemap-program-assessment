@@ -22,6 +22,8 @@ onCollections ->
       @value = ko.observable()
       @value.subscribe => @setFieldFocus()
 
+
+
       @hasValue = ko.computed =>
         if @kind == 'yes_no'
           true
@@ -88,7 +90,20 @@ onCollections ->
       @expanded = ko.observable false # For select_many
       @errorMessage = ko.observable()
       @error = ko.computed => !!@errorMessage()
-    
+
+      @is_blocked_by = ko.observableArray([])
+      @blocked = ko.computed =>
+        field_object = @get_dom_object(this)
+        if @is_blocked_by() != undefined and @is_blocked_by().length > 0
+          field_object.block({message: ""})
+        else
+          field_object.unblock()
+
+    refresh_skip: =>
+      if(@is_blocked_by())
+        tmp = @is_blocked_by()
+        @is_blocked_by(tmp)  
+
     setFieldFocus: =>
       if window.model.newOrEditSite()
         if @kind == 'yes_no'
@@ -223,38 +238,53 @@ onCollections ->
         if f.esCode == to_field_id
           flag = false
         if flag
-          @disableField f
+          @disableField f, from_field_id
         else
           if after_skip
             @enableField f
       )
 
-    disableField: (field) =>
+    disableField: (field, by_field_id) =>
       field.is_mandatory(false) 
       unless field.is_mandatory()
+        index = field.is_blocked_by().indexOf(by_field_id)
+        if(index < 0 )
+          tmp = field.is_blocked_by()
+          tmp.push(by_field_id) if by_field_id != undefined
         field.value(null)
-        switch field.kind
-          when 'select_one'
-            field.value("")
-            field_id = field.kind + "-input-" + field.code
-            field_object = $("#" + field_id).parent()
-          when 'select_many'
+        field_object = @get_dom_object(field)
+        field.is_blocked_by(tmp)
+        # field_object.block({message: ""})
+
+    get_dom_object: (field) =>
+      switch field.kind
+        when 'select_one'
+          # field.value("")
+          field_id = field.kind + "-input-" + field.code
+          field_object = $("#" + field_id).parent()
+        when 'select_many'
+          if field.expanded()
+            field_id = "select-many-input-" + field.code
+            field_object = $("#" + field_id).parent().parent()
+          else
             field.expanded(true)
             field_id = "select-many-input-" + field.code
             field_object = $("#" + field_id).parent().parent()
-          when 'hierarchy'
-            field_id = field.esCode
-            field_object = $("#" + field_id).parent()
-          when 'date'
-            field_id = "date-input-" + field.esCode
-            field_object = $("#" + field_id).parent()
-          when 'photo'
-            field_id = field.code
-            field_object = $("#" + field_id).parent()
-          else
-            field_id = field.kind + "-input-" + field.code
-            field_object = $("#" + field_id).parent()
-        field_object.block({message: ""})
+            field.expanded(false)
+
+        when 'hierarchy'
+          field_id = field.esCode
+          field_object = $("#" + field_id).parent()
+        when 'date'
+          field_id = "date-input-" + field.esCode
+          field_object = $("#" + field_id).parent()
+        when 'photo'
+          field_id = field.code
+          field_object = $("#" + field_id).parent()
+        else
+          field_id = field.kind + "-input-" + field.code
+          field_object = $("#" + field_id).parent()
+      field_object
 
     enableField: (field) =>
       field.is_mandatory(field.originalIsMandatory)
@@ -274,7 +304,12 @@ onCollections ->
         else
           field_id = field.kind + "-input-" + field.code
           field_object = $("#" + field_id).parent()
-      field_object.unblock()
+      index = field.is_blocked_by().indexOf(@esCode)
+      if(index > -1)
+        tmp = field.is_blocked_by()
+        tmp.splice(index, 1);
+        field.is_blocked_by(tmp);
+      # field_object.unblock()
 
     setValueFromSite: (value) =>
       if @kind == 'date' && $.trim(value).length > 0

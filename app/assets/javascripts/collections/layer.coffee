@@ -7,3 +7,7 @@ onCollections ->
 
     toggleExpand: =>
       @expanded(!@expanded())
+      console.log(@fields)
+      if @expanded()
+        $.map @fields, (f) => 
+          f.refresh_skip()
