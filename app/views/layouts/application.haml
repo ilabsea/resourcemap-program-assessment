@@ -17,7 +17,7 @@
   
   - if user_signed_in?
     - if !current_user.is_guest
-      = section t('views.nav.activity'), activities_path, :activities
+      / = section t('views.nav.activity'), activities_path, :activities
       - if Settings.is_on? :channels
         = section t('views.nav.sms'), gateways_path, :gateways
       - if current_user.is_super_user

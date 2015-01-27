@@ -48,7 +48,7 @@ onCollections ->
       selectedSiteId = null
       selectedCollectionId = null
       editingSiteId = null
-      showTable = false
+      showTable = true
       groupBy = null
 
       collectionId = $.url().param('collection_id')

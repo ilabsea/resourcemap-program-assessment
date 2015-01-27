@@ -6,11 +6,10 @@ require "whenever/capistrano"
 
 set :rvm_ruby_string, '1.9.3'
 set :rvm_type, :system
-set :application, "resourcemap_wfp"
+set :application, "resourcemap_wfp_lite"
 set :repository,  "https://bitbucket.org/ilab/resourcemap_wfp"
 set :scm, :mercurial
 set :user, 'ilab'
-set :use_sudo, false
 set :group, 'ilab'
 set :deploy_via, :remote_cache
 set :branch, `hg branch`.strip

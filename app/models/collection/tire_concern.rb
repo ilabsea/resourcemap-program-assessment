@@ -67,7 +67,7 @@ module Collection::TireConcern
   end
 
   module ClassMethods
-    INDEX_NAME_PREFIX = Rails.env == 'test' ? "collection_test" : "collection"
+    INDEX_NAME_PREFIX = Rails.env == 'test' ? "lite_collection_test" : "lite_collection"
 
     def index_name(id, options = {})
 

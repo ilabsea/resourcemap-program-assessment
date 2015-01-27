@@ -1,12 +1,12 @@
 mobile_id: on
-host: localhost:3000
+host: 54.169.173.164:8080
 number_of_attempt_failed: 5
 
 plugins:
   public_collection: on
   snapshot: on
   channels: on
-  reminders: on
+  reminders: off
   alerts: on
   account_completeness: on
   fred_api: on

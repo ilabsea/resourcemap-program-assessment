@@ -13,6 +13,7 @@ onCollections ->
       @currentSnapshot = ko.computed =>
         @currentCollection()?.currentSnapshot
 
+
     @findCollectionById: (id) -> (x for x in @collections() when x.id == parseInt id)[0]
     
     @refineFilters: ->
