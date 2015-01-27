@@ -8,10 +8,10 @@
           %span.stat-r
           %span{ko(html: :highlightedName)}
       %button.farrow{ko(click: '$root.editSite'), type: :button}
-    / %td.padded
-    /   %span{ko(text: :safe_lat)}
-    / %td.padded
-    /   %span{ko(text: :safe_lng)}
+    %td.padded
+      %span{ko(text: :safe_lat)}
+    %td.padded
+      %span{ko(text: :safe_lng)}
     <!-- ko foreach: $root.currentCollection().fields() -->
     %td.padded
       <!-- ko if: kind == 'photo' -->

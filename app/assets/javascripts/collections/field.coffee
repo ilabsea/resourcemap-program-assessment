@@ -256,15 +256,13 @@ onCollections ->
       field.skippedState(true)
       field.is_blocked_by([])
       unless field.is_mandatory()
-        if field.is_blocked_by() == undefined
-          field.is_blocked_by([])
-        index = field.is_blocked_by().indexOf(by_field_id) 
-        tmp = field.is_blocked_by()
+        index = field.is_blocked_by().indexOf(by_field_id)
         if(index < 0 )
+          tmp = field.is_blocked_by()
           tmp.push(by_field_id) if by_field_id != undefined
         field.value(null)
+        field_object = @get_dom_object(field)
         field.is_blocked_by(tmp)
-        # field_object = @get_dom_object(field)
         # field_object.block({message: ""})
 
     get_dom_object: (field) =>
@@ -319,11 +317,11 @@ onCollections ->
         else
           field_id = field.kind + "-input-" + field.code
           field_object = $("#" + field_id).parent()
-      # index = field.is_blocked_by().indexOf(@esCode)
-      # if(index > -1)
-      #   tmp = field.is_blocked_by()
-      #   tmp.splice(index, 1);
-      field.is_blocked_by([]);
+      index = field.is_blocked_by().indexOf(@esCode)
+      if(index > -1)
+        tmp = field.is_blocked_by()
+        tmp.splice(index, 1);
+        field.is_blocked_by(tmp);
       # field_object.unblock()
 
     setValueFromSite: (value) =>

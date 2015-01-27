@@ -20,7 +20,7 @@ module Collection::CsvConcern
     end
     hierarchy_fields = {}
     CSV.generate do |csv|
-      header = ['resmap-id', 'name']
+      header = ['resmap-id', 'name', 'lat', 'long']
       fields.each do |field| 
         if field.kind == "select_many"
           field.config["options"].each do |option|
@@ -44,7 +44,7 @@ module Collection::CsvConcern
       elastic_search_api_results.each do |result|
         source = result['_source']
         p source
-        row = [source['id'], source['name']]
+        row = [source['id'], source['name'], source['location'].try(:[], 'lat'), source['location'].try(:[], 'lon')]
         fields.each do |field|
           if field.kind == 'yes_no'
             row << (Field.yes?(source['properties'][field.code]) ? 'yes' : 'no')
