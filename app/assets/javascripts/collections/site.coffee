@@ -38,7 +38,7 @@ onCollections ->
       @valid = ko.computed => @hasName() and @hasInputMendatoryProperties()
       @highlightedName = ko.computed => window.model.highlightSearch(@name())
       @inEditMode = ko.observable(false)
-
+      @scrollable = ko.observable(false)
       
 
     hasLocation: => @position() != null
@@ -348,13 +348,17 @@ onCollections ->
       @prepareCalculatedField()
       window.model.initDatePicker()
       window.model.initAutocomplete()
+      
       for field in @fields()
         field.editing(false)
         field.originalValue = field.value()
-        field.setFieldFocus()
+        field.setFieldFocus() if field.kind in ["yes_no", "numeric", "select_one", "select_many"]
+      window.model.newOrEditSite().scrollable(false)
+      $('#name').focus()
+
     exitEditMode: (saved) =>
       @inEditMode(false)
-
+      @scrollable(false)
       # @endEditLocationInMap(if saved then @position() else @originalLocation)
 
       # Restore original name and position if not saved
@@ -443,7 +447,6 @@ onCollections ->
         for layer in @layers()
           for field in layer.fields
             fields.push(field)
-            field.disableField field
         @fields(fields)
 
         @copyPropertiesToFields()
@@ -465,6 +468,21 @@ onCollections ->
           if field["kind"] == "calculation"
             # Replace $field code to actual jQuery object
             if(field["dependentFields"])
+              length = 0
+              $.map(field["dependentFields"], (f) ->
+                length = length + 1
+              )
+              tmp = ""
+              i = 0
+              while i < (length - 1)
+                j = i + 1
+                while j < (length)
+                  if field["dependentFields"][i]["code"].length < field["dependentFields"][j]["code"].length
+                    tmp = field["dependentFields"][i]
+                    field["dependentFields"][i] = field["dependentFields"][j]
+                    field["dependentFields"][j] = tmp
+                  j++
+                i++
               $.map(field["dependentFields"], (f) -> 
                 fieldName = "$" + f["code"]
                 fieldValue = "$" + f["code"]

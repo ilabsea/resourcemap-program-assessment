@@ -33,13 +33,16 @@ onCollections ->
       window.model.initDatePicker()
       window.model.initAutocomplete()
       site.prepareCalculatedField()
-
+      window.model.newOrEditSite().scrollable(false)
+      for field in window.model.newOrEditSite().fields()
+        if field.skippedState() == false && field.kind == 'yes_no'
+          field.setFieldFocus()
+      $('#name').focus()
     @editSite: (site) ->
       $(".rm-show-site-dialog").rmCreateSiteDialog().show()
       $("#rm-colllection_id").val(@currentCollection().id)
       # initialized = @initMap()
       # site.collection.panToPosition(true) unless initialized
-
       site.collection.fetchSitesMembership()
       site.collection.fetchFields =>
         if @processingURL

@@ -20,7 +20,11 @@ onCollections ->
       @allowsDecimals = ko.observable data?.config?.allows_decimals == 'true'
       @originalIsMandatory = data.is_mandatory
       @value = ko.observable()
-      @value.subscribe => @setFieldFocus()
+      @value.subscribe =>
+        if @skippedState() == false && @kind in ["yes_no", "select_one", "select_many", "numeric"]
+          @setFieldFocus()
+
+
 
       @hasValue = ko.computed =>
         if @kind == 'yes_no'
@@ -36,7 +40,7 @@ onCollections ->
       if @kind == 'numeric'
         @range = if data.config?.range?.minimum? || data.config?.range?.maximum?
                   data.config?.range
-        if @range then @is_mandatory(true) else @is_mandatory(data.is_mandatory)
+        
         @field_logics = if data.config?.field_logics?
                           $.map data.config.field_logics, (x) => new FieldLogic x
                         else
@@ -88,6 +92,20 @@ onCollections ->
       @expanded = ko.observable false # For select_many
       @errorMessage = ko.observable()
       @error = ko.computed => !!@errorMessage()
+      @skippedState = ko.observable(false)
+
+      @is_blocked_by = ko.observableArray([])
+      @blocked = ko.computed =>
+        field_object = @get_dom_object(this)
+        if @is_blocked_by() != undefined and @is_blocked_by().length > 0
+          field_object.block({message: ""})
+        else
+          field_object.unblock()
+
+    refresh_skip: =>
+      if(@is_blocked_by())
+        tmp = @is_blocked_by()
+        @is_blocked_by(tmp)  
 
     setFieldFocus: =>
       if window.model.newOrEditSite()
@@ -97,20 +115,19 @@ onCollections ->
           value = @value()
         else
           return
-        
-        if @field_logics
+        noSkipField = false
+        if @field_logics.length > 0 && @skippedState() == false
           for field_logic in @field_logics
             b = false
-            noSkipField = false
             if field_logic.field_id?
               if @kind == 'yes_no' || @kind == 'select_one'
-                if value == field_logic.value     
+                if value == field_logic.value
                   @setFocusStyleByField(field_logic.field_id)
                   return
                 else
                   noSkipField = true
 
-              if @kind == 'numeric'
+              if @kind == 'numeric' && value != ''
                 if field_logic.condition_type == '<'
                   if parseInt(value) < field_logic.value
                     @setFocusStyleByField(field_logic.field_id)
@@ -156,7 +173,7 @@ onCollections ->
                           @setFocusStyleByField(field_logic.field_id)
                           return
                         else
-                          @enableSkippedField(@esCode)
+                          @enableSkippedField(@esCode) if @value() != null
 
                 if field_logic.condition_type == 'all'
                   tmp = []
@@ -173,31 +190,37 @@ onCollections ->
                     @setFocusStyleByField(field_id)
                     return
                   else
-                    @enableSkippedField(@esCode)
-          if noSkipField
+                    @enableSkippedField(@esCode) if @value() != null
+          
+          if @value() != "" && @value() != null && noSkipField
             @enableSkippedField(@esCode)
+            return
 
     setFocusStyleByField: (field_id) =>
-      @disableSkippedField(@esCode, field_id)
       field = window.model.newOrEditSite().findFieldByEsCode(field_id)
-      @removeFocusStyle()
-      if field.kind == "select_one"
-        $('#select_one-input-'+field.code).focus()  
-      else if field.kind == "select_many"
-        field.expanded(true)
-        $('#select-many-input-'+field.code).focus()
-      else if field.kind == "hierarchy"           
-        $('#'+field.esCode)[0].scrollIntoView(true)
-        $('#'+field.esCode).focus() 
-      else if field.kind == "yes_no"
-        $('#yes_no-input-'+field.code).focus()
-      else if field.kind == "photo"
-        $('#'+field.code).focus()
-      else if field.kind == "date"
-        $('#'+field.kind+'-input-'+field.esCode)[0].scrollIntoView(true)
-        $('#'+field.kind+'-input-'+field.esCode).focus()
+      if typeof field != 'undefined'
+        @disableSkippedField(@esCode, field_id)
+        if window.model.newOrEditSite().scrollable() == true
+          @removeFocusStyle()
+          if field.kind == "select_one"
+            $('#select_one-input-'+field.code).focus()  
+          else if field.kind == "select_many"
+            field.expanded(true)
+            $('#select-many-input-'+field.code).focus()
+          else if field.kind == "hierarchy"           
+            $('#'+field.esCode)[0].scrollIntoView(true)
+            $('#'+field.esCode).focus() 
+          else if field.kind == "yes_no"
+            $('#yes_no-input-'+field.code).focus()
+          else if field.kind == "photo"
+            $('#'+field.code).focus()
+          else if field.kind == "date"
+            $('#'+field.kind+'-input-'+field.esCode)[0].scrollIntoView(true)
+            $('#'+field.kind+'-input-'+field.esCode).focus()
+          else
+            $('#'+field.kind+'-input-'+field.code).focus()
       else
-        $('#'+field.kind+'-input-'+field.code).focus()
+        @enableSkippedField(@esCode, field_id)
 
     enableSkippedField: (field_id) =>
       layers = window.model.currentCollection().layers()
@@ -213,53 +236,51 @@ onCollections ->
     disableSkippedField: (from_field_id, to_field_id) =>
       layers = window.model.currentCollection().layers()
       flag = false
+      after_skip = false
       $.map(window.model.editingSite().fields(), (f) =>
         if f.esCode == from_field_id
           flag = true
+          after_skip = true
           return true
         if f.esCode == to_field_id
           flag = false
         if flag
-          @disableField f
+          @disableField f, from_field_id
         else
-          if f.ord > @ord
+          if after_skip
             @enableField f
       )
 
-    disableField: (field) =>
+    disableField: (field, by_field_id) =>
       field.is_mandatory(false) 
+      field.skippedState(true)
+      field.is_blocked_by([])
       unless field.is_mandatory()
+        index = field.is_blocked_by().indexOf(by_field_id)
+        if(index < 0 )
+          tmp = field.is_blocked_by()
+          tmp.push(by_field_id) if by_field_id != undefined
         field.value(null)
-        switch field.kind
-          when 'select_one'
-            field.value("")
-            field_id = field.kind + "-input-" + field.code
-            field_object = $("#" + field_id).parent()
-          when 'select_many'
+        field_object = @get_dom_object(field)
+        field.is_blocked_by(tmp)
+        # field_object.block({message: ""})
+
+    get_dom_object: (field) =>
+      switch field.kind
+        when 'select_one'
+          # field.value("")
+          field_id = field.kind + "-input-" + field.code
+          field_object = $("#" + field_id).parent()
+        when 'select_many'
+          if field.expanded()
+            field_id = "select-many-input-" + field.code
+            field_object = $("#" + field_id).parent().parent()
+          else
             field.expanded(true)
             field_id = "select-many-input-" + field.code
             field_object = $("#" + field_id).parent().parent()
-          when 'hierarchy'
-            field_id = field.esCode
-            field_object = $("#" + field_id).parent()
-          when 'date'
-            field_id = "date-input-" + field.esCode
-            field_object = $("#" + field_id).parent()
-          when 'photo'
-            field_id = field.code
-            field_object = $("#" + field_id).parent()
-          else
-            field_id = field.kind + "-input-" + field.code
-            field_object = $("#" + field_id).parent()
-        field_object.block({message: ""})
+            field.expanded(false)
 
-    enableField: (field) =>
-      field.is_mandatory(field.originalIsMandatory)
-      switch field.kind
-        when 'select_many'
-          field.expanded(true)
-          field_id = "select-many-input-" + field.code
-          field_object = $("#" + field_id).parent().parent()
         when 'hierarchy'
           field_id = field.esCode
           field_object = $("#" + field_id).parent()
@@ -272,7 +293,31 @@ onCollections ->
         else
           field_id = field.kind + "-input-" + field.code
           field_object = $("#" + field_id).parent()
-      field_object.unblock()
+      field_object
+
+    enableField: (field) =>
+      field.is_mandatory(field.originalIsMandatory)
+      field.skippedState(false)
+      switch field.kind
+        when 'select_many'
+          if field.expanded()
+           field_id = "select-many-input-" + field.code
+          else
+           field_id = "select-many-" + field.code
+          field_object = $("#" + field_id).parent()
+        when 'hierarchy'
+          field_id = field.esCode
+          field_object = $("#" + field_id).parent()
+        when 'date'
+          field_id = "date-input-" + field.esCode
+          field_object = $("#" + field_id).parent()
+        when 'photo'
+          field_id = field.code
+          field_object = $("#" + field_id).parent()
+        else
+          field_id = field.kind + "-input-" + field.code
+          field_object = $("#" + field_id).parent()
+      field.is_blocked_by([])
 
     setValueFromSite: (value) =>
       if @kind == 'date' && $.trim(value).length > 0
@@ -286,9 +331,15 @@ onCollections ->
 
       @value(value)
     
+    enableScrollFocusView: =>
+      if @field_logics.length > 0
+        if @value() == "" 
+          @enableSkippedField @esCode
+        else
+          window.model.newOrEditSite().scrollable(true)
     removeFocusStyle: =>
       $('div').removeClass('focus')
-      $('input').removeClass('focus')
+      $('input:not(#name)').removeClass('focus')
       $('select').removeClass('focus')
       $('select').blur()
       $('input').blur()
