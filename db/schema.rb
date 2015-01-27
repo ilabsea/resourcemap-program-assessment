@@ -179,11 +179,11 @@ ActiveRecord::Schema.define(:version => 20141006085556) do
 
   create_table "queries", :force => true do |t|
     t.string   "name"
-    t.text     "conditions"
+    t.text     "conditions",     :limit => 16777215
     t.boolean  "isAllSite"
     t.boolean  "isAllCondition"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
     t.integer  "collection_id"
   end
 
@@ -204,16 +204,6 @@ ActiveRecord::Schema.define(:version => 20141006085556) do
 
   add_index "reminders", ["collection_id"], :name => "index_reminders_on_collection_id"
   add_index "reminders", ["repeat_id"], :name => "index_reminders_on_repeat_id"
-
-  create_table "reminders_sites", :force => true do |t|
-    t.integer  "reminder_id"
-    t.integer  "site_id"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
-  end
-
-  add_index "reminders_sites", ["reminder_id"], :name => "index_reminders_sites_on_reminder_id"
-  add_index "reminders_sites", ["site_id"], :name => "index_reminders_sites_on_site_id"
 
   create_table "repeats", :force => true do |t|
     t.string   "name"

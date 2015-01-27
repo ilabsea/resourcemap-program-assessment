@@ -18,4 +18,4 @@ onLayers ->
       selected_options: $.map(@selected_options(), (x) -> x.toJSON())
       label: @label()
       field_id: @field_id()
-      condition_type: @condition_type
+      condition_type: @condition_type()

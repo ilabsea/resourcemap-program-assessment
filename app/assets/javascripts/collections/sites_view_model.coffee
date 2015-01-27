@@ -37,7 +37,9 @@ onCollections ->
         window.model.initDatePicker()
         window.model.initAutocomplete()
         site.prepareCalculatedField()
-
+        for field in window.model.newOrEditSite().fields()
+          if field.skippedState() == false && field.kind in ["yes_no", "numeric", "select_one", "select_many"]
+            field.setFieldFocus()
 
     @editSite: (site) ->
       initialized = @initMap()
@@ -158,6 +160,7 @@ onCollections ->
         @editingSite().create_site(@editingSite().toJSON(), callback, callbackError)
 
     @exitSite: ->
+      @editingSite().scrollable(false)
       if !@editingSite()?.inEditMode()
         @performSearchOrHierarchy()
 
