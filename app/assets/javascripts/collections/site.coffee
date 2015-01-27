@@ -352,6 +352,7 @@ onCollections ->
         field.originalValue = field.value()
         field.setFieldFocus() if field.kind in ["yes_no", "numeric", "select_one", "select_many"]
       window.model.newOrEditSite().scrollable(false)
+      $('#name').focus()
 
     exitEditMode: (saved) =>
       @inEditMode(false)

@@ -41,6 +41,7 @@ onCollections ->
         for field in window.model.newOrEditSite().fields()
           if field.skippedState() == false && field.kind in ["yes_no", "numeric", "select_one", "select_many"]
             field.setFieldFocus()
+        $('#name').focus()
 
     @editSite: (site) ->
       initialized = @initMap()
