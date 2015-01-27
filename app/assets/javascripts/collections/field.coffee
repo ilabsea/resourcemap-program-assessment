@@ -334,7 +334,7 @@ onCollections ->
     enableScrollFocusView: =>
       if @field_logics.length > 0
         window.model.newOrEditSite().scrollable(true)
-        if @value() == "" && @kind in ["yes_no", "select_one", "select_many"]
+        if @value() == "" 
           @enableSkippedField @esCode
     removeFocusStyle: =>
       $('div').removeClass('focus')
