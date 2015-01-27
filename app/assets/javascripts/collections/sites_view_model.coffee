@@ -37,6 +37,7 @@ onCollections ->
         window.model.initDatePicker()
         window.model.initAutocomplete()
         site.prepareCalculatedField()
+        window.model.newOrEditSite().scrollable(false)
         for field in window.model.newOrEditSite().fields()
           if field.skippedState() == false && field.kind in ["yes_no", "numeric", "select_one", "select_many"]
             field.setFieldFocus()
