@@ -317,12 +317,7 @@ onCollections ->
         else
           field_id = field.kind + "-input-" + field.code
           field_object = $("#" + field_id).parent()
-      index = field.is_blocked_by().indexOf(@esCode)
-      if(index > -1)
-        tmp = field.is_blocked_by()
-        tmp.splice(index, 1);
-        field.is_blocked_by(tmp);
-      # field_object.unblock()
+      field.is_blocked_by([])
 
     setValueFromSite: (value) =>
       if @kind == 'date' && $.trim(value).length > 0
