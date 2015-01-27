@@ -115,6 +115,10 @@ onCollections ->
           value = @value()
         else
           return
+        if value && window.model.newOrEditSite().id() == undefined
+          window.model.newOrEditSite().scrollable(true)
+        else
+          window.model.newOrEditSite().scrollable(false)
         noSkipField = false
         if @field_logics.length > 0 && @skippedState() == false
           for field_logic in @field_logics
