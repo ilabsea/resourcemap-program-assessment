@@ -255,13 +255,15 @@ onCollections ->
       field.is_mandatory(false) 
       field.skippedState(true)
       unless field.is_mandatory()
-        index = field.is_blocked_by().indexOf(by_field_id)
+        if field.is_blocked_by() == undefined
+          field.is_blocked_by([])
+        index = field.is_blocked_by().indexOf(by_field_id) 
+        tmp = field.is_blocked_by()
         if(index < 0 )
-          tmp = field.is_blocked_by()
           tmp.push(by_field_id) if by_field_id != undefined
         field.value(null)
-        field_object = @get_dom_object(field)
         field.is_blocked_by(tmp)
+        # field_object = @get_dom_object(field)
         # field_object.block({message: ""})
 
     get_dom_object: (field) =>
