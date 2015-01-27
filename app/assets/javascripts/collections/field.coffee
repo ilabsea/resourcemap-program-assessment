@@ -127,7 +127,7 @@ onCollections ->
                 else
                   noSkipField = true
 
-              if @kind == 'numeric'
+              if @kind == 'numeric' && value != ''
                 if field_logic.condition_type == '<'
                   if parseInt(value) < field_logic.value
                     @setFocusStyleByField(field_logic.field_id)
@@ -202,23 +202,7 @@ onCollections ->
       if typeof field != 'undefined'
         @disableSkippedField(@esCode, field_id)
         @removeFocusStyle()
-        if field.kind == "select_one"
-          $('#select_one-input-'+field.code).focus()  
-        else if field.kind == "select_many"
-          field.expanded(true)
-          $('#select-many-input-'+field.code).focus()
-        else if field.kind == "hierarchy"           
-          $('#'+field.esCode)[0].scrollIntoView(true)
-          $('#'+field.esCode).focus() 
-        else if field.kind == "yes_no"
-          $('#yes_no-input-'+field.code).focus()
-        else if field.kind == "photo"
-          $('#'+field.code).focus()
-        else if field.kind == "date"
-          $('#'+field.kind+'-input-'+field.esCode)[0].scrollIntoView(true)
-          $('#'+field.kind+'-input-'+field.esCode).focus()
-        else
-          $('#'+field.kind+'-input-'+field.code).focus()
+        @focusByField(field)
       else
         @enableSkippedField(@esCode, field_id)
 
@@ -232,6 +216,27 @@ onCollections ->
         if flag
           @enableField f
       )
+      field = window.model.currentCollection().findFieldByEsCode(field_id)
+      @focusByField(field)
+
+    focusByField: (field)=>
+      if field.kind == "select_one"
+        $('#select_one-input-'+field.code).focus()  
+      else if field.kind == "select_many"
+        field.expanded(true)
+        $('#select-many-input-'+field.code).focus()
+      else if field.kind == "hierarchy"           
+        $('#'+field.esCode)[0].scrollIntoView(true)
+        $('#'+field.esCode).focus() 
+      else if field.kind == "yes_no"
+        $('#yes_no-input-'+field.code).focus()
+      else if field.kind == "photo"
+        $('#'+field.code).focus()
+      else if field.kind == "date"
+        $('#'+field.kind+'-input-'+field.esCode)[0].scrollIntoView(true)
+        $('#'+field.kind+'-input-'+field.esCode).focus()
+      else
+        $('#'+field.kind+'-input-'+field.code).focus()
 
     disableSkippedField: (from_field_id, to_field_id) =>
       layers = window.model.currentCollection().layers()
@@ -334,7 +339,7 @@ onCollections ->
     enableScrollFocusView: =>
       if @field_logics.length > 0
         window.model.newOrEditSite().scrollable(true)
-        if @value() == "" && @kind in ["yes_no", "select_one", "select_many"]
+        if @value() == ""
           @enableSkippedField @esCode
     removeFocusStyle: =>
       $('div').removeClass('focus')
