@@ -338,7 +338,8 @@ onCollections ->
     
     enableScrollFocusView: =>
       if @field_logics.length > 0
-        window.model.newOrEditSite().scrollable(true)
+        if @value() != "" && @value() != null
+          window.model.newOrEditSite().scrollable(true) 
         if @value() == ""
           @enableSkippedField @esCode
     removeFocusStyle: =>

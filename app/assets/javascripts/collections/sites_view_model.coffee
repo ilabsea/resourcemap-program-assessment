@@ -45,7 +45,6 @@ onCollections ->
     @editSite: (site) ->
       initialized = @initMap()
       site.collection.panToPosition(true) unless initialized
-
       site.collection.fetchSitesMembership()
       site.collection.fetchFields =>
         if @processingURL
@@ -161,7 +160,6 @@ onCollections ->
         @editingSite().create_site(@editingSite().toJSON(), callback, callbackError)
 
     @exitSite: ->
-      @editingSite().scrollable(false)
       if !@editingSite()?.inEditMode()
         @performSearchOrHierarchy()
 
