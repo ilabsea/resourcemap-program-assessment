@@ -254,6 +254,7 @@ onCollections ->
     disableField: (field, by_field_id) =>
       field.is_mandatory(false) 
       field.skippedState(true)
+      field.is_blocked_by([])
       unless field.is_mandatory()
         if field.is_blocked_by() == undefined
           field.is_blocked_by([])
@@ -339,7 +340,8 @@ onCollections ->
     
     enableScrollFocusView: =>
       if @field_logics.length > 0
-        window.model.newOrEditSite().scrollable(true)
+        if @value() != "" && @value() != null
+          window.model.newOrEditSite().scrollable(true) 
         if @value() == ""
           @enableSkippedField @esCode
     removeFocusStyle: =>

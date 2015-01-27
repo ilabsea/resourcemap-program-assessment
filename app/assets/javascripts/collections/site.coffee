@@ -346,10 +346,12 @@ onCollections ->
       @prepareCalculatedField()
       window.model.initDatePicker()
       window.model.initAutocomplete()
+      
       for field in @fields()
         field.editing(false)
         field.originalValue = field.value()
         field.setFieldFocus() if field.kind in ["yes_no", "numeric", "select_one", "select_many"]
+      window.model.newOrEditSite().scrollable(false)
 
     exitEditMode: (saved) =>
       @inEditMode(false)
