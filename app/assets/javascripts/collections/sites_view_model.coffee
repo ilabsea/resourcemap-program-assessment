@@ -39,7 +39,7 @@ onCollections ->
         site.prepareCalculatedField()
         window.model.newOrEditSite().scrollable(false)
         for field in window.model.newOrEditSite().fields()
-          if field.skippedState() == false && field.kind in ["yes_no", "numeric", "select_one", "select_many"]
+          if field.skippedState() == false && field.kind == 'yes_no'
             field.setFieldFocus()
         $('#name').focus()
 
