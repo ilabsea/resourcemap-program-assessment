@@ -131,7 +131,7 @@
                 / ko if: collection.readable($data)
                 <!-- ko foreach: layers -->
                 %div
-                  %img{ko(attr: {src: "'#{InsteddRails.url}/theme/images/icons/misc/grey/arrow' + (expanded() ? 'Down' : 'Right') + '.png'"}), style: "position:relative;top:1px;cursor:pointer", width: 11, height: 11}
+                  %img{ko(click: :toggleExpand, attr: {src: "'#{InsteddRails.url}/theme/images/icons/misc/grey/arrow' + (expanded() ? 'Down' : 'Right') + '.png'"}), style: "position:relative;top:1px;cursor:pointer", width: 11, height: 11}
                   %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;color:grey;cursor:pointer'}
                 <!-- ko if: expanded() -->
                 <!-- ko foreach: fields -->
