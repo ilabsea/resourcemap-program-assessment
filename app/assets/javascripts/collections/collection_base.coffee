@@ -98,7 +98,6 @@ onCollections ->
           
         field = site?.properties()[condition.field()]
         kind = condition.kind()
-        console.log "kind : ", kind
         if field is undefined && kind is "yes_no"
           field = false
 
