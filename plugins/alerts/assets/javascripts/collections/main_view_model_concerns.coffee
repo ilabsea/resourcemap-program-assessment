@@ -4,13 +4,17 @@ onCollections ->
       @alertsCount = ko.observable(0)
       @showingAlert= ko.observable(false)
       @alertsCountText = ko.computed => if @alertsCount() == 1 then window.t('javascripts.plugins.alerts.one_alert') else window.t('javascripts.plugins.alerts.n_alerts', {n: @alertsCount()})
+      @alertedSites = ko.observable()
       
-      @onSitesChanged =>      
+      @onSitesChanged =>
         alertsCount = 0
+        alertedSites = []
         bounds = @map.getBounds()
         for siteId, marker of @markers
           if bounds.contains marker.getPosition()
-            alertsCount += 1 if marker.site?.alert == "true"
+            if marker.site?.alert == "true"
+              alertsCount += 1
+              alertedSites.push(marker)
         for clusterId, cluster of @clusters
           if bounds.contains cluster.position
             alertsCount += cluster.data.alert_count
@@ -19,6 +23,10 @@ onCollections ->
       if !@currentCollection()?
         @setThresholds()
       @aliasMethodChain "setMarkerIcon", "Alerts"
+
+    # @setLegendAlerts: =>
+    #   for siteId, marker of @markers
+
 
     @setMarkerIconWithAlerts: (marker, icon) ->
       if marker.site && marker.site.alert == 'true' && icon == 'active'

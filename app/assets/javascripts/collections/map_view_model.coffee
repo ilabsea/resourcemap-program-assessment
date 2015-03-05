@@ -119,6 +119,7 @@ onCollections ->
 
       zoom = @map.getZoom()
       query = @generateQueryParams(bounds, collection_ids, zoom)
+      queryAlertedSites = @generateQueryParams(bounds, collection_ids, 21)
 
       @mapRequestNumber += 1
       currentMapRequestNumber = @mapRequestNumber
@@ -133,6 +134,7 @@ onCollections ->
           @reloadMapSitesAutomatically = true
           @adjustZIndexes()
           @updateMapSitesCount()
+          @getAlertedSites(queryAlertedSites)
           @notifySitesChanged()
 
         callback() if callback && typeof(callback) == 'function'
@@ -142,6 +144,12 @@ onCollections ->
         getCallback()
       else
         $.get "/sites/search.json", query, getCallback
+
+    @getAlertedSites: (query) =>
+      query._alert = true
+      $.get "/sites/search_alert_site.json", query, (json) =>
+        console.log json
+
 
     @generateQueryParams: (bounds, collection_ids, zoom) ->
       ne = bounds.getNorthEast()

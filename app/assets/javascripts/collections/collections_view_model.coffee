@@ -10,6 +10,7 @@ onCollections ->
       @fullscreen = ko.observable(false)
       @fullscreenExpanded = ko.observable(false)
       @selectedQuery = ko.observable()
+      @getAlertConditions()
       @currentSnapshot = ko.computed =>
         @currentCollection()?.currentSnapshot
 
@@ -129,7 +130,8 @@ onCollections ->
       window.adjustContainerSize()
       window.model.updateSitesInfo()
       @showRefindAlertOnMap()
-      @setThresholds()
+      # @setThresholds()
+      @getAlertConditions()
       @filters([])
 
     @editCollection: (collection) -> window.location = "/collections/#{collection.id}"
@@ -189,22 +191,33 @@ onCollections ->
 
     @createCollection: -> window.location = "/collections/new"
 
-    @setThresholds: ->
+    @getAlertConditions: ->
       if @currentCollection()
-        @showingLegend(false)
-        @currentCollection().thresholds([])
-        @currentCollection().showLegend(false) 
-        $.get "/plugin/alerts/collections/#{@currentCollection().id}/thresholds.json", (data) =>  
-          thresholds = @currentCollection().fetchThresholds(data)     
-          @currentCollection().thresholds(@currentCollection().findSitesByThresholds(thresholds))
+        $.get "/plugin/alerts/collections/#{@currentCollection().id}/thresholds.json", (data) =>
+          thresholds = @currentCollection().fetchThresholds(data)
+          @currentCollection().thresholds(thresholds)
       else
-        $.get "/plugin/alerts/thresholds.json", (data) =>
+        $.get "/plugin/alerts/thresholds.json", (data) =>   
           for collection in @collections()
-            if collection.checked() == true && collection.sites().length > 0
+            if collection.checked() == true
               thresholds = collection.fetchThresholds(data)
-              collection.thresholds(collection.findSitesByThresholds(thresholds))
-              thresholds = []
-          @showLegendState()
+              collection.thresholds(thresholds)
+    @setThresholds: ->
+      # if @currentCollection()
+      #   @showingLegend(false)
+      #   @currentCollection().thresholds([])
+      #   @currentCollection().showLegend(false) 
+      #   $.get "/plugin/alerts/collections/#{@currentCollection().id}/thresholds.json", (data) =>  
+      #     thresholds = @currentCollection().fetchThresholds(data)     
+      #     @currentCollection().thresholds(@currentCollection().findSitesByThresholds(thresholds))
+      # else
+      #   $.get "/plugin/alerts/thresholds.json", (data) =>
+      #     for collection in @collections()
+      #       if collection.checked() == true && collection.sites().length > 0
+      #         thresholds = collection.fetchThresholds(data)
+      #         collection.thresholds(collection.findSitesByThresholds(thresholds))
+      #         thresholds = []
+      #     @showLegendState()
 
     @showLegendState: ->
       for collection in @collections()

@@ -27,7 +27,7 @@ onCollections ->
       @updatedAtTimeago = ko.computed => if @updatedAt() then $.timeago(@updatedAt()) else ''
       @loadCurrentSnapshotMessage()
       @loadAllSites()
-      @loadSites() unless window.currentUserIsGuest
+      # @loadSites() unless window.currentUserIsGuest
 
     loadSites: =>
       $.get @sitesUrl(), (data) =>
