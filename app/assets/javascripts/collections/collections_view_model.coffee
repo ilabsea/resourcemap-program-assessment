@@ -94,7 +94,7 @@ onCollections ->
       @currentCollection collection
       @unselectSite() if @selectedSite()
       @exitSite() if @editingSite()   
-      # @currentCollection().checked(true)
+      @currentCollection().checked(true)
       if @showingAlert()
         $.get "/collections/#{@currentCollection().id}/sites_by_term.json", _alert: true, (sites) =>
           @currentCollection().allSites(sites)
