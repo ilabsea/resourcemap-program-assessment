@@ -148,8 +148,19 @@ onCollections ->
     @getAlertedSites: (query) =>
       query._alert = true
       $.get "/sites/search_alert_site.json", query, (json) =>
-        console.log json
+        @setAlertedSites(json)
 
+    @setAlertedSites: (sites) =>
+      # window.model.alertedSites([])
+      @clearAlertedSites()
+      for site in sites
+        collection = window.model.findCollectionById(site.collection_id)
+        collection.alertedSites.push(new Site(collection, site))
+        # window.model.alertedSites.push(new Site(collection, site))
+
+    @clearAlertedSites: =>
+      for collection in window.model.collections()
+        collection.alertedSites([])
 
     @generateQueryParams: (bounds, collection_ids, zoom) ->
       ne = bounds.getNorthEast()

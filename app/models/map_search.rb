@@ -49,6 +49,7 @@ class MapSearch
 
   def sites_json
     return {} if @collection_ids.empty?
+    set_bounds_filter
     apply_queries
     sort_list = @sort_list
     if @sort
