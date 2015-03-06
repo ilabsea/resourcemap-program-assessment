@@ -2,6 +2,9 @@ onCollections ->
   class @MapViewModel
     @constructor: ->
       @showingMap = ko.observable(true)
+      @showingLegend = ko.observable(false)
+      @toggleLegend = ko.observable(false)
+
       @mapSitesCount = ko.observable(0)
       @mapSitesCountText = ko.computed =>
         sitesText = if @mapSitesCount() == 1 then window.t('javascripts.collections.site') else window.t('javascripts.collections.sites')
@@ -22,7 +25,6 @@ onCollections ->
 
       $.each @collections(), (idx) =>
         @collections()[idx].checked.subscribe (newValue) =>
-          @setThresholds()
           @reloadMapSites()
 
       @showingMap.subscribe =>
@@ -145,22 +147,123 @@ onCollections ->
       else
         $.get "/sites/search.json", query, getCallback
 
+    @showLegend: =>
+      noAlert = true
+      for collection in window.model.collections()
+        noThreshold = true
+        if collection.checked()
+          for threshold in collection.thresholds()
+            if threshold.alertedSitesNum() > 0
+              threshold.showingThreshold(true)
+              collection.showingCollectionAlert(true)
+              noThreshold = false
+            else
+              threshold.showingThreshold(false)
+            
+            if noThreshold
+              collection.showingCollectionAlert(false)
+
+          if collection.showingCollectionAlert()
+            window.model.showingLegend(true)
+            noAlert = false
+      if noAlert
+        window.model.showingLegend(false)
+
+    
+    @toggleAlertLegend: ->
+      if @toggleLegend() == true
+        @toggleLegend(false)
+      else
+        @toggleLegend(true)
+    
     @getAlertedSites: (query) =>
       query._alert = true
       $.get "/sites/search_alert_site.json", query, (json) =>
         @setAlertedSites(json)
 
     @setAlertedSites: (sites) =>
-      # window.model.alertedSites([])
       @clearAlertedSites()
       for site in sites
         collection = window.model.findCollectionById(site.collection_id)
         collection.alertedSites.push(new Site(collection, site))
-        # window.model.alertedSites.push(new Site(collection, site))
 
+      @drawLegend()
+      @showLegend()
+    
     @clearAlertedSites: =>
       for collection in window.model.collections()
         collection.alertedSites([])
+        for threshold in collection.thresholds()
+          threshold.alertedSitesNum(0)
+
+    @drawLegend: =>
+      for collection in window.model.collections()
+        @compareSitePropertyWithAlertCondition(collection.alertedSites(), collection.thresholds())
+
+    @compareSitePropertyWithAlertCondition: (sites, thresholds) =>
+      for site in sites
+        for threshold in thresholds
+          if threshold.isAllSite() == "false" && !@isThresholdSite(site, threshold.alertSites())
+            continue
+          alertSite = @operateWithCondition(threshold.conditions(), site, threshold.isAllCondition())
+          
+          if alertSite
+            # console.log threshold.propertyName()+" : "+alertSite.name()
+            threshold.alertedSitesNum(threshold.alertedSitesNum()+1)
+            break
+
+    @isThresholdSite: (site, thresholdSites) =>
+      for t_site in thresholdSites
+        if site.id() == t_site.collection.id
+          return true
+
+      return false
+
+    @operateWithCondition: (conditions, site, isAllCondition) =>
+      b = true
+      for key, condition of conditions
+        operator = condition.op().code()
+        if condition.valueType().code() is 'percentage'
+          percentage = (site.properties()[condition.compareField()] * condition.value())/100
+          compareField = percentage
+        else
+          compareField = condition.value()
+          
+        field = site?.properties()[condition.field()]
+        kind = condition.kind()
+        if field is undefined && kind is "yes_no"
+          field = false
+
+        switch operator
+          when "eq","eqi"
+            if field is compareField
+              b = true
+            else
+              b = false
+          when "gt"
+            if field > compareField
+              b = true
+            else
+              b = false   
+          when "lt"
+            if field < compareField
+              b = true
+            else
+              b = false
+          when "con"
+            if typeof field != 'undefined' && field.toLowerCase().indexOf(compareField.toLowerCase()) != -1
+              b = true
+            else
+              b = false                   
+          else
+            null
+        if isAllCondition == "true"
+          return null if b == false            
+        else
+          return site if b == true            
+          return null if b == false && parseInt(key) == conditions.length-1
+
+      return site    
 
     @generateQueryParams: (bounds, collection_ids, zoom) ->
       ne = bounds.getNorthEast()
