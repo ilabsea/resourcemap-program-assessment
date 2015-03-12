@@ -4,6 +4,7 @@ onCollections ->
       @showingMap = ko.observable(true)
       @showingLegend = ko.observable(false)
       @toggleLegend = ko.observable(false)
+      @loadingLegend = ko.observable(false)
 
       @mapSitesCount = ko.observable(0)
       @mapSitesCountText = ko.computed =>
@@ -121,7 +122,7 @@ onCollections ->
 
       zoom = @map.getZoom()
       query = @generateQueryParams(bounds, collection_ids, zoom)
-      queryAlertedSites = @generateQueryParams(bounds, collection_ids, 21)
+      queryAlertedSites = @generateQueryParams(bounds, collection_ids, zoom)
 
       @mapRequestNumber += 1
       currentMapRequestNumber = @mapRequestNumber
@@ -177,18 +178,46 @@ onCollections ->
         @toggleLegend(true)
     
     @getAlertedSites: (query) =>
+      window.model.loadingLegend(true)
       query._alert = true
       $.get "/sites/search_alert_site.json", query, (json) =>
         @setAlertedSites(json)
 
     @setAlertedSites: (sites) =>
       @clearAlertedSites()
+      bounds = window.model.map.getBounds()
       for site in sites
-        collection = window.model.findCollectionById(site.collection_id)
-        collection.alertedSites.push(new Site(collection, site))
+        latlng = new google.maps.LatLng(site.lat_analyzed,site.lng_analyzed)
+        isMapContainedSite = @isMapContainedSite(site, latlng, bounds)
+        if isMapContainedSite == true
+          collection = window.model.findCollectionById(site.collection_id)
+          collection.alertedSites.push(new Site(collection, site))
+
+      isMapContainedSite = false
+      if window.model.selectedSite()?.alert() == true
+        for site in window.model.currentCollection().alertedSites()
+          if parseInt(site.id()) == parseInt(window.model.selectedSite().id())
+            isMapContainedSite = true
+            break
+        if isMapContainedSite == false
+          window.model.currentCollection().alertedSites.push(window.model.selectedSite())
 
       @drawLegend()
       @showLegend()
+      window.model.loadingLegend(false)
+    
+    @isMapContainedSite: (site, latlng, bounds) =>
+      isContainInMap = false
+      
+      for siteId, marker of window.model.markers
+        if bounds.contains(marker.getPosition()) && parseInt(siteId) == parseInt(site.id)
+          return true
+
+      for clusterId,cluster of window.model.clusters
+        if bounds.contains(cluster.position) && cluster.bounds.contains(latlng)
+          return true
+
+      return isContainInMap
     
     @clearAlertedSites: =>
       for collection in window.model.collections()
