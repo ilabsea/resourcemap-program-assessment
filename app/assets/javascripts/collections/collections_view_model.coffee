@@ -84,6 +84,8 @@ onCollections ->
       alert 'delete'
 
     @enterCollection: (collection) ->
+      if @showingAlert()
+        return if !collection.checked()       
       @queryParams = $.url().param()
 
       # collection may be a collection object (in most of the cases)
