@@ -136,7 +136,7 @@
       %input{"data-bind" => "checked: isNotify", :value => "true", :name => "notification", :type => "radio"}
       %label= t('views.plugins.alerts.form.notify_these_people')
       %br
-      .middlebuttons{ko(visible: 'isNotify() == "true"' ), :style => "height: 360px;"}
+      .middlebuttons{ko(visible: 'isNotify() == "true"' )}
         .middlebuttons.w30{:style => "float: left;"}
           = t('views.plugins.alerts.form.send_emails_to')
           %p.list-box
@@ -166,29 +166,29 @@
         .clear
         %label{ko(css: {error: 'notificationMessageError'})}= t('views.plugins.alerts.form.message')
         %br/
-        %label.smalltext
+        .smalltext{style: 'float;left'}
           = t('views.plugins.alerts.form.use_the_following_expression')
           .template_text
             [
-            %span{ko(click: 'addSiteNameToMessageNotification')} Site Name
+            %span{ko(click: 'addSiteNameToMessageNotification')} Site Name                                               
             ]
             <!-- ko foreach: $root.fields -->
             [
             %span{ ko(text: :code, click: '$parent.addFieldNameToMessageNotification') }
             ]
             <!-- /ko -->
+        
         %textarea.ux-wajbar.w60{ko(value: :messageNotification, valueUpdate: :afterkeydown), placeholder: t('views.plugins.alerts.form.message_template'), maxlength: 140, rows: 4 }
-        .clear
       %hr/
-
-      .bottom-actions
+      %br/
+      .bottom-actions{style: 'float;left'}
         %button.white{ ko(click: '$root.saveThreshold', enable: :valid) }= t('views.plugins.alerts.form.save')
         %a.tgrey{ ko(click: '$root.cancelThreshold'), href: 'javascript:void(0)' }= t('views.plugins.alerts.form.cancel')
         <!-- ko if: !valid() -->
         %span{ ko(text: 'error()'), style: 'color:red;margin-left:20px' }= t('views.plugins.alerts.form.cannot_save')
         <!-- /ko -->
     <!-- /ko -->
-
+    .clear
     %br/
     <!-- /ko -->
 
