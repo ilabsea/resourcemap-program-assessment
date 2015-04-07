@@ -3,7 +3,7 @@ onQueries ->
     constructor: (collectionId) ->
       @collectionId = collectionId
       @newQuery = ko.observable()
-      @newCondition = ko.observable()
+      @newCondition = ko.observable(new Condition)
       @isEditing = ko.observable(false)
       @layers = ko.observableArray()
       @queries = ko.observableArray()
@@ -59,7 +59,11 @@ onQueries ->
         @currentQuery().isRefineQuery(true)
 
     saveCondition: =>
+      @nextId =  @currentQuery().conditions()?.next_id || @currentQuery().conditions().length + 1
       condition = new Condition()
+      condition.id @nextId
+      @nextId++
+
       condition.fieldId(@expandedRefineProperty())
       field = @findFieldById(@expandedRefineProperty())
       if field?
@@ -75,6 +79,7 @@ onQueries ->
 
       condition.operator(@expandedRefinePropertyOperator())
       @currentQuery().conditions.push(condition)
+      @currentQuery().conditions().next_id = @nextId
       @toggleRefineProperty(@expandedRefineProperty()) unless @expandedRefineProperty() == 'location_missing'
       condition
 

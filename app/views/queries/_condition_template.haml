@@ -1,6 +1,5 @@
 /ko if: field()
 /ko if: field().kind == 'text' || field().kind == 'user' || field().kind == 'email' || field().kind == 'phone'
-%span{ko(text: 'field().name')}
 /ko if: operator() == '='
 %span start with
 %span{ko(text: :fieldValue)}

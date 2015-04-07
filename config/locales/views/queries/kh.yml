@@ -4,6 +4,7 @@ kh:
       title: "សំណួរ"
       description: "គ្រប់គ្រងសំណួររបស់ទិន្នន័យតំបន់នេះ"
       name: "ឈ្មោះ"
+      formular: ៉រូបមន្ត៉ 
       refine_query: "បង្កេីតលក្ខខណ្ឌ"
       properties: "លក្ខណៈសម្បត្តិ"
       edit: "កែសម្រួល"

@@ -4,6 +4,7 @@ en:
       title: "Queries"
       description: "Manage queries of this collection's sites"
       name: "Name"
+      formular: "formular"
       refine_query: "Refine query"
       properties: "Properties"
       edit: "Edit"

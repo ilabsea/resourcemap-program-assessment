@@ -40,10 +40,17 @@
         %br
         /ko foreach :conditions
         .box.grey.w60{style: 'height:15px; margin-bottom:7px'}
+          %span{ko(text: :id)}
           = render 'queries/condition_template'
           .rightbuttons
             %button.fclose{ ko(click: '$parent.removeCondition'), title: 'Remove condition' }
         //ko        
+
+        .middlebuttons
+        %label= t('views.queries.formular')
+        %br 
+        %textarea{style: 'width:240px; height: 20px'}
+        %br
           
         %button.farrow{ko(click: '$root.refineQuery'), title: 'Refine query' }
           = t('views.queries.refine_query') 
@@ -75,7 +82,7 @@
           %span    
             /ko if: $index() == $parent.conditions().length-1 && $parent.conditions().length > 1
             %span and
-            //ko          
+            //ko    
             = render 'queries/condition_template'
             /ko if: $index() < $parent.conditions().length-1 && $parent.conditions().length > 1
             %span ,
@@ -100,16 +107,22 @@
           %br
           %br
           %div
-            %div
-              /ko if: conditions().length > 0             
-              = t('views.queries.conditions.description')
-              %ul          
-                /ko foreach :conditions
-                %li
-                  = render 'queries/condition_template'
-                  %button.premove{ ko(click: '$parent.removeCondition'), title: 'Remove condition' }
-                //ko
-              //ko                
+            = t('views.queries.conditions.description')
+            %br
+            %br
+            /ko foreach :conditions
+            .box.grey{style: 'height:15px; margin-bottom:7px; width: 10px; float: left'}
+              %span{ko(text: :id)}
+            .box.grey.w60{style: 'height:15px; margin-bottom:7px; margin-left: 40px;'}
+              = render 'queries/condition_template'
+              .rightbuttons
+                %button.fclose{ ko(click: '$parent.removeCondition'), title: 'Remove condition' }
+            //ko   
+            .middlebuttons
+            %label= t('views.queries.formular')
+            %br 
+            %textarea{style: 'width:240px; height: 20px'}
+            %br             
             
             %button.farrow{ko(click: '$root.refineQuery'), title: 'Refine query' } 
               = t('views.queries.refine_query')              

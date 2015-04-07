@@ -1,6 +1,7 @@
 onCollections ->
   class @QueryCondition
   	constructor: (data) ->
+      @id = data?.id
       @fieldId = data?.field_id
       @operator = data?.operator
       @collection = window.model.currentCollection()
