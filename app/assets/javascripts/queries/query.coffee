@@ -12,7 +12,7 @@ onQueries ->
 
       @nameError = ko.computed => if @hasName()  then null else "the query's name is missing"
       @queryError = ko.computed => if @conditions().length > 0  then null else "the query must have at least one condition refined"
-      @formalaError = ko.computed => if @hasFormula() then null else "the formula is missing"
+      @formalaError = ko.computed => @hasFormulaError() || @LogicalOperatorError()
       @error = ko.computed => @nameError() || @queryError() || @formalaError()
       @valid = ko.computed => !@error()
       @isEditing = ko.observable(false)
@@ -22,6 +22,10 @@ onQueries ->
 
     hasFormula: => $.trim(@formula()).length > 0
 
+    hasFormulaError: => if @hasFormula() then null else "the formula is missing"
+
+    LogicalOperatorError: => if @isLogicalOperatorExpr().status then null else "the formula #{@isLogicalOperatorExpr().msg}"
+    
     addCondition: =>
       @conditions.push(new Condition)
 
@@ -40,24 +44,34 @@ onQueries ->
       m = undefined
       while (m = tokenRegExp.exec(@formula())) != null
         results.push m[1]
-      console.log("results : ", results)
       results
 
-    parse: =>
+    condition_ids: =>
+      ids = []
+      for condition in @conditions()
+        ids.push(parseInt(condition.id()))
+      ids
+
+    isLogicalOperatorExpr: =>
       tokens = @tokenize(@formula())
       position = 0
+      ids = @condition_ids()
 
       peek = ->
         tokens[position]
 
-      parsePrimaryExpr = ->
+      isValidNumber = (t)->
+        if t != undefined && t.match(/^[0-9]+$/) != null
+          ids.indexOf(parseInt(t)) > -1 
+
+      isPrimaryExpr = ->
         t = peek()
-        if t != undefined && t.match(/^[0-9]+$/) != null #isNumber
+        if isValidNumber(t)
           position++
           return {status: true, msg: "number"}
         else if t == '('
           position++
-          expr = parseExpr()
+          expr = isExpr()
           if peek() != ')'
             expr = {status: false, msg: "expected )"}
           else 
@@ -66,25 +80,26 @@ onQueries ->
         else
           return {status: false, msg:"expected a number, or parentheses"}
 
-      parseExpr = ->
-        expr = parsePrimaryExpr()
+      isExpr = ->
+        expr = isPrimaryExpr()
         t = peek()
+        if t != undefined && t.match(/^[A-Za-z]+$/) != null
+          t = t.toUpperCase()
         while t == "AND" or t == "OR"
           position++
-          nextExpr = parsePrimaryExpr()
+          nextExpr = isPrimaryExpr()
           if !expr.status || !nextExpr.status
-            expr = {status : false, msg: "Expected number before or after \'"+ t + "\'"}
+            expr = {status : false, msg: "expected number before or after \'"+ t + "\'"}
             break
           expr = {status: true, msg: ""}
           t = peek()
         expr
 
-      result = parseExpr()
+      result = isExpr()
 
       if position != tokens.length
-        result = {status: false, msg: "unexpected \'" + peek() + "\'"}
+        result = {status: false, msg: "has unexpected \'" + peek() + "\'"}
 
-      console.log "result : ", result
       result
 
 

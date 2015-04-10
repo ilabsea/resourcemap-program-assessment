@@ -46,12 +46,14 @@
           .rightbuttons
             %button.fclose{ ko(click: '$parent.removeCondition'), title: 'Remove condition' }
         //ko  
-
+        /ko if : conditions().length > 0 
         .middlebuttons
-        %label{ko(css: {error: 'formulaError'})}= t('views.queries.formula')
+        %label{ko(css: {error: 'formalaError'})}
+          = t('views.queries.formula')
         %br 
         %textarea{ko(value: :formula), style: 'width:240px; height: 20px'}
-        %br
+        %br  
+        //ko
         %button.farrow{ko(click: '$root.refineQuery'), title: 'Refine query' }
           = t('views.queries.refine_query') 
         
@@ -116,13 +118,16 @@
             .box.grey.w60{style: 'height:15px; margin-bottom:7px; margin-left: 40px;'}
               = render 'queries/condition_template'
               .rightbuttons
-                %button.fclose{ ko(click: '$parent.removeCondition'), title: 'Remove condition' }
-            //ko   
+                %button.fclose{ko(click: '$parent.removeCondition'), title: 'Remove condition' }
+            //ko 
+            /ko if : conditions().length > 0 
             .middlebuttons
-            %label= t('views.queries.formula')
+            %label{ko(css: {error: 'formalaError'})}
+              = t('views.queries.formula')
             %br 
-            %textarea{ko(value: :formula, event: {change: :parse}), style: 'width:240px; height: 20px'}
-            %br   
+            %textarea{ko(value: :formula), style: 'width:240px; height: 20px'}
+            %br  
+            //ko 
             
             %button.farrow{ko(click: '$root.refineQuery'), title: 'Refine query' } 
               = t('views.queries.refine_query')              
