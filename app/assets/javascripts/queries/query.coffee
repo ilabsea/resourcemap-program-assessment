@@ -85,7 +85,7 @@ onQueries ->
         t = peek()
         if t != undefined && t.match(/^[A-Za-z]+$/) != null
           t = t.toUpperCase()
-        while t == "AND" or t == "OR"
+        while t == "AND" || t == "OR"
           position++
           nextExpr = isPrimaryExpr()
           if !expr.status || !nextExpr.status
