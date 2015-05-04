@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150408064018) do
+ActiveRecord::Schema.define(:version => 20150421040513) do
 
   create_table "activities", :force => true do |t|
     t.integer  "user_id"
@@ -182,10 +182,10 @@ ActiveRecord::Schema.define(:version => 20150408064018) do
     t.text     "conditions"
     t.boolean  "isAllSite"
     t.boolean  "isAllCondition"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.datetime "created_at",                           :null => false
+    t.datetime "updated_at",                           :null => false
     t.integer  "collection_id"
-    t.string   "formula"
+    t.text     "formula",        :limit => 2147483647
   end
 
   create_table "reminders", :force => true do |t|

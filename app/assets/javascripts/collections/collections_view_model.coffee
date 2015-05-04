@@ -48,6 +48,8 @@ onCollections ->
             id = @currentCollection().findSiteIdByName(condition.field_value)
             @filters.push(new FilterBySiteProperty(field, condition.operator, condition.field_value, id))
 
+      console.log 'filters : ', @filters()
+
     @goToRoot: ->
       @filters([])
       @selectedQuery(null)

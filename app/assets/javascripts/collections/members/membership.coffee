@@ -118,8 +118,10 @@ class @Membership extends Expandable
         $.get "#{@searchSitesUrl()}?term=#{@customSite()}", { term: @customSite() }, (data) ->
           # Check that a site with that name exists
           _.each data, (s) ->
+            console.log 's : ', s
             if s.name == _self.customSite()
               new_permission = new SiteCustomPermission s.id, s.name, true, true, _self
+              console.log 'new_permission : ', new_permission
               _self.sitesWithCustomPermissions.push new_permission
               _self.customSite ""
               _self.saveCustomSitePermissions()

@@ -79,7 +79,6 @@ class SitesController < ApplicationController
 
   def search
     zoom = params[:z].to_i
-
     search = MapSearch.new params[:collection_ids], user: current_user
 
     search.zoom = zoom
@@ -95,6 +94,7 @@ class SitesController < ApplicationController
     search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :updated_since, :search, :location_missing, :hierarchy_code, :selected_hierarchies, :_alert)
 
     search.apply_queries
+    
     render json: search.results
   end
 
