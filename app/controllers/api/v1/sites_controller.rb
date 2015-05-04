@@ -27,7 +27,7 @@ module Api::V1
     end
 
     def update
-      site.attributes = sanitized_site_params.merge(user: current_user)
+      site.attributes = sanitized_site_params(false).merge(user: current_user)
       if site.valid?
         site.save!
         if params[:photosToRemove]
@@ -74,7 +74,7 @@ module Api::V1
       parameters["properties"] = decoded_properties
       parameters
     end
-    
+
     def build_site
       site = collection.is_site_exist? params[:site][:device_id], params[:site][:external_id] if params[:site][:device_id]
       if site
