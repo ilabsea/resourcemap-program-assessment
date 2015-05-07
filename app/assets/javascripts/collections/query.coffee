@@ -4,4 +4,5 @@ onCollections ->
       @id = data?.id
       @name = data?.name
       @formula = data?.formula
+      @parse = data?.parse
       @conditions = data?.conditions #$.map(data?.conditions, (x) => new QueryCondition(x))

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150421040513) do
+ActiveRecord::Schema.define(:version => 20150506080524) do
 
   create_table "activities", :force => true do |t|
     t.integer  "user_id"
@@ -186,6 +186,7 @@ ActiveRecord::Schema.define(:version => 20150421040513) do
     t.datetime "updated_at",                           :null => false
     t.integer  "collection_id"
     t.text     "formula",        :limit => 2147483647
+    t.text     "parse"
   end
 
   create_table "reminders", :force => true do |t|
@@ -264,6 +265,8 @@ ActiveRecord::Schema.define(:version => 20150421040513) do
     t.string   "location_mode",  :limit => 10,                                :default => "automatic"
     t.string   "id_with_prefix"
     t.string   "uuid"
+    t.string   "device_id"
+    t.string   "external_id"
   end
 
   create_table "sites_permissions", :force => true do |t|

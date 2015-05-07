@@ -79,6 +79,9 @@ class SitesController < ApplicationController
 
   def search
     zoom = params[:z].to_i
+
+    p 'search  : ', params
+
     search = MapSearch.new params[:collection_ids], user: current_user
 
     search.zoom = zoom

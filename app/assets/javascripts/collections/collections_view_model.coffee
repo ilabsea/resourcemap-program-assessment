@@ -15,43 +15,90 @@ onCollections ->
 
     @findCollectionById: (id) -> (x for x in @collections() when x.id == parseInt id)[0]
     
-    @refineFilters: ->
-      @filters([])
-      conditions = @selectedQuery()?.conditions ? []
-      for condition in conditions
-        if condition.field_id == 'update'
-          if condition.field_value == 'last_hour'
-            @filters.push(new FilterByLastHour())
-          else if condition.field_value == 'last_day'
-            @filters.push(new FilterByLastDay())
-          else if condition.field_value == 'last_week'
-            @filters.push(new FilterByLastWeek())
-          else if condition.field_value == 'last_month'
-            @filters.push(new FilterByLastMonth())
-        else if condition.field_id == 'location_missing'
-          @filters.push(new FilterByLocationMissing())
-        else
-          field = @currentCollection().findFieldByEsCode(condition.field_id)
-          if field.kind == 'text' || field.kind == 'phone' || field.kind == 'email' || field.kind == 'user'
-            @filters.push(new FilterByTextProperty(field, condition.operator, condition.field_value))
-          else if field.kind == 'numeric'
-            @filters.push(new FilterByNumericProperty(field, condition.operator, condition.field_value))
-          else if field.kind == 'yes_no'
-            @filters.push(new FilterByYesNoProperty(field, condition.field_value))
-          else if field.kind == 'date'
-            @filters.push(new FilterByDateProperty(field, condition.operator, condition.field_date_from, condition.field_date_to))
-          else if field.kind == 'hierarchy'
-            @filters.push(new FilterByHierarchyProperty(field, "under", condition.field_value))
-          else if field.kind == 'select_one' || field.kind == 'select_many'
-            @filters.push(new FilterBySelectProperty(field, condition.field_value))
-          else if field.kind == 'site'
-            id = @currentCollection().findSiteIdByName(condition.field_value)
-            @filters.push(new FilterBySiteProperty(field, condition.operator, condition.field_value, id))
+    @tokenize: (str) ->
+      results = []
+      tokenRegExp = /\s*([A-Za-z]+|[0-9]+|\S)\s*/g
+      m = undefined
+      while (m = tokenRegExp.exec(str)) != null
+        results.push m[1]
+      results
 
-      console.log 'filters : ', @filters()
+    @refineFilters: ->
+      @filters({})
+      conditions = @selectedQuery()?.conditions ? []
+      formula = @selectedQuery()?.formula ? ""
+      collection = @currentCollection()
+
+      tokens = @tokenize(formula)
+      position = 0
+
+      peek = ->
+        tokens[position]
+
+      refineCondition= (token_id)->
+        for condition in conditions
+          if condition.id == token_id
+            if condition.field_id == 'update'
+              if condition.field_value == 'last_hour'
+                return new FilterByLastHour()
+              else if condition.field_value == 'last_day'
+                return new FilterByLastDay()
+              else if condition.field_value == 'last_week'
+                return new FilterByLastWeek()
+              else if condition.field_value == 'last_month'
+                return new FilterByLastMonth()
+            else if condition.field_id == 'location_missing'
+              return new FilterByLocationMissing()
+            else
+              field = collection.findFieldByEsCode(condition.field_id)
+              if field.kind == 'text' || field.kind == 'phone' || field.kind == 'email' || field.kind == 'user'
+                return new FilterByTextProperty(field, condition.operator, condition.field_value)
+              else if field.kind == 'numeric'
+                return new FilterByNumericProperty(field, condition.operator, condition.field_value)
+              else if field.kind == 'yes_no'
+                return new FilterByYesNoProperty(field, condition.field_value)
+              else if field.kind == 'date'
+                return new FilterByDateProperty(field, condition.operator, condition.field_date_from, condition.field_date_to)
+              else if field.kind == 'hierarchy'
+                return new FilterByHierarchyProperty(field, "under", condition.field_value)
+              else if field.kind == 'select_one' || field.kind == 'select_many'
+                return new FilterBySelectProperty(field, condition.field_value)
+              else if field.kind == 'site'
+                id = @currentCollection().findSiteIdByName(condition.field_value)
+                return new FilterBySiteProperty(field, condition.operator, condition.field_value, id)
+
+      parsePrimaryExpr = ->
+        t = peek()
+        if t != undefined && t.match(/^[0-9]+$/) != null
+          position++
+          expr = refineCondition(t)
+          return expr
+        else if t == '('
+          position++
+          expr = parseExpr()
+          position++
+          return expr
+
+      parseExpr = ->
+        expr = parsePrimaryExpr()
+        t = peek()
+        if t != undefined && t.match(/^[A-Za-z]+$/) != null
+          t = t.toLowerCase()
+        while t == "and" || t == "or"
+          position++
+          nextExpr = parsePrimaryExpr()
+          expr = {left: expr, right: nextExpr, op: t}
+          t = peek()
+        expr
+
+      result = parseExpr()
+
+      console.log 'result : ', result
+
+      @filters(result)
 
     @goToRoot: ->
-      @filters([])
+      @filters({})
       @selectedQuery(null)
       @queryParams = $.url().param()
       @currentCollection(null)
@@ -132,7 +179,7 @@ onCollections ->
       window.model.updateSitesInfo()
       @showRefindAlertOnMap()
       @setThresholds()
-      @filters([])
+      @filters({})
 
     @editCollection: (collection) -> window.location = "/collections/#{collection.id}"
 
