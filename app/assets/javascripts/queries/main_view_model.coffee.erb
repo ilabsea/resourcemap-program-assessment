@@ -133,7 +133,6 @@ onQueries ->
     saveQuery: =>
       @isEditing(false)
       json = {query: @currentQuery().toJSON()}
-      console.log 'json : ', json
       if @currentQuery().id()
         json._method = 'put'
         $.post "/collections/#{@collectionId}/queries/#{@currentQuery().id()}.json", json, @saveQueryCallback

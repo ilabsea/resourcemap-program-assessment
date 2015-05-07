@@ -98,7 +98,6 @@ module SearchBase
 
   def where(properties = {})
     properties.each do |es_code, value|
-
       field = check_field_exists es_code
       
       if value.is_a? String

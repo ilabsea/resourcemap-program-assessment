@@ -1,12 +1,9 @@
 onQueries ->
   class @Query
     constructor: (data) ->
-      console.log 'data : ', data
       @id = ko.observable data?.id
       @name = ko.observable data?.name
       @formula = ko.observable data?.formula
-
-      @parse = data?.parse
 
       @conditions = if data?.conditions
                       ko.observableArray $.map(data.conditions, (x) => new Condition(x))
@@ -27,7 +24,7 @@ onQueries ->
 
     hasFormulaError: => if @hasFormula() then null else "the formula is missing"
 
-    LogicalOperatorError: => if @parseLogicalOperatorExpr().status then null else "the formula #{@parseLogicalOperatorExpr().msg}"
+    LogicalOperatorError: => if @isLogicalOperatorExpr().status then null else "the formula #{@isLogicalOperatorExpr().msg}"
     
     addCondition: =>
       @conditions.push(new Condition)
@@ -35,13 +32,12 @@ onQueries ->
     removeCondition: (condition) =>
       @conditions.remove(condition)
 
-    toJSON: ()=>
+    toJSON: =>
       id: @id()
       name: @name()
       formula: @formula()
-      parse: @parseLogicalOperatorExpr()
       conditions: $.map(@conditions(), (x) -> x.toJSON())
-    
+
     tokenize: =>
       results = []
       tokenRegExp = /\s*([A-Za-z]+|[0-9]+|\S)\s*/g
@@ -56,7 +52,7 @@ onQueries ->
         ids.push(parseInt(condition.id()))
       ids
 
-    parseLogicalOperatorExpr: =>
+    isLogicalOperatorExpr: =>
       tokens = @tokenize(@formula())
       position = 0
       ids = @condition_ids()
@@ -68,43 +64,41 @@ onQueries ->
         if t != undefined && t.match(/^[0-9]+$/) != null
           ids.indexOf(parseInt(t)) > -1 
 
-      parsePrimaryExpr = ->
+      isPrimaryExpr = ->
         t = peek()
         if isValidNumber(t)
           position++
-          return new Parse({status: true, msg: "number", condition_id: t})
+          return {status: true, msg: "number", type: "number", value: t}
         else if t == '('
           position++
-          expr = parseExpr()
+          expr = isExpr()
           if peek() != ')'
-            expr = new Parse({status: false, msg: "expected )"})
+            expr = {status: false, msg: "expected )"}
           else 
             position++
           return expr
         else
-          return new Parse({status: false, msg:"expected a number, or parentheses"})
+          return {status: false, msg:"expected a number, or parentheses"}
 
-      parseExpr = ->
-        expr = parsePrimaryExpr()
+      isExpr = ->
+        expr = isPrimaryExpr()
         t = peek()
         if t != undefined && t.match(/^[A-Za-z]+$/) != null
           t = t.toUpperCase()
         while t == "AND" || t == "OR"
           position++
-          nextExpr = parsePrimaryExpr()
+          nextExpr = isPrimaryExpr()
           if !expr.status || !nextExpr.status
-            expr = new Parse({status : false, msg: "expected number before or after \'"+ t + "\'"})
+            expr = {status : false, msg: "expected number before or after \'"+ t + "\'"}
             break
-          expr = new Parse({status: true, msg: "", logical_op: t, left: expr, right: nextExpr})
+          expr = {status: true, msg: "", type: t, left: expr, right: nextExpr}
           t = peek()
         expr
 
-      result = parseExpr()
+      result = isExpr()
 
       if position != tokens.length
-        result = new Parse({status: false, msg: "has unexpected \'" + peek() + "\'"})
-
-      console.log 'result : ', result
+        result = {status: false, msg: "has unexpected \'" + peek() + "\'"}
 
       result
 

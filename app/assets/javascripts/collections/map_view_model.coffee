@@ -155,7 +155,6 @@ onCollections ->
         z: zoom
         _alert: @showingAlert() if @showingAlert()
         collection_ids: collection_ids
-        filters: @filters()
 
       query.selected_hierarchies = @selectedHierarchy().hierarchyIds() if @selectedHierarchy()
       query.hierarchy_code = window.model.groupBy().esCode if @selectedHierarchy() && window.model.groupBy().esCode
@@ -163,16 +162,7 @@ onCollections ->
       query.exclude_id = @selectedSite().id() if @selectedSite()?.id()
       query.search = @lastSearch() if @lastSearch()
 
-      # console.log 'filter : ', query 
-
-      $.map @filters() , (filter) ->
-        console.log 'filter : ', filter()
-        filter().setQueryParams(query) 
-
-
-      # for filter in @filters()
-      #   filter.setQueryParams(query) 
-        
+      filter.setQueryParams(query) for filter in @filters()
 
       query
 
