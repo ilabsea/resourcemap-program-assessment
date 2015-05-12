@@ -38,15 +38,15 @@ module SearchBase
     query_key = field.es_code
 
     if field.kind == 'yes_no'
-      @search.filter :term, query_key => Field.yes?(value)
+      add_filter key: query_key, value: Field.yes?(value), type: :term
     elsif field.kind == 'date'
       date_field_range(query_key, validated_value)
     elsif field.kind == 'hierarchy' and value.is_a? Array
-      @search.filter :terms, query_key => validated_value
+      add_filter key: query_key, value: validated_value, type: :terms
     elsif field.select_kind?
-      @search.filter :term, query_key => validated_value
+      add_filter key: query_key, value: validated_value, type: :term
     else
-      @search.filter :term, query_key => value
+      add_filter key: query_key, value: value, type: :term
     end
 
     self
@@ -54,7 +54,8 @@ module SearchBase
 
   def under(field, value)
     if value.blank?
-      @search.filter :missing, {field: field.es_code}
+      # @search.filter :missing, {field: field.es_code}
+      add_filter key: field, value: field.es_code, type: :missing
       return self
     end
 
@@ -62,14 +63,15 @@ module SearchBase
     value = field.descendants_of_in_hierarchy value, @use_codes_instead_of_es_codes
     validated_value = field.apply_format_query_validation(value, @use_codes_instead_of_es_codes)
     query_key = field.es_code
-    @search.filter :terms, query_key => validated_value
+    # @search.filter :terms, query_key => validated_value
+    add_filter key: query_key, value: validated_value, type: :terms
     self
   end
 
   def starts_with(field, value)
     validated_value = field.apply_format_query_validation(value, @use_codes_instead_of_es_codes)
     query_key = field.es_code
-    add_prefix key: query_key, value: validated_value
+    add_filter key: query_key, value: validated_value, type: :prefix
     self
   end
 
@@ -123,7 +125,7 @@ module SearchBase
     date_from = valid_value[:date_from]
     date_to = valid_value[:date_to]
 
-    @search.filter :range, key => {gte: date_from, lte: date_to}
+    add_filter key: key, value: {gte: date_from, lte: date_to}, type: :range
     self
   end
 
@@ -144,7 +146,7 @@ module SearchBase
   end
 
   def updated_since_query(time)
-    @search.filter :range, updated_at: {gte: Site.format_date(time)}
+    add_filter key: :updated_at, value: {gte: Site.format_date(time)}, type: :range
     self
   end
 
@@ -205,7 +207,7 @@ module SearchBase
   end
 
   def location_missing
-    @search.filter :not, {exists: {field: :location}}
+    add_filter key: :exists, value: {field: :location}, type: :not
     self
   end
 
@@ -218,7 +220,32 @@ module SearchBase
     end
   end
 
-  def apply_queries
+  def set_formula(formula)
+    @formula = formula
+  end
+
+  def prepare_filter
+    tokens = tokenize
+    p 'filters : ', @filters
+    if @filters
+      if @filters.length == 1
+        @search.filter @filters.first[:type], @filters.first[:key] => @filters.first[:value]
+      else
+        filters = []
+        @filters.each do |f|
+          filters.push({f[:type] => {f[:key]=> f[:value]}})
+        end
+        @search.filter :and , filters
+      end
+    end
+    self
+  end
+
+  def tokenize
+    @formula.split(" ") if @formula
+  end
+
+  def apply_queries 
     @search.query { |q|
       query = @queries.join " AND " if @queries
       case
@@ -227,9 +254,12 @@ module SearchBase
           bool.must { |q| q.string query }
           apply_prefixes bool
         end
-      when @queries && !@prefixes then q.string query
-      when !@queries && @prefixes then apply_prefixes q
-      else q.all
+      when @queries && !@prefixes 
+        q.string query
+      when !@queries && @prefixes 
+        apply_prefixes q
+      else 
+        q.all
       end
     }
   end
@@ -271,9 +301,9 @@ module SearchBase
     @queries.push query
   end
 
-  def add_prefix(query)
-    @prefixes ||= []
-    @prefixes.push query
+  def add_filter(query)
+    @filters ||= []
+    @filters.push query
   end
 
   def parse_time(time)

@@ -100,6 +100,8 @@ onQueries ->
       if position != tokens.length
         result = {status: false, msg: "has unexpected \'" + peek() + "\'"}
 
+      console.log 'result : ', result
+
       result
 
 

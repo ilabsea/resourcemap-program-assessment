@@ -14,10 +14,33 @@ onCollections ->
         @currentCollection()?.currentSnapshot
 
     @findCollectionById: (id) -> (x for x in @collections() when x.id == parseInt id)[0]
-    
+
+    @tokenize: (str) ->
+      results = []
+      tokenRegExp = /\s*([A-Za-z]+|[0-9]+|\S)\s*/g
+      m = undefined
+      while (m = tokenRegExp.exec(str)) != null
+        results.push m[1]
+      results
+
+    @refineFormula: ->
+      res = ""
+      conditions = @selectedQuery()?.conditions ? []
+      formula = @selectedQuery()?.formula ? ""
+      tokens = @tokenize(formula)
+      for t in tokens
+        if t != undefined && t.match(/^[0-9]+$/) != null
+          for condition in conditions
+            if t == condition.id
+              t = condition.field_id
+              break
+        res += " " + t
+      return res
+
     @refineFilters: ->
       @filters([])
       conditions = @selectedQuery()?.conditions ? []
+      @formula = @refineFormula()
       for condition in conditions
         if condition.field_id == 'update'
           if condition.field_value == 'last_hour'

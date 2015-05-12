@@ -1,7 +1,7 @@
 class MapSearch
   include SearchBase
 
-  def initialize(collection_ids, options = {})
+  def initialize(collection_ids, formula, options = {})
     @collection_ids = Array(collection_ids)
     @search = Collection.new_tire_search(*@collection_ids, options)
     @search.size 100000
@@ -33,9 +33,10 @@ class MapSearch
     listener = clusterer = Clusterer.new(@zoom)
     clusterer.highlight @hierarchy if @hierarchy
     listener = ElasticSearch::SitesAdapter::SkipIdListener.new(listener, @exclude_id) if @exclude_id
-
+    
     set_bounds_filter
-    apply_queries
+    prepare_filter
+    # apply_queries
 
     adapter = ElasticSearch::SitesAdapter.new listener
     adapter.return_property @hierarchy[:code] if @hierarchy[:code]

@@ -161,6 +161,7 @@ onCollections ->
 
       query.exclude_id = @selectedSite().id() if @selectedSite()?.id()
       query.search = @lastSearch() if @lastSearch()
+      query.formula = @formula
 
       filter.setQueryParams(query) for filter in @filters()
 
