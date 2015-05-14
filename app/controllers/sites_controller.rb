@@ -86,8 +86,7 @@ class SitesController < ApplicationController
     search.exclude_id params[:exclude_id].to_i if params[:exclude_id].present?
     search.full_text_search params[:search] if params[:search].present?
     search.alerted_search params[:_alert] if params[:_alert].present?
-    search.set_formula params[:formula] if params[:formula].present?
-
+    
     search.after params[:updated_since] if params[:updated_since]
     search.location_missing if params[:location_missing].present?
 
@@ -96,7 +95,8 @@ class SitesController < ApplicationController
     end
 
     search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :updated_since, :search, :location_missing, :hierarchy_code, :selected_hierarchies, :_alert, :formula)
-
+    search.set_formula params[:formula] if params[:formula].present?
+    
     # search.apply_queries 
     render json: search.results
   end

@@ -9,6 +9,7 @@ onCollections ->
       @div = ko.observable('')
 
     @performSearchOrHierarchy: ->
+      console.log 'performSearchOrHierarchy'
       return false if !@currentCollection() || @ignorePerformSearchOrHierarchy
 
       rootCollection = @currentCollection().collection ? @currentCollection()
@@ -29,7 +30,6 @@ onCollections ->
         @reloadMapSites()
       else
         window.adjustContainerSize()
-
       @rewriteUrl()
 
       false

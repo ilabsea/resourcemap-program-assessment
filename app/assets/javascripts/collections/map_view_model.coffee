@@ -134,7 +134,7 @@ onCollections ->
           @adjustZIndexes()
           @updateMapSitesCount()
           @notifySitesChanged()
-
+          console.log window.model.currentCollection().sites()
         callback() if callback && typeof(callback) == 'function'
 
       if query.collection_ids.length == 0

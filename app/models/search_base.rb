@@ -71,6 +71,7 @@ module SearchBase
   def starts_with(field, value)
     validated_value = field.apply_format_query_validation(value, @use_codes_instead_of_es_codes)
     query_key = field.es_code
+    # add_prefix key: query_key, value: validated_value
     add_filter key: query_key, value: validated_value, type: :prefix
     self
   end
@@ -147,7 +148,6 @@ module SearchBase
 
   def updated_since_query(time)
     add_filter key: :updated_at, value: {gte: Site.format_date(time)}, type: :range
-    self
   end
 
   def alerted_search(v)
@@ -208,7 +208,6 @@ module SearchBase
 
   def location_missing
     add_filter key: :exists, value: {field: :location}, type: :not
-    self
   end
 
   def hierarchy(es_code, value)
@@ -224,18 +223,77 @@ module SearchBase
     @formula = formula
   end
 
+  def is_number(str)
+    /^[0-9]+$/ === str
+  end
+
+  def is_code(str)
+    /^[A-Za-z]+$/ === str
+  end
+
+  def parse
+    $tokens = tokenize
+    $position = 0
+
+    def peek
+      if $tokens
+        return $tokens[$position]
+      end
+    end
+
+    def parsePrimaryExpr
+      t = peek
+      res = {}
+      if t == "("
+        $position += 1
+        res = parseExpr
+        $position += 1
+      else
+        $position += 1
+        if t == "location_missing" 
+          t = :exists
+        elsif t == "update" 
+          t = :updated_at
+        end
+        if @filters
+          @filters.each do |f|
+            if f[:key] == t
+              res = { f[:type]=> {f[:key]=> f[:value]}}
+              break
+            end
+          end
+        end
+      end
+      return res
+    end
+
+    def parseExpr
+      expr = parsePrimaryExpr
+      t = peek
+      if is_code(t)
+        t = t.downcase
+      end
+      while t == "and" || t == "or" do
+        $position += 1
+        nextExpr = parsePrimaryExpr
+        expr = {t => [expr, nextExpr]}
+        t = peek
+      end
+      return expr
+    end
+
+    parseExpr
+  end
+
   def prepare_filter
-    tokens = tokenize
-    p 'filters : ', @filters
+    expr  = parse
+    p 'expr : ', expr
+
     if @filters
       if @filters.length == 1
         @search.filter @filters.first[:type], @filters.first[:key] => @filters.first[:value]
       else
-        filters = []
-        @filters.each do |f|
-          filters.push({f[:type] => {f[:key]=> f[:value]}})
-        end
-        @search.filter :and , filters
+        @search.filter parse 
       end
     end
     self
@@ -254,12 +312,9 @@ module SearchBase
           bool.must { |q| q.string query }
           apply_prefixes bool
         end
-      when @queries && !@prefixes 
-        q.string query
-      when !@queries && @prefixes 
-        apply_prefixes q
-      else 
-        q.all
+      when @queries && !@prefixes then q.string query
+      when !@queries && @prefixes then apply_prefixes q
+      else q.all
       end
     }
   end

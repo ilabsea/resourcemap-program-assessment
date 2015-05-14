@@ -1,7 +1,7 @@
 class MapSearch
   include SearchBase
 
-  def initialize(collection_ids, formula, options = {})
+  def initialize(collection_ids, options = {})
     @collection_ids = Array(collection_ids)
     @search = Collection.new_tire_search(*@collection_ids, options)
     @search.size 100000
@@ -44,6 +44,8 @@ class MapSearch
     Rails.logger.debug @search.to_curl if Rails.logger.level <= Logger::DEBUG
 
     adapter.parse @search.stream
+
+    p 'clusterer.clusters : ', clusterer.clusters
 
     clusterer.clusters
   end
