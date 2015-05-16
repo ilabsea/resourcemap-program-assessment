@@ -255,12 +255,10 @@ module SearchBase
         elsif t == "update" 
           t = :updated_at
         end
-        if @filters
-          @filters.each do |f|
-            if f[:key] == t
-              res = { f[:type]=> {f[:key]=> f[:value]}}
-              break
-            end
+        @filters.each do |f|
+          if f[:key] == t 
+            res = {f[:type]=> {f[:key] => f[:value]}}
+            break
           end
         end
       end
@@ -279,6 +277,7 @@ module SearchBase
         expr = {t => [expr, nextExpr]}
         t = peek
       end
+    
       return expr
     end
 
@@ -286,14 +285,12 @@ module SearchBase
   end
 
   def prepare_filter
-    expr  = parse
-    p 'expr : ', expr
-
     if @filters
       if @filters.length == 1
         @search.filter @filters.first[:type], @filters.first[:key] => @filters.first[:value]
       else
-        @search.filter parse 
+        expr = parse
+        @search.filter expr.keys[0] , expr.values[0]
       end
     end
     self
