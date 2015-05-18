@@ -148,6 +148,7 @@ onCollections ->
 
         $('a#previewimg').fancybox()
         window.model.updateSitesInfo()
+        @reloadMapSites()
 
       callbackError = () =>
         @hideProgress()

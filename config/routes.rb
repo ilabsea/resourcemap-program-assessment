@@ -17,7 +17,7 @@ ResourceMap::Application.routes.draw do
   match 'get_user_auth_token' => "application#get_user_auth_token", :via => 'get'
   match 'load_app_cache' => 'home#load_app_cache', :via => 'get'
   get 'plugin/alerts/thresholds' => 'thresholds#index'
-  
+
   resources :repeats
   resources :collections do
     post  :send_new_member_sms
@@ -90,6 +90,7 @@ ResourceMap::Application.routes.draw do
   resources :sites do
     get 'root_sites'
     get 'search', :on => :collection
+    get 'search_alert_site', :on => :collection
 
     post 'update_property'
   end
