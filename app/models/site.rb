@@ -80,6 +80,10 @@ class Site < ActiveRecord::Base
     self.properties = properties
   end
 
+  def filter_site_by_id site_id
+    builder = Site.find site_id
+  end
+
   private
 
   def standardize_properties
