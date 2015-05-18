@@ -231,6 +231,10 @@ module SearchBase
     /^[A-Za-z]+$/ === str
   end
 
+  def tokenize
+    @formula.split(" ") if @formula
+  end
+
   def parse
     $tokens = tokenize
     $position = 0
@@ -286,18 +290,11 @@ module SearchBase
 
   def prepare_filter
     if @filters
-      if @filters.length == 1
-        @search.filter @filters.first[:type], @filters.first[:key] => @filters.first[:value]
-      else
-        expr = parse
-        @search.filter expr.keys[0] , expr.values[0]
-      end
+      expr = parse
+      @search.query { |q| q.all}
+      @search.filter expr.keys[0] , expr.values[0]
     end
     self
-  end
-
-  def tokenize
-    @formula.split(" ") if @formula
   end
 
   def apply_queries 

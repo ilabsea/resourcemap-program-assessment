@@ -35,7 +35,6 @@ class MapSearch
     listener = ElasticSearch::SitesAdapter::SkipIdListener.new(listener, @exclude_id) if @exclude_id
     
     set_bounds_filter
-    prepare_filter
     # apply_queries
 
     adapter = ElasticSearch::SitesAdapter.new listener
