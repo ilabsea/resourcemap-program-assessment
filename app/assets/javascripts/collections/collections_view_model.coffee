@@ -51,11 +51,11 @@ onCollections ->
       @filters([])
       @selectedQuery(null)
       @queryParams = $.url().param()
-      @showingAlert(false)
-      @cancelFilterAlertedSites()
       @exitSite() if @editingSite()
       @unselectSite() if @selectedSite()
       @currentCollection(null)
+      @showingAlert(false)
+      @cancelFilterAlertedSites()
       @search('')
       @lastSearch(null)
       
