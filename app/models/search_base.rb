@@ -30,7 +30,8 @@ module SearchBase
 
   def eq(field, value)
     if value.blank?
-      @search.filter :missing, {field: field.es_code}
+      add_filter key: field, value: field.es_code, type: :missing
+      # @search.filter :missing, {field: field.es_code}
       return self
     end
 

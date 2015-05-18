@@ -134,7 +134,6 @@ onCollections ->
           @adjustZIndexes()
           @updateMapSitesCount()
           @notifySitesChanged()
-          console.log window.model.currentCollection().sites()
         callback() if callback && typeof(callback) == 'function'
 
       if query.collection_ids.length == 0
@@ -156,13 +155,14 @@ onCollections ->
         _alert: @showingAlert() if @showingAlert()
         collection_ids: collection_ids
 
+      query.formula = @formula
+
       query.selected_hierarchies = @selectedHierarchy().hierarchyIds() if @selectedHierarchy()
       query.hierarchy_code = window.model.groupBy().esCode if @selectedHierarchy() && window.model.groupBy().esCode
 
       query.exclude_id = @selectedSite().id() if @selectedSite()?.id()
       query.search = @lastSearch() if @lastSearch()
-      query.formula = @formula
-
+      
       filter.setQueryParams(query) for filter in @filters()
 
       query
