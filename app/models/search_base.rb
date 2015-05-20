@@ -207,10 +207,34 @@ module SearchBase
     add_filter key: :exists, value: {field: :location}, type: :not
   end
 
+  def eq_hierarchy(field, value)
+    if value.blank?
+      @search.filter :missing, {field: field.es_code}
+      return self
+    end
+
+    validated_value = field.apply_format_query_validation(value, @use_codes_instead_of_es_codes)
+    query_key = field.es_code
+
+    if field.kind == 'yes_no'
+      @search.filter :term, query_key => Field.yes?(value)
+    elsif field.kind == 'date'
+      date_field_range(query_key, validated_value)
+    elsif field.kind == 'hierarchy' and value.is_a? Array
+      @search.filter :terms, query_key => validated_value
+    elsif field.select_kind?
+      @search.filter :term, query_key => validated_value
+    else
+      @search.filter :term, query_key => value
+    end
+
+    self
+  end
+
   def hierarchy(es_code, value)
     field = check_field_exists es_code
     if value.present?
-      eq field, value
+      eq_hierarchy field, value
     else
       @search.filter :not, {exists: {field: es_code}}
     end
