@@ -43,7 +43,7 @@ class MapSearch
     Rails.logger.debug @search.to_curl if Rails.logger.level <= Logger::DEBUG
 
     adapter.parse @search.stream
-    
+
     clusterer.clusters
   end
 

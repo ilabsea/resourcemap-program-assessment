@@ -81,7 +81,7 @@ module SearchBase
     class_eval %Q(
       def #{op}(field, value)
         validated_value = field.apply_format_query_validation(value, @use_codes_instead_of_es_codes)
-        @search.filter :range, field.es_code => {#{op}: validated_value}
+        add_filter key: field.es_code, value: {#{op}: validated_value}, type: :range
         self
       end
     )

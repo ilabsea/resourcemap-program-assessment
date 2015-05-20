@@ -139,6 +139,7 @@ onCollections ->
           @updateMapSitesCount()
           @getAlertedSites(queryAlertedSites)
           @notifySitesChanged()
+          
         callback() if callback && typeof(callback) == 'function'
 
       if query.collection_ids.length == 0
@@ -175,6 +176,7 @@ onCollections ->
         @toggleLegend(false)
       else
         @toggleLegend(true)
+
     
     @getAlertedSites: (query) =>
       window.model.loadingLegend(true)

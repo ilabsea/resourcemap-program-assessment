@@ -29,6 +29,7 @@ onCollections ->
 
     setQueryParams: (q, api = false) =>
       q.search = @search if @search
+      q.formula = window.model.formula
       if @sort
         if api
           field = @collection.findFieldByEsCode(@sort)
@@ -37,6 +38,7 @@ onCollections ->
           q.sort = @sort
         q.sort_direction = if @sortDirection then 'asc' else 'desc'
       filter.setQueryParams(q, api) for filter in @filters
+
       q
 
     link: (format) => "/api/collections/#{@id}.#{format}?#{$.param @queryParams(true)}"
