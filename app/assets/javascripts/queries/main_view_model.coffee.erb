@@ -52,6 +52,9 @@ onQueries ->
           id = inst.id
           $("##{id}").change()
 
+    autoExpand: =>
+      $('textarea').autogrow()
+
     refineQuery: =>
       if @currentQuery().isRefineQuery()
         @currentQuery().isRefineQuery(false)

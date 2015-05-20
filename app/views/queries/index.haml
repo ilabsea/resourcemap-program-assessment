@@ -51,7 +51,7 @@
         %label{ko(css: {error: 'formalaError'})}
           = t('views.queries.formula')
         %br 
-        %textarea{ko(value: :formula), style: 'width:240px; height: 20px'}
+        %textarea{ko(value: :formula,click: '$root.autoExpand'), style: 'width:240px; height: 20px'}
         %br  
         //ko
         %button.farrow{ko(click: '$root.refineQuery'), title: 'Refine query' }
@@ -125,7 +125,7 @@
             %label{ko(css: {error: 'formalaError'})}
               = t('views.queries.formula')
             %br 
-            %textarea{ko(value: :formula), style: 'width:240px; height: 20px'}
+            %textarea{ko(value: :formula,click: '$root.autoExpand'), style: 'width:240px; height: 20px'}
             %br  
             //ko 
             
