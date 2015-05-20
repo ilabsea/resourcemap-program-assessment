@@ -68,7 +68,7 @@ onQueries ->
         t = peek()
         if isValidNumber(t)
           position++
-          return {status: true, msg: "number", type: "number", value: t}
+          return {status: true, msg: "number"}
         else if t == '('
           position++
           expr = isExpr()
@@ -91,7 +91,7 @@ onQueries ->
           if !expr.status || !nextExpr.status
             expr = {status : false, msg: "expected number before or after \'"+ t + "\'"}
             break
-          expr = {status: true, msg: "", type: t, left: expr, right: nextExpr}
+          expr = {status: true, msg: ""}
           t = peek()
         expr
 
@@ -99,8 +99,6 @@ onQueries ->
 
       if position != tokens.length
         result = {status: false, msg: "has unexpected \'" + peek() + "\'"}
-
-      console.log 'result : ', result
 
       result
 

@@ -11,8 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-
-ActiveRecord::Schema.define(:version => 20150504073516) do
+ActiveRecord::Schema.define(:version => 20150520080139) do
 
   create_table "activities", :force => true do |t|
     t.integer  "user_id"
@@ -186,7 +185,7 @@ ActiveRecord::Schema.define(:version => 20150504073516) do
     t.datetime "created_at",     :null => false
     t.datetime "updated_at",     :null => false
     t.integer  "collection_id"
-    t.text     "formula",        :limit => 2147483647
+    t.string   "formula"
   end
 
   create_table "reminders", :force => true do |t|
