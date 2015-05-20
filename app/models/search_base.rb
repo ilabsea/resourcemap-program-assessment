@@ -31,7 +31,6 @@ module SearchBase
   def eq(field, value)
     if value.blank?
       add_filter key: field, value: field.es_code, type: :missing
-      # @search.filter :missing, {field: field.es_code}
       return self
     end
 
@@ -55,7 +54,6 @@ module SearchBase
 
   def under(field, value)
     if value.blank?
-      # @search.filter :missing, {field: field.es_code}
       add_filter key: field, value: field.es_code, type: :missing
       return self
     end
@@ -64,7 +62,6 @@ module SearchBase
     value = field.descendants_of_in_hierarchy value, @use_codes_instead_of_es_codes
     validated_value = field.apply_format_query_validation(value, @use_codes_instead_of_es_codes)
     query_key = field.es_code
-    # @search.filter :terms, query_key => validated_value
     add_filter key: query_key, value: validated_value, type: :terms
     self
   end
@@ -72,7 +69,6 @@ module SearchBase
   def starts_with(field, value)
     validated_value = field.apply_format_query_validation(value, @use_codes_instead_of_es_codes)
     query_key = field.es_code
-    # add_prefix key: query_key, value: validated_value
     add_filter key: query_key, value: validated_value, type: :prefix
     self
   end
