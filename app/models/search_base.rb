@@ -30,7 +30,7 @@ module SearchBase
 
   def eq(field, value)
     if value.blank?
-      add_filter key: field, value: field.es_code, type: :missing
+      add_filter key: "field", value: field.es_code , type: :missing
       return self
     end
 
@@ -281,7 +281,7 @@ module SearchBase
           t = :updated_at
         end
         @filters.each do |f|
-          if f[:key] == t 
+          if f[:key] == t || (f[:key] == "field" && f[:value] == t)
             res = {f[:type]=> {f[:key] => f[:value]}}
             break
           end

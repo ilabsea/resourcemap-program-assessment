@@ -238,7 +238,6 @@ onCollections ->
           alertSite = @operateWithCondition(threshold.conditions(), site, threshold.isAllCondition())
           
           if alertSite
-            # console.log threshold.propertyName()+" : "+alertSite.name()
             threshold.alertedSitesNum(threshold.alertedSitesNum()+1)
             break
 

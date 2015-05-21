@@ -1,6 +1,6 @@
 %div{style: 'padding:15px;'}              
   #div{ko(click: 'function(data, event) { $root.toggleRefineProperty("update") }'), style: 'cursor:pointer'}
-    %img{ko(attr: {src: "'#{InsteddRails.url}/theme/images/icons/misc/grey/arrow' + ('$root.expandedRefineProperty()' == \"update\" ? 'Down' : 'Right') + '.png'"}), style: "position:relative;top:1px", width: 11, height: 11}
+    %img{ko(attr: {src: "'#{InsteddRails.url}/theme/images/icons/misc/grey/arrow' + ($root.expandedRefineProperty() == \"update\" ? 'Down' : 'Right') + '.png'"}), style: "position:relative;top:1px", width: 11, height: 11}
     %span Updated within
   /ko if: $root.expandedRefineProperty() == 'update'
   #div{style: 'padding:10px;margin-left:10px'}
@@ -21,7 +21,7 @@
 
 
   #div{ko(click: 'function(data, event) { $root.toggleRefineProperty("location_missing") }'), style: 'cursor:pointer;padding-top:6px'}
-    %img{ko(attr: {src: "'#{InsteddRails.url}/theme/images/icons/misc/grey/arrow' + ('$root.expandedRefineProperty()' == \"location_missing\" ? 'Down' : 'Right') + '.png'"}), style: "position:relative;top:1px", width: 11, height: 11}
+    %img{ko(attr: {src: "'#{InsteddRails.url}/theme/images/icons/misc/grey/arrow' + ($root.expandedRefineProperty() == \"location_missing\" ? 'Down' : 'Right') + '.png'"}), style: "position:relative;top:1px", width: 11, height: 11}
     %span Location missing
     /ko if: $root.expandedRefineProperty() == 'location_missing'
     #div{ko(click: '$root.filterByLocationMissing'), style: 'cursor:pointer;padding:10px;margin-left:10px'}
@@ -33,7 +33,7 @@
   /ko if: kind != 'photo'
 
   #div{ko(click: 'function (data, event) { $root.toggleRefineProperty($data.id) }'), style: 'cursor:pointer;padding-top:6px'}
-    %img{ko(attr: {src: "'#{InsteddRails.url}/theme/images/icons/misc/grey/arrow' + ('$root.expandedRefineProperty()' == id ? 'Down' : 'Right') + '.png'"}), style: "position:relative;top:1px", width: 11, height: 11}
+    %img{ko(attr: {src: "'#{InsteddRails.url}/theme/images/icons/misc/grey/arrow' + ($root.expandedRefineProperty() == id ? 'Down' : 'Right') + '.png'"}), style: "position:relative;top:1px", width: 11, height: 11}
     %span{ko(text: :name)}
   //ko
   /ko if: $root.expandedRefineProperty() == id
