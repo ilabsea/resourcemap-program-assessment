@@ -83,3 +83,5 @@ en:
           add_skip_logic: "Add skip logic"
           enable_skip_logic_for_this_field: "Enable skip logic for this field"
           dependent_field: "Dependent field"
+          maximum_search_length: "Maximum search length(meter)"
+          import_places: "Import places"
