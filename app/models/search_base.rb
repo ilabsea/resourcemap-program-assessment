@@ -54,7 +54,7 @@ module SearchBase
 
   def under(field, value)
     if value.blank?
-      add_filter key: field, value: field.es_code, type: :missing
+      add_filter key: "field", value: field.es_code, type: :missing
       return self
     end
 
