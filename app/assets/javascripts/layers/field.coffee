@@ -59,8 +59,8 @@ onLayers ->
       @selecting = v
 
     buttonClass: =>
-      if @kind() == 'location'
-        return 'llocation'
+      # if @kind() == 'location'
+      #   return 'llocation'
       FIELD_TYPES[@kind()].css_class
 
     iconClass: =>
@@ -294,14 +294,16 @@ onLayers ->
   class @Field_location extends @FieldImpl
     constructor: (field) ->
       super(field)
-      @maximumSearchLength = ko.observable()
-      @places = ko.observable()
+      @maximumSearchLength = ko.observable(field?.config?.maximumSearchLength)
       @uploadingLocation = ko.observable(false)
-      @locations = ko.observableArray()
+      @locations = ko.observableArray($.map(field?.config?.locations, (x) -> new Location(x)))
 
     setLocation: (locations) =>
       @locations($.map(locations, (x) -> new Location(x)))
       @uploadingLocation(false)
+
+    toJSON: (json)=>
+      json.config = {locations: $.map(@locations(), (x) ->  x.toJSON()), maximumSearchLength: @maximumSearchLength()}
 
   class @Field_calculation extends @FieldImpl
     constructor: (field) ->
