@@ -83,6 +83,7 @@ onLayers ->
   class @FieldImpl
     constructor: (field) ->
       @field = field
+      @maximumSearchLengthError = -> null
       @error = -> null
 
     toJSON: (json) =>
@@ -307,11 +308,14 @@ onLayers ->
           null 
         else 
           "the field #{@field.fieldErrorDescription()} is missing a maximum search length"
-      @error = ko.computed =>
+      @missingFileLocationError = ko.computed =>
         if @locations() && @locations().length > 0
           null
         else
           "the field #{@field.fieldErrorDescription()} is missing the location file"
+
+      @error = ko.computed =>
+        @missingFileLocationError() || @maximumSearchLengthError()
 
     setLocation: (locations) =>
       @locations($.map(locations, (x) -> new Location(x)))
