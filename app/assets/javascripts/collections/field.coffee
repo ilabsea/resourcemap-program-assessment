@@ -396,6 +396,7 @@ onCollections ->
       @fieldHierarchyItems.unshift new FieldHierarchyItem(@, {id: '', name: window.t('javascripts.collections.fields.no_value')})
 
     edit: =>
+      @editing(true)
       if !window.model.currentCollection()?.currentSnapshot
         @originalValue = @value()
 
