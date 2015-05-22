@@ -341,6 +341,9 @@ onCollections ->
       # Keep the original values, in case the user cancels
       @originalName = @name()
       @originalPosition = @position()
+
+      @getLocationFieldOption()
+
       @inEditMode(true)
       @startEditLocationInMap()
       @prepareCalculatedField()
@@ -446,6 +449,7 @@ onCollections ->
           for field in layer.fields
             fields.push(field)
         @fields(fields)
+        @getLocationFieldOption(@lat(), @lng())
 
         @copyPropertiesToFields()
         $('a#previewimg').fancybox()

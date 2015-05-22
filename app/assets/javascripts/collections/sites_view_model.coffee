@@ -27,8 +27,13 @@ onCollections ->
       distance = google.maps.geometry.spherical.computeDistanceBetween(fromLatlng, toLatlng)
       return distance
 
-    @getDistances: (fromLat, fromLng) => 
-      for field in window.model.currentCollection().fields()
+    @getLocations: (fromLat, fromLng) =>
+      if window.model.selectedSite()
+        fields = window.model.selectedSite().fields() 
+      else if window.model.currentCollection()
+        fields = window.model.currentCollection().fields()
+  
+      for field in fields
         if field.kind == 'location'
           resultLocations = []
           for location in field.locations
@@ -48,11 +53,10 @@ onCollections ->
             field = @currentCollection().findFieldByEsCode esCode
             field.setValueFromSite(value) if field
         
-        @getDistances(pos.lat(), pos.lng())
-
         @unselectSite()
         @editingSite site
         @editingSite().startEditLocationInMap()
+        @getDistances(pos.lat(), pos.lng())
         window.model.initDatePicker()
         window.model.initAutocomplete()
         site.prepareCalculatedField()
