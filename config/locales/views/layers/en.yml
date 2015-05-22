@@ -30,6 +30,7 @@ en:
         email: "Email"
         phone: "Phone"
         calculation: "Calculation"
+        location: "Location"
       form:
         remove_field: "Remove field"
         move_field_up: "Move field up"
