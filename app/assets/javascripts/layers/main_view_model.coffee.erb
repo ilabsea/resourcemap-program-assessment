@@ -397,5 +397,11 @@ onLayers ->
 
       });
 
+    startUploadLocation: =>
+      @currentField().impl().uploadingLocation(true)
+
+    locationUploaded: (location) =>
+      @currentField().impl().setLocation(location)
+
     change: =>
       alert 'test'

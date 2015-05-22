@@ -10,6 +10,10 @@ onLayers -> if $('#layers-main').length > 0
     $('.hierarchy_form').submit()
     window.model.startUploadHierarchy()
 
+  $('.location_upload').live 'change', ->
+    $('.location_form').submit()
+    window.model.startUploadLocation()
+
   $.get "/collections/#{collectionId}/layers.json", {}, (layers) =>
     window.model = new MainViewModel(collectionId, layers)
     ko.applyBindings window.model

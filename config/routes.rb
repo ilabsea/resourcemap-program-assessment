@@ -67,6 +67,7 @@ ResourceMap::Application.routes.draw do
     get 'recreate_index'
     get 'search'
     post 'decode_hierarchy_csv'
+    post 'decode_location_csv'
 
     get 'sites_info'
 
