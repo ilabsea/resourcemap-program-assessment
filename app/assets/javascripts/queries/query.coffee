@@ -43,15 +43,11 @@ onQueries ->
       tokenRegExp = /\s*([A-Za-z]+|[0-9]+|\S)\s*/g
       formula = @formula()
       formula = formula.toLowerCase()
-      # @setFormula(formula)
       m = undefined
       while (m = tokenRegExp.exec(formula)) != null
         results.push m[1]
 
       results
-
-    setFormula: (formula)=>
-      @formula(formula)
 
     condition_ids: =>
       ids = []
