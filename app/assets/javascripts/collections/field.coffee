@@ -454,9 +454,9 @@ onCollections ->
 
     validate_decimal_only: (keyCode) =>
       value = $('#'+@kind+'-input-'+@code).val()
-      if (value == null || value == "")&& (keyCode == 229 || keyCode == 190) #prevent dot at the beginning
+      if (value == null || value == "") && (keyCode == 229 || keyCode == 190) #prevent dot at the beginning
         return false
-      if (keyCode != 8 && keyCode != 46) && (keyCode != 190 || value.indexOf('.') != -1) && (keyCode < 48 || keyCode > 57) #prevent multiple dot
+      if (keyCode != 8 && keyCode != 46 && keyCode != 173) && (keyCode != 190 || value.indexOf('.') != -1) && (keyCode < 48 || keyCode > 57) #prevent multiple dot
         return false
       else
         return true
