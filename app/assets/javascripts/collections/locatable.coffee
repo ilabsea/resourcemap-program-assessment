@@ -37,5 +37,5 @@ onCollections ->
         ''
 
     @getLocationFieldOption: ->
-      window.model.getLocations(@position().k, @position().B)
+      window.model.getLocations(@position().k, @position().D) if @position()
 
