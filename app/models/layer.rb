@@ -93,7 +93,7 @@ class Layer < ActiveRecord::Base
     self.collection.thresholds.map { |threshold|
 
       thresholdFieldIDs = threshold.conditions.map { |condition| condition['field'].to_i}
-
+      
       if (layerFieldIDs - thresholdFieldIDs).length < layerFieldIDs.length
         associated_threshold_ids.push(threshold.id)
       end
@@ -101,7 +101,6 @@ class Layer < ActiveRecord::Base
     }
 
     associated_threshold_ids
-
   end
 
   private
