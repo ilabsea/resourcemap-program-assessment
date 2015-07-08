@@ -28,9 +28,9 @@ module SearchBase
     @search.filter :term, uuid: uuid
   end
 
-  def eq(field, value)
+  def eq(condition_id , field, value)
     if value.blank?
-      add_filter key: "field", value: field.es_code , type: :missing
+      add_filter key: "field", value: field.es_code , type: :missing, condition_id: condition_id
       return self
     end
 
@@ -38,23 +38,23 @@ module SearchBase
     query_key = field.es_code
 
     if field.kind == 'yes_no'
-      add_filter key: query_key, value: Field.yes?(value), type: :term
+      add_filter key: query_key, value: Field.yes?(value), type: :term, condition_id: condition_id
     elsif field.kind == 'date'
-      date_field_range(query_key, validated_value)
+      date_field_range(query_key, validated_value, condition_id)
     elsif field.kind == 'hierarchy' and value.is_a? Array
-      add_filter key: query_key, value: validated_value, type: :terms
+      add_filter key: query_key, value: validated_value, type: :terms, condition_id: condition_id
     elsif field.select_kind?
-      add_filter key: query_key, value: validated_value, type: :term
+      add_filter key: query_key, value: validated_value, type: :term, condition_id: condition_id
     else
-      add_filter key: query_key, value: value, type: :term
+      add_filter key: query_key, value: value, type: :term, condition_id: condition_id
     end
 
     self
   end
 
-  def under(field, value)
+  def under(condition_id, field, value)
     if value.blank?
-      add_filter key: "field", value: field.es_code, type: :missing
+      add_filter key: "field", value: field.es_code, type: :missing, condition_id: condition_id
       return self
     end
 
@@ -62,68 +62,75 @@ module SearchBase
     value = field.descendants_of_in_hierarchy value, @use_codes_instead_of_es_codes
     validated_value = field.apply_format_query_validation(value, @use_codes_instead_of_es_codes)
     query_key = field.es_code
-    add_filter key: query_key, value: validated_value, type: :terms
+    add_filter key: query_key, value: validated_value, type: :terms, condition_id: condition_id
     self
   end
 
-  def starts_with(field, value)
+  def starts_with(condition_id, field, value)
     validated_value = field.apply_format_query_validation(value, @use_codes_instead_of_es_codes)
     query_key = field.es_code
-    add_filter key: query_key, value: validated_value, type: :prefix
+    add_filter key: query_key, value: validated_value, type: :prefix, condition_id: condition_id
     self
   end
 
   ['lt', 'lte', 'gt', 'gte'].each do |op|
     class_eval %Q(
-      def #{op}(field, value)
+      def #{op}(condition_id, field, value)
         validated_value = field.apply_format_query_validation(value, @use_codes_instead_of_es_codes)
-        add_filter key: field.es_code, value: {#{op}: validated_value}, type: :range
+        add_filter key: field.es_code, value: {#{op}: validated_value}, type: :range , condition_id: condition_id
         self
       end
     )
   end
 
-  def op(field, op, value)
+  def op(condition_id, field, op, value)
     case op.to_s.downcase
-    when '<', 'l' then lt(field, value)
-    when '<=', 'lte' then lte(field, value)
-    when '>', 'gt' then gt(field, value)
-    when '>=', 'gte' then gte(field, value)
-    when '=', '==', 'eq' then eq(field, value)
-    when 'under' then under(field, value)
+    when '<', 'l' then lt(condition_id, field, value)
+    when '<=', 'lte' then lte(condition_id, field, value)
+    when '>', 'gt' then gt(condition_id , field, value)
+    when '>=', 'gte' then gte(condition_id, field, value)
+    when '=', '==', 'eq' then eq(condition_id, field, value)
+    when 'under' then under(condition_id, field, value)
     else raise "Invalid operation: #{op}"
     end
     self
   end
 
   def where(properties = {})
-    properties.each do |es_code, value|
-      field = check_field_exists es_code
-      
-      if value.is_a? String
-        case
-        when value[0 .. 1] == '<=' then lte(field, value[2 .. -1].strip)
-        when value[0] == '<' then lt(field, value[1 .. -1].strip)
-        when value[0 .. 1] == '>=' then gte(field, value[2 .. -1].strip)
-        when value[0] == '>' then gt(field, value[1 .. -1].strip)
-        when value[0] == '=' then eq(field, value[1 .. -1].strip)
-        when value[0 .. 1] == '~=' then starts_with(field, value[2 .. -1].strip)
-        else eq(field, value)
+    properties.each do |condition_id, fieldValue|
+      fieldValue.each do |es_code, value|
+        case 
+        when es_code == "location_missing" then location_missing(condition_id)
+        when es_code == "updated_since" then after(value, condition_id)
+        else
+          field = check_field_exists es_code
+          
+          if value.is_a? String
+            case
+            when value[0 .. 1] == '<=' then lte(condition_id, field, value[2 .. -1].strip)
+            when value[0] == '<' then lt(condition_id, field, value[1 .. -1].strip)
+            when value[0 .. 1] == '>=' then gte(condition_id, field, value[2 .. -1].strip)
+            when value[0] == '>' then gt(condition_id, field, value[1 .. -1].strip)
+            when value[0] == '=' then eq(condition_id, field, value[1 .. -1].strip)
+            when value[0 .. 1] == '~=' then starts_with(condition_id, field, value[2 .. -1].strip)
+            else eq(condition_id, field, value)
+            end
+          elsif value.is_a? Hash
+            value.each { |pair| op(condition_id, field, pair[0], pair[1]) }
+          else
+            eq(condition_id , field, value)
+          end
         end
-      elsif value.is_a? Hash
-        value.each { |pair| op(field, pair[0], pair[1]) }
-      else
-        eq(field, value)
       end
     end
     self
   end
 
-  def date_field_range(key, valid_value)
+  def date_field_range(key, valid_value, condition_id)
     date_from = valid_value[:date_from]
     date_to = valid_value[:date_to]
 
-    add_filter key: key, value: {gte: date_from, lte: date_to}, type: :range
+    add_filter key: key, value: {gte: date_from, lte: date_to}, type: :range, condition_id: condition_id
     self
   end
 
@@ -133,9 +140,9 @@ module SearchBase
     self
   end
 
-  def after(time)
+  def after(time, condition_id)
     time = parse_time(time)
-    updated_since_query(time)
+    updated_since_query(time, condition_id)
   end
 
   def updated_since(iso_string)
@@ -143,8 +150,8 @@ module SearchBase
     updated_since_query(time)
   end
 
-  def updated_since_query(time)
-    add_filter key: :updated_at, value: {gte: Site.format_date(time)}, type: :range
+  def updated_since_query(time, condition_id)
+    add_filter key: :updated_at, value: {gte: Site.format_date(time)}, type: :range, condition_id: condition_id
   end
 
   def alerted_search(v)
@@ -203,8 +210,8 @@ module SearchBase
     self
   end
 
-  def location_missing
-    add_filter key: :exists, value: {field: :location}, type: :not
+  def location_missing(condition_id)
+    add_filter key: :exists, value: {field: :location}, type: :not, condition_id: condition_id
   end
 
   def eq_hierarchy(field, value)
@@ -275,15 +282,9 @@ module SearchBase
         $position += 1
       else
         $position += 1
-        if t == "location_missing" 
-          t = :exists
-        elsif t == "update" 
-          t = :updated_at
-        end
         @filters.each do |f|
-          if f[:key] == t || (f[:key] == "field" && f[:value] == t)
+          if f[:condition_id] == t
             res = {f[:type]=> {f[:key] => f[:value]}}
-            @filters.delete(f)
             break
           end
         end

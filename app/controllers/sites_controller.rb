@@ -82,20 +82,19 @@ class SitesController < ApplicationController
     search = MapSearch.new params[:collection_ids], user: current_user
 
     formula = params[:formula].downcase if params[:formula].present?
+    p 'params : ', params
 
     search.set_formula formula
     search.zoom = zoom
     search.bounds = params if zoom >= 2
     search.exclude_id params[:exclude_id].to_i if params[:exclude_id].present?
-    search.after params[:updated_since] if params[:updated_since]
     search.full_text_search params[:search] if params[:search].present?
     search.alerted_search params[:_alert] if params[:_alert].present?
-    search.location_missing if params[:location_missing].present?
     if params[:selected_hierarchies].present?
       search.selected_hierarchy params[:hierarchy_code], params[:selected_hierarchies]
     end
 
-    search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :updated_since, :search, :location_missing, :hierarchy_code, :selected_hierarchies, :_alert, :formula)
+    search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :search, :hierarchy_code, :selected_hierarchies, :_alert, :formula)
     
     search.prepare_filter
     # search.apply_queries 
