@@ -283,6 +283,7 @@ module SearchBase
         @filters.each do |f|
           if f[:key] == t || (f[:key] == "field" && f[:value] == t)
             res = {f[:type]=> {f[:key] => f[:value]}}
+            @filters.delete(f)
             break
           end
         end
