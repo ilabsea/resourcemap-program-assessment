@@ -22,10 +22,18 @@ onCollections ->
         results.push m[1]
       results
 
+    @refineFormula: ->
+      res = ""
+      formula = @selectedQuery()?.formula ? ""
+      tokens = @tokenize(formula)
+      for t in tokens
+        res += " " + t
+      return res
+
     @refineFilters: ->
       @filters([])
       conditions = @selectedQuery()?.conditions ? []
-      @formula = @selectedQuery()?.formula ? ""
+      @formula = @refineFormula() #add space to each token of formula
       for condition in conditions
         if condition.field_id == 'update'
           if condition.field_value == 'last_hour'
