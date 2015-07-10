@@ -265,7 +265,6 @@ module SearchBase
 
   def parse
     $tokens = tokenize
-    p $tokens
     $position = 0
 
     def peek
