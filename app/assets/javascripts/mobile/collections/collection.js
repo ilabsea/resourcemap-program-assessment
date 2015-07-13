@@ -257,6 +257,7 @@ Collection.prototype.validateData = function(collectionId){
             case "numeric":
               value = $("#" + field["code"]).val();
               range = field["config"]["range"];
+              digitsPrecision = field["config"]["digits_precision"];
               if(Collection.prototype.validateNumeric(value) == false){
                 Collection.prototype.showErrorMessage(field["name"] + " is not valid numeric value.");
                 return false;
@@ -268,13 +269,21 @@ Collection.prototype.validateData = function(collectionId){
                   return false;                  
                 }
               }
-              if(range){                  
-                  if(Collection.prototype.validateRange(value, range) == false){
-                    Collection.prototype.showErrorMessage("Invalid number range");
-                    Collection.setFieldStyleFailed(field["code"]);
+                if(range){
+                  msg = Collection.prototype.validateRange(value, range);
+                  if(msg != ""){
+                    Collection.prototype.showErrorMessage(msg);
+                    $('div').removeClass('invalid_field');
+                    Collection.setFieldStyleFailed(field["code"]);                    
                     return false;
                   }
-              }
+                }
+                if(digitsPrecision){
+                  console.log("Action");
+                  value = parseInt(value * Math.pow(10, parseInt(digitsPrecision))) / Math.pow(10, parseInt(digitsPrecision))
+                  $("#" + field["code"]).val(value);
+                  console.log(value);
+                }
               
               state =  Collection.valiateMandatoryText(field);
               break;
