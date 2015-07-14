@@ -24,51 +24,45 @@ onCollections ->
 
     @refineFormula: ->
       res = ""
-      conditions = @selectedQuery()?.conditions ? []
       formula = @selectedQuery()?.formula ? ""
       tokens = @tokenize(formula)
       for t in tokens
-        if t != undefined && t.match(/^[0-9]+$/) != null
-          for condition in conditions
-            if t == condition.id
-              t = condition.field_id
-              break
         res += " " + t
       return res
 
     @refineFilters: ->
       @filters([])
       conditions = @selectedQuery()?.conditions ? []
-      @formula = @refineFormula()
+      @formula = @refineFormula() #add space to each token of formula
       for condition in conditions
         if condition.field_id == 'update'
           if condition.field_value == 'last_hour'
-            @filters.push(new FilterByLastHour())
+            @filters.push(new FilterByLastHour(condition.id))
           else if condition.field_value == 'last_day'
-            @filters.push(new FilterByLastDay())
+            @filters.push(new FilterByLastDay(condition.id))
           else if condition.field_value == 'last_week'
-            @filters.push(new FilterByLastWeek())
+            @filters.push(new FilterByLastWeek(condition.id))
           else if condition.field_value == 'last_month'
-            @filters.push(new FilterByLastMonth())
+            @filters.push(new FilterByLastMonth(condition.id))
         else if condition.field_id == 'location_missing'
-          @filters.push(new FilterByLocationMissing())
+          @filters.push(new FilterByLocationMissing(condition.id))
         else
           field = @currentCollection().findFieldByEsCode(condition.field_id)
           if field.kind == 'text' || field.kind == 'phone' || field.kind == 'email' || field.kind == 'user'
-            @filters.push(new FilterByTextProperty(field, condition.operator, condition.field_value))
+            @filters.push(new FilterByTextProperty(field, condition.operator, condition.field_value, condition.id))
           else if field.kind == 'numeric'
-            @filters.push(new FilterByNumericProperty(field, condition.operator, condition.field_value))
+            @filters.push(new FilterByNumericProperty(field, condition.operator, condition.field_value, condition.id))
           else if field.kind == 'yes_no'
-            @filters.push(new FilterByYesNoProperty(field, condition.field_value))
+            @filters.push(new FilterByYesNoProperty(field, condition.field_value, condition.id))
           else if field.kind == 'date'
-            @filters.push(new FilterByDateProperty(field, condition.operator, condition.field_date_from, condition.field_date_to))
+            @filters.push(new FilterByDateProperty(field, condition.operator, condition.field_date_from, condition.field_date_to, condition.id))
           else if field.kind == 'hierarchy'
-            @filters.push(new FilterByHierarchyProperty(field, "under", condition.field_value))
+            @filters.push(new FilterByHierarchyProperty(field, "under", condition.field_value, "", condition.id))
           else if field.kind == 'select_one' || field.kind == 'select_many'
-            @filters.push(new FilterBySelectProperty(field, condition.field_value))
+            @filters.push(new FilterBySelectProperty(field, condition.field_value, "", condition.id))
           else if field.kind == 'site'
             id = @currentCollection().findSiteIdByName(condition.field_value)
-            @filters.push(new FilterBySiteProperty(field, condition.operator, condition.field_value, id))
+            @filters.push(new FilterBySiteProperty(field, condition.operator, condition.field_value, id, condition.id))
 
     @goToRoot: ->
       @filters([])

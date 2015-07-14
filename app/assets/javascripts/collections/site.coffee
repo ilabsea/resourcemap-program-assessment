@@ -79,7 +79,9 @@ onCollections ->
         success: ((data) =>
           field.errorMessage("")
           @propagateUpdatedAt(data.updated_at)
-          window.model.updateSitesInfo()),
+          window.model.updateSitesInfo()
+          window.model.currentCollection().reloadSites()
+          window.model.reloadMapSites()),
         global: false
       })
       .fail((data) =>
@@ -100,6 +102,17 @@ onCollections ->
             @photos[field.value()] = field.photo
           if field.originalValue and !field.value()
             @photosToRemove.push(field.originalValue)
+
+    roundNumericDecimalNumber: (collection) =>
+      tmpProperties = this.properties()
+      for field in @fields()
+        if(field.kind == 'numeric' && field.allowsDecimals() && field.digitsPrecision != undefined)
+          $.map(tmpProperties, (value, key) =>
+            if key.toString() == field.esCode.toString()
+              field.value(parseInt(value * Math.pow(10, parseInt(field.digitsPrecision))) / Math.pow(10, parseInt(field.digitsPrecision)))
+              tmpProperties[key.toString()] = field.value()
+          )
+      this.properties(tmpProperties)
 
     copyPropertiesFromCollection: (collection) =>
       oldProperties = @properties()

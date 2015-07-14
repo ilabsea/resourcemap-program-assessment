@@ -38,6 +38,7 @@ onCollections ->
          @value(@valueUIFrom(value))
 
       if @kind == 'numeric'
+        @digitsPrecision = data?.config?.digits_precision
         @range = if data.config?.range?.minimum? || data.config?.range?.maximum?
                   data.config?.range
         
@@ -413,6 +414,14 @@ onCollections ->
           @save()
         window.model.initDatePicker(optionsDatePicker)
         window.model.initAutocomplete()
+
+    validateRangeAndDigitsPrecision: =>
+      @validateRange()
+      @validateDigitsPrecision()
+
+    validateDigitsPrecision: =>
+      if @digitsPrecision
+        @value(parseInt(@value() * Math.pow(10, parseInt(@digitsPrecision))) / Math.pow(10, parseInt(@digitsPrecision)))
 
     validateRange: =>
       if @range
