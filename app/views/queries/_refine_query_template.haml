@@ -79,7 +79,7 @@
       %option{value: 'empty'} has no value
 
     /ko if: $root.expandedRefinePropertyOperator() != 'empty'
-    %input{ko(value: '$root.expandedRefinePropertyValue', valueUpdate: :afterkeydown, event: {keydown: '$root.expandedRefinePropertyValueKeyPress'}, hasfocus: true), type: :number}
+    %input{ko(value: '$root.expandedRefinePropertyValue', valueUpdate: :afterkeydown, event: {keydown: :validateFormat}, hasfocus: true, attr: {id: "'numeric-input-' + code"}), type: :number}
     //ko
 
     %button.white{ko(click: '$root.saveCondition', enable: '$root.validCondition')} OK

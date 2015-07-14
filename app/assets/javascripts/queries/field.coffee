@@ -56,3 +56,35 @@ onQueries ->
         layer_id: @layer.id
         is_mandatory: @is_mandatory      
       json
+    
+    validateFormat: (field,event) =>
+      if @config.allows_decimals
+        return @validate_decimal_only(event.keyCode)
+      else
+        return @validate_integer_only(event.keyCode)
+      return trues
+
+    validate_integer_only: (keyCode) =>
+      value = $('#'+@kind+'-input-'+@code).val()
+      if value == null || value == ""
+        if(keyCode == 189 || keyCode == 173) && (@preKeyCode != 189 || @preKeyCode == null || @preKeyCode == 173) #allow '-' for both chrome & firefox
+          @preKeyCode = keyCode
+          return true
+      else
+        if(keyCode == 189 || keyCode == 173) && value.charAt(0) != '-'
+          @preKeyCode = keyCode
+          return true
+      if keyCode > 31 && (keyCode < 48 || keyCode > 57) && (keyCode != 8 && keyCode != 46) && keyCode != 37 && keyCode != 39  #allow right and left arrow key
+        return false
+      else 
+        @preKeyCode = keyCode
+        return true
+
+    validate_decimal_only: (keyCode) =>
+      value = $('#'+@kind+'-input-'+@code).val()
+      if (value == null || value == "") && (keyCode == 229 || keyCode == 190) #prevent dot at the beginning
+        return false
+      if (keyCode != 8 && keyCode != 46 && keyCode != 173) && (keyCode != 190 || value.indexOf('.') != -1) && (keyCode < 48 || keyCode > 57) #prevent multiple dot
+        return false
+      else
+        return true
