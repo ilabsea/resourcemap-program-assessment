@@ -7,7 +7,9 @@ onCollections ->
   class @FilterMaybeEmpty extends Filter
     setQueryParams: (options, api = false) =>
       if @operator == 'empty'
-        options[@field.codeForLink(api)] = "="
+        options[@condition_id] = {}
+        options[@condition_id][@field.codeForLink(api)] = {}
+        options[@condition_id][@field.codeForLink(api)]["="] = ""
       else
         @setQueryParamsNonEmpty(options, api)
 
