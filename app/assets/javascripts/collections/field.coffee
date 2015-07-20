@@ -24,13 +24,15 @@ onCollections ->
         if @skippedState() == false && @kind in ["yes_no", "select_one", "select_many", "numeric"]
           @setFieldFocus()
 
-
-
       @hasValue = ko.computed =>
         if @kind == 'yes_no'
           true
+        else if @kind == 'select_many'
+          @value() && @value().length > 0
+        else if @kind == 'numeric'
+          @value() != '' && @value() != null && @value() != undefined
         else
-          @value() && (if @kind == 'select_many' then @value().length > 0 else @value())
+          @value()
 
       @valueUI =  ko.computed
        read: =>  @valueUIFor(@value())
@@ -341,7 +343,7 @@ onCollections ->
         date.setTime(date.getTime() + date.getTimezoneOffset() * 60000)
         value = @datePickerFormat(date)
 
-      value = '' unless value
+      value = '' if (value == null && value == '')
 
       @value(value)
     
@@ -377,9 +379,8 @@ onCollections ->
       else if @kind == 'site'
         name = window.model.currentCollection()?.findSiteNameById(value)
         if value && name then name else ''
-
       else
-        if value then value else ''
+        if value != null && value != '' then value else ''
 
     valueUIFrom: (value) =>
       if @kind == 'site'
