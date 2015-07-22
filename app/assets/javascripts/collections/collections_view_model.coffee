@@ -107,10 +107,11 @@ onCollections ->
       if @showingAlert()
         return if !collection.checked()
       else
-        collection.hasMoreSites(true)
-        collection.sitesPage = 1
-        collection.sites([])
-        collection.siteIds = []
+        if typeof collection != 'string'
+          collection.hasMoreSites(true)
+          collection.sitesPage = 1
+          collection.sites([])
+          collection.siteIds = []
 
       @queryParams = $.url().param()
 
