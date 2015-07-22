@@ -106,6 +106,11 @@ onCollections ->
     @enterCollection: (collection) ->
       if @showingAlert()
         return if !collection.checked()
+      else
+        collection.hasMoreSites(true)
+        collection.sitesPage = 1
+        collection.sites([])
+        collection.siteIds = []
 
       @queryParams = $.url().param()
 
@@ -150,6 +155,7 @@ onCollections ->
       @showRefindAlertOnMap()
       @filters([]) if @filters().length == 0
       @getAlertConditions()
+
 
     @editCollection: (collection) -> window.location = "/collections/#{collection.id}"
 
@@ -213,6 +219,7 @@ onCollections ->
         $.get "/plugin/alerts/collections/#{@currentCollection().id}/thresholds.json", (data) =>
           thresholds = @currentCollection().fetchThresholds(data)
           @currentCollection().thresholds(thresholds)
+          window.model.selectedQuery(@setSelectedQuery()) if @filters().length > 0
       else
         $.get "/plugin/alerts/thresholds.json", (data) =>   
           for collection in @collections()
@@ -221,3 +228,9 @@ onCollections ->
 
     @hideDatePicker: ->
       $("input").datepicker "hide"
+
+    @setSelectedQuery: ->
+      query = window.model.selectedQuery()
+      for q in @currentCollection().queries()
+        if query.id == q.id
+          return q
