@@ -107,6 +107,9 @@ class SitesController < ApplicationController
 
     search = MapSearch.new params[:collection_ids], user: current_user
 
+    formula = params[:formula].downcase if params[:formula].present?
+    
+    search.set_formula formula
     search.zoom = zoom
     search.bounds = params if zoom >= 2
     search.exclude_id params[:exclude_id].to_i if params[:exclude_id].present?
@@ -117,7 +120,8 @@ class SitesController < ApplicationController
     end
     search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :search, :hierarchy_code, :selected_hierarchies, :_alert, :formula)
     
-    search.apply_queries
+    # search.apply_queries
+    search.prepare_filter
     render json: search.sites_json    
   end
 
