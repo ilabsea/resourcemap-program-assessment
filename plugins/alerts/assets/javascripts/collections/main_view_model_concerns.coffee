@@ -34,11 +34,21 @@ onCollections ->
     @filterAlertedSites: () ->
       @showingAlert(true) 
       if @currentCollection()
-        @currentCollection().hasMoreSites(true)
-        @currentCollection().siteIds = {}
-        @currentCollection().sites([])
-        @currentCollection().sitesPage = 1 
-        @enterCollection(@currentCollection())
+        unless window.model.filters().length > 0
+          @currentCollection().hasMoreSites(true)
+          @currentCollection().siteIds = {}
+          @currentCollection().sites([])
+          @currentCollection().sitesPage = 1 
+          @enterCollection(@currentCollection())
+        else
+          collection = @findCollectionById parseInt(@currentCollection().id)
+          @currentCollection(collection)
+          @currentCollection().hasMoreSites(true)
+          @currentCollection().siteIds = {}
+          @currentCollection().sites(collection.sites())
+          @currentCollection().sitesPage = 1           
+          @enterCollection(@currentCollection())
+
       else
         @getAlertedCollections()
 
@@ -58,6 +68,8 @@ onCollections ->
 
       @showingAlert(false)
       if @currentCollection()
+        collection = @findCollectionById parseInt(@currentCollection().id)
+        @currentCollection(collection)
         @resetCollectionStatus(@currentCollection())
         @enterCollection(@currentCollection())
       else

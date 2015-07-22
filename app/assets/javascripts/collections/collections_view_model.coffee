@@ -66,7 +66,7 @@ onCollections ->
             filters.push(new FilterBySiteProperty(field, condition.operator, condition.field_value, id, condition.id))
 
       @filters(filters)
-      
+
     @goToRoot: ->
       @filters([])
       @selectedQuery(null)
@@ -105,7 +105,8 @@ onCollections ->
 
     @enterCollection: (collection) ->
       if @showingAlert()
-        return if !collection.checked()       
+        return if !collection.checked()
+
       @queryParams = $.url().param()
 
       # collection may be a collection object (in most of the cases)
@@ -147,7 +148,7 @@ onCollections ->
       window.adjustContainerSize()
       window.model.updateSitesInfo()
       @showRefindAlertOnMap()
-      @filters([])
+      @filters([]) if @filters().length == 0
       @getAlertConditions()
 
     @editCollection: (collection) -> window.location = "/collections/#{collection.id}"
