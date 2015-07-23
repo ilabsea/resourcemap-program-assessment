@@ -21,7 +21,7 @@ class ThresholdsController < ApplicationController
       end
 
       respond_to do |format|
-        format.json { render json: thresholds }
+        format.json { render json: thresholds.order(:ord) }
       end
     end
   end
