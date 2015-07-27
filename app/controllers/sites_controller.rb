@@ -82,8 +82,8 @@ class SitesController < ApplicationController
     search = MapSearch.new params[:collection_ids], user: current_user
 
     formula = params[:formula].downcase if params[:formula].present?
-
-    search.set_formula formula
+    
+    search.set_formula formula if formula.present?
     search.zoom = zoom
     search.bounds = params if zoom >= 2
     search.exclude_id params[:exclude_id].to_i if params[:exclude_id].present?
@@ -109,7 +109,7 @@ class SitesController < ApplicationController
 
     formula = params[:formula].downcase if params[:formula].present?
     
-    search.set_formula formula
+    search.set_formula formula if formula.present?
     search.zoom = zoom
     search.bounds = params if zoom >= 2
     search.exclude_id params[:exclude_id].to_i if params[:exclude_id].present?

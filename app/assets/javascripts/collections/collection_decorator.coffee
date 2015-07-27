@@ -26,6 +26,7 @@ onCollections ->
       @sitesPermission = collection.sitesPermission
       @thresholds = collection.thresholds
       @showLegend = collection.showLegend
+      @checked = collection.checked
       @showingCollectionAlert = collection.showingCollectionAlert
       @allSites(collection.allSites())
 

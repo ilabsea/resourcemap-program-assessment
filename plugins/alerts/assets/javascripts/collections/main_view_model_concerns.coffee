@@ -34,9 +34,9 @@ onCollections ->
     @filterAlertedSites: () ->
       @showingAlert(true) 
       if @currentCollection()
-        if window.model.filters().length > 0
-          collection = @findCollectionById parseInt(@currentCollection().id)
-          @currentCollection(collection)
+        # if window.model.filters().length > 0
+        #   collection = @findCollectionById parseInt(@currentCollection().id)
+        #   @currentCollection(collection)
         @currentCollection().hasMoreSites(true)
         @currentCollection().siteIds = {}
         @currentCollection().sites([])
@@ -61,8 +61,8 @@ onCollections ->
     @cancelFilterAlertedSites: () ->
       @showingAlert(false)
       if @currentCollection()
-        collection = @findCollectionById parseInt(@currentCollection().id)
-        @currentCollection(collection)
+        # collection = @findCollectionById parseInt(@currentCollection().id)
+        # @currentCollection(collection)
         @resetCollectionStatus(@currentCollection())
         @enterCollection(@currentCollection())
       else

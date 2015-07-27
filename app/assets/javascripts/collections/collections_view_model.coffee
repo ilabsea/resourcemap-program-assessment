@@ -66,7 +66,8 @@ onCollections ->
             filters.push(new FilterBySiteProperty(field, condition.operator, condition.field_value, id, condition.id))
 
       @filters(filters)
-
+      # if @filters().length == 0 && @showingAlert() == false
+      #   @currentCollection().loadSites()
     @goToRoot: ->
       @filters([])
       @selectedQuery(null)
