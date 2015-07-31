@@ -206,7 +206,7 @@ class Api::CollectionsController < ApplicationController
   end
 
   def collection_kml(collection, results)
-    sites_kml = collection.to_kml results
+    sites_kml = collection.to_kml results, current_user
     send_data sites_kml, type: 'application/vnd.google-earth.kml+xml', filename: "#{collection.name}_sites.kml"
   end
 
