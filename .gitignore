@@ -1,9 +1,9 @@
-/log/
+*.log
 *.sqlite3
-/tmp/
+*.tmp*~
 *.orig
 *.pid
-*.*~
+.~
 .DS_Store
 tmp/*
 public/assets
