@@ -126,7 +126,7 @@
                   .clear
                 %div
                   %label Location:
-                  = ko_text_field_tag :locationText, event: {keydown: :newLocationKeyPress, blur: :moveLocation}, html: {class: 'ux-search right w20', placeholder: t('views.collections.index.search_or_drug_the_pin')}
+                  = ko_text_field_tag :locationText, event: {keydown: :newLocationKeyPress, blur: :moveLocation}, html: {class: 'ux-search right w20', placeholder: t('views.collections.index.search_or_drug_the_pin'), disabled: "disabled"}
                   .clear
                 / ko if: collection.readable($data)
                 <!-- ko foreach: layers -->
@@ -135,6 +135,7 @@
                   %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;color:grey;cursor:pointer'}
                 <!-- ko if: expanded() -->
                 <!-- ko foreach: fields -->
+                <!-- ko if: kind != 'calculation' -->
                 %div
                   %span{ko(text: :errorMessage, validationPopover: :errorMessage), style: 'display: none;'}
                   <!-- ko if: is_mandatory -->
@@ -150,6 +151,24 @@
                     = render partial: field_edit_view(kind), locals: { single_editing_mode: false, mobile: false }
                     <!-- /ko -->
                   <!-- /ko -->
+                <!-- /ko -->
+                <!-- ko if: kind == 'calculation' -->
+                %div.invisible-div
+                  %span{ko(text: :errorMessage, validationPopover: :errorMessage), style: 'display: none;'}
+                  <!-- ko if: is_mandatory -->
+                  %label *
+                  <!-- /ko -->
+                  = label_tag '', '', ko(attr: {:for => :esCode}, text: "name + ':'")
+                  <!-- ko if: !writeable -->
+                  %span.value{ko(text: :valueUI)}
+                  <!-- /ko -->
+                  <!-- ko if: writeable -->
+                  - Field::kinds.each do |kind|
+                    <!-- ko if: kind == '#{kind}' -->
+                    = render partial: field_edit_view(kind), locals: { single_editing_mode: false, mobile: false }
+                    <!-- /ko -->
+                  <!-- /ko -->
+                <!-- /ko -->
                 <!-- /ko -->
                 <!-- /ko -->
                 <!-- /ko -->
@@ -197,7 +216,7 @@
                     %span.value{ko(text: :locationText, visible: '!editingLocation()', click: 'editLocation'), style: 'cursor: pointer'}
                   <!-- /ko -->
                   <!-- ko if: editingLocation() -->
-                  = ko_text_field_tag :locationText, visible: :editingLocation, hasfocus: true, event: {keydown: :locationKeyPress, blur: :saveLocation}, html: {class: 'ux-search'}
+                  = ko_text_field_tag :locationText, visible: :editingLocation, hasfocus: true, event: {keydown: :locationKeyPress, blur: :saveLocation}, html: {class: 'ux-search', disabled: "disabled"}
                   <!-- /ko -->
                 - if Settings.mobile_id?
                   %div{style: 'margin-bottom:14px'}
@@ -211,6 +230,7 @@
                   %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;color:grey;cursor:pointer'}
                 <!-- ko if: expanded() -->
                 <!-- ko foreach: fields -->
+                <!-- ko if: kind != "calculation" -->
                 %div{style: 'margin-bottom:14px'}
                   %span{ko(text: :errorMessage, validationPopover: :errorMessage), style: 'display: none;'}
                   %label.field-name{ko(html: "name + '<sup>' + code + '</sup>:'", css: { error: :error })}
@@ -247,6 +267,7 @@
                     = render partial: field_edit_view(kind), locals: { single_editing_mode: true, mobile: false }
                     <!-- /ko -->
                   <!-- /ko -->
+                <!-- /ko -->
                 <!-- /ko -->
                 <!-- /ko -->
                 <!-- /ko -->
