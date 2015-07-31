@@ -38,12 +38,13 @@ module Collection::CsvConcern
           header << field.code
         end
       end
+      header << 'start entry date'
+      header << 'end entry date'
       header << 'last updated'
       csv << header
 
       elastic_search_api_results.each do |result|
         source = result['_source']
-        p source
         row = [source['id'], source['name'], source['location'].try(:[], 'lat'), source['location'].try(:[], 'lon')]
         fields.each do |field|
           if field.kind == 'yes_no'
@@ -77,10 +78,16 @@ module Collection::CsvConcern
         end
         if current_user
           updated_at = Site.iso_string_to_rfc822_with_timezone(source['updated_at'], current_user.time_zone)
+          start_entry_date = Site.iso_string_to_rfc822_with_timezone(source['start_entry_date'], current_user.time_zone)
+          end_entry_date = Site.iso_string_to_rfc822_with_timezone(source['end_entry_date'], current_user.time_zone)
         else
           updated_at = Site.iso_string_to_rfc822(source['updated_at'])
+          start_entry_date = Site.iso_string_to_rfc822(source['start_entry_date'])
+          end_entry_date = Site.iso_string_to_rfc822(source['end_entry_date'])
         end
         # row << Site.iso_string_to_rfc822(source['updated_at'])
+        row << start_entry_date
+        row << end_entry_date
         row << updated_at
         csv << row
       end
