@@ -47,6 +47,18 @@ class Site < ActiveRecord::Base
     end
     props
   end
+  
+  def self.add_start_and_end_entry_date
+    Site.transaction do
+      Site.find_each(batch_size: 100) do |site|
+        site.start_entry_date = site.created_at
+        site.end_entry_date = site.created_at
+        site.save!
+        print "\."
+      end
+    end
+    print 'Done!'
+  end
 
   def self.get_id_and_name sites
     sites = Site.select("id, name").find(sites)
