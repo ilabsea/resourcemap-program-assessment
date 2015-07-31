@@ -14,6 +14,8 @@ module Site::IndexUtils
       properties: site.properties,
       created_at: site.created_at.strftime(DateFormat),
       updated_at: site.updated_at.strftime(DateFormat),
+      start_entry_date: site.start_entry_date.strftime(DateFormat),
+      end_entry_date: site.end_entry_date.strftime(DateFormat),
       icon: site.collection.icon,
     }
 
@@ -45,6 +47,8 @@ module Site::IndexUtils
         lng_analyzed: { type: :string },
         created_at: { type: :date, format: :basic_date_time },
         updated_at: { type: :date, format: :basic_date_time },
+        start_entry_date: { type: :date, format: :basic_date_time },
+        end_entry_date: { type: :date, format: :basic_date_time },
         properties: { properties: fields_mapping(fields) }
       }
     }

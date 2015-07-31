@@ -76,6 +76,12 @@
           %button{ko(style: {background: "'transparent url(#{InsteddRails.url}/theme/images/icons/misc/grey/arrow' + ($root.sortDirection() ? 'Up' : 'Down') + '.png) no-repeat scroll center'", height: "'11px'", cssFloat: "'right'", float: "'right'", borderStyle: "'none'"})}
           <!-- /ko -->
         <!-- /ko -->
+
+        %th
+          %span{style: 'display:inline'}= t('views.collections.index.start_entry_date')
+        %th
+          %span{style: 'display:inline'}= t('views.collections.index.end_entry_date')
+
         %th{ko(click: '$root.sortByDate'), style: 'width:100%;min-width:100px;cursor:pointer'}
           %span{style: 'display:inline'}= t('views.collections.index.last_update')
           <!-- ko if: $root.sort() == 'updated_at' -->

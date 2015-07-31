@@ -100,6 +100,8 @@ en:
         leave_this_collection: "Leave this collection"
         confirm_leave_collection: "Are you sure you want to leave this collection?"
         query: "Query"
+        start_entry_date: "Start entry date"
+        end_entry_date: "End entry date"
       form:
         name: "Name"
         description: "Description"

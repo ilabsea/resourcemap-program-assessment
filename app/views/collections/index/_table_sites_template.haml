@@ -23,6 +23,8 @@
       %span{ko(attr: "{ title: $parent.highlightedPropertyValue($data) }", text: "$parent.highlightedPropertyValue($data)"), style: 'vertical-align:top'}
       <!-- /ko -->
     <!-- /ko -->
+    %td.padded{ko(attr: "{title: startEntryDate}", text: :startEntryDate)}
+    %td.padded{ko(attr: "{title: endEntryDate}", text: :endEntryDate)}
     %td.timeago.padded{ko(attr: "{title: updatedAt}", text: :updatedAtTimeago)}
     %td.padded
   <!-- /ko -->
