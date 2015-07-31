@@ -128,6 +128,8 @@
                   %label Location:
                   = ko_text_field_tag :locationText, event: {keydown: :newLocationKeyPress, blur: :moveLocation}, html: {class: 'ux-search right w20', placeholder: t('views.collections.index.search_or_drug_the_pin'), readonly: true}
                   .clear
+                %div
+                  %input{ko(value: :startEntryDate), type: :hidden, name: :startEntryDate}
                 / ko if: collection.readable($data)
                 <!-- ko foreach: layers -->
                 %div

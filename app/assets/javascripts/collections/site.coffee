@@ -39,6 +39,7 @@ onCollections ->
       @highlightedName = ko.computed => window.model.highlightSearch(@name())
       @inEditMode = ko.observable(false)
       @scrollable = ko.observable(false)
+      @startEntryDate = ko.observable()
       
 
     hasLocation: => @position() != null
@@ -444,6 +445,7 @@ onCollections ->
         name: @name()
       json.lat = @lat() if @lat()
       json.lng = @lng() if @lng()
+      json.start_entry_date = @startEntryDate()
       json.properties = @properties() if @properties()
       json
 
