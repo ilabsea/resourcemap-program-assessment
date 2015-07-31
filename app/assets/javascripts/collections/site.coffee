@@ -445,7 +445,9 @@ onCollections ->
         name: @name()
       json.lat = @lat() if @lat()
       json.lng = @lng() if @lng()
-      json.start_entry_date = @startEntryDate()
+      unless @id() #set entry date for new site only
+        json.start_entry_date = @startEntryDate()
+        json.end_entry_date = new Date(Date.now())
       json.properties = @properties() if @properties()
       json
 
