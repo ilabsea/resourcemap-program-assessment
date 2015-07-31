@@ -34,11 +34,15 @@ onCollections ->
     @filterAlertedSites: () ->
       @showingAlert(true) 
       if @currentCollection()
+        # if window.model.filters().length > 0
+        #   collection = @findCollectionById parseInt(@currentCollection().id)
+        #   @currentCollection(collection)
         @currentCollection().hasMoreSites(true)
         @currentCollection().siteIds = {}
         @currentCollection().sites([])
-        @currentCollection().sitesPage = 1 
+        @currentCollection().sitesPage = 1           
         @enterCollection(@currentCollection())
+
       else
         @getAlertedCollections()
 
@@ -55,9 +59,10 @@ onCollections ->
               collection.checked(true)
 
     @cancelFilterAlertedSites: () ->
-
       @showingAlert(false)
       if @currentCollection()
+        # collection = @findCollectionById parseInt(@currentCollection().id)
+        # @currentCollection(collection)
         @resetCollectionStatus(@currentCollection())
         @enterCollection(@currentCollection())
       else
