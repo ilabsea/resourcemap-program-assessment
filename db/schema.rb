@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150522044459) do
+ActiveRecord::Schema.define(:version => 20150731030849) do
 
   create_table "activities", :force => true do |t|
     t.integer  "user_id"
@@ -254,18 +254,19 @@ ActiveRecord::Schema.define(:version => 20150522044459) do
   create_table "sites", :force => true do |t|
     t.integer  "collection_id"
     t.string   "name"
-    t.decimal  "lat",                          :precision => 10, :scale => 6
-    t.decimal  "lng",                          :precision => 10, :scale => 6
+    t.decimal  "lat",                            :precision => 10, :scale => 6
+    t.decimal  "lng",                            :precision => 10, :scale => 6
     t.integer  "parent_id"
     t.string   "hierarchy"
-    t.datetime "created_at",                                                                           :null => false
-    t.datetime "updated_at",                                                                           :null => false
+    t.datetime "created_at",                                                                             :null => false
+    t.datetime "updated_at",                                                                             :null => false
     t.text     "properties"
-    t.string   "location_mode",  :limit => 10,                                :default => "automatic"
+    t.string   "location_mode",    :limit => 10,                                :default => "automatic"
     t.string   "id_with_prefix"
     t.string   "uuid"
     t.string   "device_id"
     t.string   "external_id"
+    t.datetime "start_entry_date"
   end
 
   create_table "sites_permissions", :force => true do |t|
