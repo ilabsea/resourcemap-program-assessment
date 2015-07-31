@@ -55,6 +55,8 @@
     <!-- ko foreach: $root.currentCollection().fields() -->
     %col{ko(attr: { width: 'suggestedWidth()' })}
     <!-- /ko -->
+    %col{width: '180'}
+    %col{width: '180'}
     %col{width: '150'}
     %thead
       %tr
@@ -77,9 +79,9 @@
           <!-- /ko -->
         <!-- /ko -->
 
-        %th
+        %th{style: 'width:180px'}
           %span{style: 'display:inline'}= t('views.collections.index.start_entry_date')
-        %th
+        %th{style: 'width:180px'}
           %span{style: 'display:inline'}= t('views.collections.index.end_entry_date')
 
         %th{ko(click: '$root.sortByDate'), style: 'width:100%;min-width:100px;cursor:pointer'}
