@@ -126,7 +126,7 @@
                   .clear
                 %div
                   %label Location:
-                  = ko_text_field_tag :locationText, event: {keydown: :newLocationKeyPress, blur: :moveLocation}, html: {class: 'ux-search right w20', placeholder: t('views.collections.index.search_or_drug_the_pin'), disabled: "disabled"}
+                  = ko_text_field_tag :locationText, event: {keydown: :newLocationKeyPress, blur: :moveLocation}, html: {class: 'ux-search right w20', placeholder: t('views.collections.index.search_or_drug_the_pin'), readonly: true}
                   .clear
                 / ko if: collection.readable($data)
                 <!-- ko foreach: layers -->
@@ -216,7 +216,7 @@
                     %span.value{ko(text: :locationText, visible: '!editingLocation()', click: 'editLocation'), style: 'cursor: pointer'}
                   <!-- /ko -->
                   <!-- ko if: editingLocation() -->
-                  = ko_text_field_tag :locationText, visible: :editingLocation, hasfocus: true, event: {keydown: :locationKeyPress, blur: :saveLocation}, html: {class: 'ux-search', disabled: "disabled"}
+                  = ko_text_field_tag :locationText, visible: :editingLocation, hasfocus: true, event: {keydown: :locationKeyPress, blur: :saveLocation}, html: {class: 'ux-search', readonly: true}
                   <!-- /ko -->
                 - if Settings.mobile_id?
                   %div{style: 'margin-bottom:14px'}
