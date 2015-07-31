@@ -18,6 +18,8 @@ module Api::JsonHelper
     obj[:name] = source['name']
     obj[:createdAt] = Site.parse_time(source['created_at'])
     obj[:updatedAt] = Site.parse_time(source['updated_at'])
+    obj[:startEntryDate] = Site.parse_time(source['start_entry_date'])
+    obj[:endEntryDate] = Site.parse_time(source['end_entry_date'])
 
     if source['location']
       obj[:lat] = source['location']['lat']
