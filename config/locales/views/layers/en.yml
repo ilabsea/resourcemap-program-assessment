@@ -71,6 +71,8 @@ en:
           add_attribute: "Add attribute"
           mandatory: "Mandatory"
           this_field_must_be_report_on_every_report: "This field must be report on every report."
+          display_on_form_entry: "Display on form entry"
+          show_this_field_and_value_on_form_entry: "Show this field and value on form entry"
           all_of_following: "All of the following"
           any_of_following: "Any of the following"
           if_input_is: "if input is"
