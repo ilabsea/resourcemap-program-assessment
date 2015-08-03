@@ -137,7 +137,7 @@
                   %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;color:grey;cursor:pointer'}
                 <!-- ko if: expanded() -->
                 <!-- ko foreach: fields -->
-                <!-- ko if: kind != 'calculation' -->
+                <!-- ko if: kind != "calculation" || ( kind == "calculation" && is_display_field) -->
                 %div
                   %span{ko(text: :errorMessage, validationPopover: :errorMessage), style: 'display: none;'}
                   <!-- ko if: is_mandatory -->
@@ -154,7 +154,7 @@
                     <!-- /ko -->
                   <!-- /ko -->
                 <!-- /ko -->
-                <!-- ko if: kind == 'calculation' -->
+                <!-- ko if: kind == "calculation" && !is_display_field -->
                 %div.invisible-div
                   %span{ko(text: :errorMessage, validationPopover: :errorMessage), style: 'display: none;'}
                   <!-- ko if: is_mandatory -->
@@ -232,7 +232,7 @@
                   %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;color:grey;cursor:pointer'}
                 <!-- ko if: expanded() -->
                 <!-- ko foreach: fields -->
-                <!-- ko if: kind != "calculation" -->
+                <!-- ko if: kind != "calculation" || ( kind == "calculation" && is_display_field) -->
                 %div{style: 'margin-bottom:14px'}
                   %span{ko(text: :errorMessage, validationPopover: :errorMessage), style: 'display: none;'}
                   %label.field-name{ko(html: "name + '<sup>' + code + '</sup>:'", css: { error: :error })}

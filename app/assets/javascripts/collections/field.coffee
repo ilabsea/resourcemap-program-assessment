@@ -9,6 +9,7 @@ onCollections ->
       @kind = data.kind
       @ord = data.ord
       @is_mandatory = ko.observable data?.is_mandatory ? false 
+      @is_display_field = ko.observable data?.is_display_field ? false
       @is_enable_field_logic = data.is_enable_field_logic
 
       @photo = '' 
