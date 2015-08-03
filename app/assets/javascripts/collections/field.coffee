@@ -390,7 +390,8 @@ onCollections ->
         value
 
     datePickerFormat: (date) =>
-      date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear()
+      month = date.getMonth() + 1
+      date.getDate() + '/' + month + '/' + date.getFullYear()
 
     buildHierarchyItems: =>
       @fieldHierarchyItemsMap = {}

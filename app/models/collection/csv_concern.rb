@@ -76,16 +76,11 @@ module Collection::CsvConcern
             row << Array(source['properties'][field.code]).join(", ")
           end
         end
-        if current_user
-          updated_at = Site.iso_string_to_rfc822_with_timezone(source['updated_at'], current_user.time_zone)
-          start_entry_date = Site.iso_string_to_rfc822_with_timezone(source['start_entry_date'], current_user.time_zone)
-          end_entry_date = Site.iso_string_to_rfc822_with_timezone(source['end_entry_date'], current_user.time_zone)
-        else
-          updated_at = Site.iso_string_to_rfc822(source['updated_at'])
-          start_entry_date = Site.iso_string_to_rfc822(source['start_entry_date'])
-          end_entry_date = Site.iso_string_to_rfc822(source['end_entry_date'])
-        end
-        # row << Site.iso_string_to_rfc822(source['updated_at'])
+
+        updated_at = Site.parse_time(source['updated_at']).strftime("%d/%m/%Y %H:%M:%S")
+        start_entry_date = Site.parse_time(source['start_entry_date']).strftime("%d/%m/%Y %H:%M:%S")
+        end_entry_date = Site.parse_time(source['end_entry_date']).strftime("%d/%m/%Y %H:%M:%S")
+
         row << start_entry_date
         row << end_entry_date
         row << updated_at

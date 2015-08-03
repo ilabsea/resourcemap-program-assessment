@@ -641,6 +641,7 @@ onCollections ->
       # fix dinamic DOM
       # http://stackoverflow.com/questions/1059107/why-does-jquery-uis-datepicker-break-with-a-dynamic-dom
       $(".ux-datepicker").removeClass('hasDatepicker').datepicker(
+                                                                    dateFormat : "dd/mm/yy",
                                                                     yearRange: "-100:+5",
                                                                     changeMonth: true,
                                                                     changeYear: true

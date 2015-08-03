@@ -73,13 +73,13 @@ onThresholds ->
 
   class @Field_date extends @FieldImpl
     format: (value) ->
-      value?.toString().toDate()?.strftime '%m/%d/%Y'
+      value?.toString().toDate()?.strftime '%d/%m/%Y'
 
     getOperators: =>
       [Operator.EQ, Operator.LT, Operator.GT]
 
     encode: (value) ->
-      value?.toString().toDate()?.strftime '%m/%d/%Y'
+      value?.toString().toDate()?.strftime '%d/%m/%Y'
 
     valid: (value) ->
       !!value
