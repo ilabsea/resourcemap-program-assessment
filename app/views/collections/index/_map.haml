@@ -137,6 +137,7 @@
                   %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;color:grey;cursor:pointer'}
                 <!-- ko if: expanded() -->
                 <!-- ko foreach: fields -->
+                <!-- ko if: kind != "calculation" || ( kind == "calculation" && is_display_field) -->
                 %div
                   %span{ko(text: :errorMessage, validationPopover: :errorMessage), style: 'display: none;'}
                   <!-- ko if: is_mandatory -->
@@ -152,6 +153,24 @@
                     = render partial: field_edit_view(kind), locals: { single_editing_mode: false, mobile: false }
                     <!-- /ko -->
                   <!-- /ko -->
+                <!-- /ko -->
+                <!-- ko if: kind == "calculation" && !is_display_field -->
+                %div.invisible-div
+                  %span{ko(text: :errorMessage, validationPopover: :errorMessage), style: 'display: none;'}
+                  <!-- ko if: is_mandatory -->
+                  %label *
+                  <!-- /ko -->
+                  = label_tag '', '', ko(attr: {:for => :esCode}, text: "name + ':'")
+                  <!-- ko if: !writeable -->
+                  %span.value{ko(text: :valueUI)}
+                  <!-- /ko -->
+                  <!-- ko if: writeable -->
+                  - Field::kinds.each do |kind|
+                    <!-- ko if: kind == '#{kind}' -->
+                    = render partial: field_edit_view(kind), locals: { single_editing_mode: false, mobile: false }
+                    <!-- /ko -->
+                  <!-- /ko -->
+                <!-- /ko -->
                 <!-- /ko -->
                 <!-- /ko -->
                 <!-- /ko -->
@@ -213,6 +232,7 @@
                   %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;color:grey;cursor:pointer'}
                 <!-- ko if: expanded() -->
                 <!-- ko foreach: fields -->
+                <!-- ko if: kind != "calculation" || ( kind == "calculation" && is_display_field) -->
                 %div{style: 'margin-bottom:14px'}
                   %span{ko(text: :errorMessage, validationPopover: :errorMessage), style: 'display: none;'}
                   %label.field-name{ko(html: "name + '<sup>' + code + '</sup>:'", css: { error: :error })}
@@ -249,6 +269,7 @@
                     = render partial: field_edit_view(kind), locals: { single_editing_mode: true, mobile: false }
                     <!-- /ko -->
                   <!-- /ko -->
+                <!-- /ko -->
                 <!-- /ko -->
                 <!-- /ko -->
                 <!-- /ko -->
