@@ -44,6 +44,14 @@ module Field::Base
   def stored_as_number?
     numeric? || select_one? || select_many?
   end
+
+  def stoted_as_double?
+    numeric?
+  end
+
+  def storeed_as_long?
+    select_one? || select_many?
+  end
  
   def stored_as_floating_point?
     numeric? && allow_decimals?
