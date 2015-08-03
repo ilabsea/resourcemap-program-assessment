@@ -11,11 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema.define(:version => 20150731042851) do
-=======
 ActiveRecord::Schema.define(:version => 20150803045233) do
->>>>>>> calculation_config
 
   create_table "activities", :force => true do |t|
     t.integer  "user_id"
