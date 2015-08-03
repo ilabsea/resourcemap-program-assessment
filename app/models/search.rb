@@ -125,8 +125,8 @@ class Search
       end
       item['_source']['created_at'] = Site.parse_time item['_source']['created_at']
       item['_source']['updated_at'] = Site.parse_time item['_source']['updated_at']
-      item['_source']['start_entry_date'] = Site.parse_time item['_source']['start_entry_date']
-      item['_source']['end_entry_date'] = Site.parse_time item['_source']['end_entry_date']
+      item['_source']['start_entry_date'] = Site.parse_time(item['_source']['start_entry_date']).strftime("%d/%m/%y %H:%M:%S")
+      item['_source']['end_entry_date'] = Site.parse_time(item['_source']['end_entry_date']).strftime("%d/%m/%y %H:%M:%S")
       if not site_ids_permission.include?(item['_source']['id'])
         item['_source']['properties'] = item['_source']['properties'].select { |es_code, value|
           fields_by_es_code[es_code]
