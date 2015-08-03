@@ -102,6 +102,7 @@ onCollections ->
         @filter = ->
 
       if @kind == 'calculation'
+        @digitsPrecision = data?.config?.digits_precision
         @codeCalculation = data.config?.code_calculation
         @dependentFields = data.config?.dependent_fields
 
