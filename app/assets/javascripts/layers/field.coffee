@@ -13,7 +13,8 @@ onLayers ->
       @config = data?.config
       @field_logics_attributes = data?.field_logics_attributes
       @metadata = data?.metadata
-      @is_mandatory = data?.is_mandatory      
+      @is_mandatory = data?.is_mandatory 
+      @is_display_field = data?.is_display_field     
 
       @kind_titleize = ko.computed =>
         (@kind().split(/_/).map (word) -> word[0].toUpperCase() + word[1..-1].toLowerCase()).join ' '
@@ -25,8 +26,8 @@ onLayers ->
       @fieldErrorDescription = ko.computed => if @hasName() then "'#{@name()}'" else "number #{@layer().fields().indexOf(@) + 1}"
 
       # Tried doing "@impl = ko.computed" but updates were triggering too often
-      @impl = ko.observable eval("new Field_#{@kind()}(_this)")
-      @kind.subscribe => @impl eval("new Field_#{@kind()}(_this)")
+      @impl = ko.observable eval("new Field_#{@kind()}(this)")
+      @kind.subscribe => @impl eval("new Field_#{@kind()}(this)")
 
       @nameError = ko.computed => if @hasName() then null else "the field #{@fieldErrorDescription()} is missing a Name"
       @codeError = ko.computed =>
@@ -79,6 +80,7 @@ onLayers ->
         ord: @ord()
         layer_id: @layer().id()
         is_mandatory: @is_mandatory
+        is_display_field: @is_display_field
         is_enable_field_logic: @is_enable_field_logic
       @impl().toJSON(json)
       json
@@ -332,6 +334,8 @@ onLayers ->
   class @Field_calculation extends @FieldImpl
     constructor: (field) ->
       super(field)
+      @allowsDecimals = ko.observable field?.config?.allows_decimals == 'true'
+      @digitsPrecision = ko.observable field?.config?.digits_precision
       @dependent_fields = if field.config?.dependent_fields?
                             ko.observableArray(
                               $.map(field.config.dependent_fields, (x) -> new FieldDependant(x))
@@ -351,4 +355,4 @@ onLayers ->
     addFieldToCodeCalculation: (field) =>
       @codeCalculation(@codeCalculation() + '$' + field.code())
     toJSON: (json) =>
-      json.config = {code_calculation: @codeCalculation(), dependent_fields: $.map(@dependent_fields(), (x) ->  x.toJSON())}
+      json.config = {digits_precision: @digitsPrecision(), allows_decimals: @allowsDecimals(), code_calculation: @codeCalculation(), dependent_fields: $.map(@dependent_fields(), (x) ->  x.toJSON())}

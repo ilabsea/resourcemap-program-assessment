@@ -42,7 +42,6 @@ module Site::UploadUtils
           File.delete(path + photoFileName)
       end
     }
-
   end
 
 end

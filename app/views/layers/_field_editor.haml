@@ -3,7 +3,7 @@
   %p.smalltext= t('views.layers.form.field.the_data_type_to_fill_in_this_field')
   %div{"data-bind" => "text: kind_titleize"}
 
-  /ko if: kind() == 'numeric'
+  /ko if: kind() == 'numeric' || kind() == "calculation"
   %br/
   %div
     %label
@@ -122,6 +122,11 @@
   //ko
 
   /ko if: kind() == 'calculation'
+  %hr/
+  %label
+    = t('views.layers.form.field.display_on_form_entry')
+  %p.smalltext= t('views.layers.form.field.show_this_field_and_value_on_form_entry') 
+  = ko_check_box_tag :is_display_field, css: {error: :codeError}
   %hr/
   %label
     = t('views.layers.form.field.dependent_field')

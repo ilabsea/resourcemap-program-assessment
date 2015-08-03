@@ -9,6 +9,7 @@ onCollections ->
       @kind = data.kind
       @ord = data.ord
       @is_mandatory = ko.observable data?.is_mandatory ? false 
+      @is_display_field = ko.observable data?.is_display_field ? false
       @is_enable_field_logic = data.is_enable_field_logic
 
       @photo = '' 
@@ -38,7 +39,7 @@ onCollections ->
        read: =>  @valueUIFor(@value())
        write: (value) =>
          @value(@valueUIFrom(value))
-
+      
       if @kind == 'numeric'
         @digitsPrecision = data?.config?.digits_precision
         @range = if data.config?.range?.minimum? || data.config?.range?.maximum?
@@ -101,6 +102,7 @@ onCollections ->
         @filter = ->
 
       if @kind == 'calculation'
+        @digitsPrecision = data?.config?.digits_precision
         @codeCalculation = data.config?.code_calculation
         @dependentFields = data.config?.dependent_fields
 
