@@ -380,7 +380,7 @@ onCollections ->
         name = window.model.currentCollection()?.findSiteNameById(value)
         if value && name then name else ''
       else
-        if value != null && value != '' then value else ''
+        if value != null && value != '' && typeof value != 'undefined' then value else ''
 
     valueUIFrom: (value) =>
       if @kind == 'site'
