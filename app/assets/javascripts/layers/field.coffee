@@ -334,6 +334,8 @@ onLayers ->
   class @Field_calculation extends @FieldImpl
     constructor: (field) ->
       super(field)
+      @allowsDecimals = ko.observable field?.config?.allows_decimals == 'true'
+      @digitsPrecision = ko.observable field?.config?.digits_precision
       @dependent_fields = if field.config?.dependent_fields?
                             ko.observableArray(
                               $.map(field.config.dependent_fields, (x) -> new FieldDependant(x))
@@ -353,4 +355,4 @@ onLayers ->
     addFieldToCodeCalculation: (field) =>
       @codeCalculation(@codeCalculation() + '$' + field.code())
     toJSON: (json) =>
-      json.config = {code_calculation: @codeCalculation(), dependent_fields: $.map(@dependent_fields(), (x) ->  x.toJSON())}
+      json.config = {digits_precision: @digitsPrecision(), allows_decimals: @allowsDecimals(), code_calculation: @codeCalculation(), dependent_fields: $.map(@dependent_fields(), (x) ->  x.toJSON())}

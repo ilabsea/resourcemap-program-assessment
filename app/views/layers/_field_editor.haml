@@ -3,7 +3,7 @@
   %p.smalltext= t('views.layers.form.field.the_data_type_to_fill_in_this_field')
   %div{"data-bind" => "text: kind_titleize"}
 
-  /ko if: kind() == 'numeric'
+  /ko if: kind() == 'numeric' || kind() == "calculation"
   %br/
   %div
     %label
