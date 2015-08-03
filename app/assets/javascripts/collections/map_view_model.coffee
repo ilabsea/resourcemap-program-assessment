@@ -23,6 +23,7 @@ onCollections ->
       @ghostMarkers = []
       @mapRequestNumber = 0
       @geocoder = new google.maps.Geocoder()
+      @currentPosition = {}
 
       $.each @collections(), (idx) =>
         @collections()[idx].checked.subscribe (newValue) =>
@@ -30,6 +31,21 @@ onCollections ->
 
       @showingMap.subscribe =>
         @rewriteUrl()
+
+    @getCurrentLocation:->
+      if navigator.geolocation
+        navigator.geolocation.getCurrentPosition ((pos) =>
+          lat = pos.coords.latitude
+          lng = pos.coords.longitude
+          @currentPosition = {lat: lat, lng: lng}
+        ), =>
+          @handleNoGeolocation()
+      else
+        @handleNoGeolocation()
+
+    @handleNoGeolocation: ->
+      pos = window.model.map.getCenter()
+      @currentPosition = {lat: pos.lat(), lng: pos.lng()}
 
     @initMap: ->
       return true unless @showingMap()
@@ -54,6 +70,8 @@ onCollections ->
         mapTypeId: google.maps.MapTypeId.ROADMAP
         scaleControl: true
       @map = new google.maps.Map document.getElementById("map"), mapOptions
+
+      @getCurrentLocation()
 
       # Create a dummy overlay to easily get a position of a marker in pixels
       # See the second answer in http://stackoverflow.com/questions/2674392/how-to-access-google-maps-api-v3-markers-div-and-its-pixel-position
