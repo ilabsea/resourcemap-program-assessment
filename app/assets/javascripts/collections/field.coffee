@@ -39,7 +39,7 @@ onCollections ->
        read: =>  @valueUIFor(@value())
        write: (value) =>
          @value(@valueUIFrom(value))
-
+      
       if @kind == 'numeric'
         @digitsPrecision = data?.config?.digits_precision
         @range = if data.config?.range?.minimum? || data.config?.range?.maximum?

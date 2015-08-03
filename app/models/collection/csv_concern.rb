@@ -45,10 +45,14 @@ module Collection::CsvConcern
 
       elastic_search_api_results.each do |result|
         source = result['_source']
+        p source["uuid"]
         row = [source['id'], source['name'], source['location'].try(:[], 'lat'), source['location'].try(:[], 'lon')]
         fields.each do |field|
           if field.kind == 'yes_no'
             row << (Field.yes?(source['properties'][field.code]) ? 'yes' : 'no')
+          elsif field.kind == 'photo'
+            # row << "#{Settings.host}/photo_field/#{source['properties'][field.code]}" if source['properties'][field.code].present?
+            row << "http://#{Settings.host}/view_photo?uuid=#{source['uuid']}&file_name=#{source['properties'][field.code]}" if source['properties'][field.code].present?
           elsif field.kind == "select_many"
             field.config["options"].each do |option|
               if source['properties'][field.code] and source['properties'][field.code].include? option["code"]

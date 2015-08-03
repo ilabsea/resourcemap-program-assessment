@@ -28,6 +28,7 @@ class SitesController < ApplicationController
   end
 
   def create
+    debugger
     site_params = JSON.parse params[:site]
     ui_attributes = prepare_from_ui(site_params)
     site = collection.sites.new(ui_attributes.merge(user: current_user))
@@ -179,6 +180,20 @@ class SitesController < ApplicationController
       layers = site.collection.visible_layers_for(current_user)
     end
     render json: layers
+  end
+
+  def view_photo
+    site = Site.find_by_uuid(params["uuid"])
+    if site
+      site.properties.each do |key, value|
+        field = Field.find key
+        if site.uuid == params["uuid"] and field.kind == "photo" and value == params["file_name"]
+          send_file "#{Rails.root}/public/photo_field/#{value}", type: 'image/png', disposition: 'inline'
+        end
+      end
+    else
+      render :text => "File not found", :status => 404
+    end
   end
 
   private
