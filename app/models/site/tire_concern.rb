@@ -32,8 +32,8 @@ module Site::TireConcern
       Time.zone.parse(es_time_string)
     end
 
-    def iso_string_to_mdy(iso_string)
-      Time.iso8601(iso_string).strftime("%m/%d/%Y")
+    def iso_string_to_dmy(iso_string)
+      Time.iso8601(iso_string).strftime("%d/%m/%Y")
     end
 
     def iso_string_to_rfc822(iso_string, time_zone = nil)

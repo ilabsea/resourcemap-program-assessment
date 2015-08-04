@@ -4,16 +4,16 @@ require 'bundler/capistrano'
 set :whenever_command, "bundle exec whenever"
 require "whenever/capistrano"
 
-set :rvm_ruby_string, '1.9.3'
+set :rvm_ruby_string, '1.9.3-p545'
 set :rvm_type, :system
 set :application, "resourcemap_wfp"
-set :repository,  "https://bitbucket.org/ilab/resourcemap_wfp"
-set :scm, :mercurial
+set :repository,  "https://github.com/ilabsea/resourcemap-program-assessment"
+set :scm, :git
 set :user, 'ilab'
 set :use_sudo, false
 set :group, 'ilab'
 set :deploy_via, :remote_cache
-set :branch, `hg branch`.strip
+set :branch, '1.3'
 
 server '54.169.173.164', :app, :web, :db, primary: true
 

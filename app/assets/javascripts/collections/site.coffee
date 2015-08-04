@@ -55,7 +55,14 @@ onCollections ->
 
     propertyValue: (field) =>
       value = @properties()[field.esCode]
-      field.valueUIFor(value)
+      if field.kind == 'date' && $.trim(value).length > 0
+        # Value from server comes with utc time zone and creating a date here gives one
+        # with the client's (browser) time zone, so we convert it back to utc
+        date = new Date(value)
+        date.setTime(date.getTime() + date.getTimezoneOffset() * 60000)
+        value = field.datePickerFormat(date)
+      else
+        field.valueUIFor(value)
 
     highlightedPropertyValue: (field) =>
       window.model.highlightSearch(@propertyValue(field))
