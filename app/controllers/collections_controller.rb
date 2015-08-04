@@ -214,6 +214,8 @@ class CollectionsController < ApplicationController
       obj[:name] = source['name']
       obj[:created_at] = Site.parse_time(source['created_at'])
       obj[:updated_at] = Site.parse_time(source['updated_at'])
+      obj[:start_entry_date] = Site.parse_time(source['start_entry_date']).strftime("%d/%m/%Y %H:%M:%S")
+      obj[:end_entry_date] = Site.parse_time(source['end_entry_date']).strftime("%d/%m/%Y %H:%M:%S")
 
       if source['location']
         obj[:lat] = source['location']['lat']

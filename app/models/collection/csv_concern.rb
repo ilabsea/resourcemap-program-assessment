@@ -215,12 +215,12 @@ module Collection::CsvConcern
         else
 
           #Check unique name
-          name = row[1].strip
-          if items.any?{|item| item.second[:name] == name}
-            item[:error] = "Invalid name."
-            item[:error_description] = "location name should be unique"
-            error = true
-          end
+          # name = row[1].strip
+          # if items.any?{|item| item.second[:name] == name}
+          #   item[:error] = "Invalid name."
+          #   item[:error_description] = "location name should be unique"
+          #   error = true
+          # end
           
           #Check unique id
           code = row[0].strip
