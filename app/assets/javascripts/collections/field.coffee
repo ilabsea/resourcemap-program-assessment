@@ -424,7 +424,7 @@ onCollections ->
       @validateDigitsPrecision()
 
     validateDigitsPrecision: =>
-      if @digitsPrecision
+      if @digitsPrecision and @value() != ""
         @value(parseInt(@value() * Math.pow(10, parseInt(@digitsPrecision))) / Math.pow(10, parseInt(@digitsPrecision)))
 
     validateRange: =>
