@@ -1,6 +1,6 @@
 class SitesController < ApplicationController
   before_filter :setup_guest_user, :if => Proc.new { collection && collection.public }
-  before_filter :authenticate_user!, :except => [:index, :search, :search_alert_site], :unless => Proc.new { collection && collection.public }
+  before_filter :authenticate_user!, :except => [:index, :search, :search_alert_site, :view_photo], :unless => Proc.new { collection && collection.public }
 
   authorize_resource :only => [:index, :search, :search_alert_site], :decent_exposure => true
 
