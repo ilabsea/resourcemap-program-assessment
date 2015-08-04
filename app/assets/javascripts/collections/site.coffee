@@ -39,8 +39,8 @@ onCollections ->
       @highlightedName = ko.computed => window.model.highlightSearch(@name())
       @inEditMode = ko.observable(false)
       @scrollable = ko.observable(false)
-      @startEntryDate = ko.observable(data?.start_entry_date)
-      @endEntryDate = ko.observable(data?.end_entry_date)
+      @startEntryDate = ko.observable data?.start_entry_date
+      @endEntryDate = ko.observable data?.end_entry_date
       
 
     hasLocation: => @position() != null

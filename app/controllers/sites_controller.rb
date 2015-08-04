@@ -28,7 +28,6 @@ class SitesController < ApplicationController
   end
 
   def create
-    debugger
     site_params = JSON.parse params[:site]
     ui_attributes = prepare_from_ui(site_params)
     site = collection.sites.new(ui_attributes.merge(user: current_user))
