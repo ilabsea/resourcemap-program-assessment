@@ -308,14 +308,6 @@
     %br{clear: :all}
   %div.mapcontainer
     %button.icon_button.expand-collapse_button.oleftexpand{ko(click: '$root.toogleExpandFullScreen')}
-    <!-- ko if: $root.shouldShowLocationMissingAlert() -->
-    %a#sites_whitout_location_alert.alert.box.flash_error.drop_shadow(href='javascript:void(window.model.filterByLocationMissing())')
-      %span= t('views.collections.index.there_are_sites_with_no_location_set')
-      %span.right
-        %button.fconfiguration{ko(click: '$root.filterByLocationMissing'), type: 'button', style: 'margin-left:9px'}
-        %span.black= t('views.collections.index.show_them')
-      .clear
-    <!-- /ko -->
 
     #map
     
