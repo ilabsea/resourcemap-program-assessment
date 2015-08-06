@@ -480,11 +480,20 @@ onCollections ->
         else
           return false
         
-      if (value == null || value == "") && (keyCode == 229 || keyCode == 190) #prevent dot at the beginning
-        return false
+      if (value == null || value == "")  
+        if(keyCode == 189 || keyCode == 173) && (@preKeyCode != 189 || @preKeyCode == null || @preKeyCode == 173) #allow '-' for both chrome & firefox
+          @preKeyCode = keyCode
+          return true
+        else if (keyCode == 229 || keyCode == 190) #prevent dot at the beginning
+          return false
+      else
+        if(keyCode == 189 || keyCode == 173) && value.charAt(0) != '-' #set preKeyCode = "-"
+          @preKeyCode = keyCode
+          return true
       if (keyCode != 8 && keyCode != 46 && keyCode != 173) && (keyCode != 190 || value.indexOf('.') != -1) && (keyCode < 48 || keyCode > 57) #prevent multiple dot
         return false
       else
+        @preKeyCode = keyCode
         return true
 
     keyPress: (field, event) =>
