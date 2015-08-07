@@ -99,7 +99,7 @@ class LayersController < ApplicationController
             field[:config][:field_logics] = field[:config][:field_logics].values
             field[:config][:field_logics].each { |field_logic| 
               field_logic['id'] = field_logic['id'].to_i
-              field_logic['value'] = field_logic['value'].to_i
+              field_logic['value'] = field_logic['value'].to_f
               if field_logic['field_id']
                 field_logic['field_id'].each { |field_id|
                   if field_id == ""

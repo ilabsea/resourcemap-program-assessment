@@ -150,35 +150,35 @@ onCollections ->
 
               if @kind == 'numeric' && value != ''
                 if field_logic.condition_type == '<'
-                  if parseInt(value) < field_logic.value
+                  if parseFloat(value) < field_logic.value
                     @setFocusStyleByField(field_logic.field_id)
                     return
                   else
                     @enableSkippedField(@esCode)
 
                 if field_logic.condition_type == '<='
-                  if parseInt(value) <= field_logic.value
+                  if parseFloat(value) <= field_logic.value
                     @setFocusStyleByField(field_logic.field_id)  
                     return
                   else
                     @enableSkippedField(@esCode)
 
                 if field_logic.condition_type == '='
-                  if parseInt(value) == field_logic.value
+                  if parseFloat(value) == field_logic.value
                     @setFocusStyleByField(field_logic.field_id)  
                     return
                   else
                     @enableSkippedField(@esCode)
 
                 if field_logic.condition_type == '>'
-                  if parseInt(value) > field_logic.value
+                  if parseFloat(value) > field_logic.value
                     @setFocusStyleByField(field_logic.field_id)
                     return
                   else
                     @enableSkippedField(@esCode)
 
                 if field_logic.condition_type == '>='
-                  if parseInt(value) >= field_logic.value
+                  if parseFloat(value) >= field_logic.value
                     @setFocusStyleByField(field_logic.field_id)
                     return 
                   else
