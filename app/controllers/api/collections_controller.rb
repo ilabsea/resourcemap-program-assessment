@@ -162,6 +162,7 @@ class Api::CollectionsController < ApplicationController
     search.after params[:updated_since] if params[:updated_since]
     search.full_text_search params[:search] if params[:search]
     search.box *valid_box_coordinates if params[:box]
+    search.my_site_search current_user.id unless current_user.can_view_other? params[:id]
 
     if params[:lat] || params[:lng] || params[:radius]
       [:lat, :lng, :radius].each do |key|

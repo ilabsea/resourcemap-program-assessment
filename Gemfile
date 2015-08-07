@@ -25,7 +25,7 @@ gem 'cancan'
 gem 'aws-sdk'
 gem 'whenever', :require => false
 gem 'georuby', '2.2.1'
-gem 'dbf', :require => 'dbf'
+gem 'dbf', '2.0.7', :require => 'dbf'
 gem "zip-zip"
 gem 'rubyzip', :require => 'zip/zip'
 gem "password_strength"
