@@ -541,7 +541,10 @@ onCollections ->
                     $(".calculation").on("change keyup click", ->
                       $.map(window.model.editingSite().fields(), (fi) ->
                         if fi.code == element_id
-                          fi.value(eval(execute_code))
+                          if fi.digitsPrecision
+                            fi.value(Number((eval(execute_code)).toFixed(parseInt(fi.digitsPrecision))))
+                          else
+                            fi.value(eval(execute_code))
                       )
                     )
                 )
