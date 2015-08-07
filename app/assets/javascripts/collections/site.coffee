@@ -532,8 +532,6 @@ onCollections ->
               )
               # Add change value to dependent field
               $.map(field["dependentFields"], (f) -> 
-                console.log('f : ', f);
-                # element_id = "#" +field["kind"] + "-input-" + field["code"]
                 $("#" + f["kind"] + "-input-" + f["code"]).addClass('calculation')
                 element_id = field["code"]
                 $.map(window.model.editingSite().fields(), (fi) ->

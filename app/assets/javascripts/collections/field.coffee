@@ -347,6 +347,8 @@ onCollections ->
         date = new Date(value)
         date.setTime(date.getTime() + date.getTimezoneOffset() * 60000)
         value = @datePickerFormat(date)
+      else if @kind == 'numeric' || @kind == 'calculation'
+        value = @valueUIFor(value)
 
       value = '' if (value == null && value == '')
 
@@ -384,7 +386,8 @@ onCollections ->
       else if @kind == 'site'
         name = window.model.currentCollection()?.findSiteNameById(value)
         if value && name then name else ''
-      else if @kind == 'calculation'
+      else if @kind == 'calculation' || @kind == 'numeric'
+        value = parseFloat(value)
         if @digitsPrecision && value then Number((value).toFixed(parseInt(@digitsPrecision))) else value
       else
         if value != null && value != '' && typeof value != 'undefined' then value else ''
@@ -476,12 +479,13 @@ onCollections ->
       valueAfterSplit = value.split '.'
       if valueAfterSplit.length >= 2
         decimalValue = valueAfterSplit[1]
-        if decimalValue.length < parseInt(@digitsPrecision)
-          return true
-        else if keyCode == 8 || keyCode == 46
-          return true
-        else
-          return false
+        if @digitsPrecision
+          if decimalValue.length < parseInt(@digitsPrecision)
+            return true
+          else if keyCode == 8 || keyCode == 46 || keyCode == 9
+            return true
+          else
+            return false
         
       if (value == null || value == "")  
         if(keyCode == 189 || keyCode == 173) && (@preKeyCode != 189 || @preKeyCode == null || @preKeyCode == 173) #allow '-' for both chrome & firefox
@@ -493,7 +497,7 @@ onCollections ->
         if(keyCode == 189 || keyCode == 173) && value.charAt(0) != '-' #set preKeyCode = "-"
           @preKeyCode = keyCode
           return true
-      if (keyCode != 8 && keyCode != 46 && keyCode != 173) && (keyCode != 190 || value.indexOf('.') != -1) && (keyCode < 48 || keyCode > 57) #prevent multiple dot
+      if (keyCode != 8  && keyCode != 9 && keyCode != 46 && keyCode != 173) && (keyCode != 190 || value.indexOf('.') != -1) && (keyCode < 48 || keyCode > 57) #prevent multiple dot
         return false
       else
         @preKeyCode = keyCode
