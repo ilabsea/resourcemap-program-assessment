@@ -1,5 +1,6 @@
 .left.w30.h50{style: 'position: relative'}
   %img{src: '/images/progress.gif',id: 'uploadProgress', style: 'position: absolute; margin: auto; left: 0; top: 0; right: 0; bottom: 0; display: none'}
+  %img{src: '/images/loading.gif',id: 'loadProgress', style: 'position: absolute; margin: auto; left: 0; top: 0; right: 0; bottom: 0; display: none'}  
   #editorContent.left.w30.h50
     <!-- ko if: !loadingSite() -->
 
@@ -90,7 +91,7 @@
             %td.loadmore
               = ko_link_to t('views.collections.index.load_more_sites'), :loadMoreSites, style: 'margin-left: 23px'
           <!-- /ko -->
-          <!-- ko if: hasMoreSites() && loadingSites()-->
+          <!-- ko if: hasMoreSites() && loadingSites() -->
           %tr
             %td.loadmore= t('views.collections.index.loading')
           <!-- /ko -->

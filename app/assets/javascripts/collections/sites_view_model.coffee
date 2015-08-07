@@ -6,6 +6,7 @@ onCollections ->
       @selectedSite = ko.observable()
       @selectedHierarchy = ko.observable()
       @loadingSite = ko.observable(false)
+      @loadingFields = ko.observable(true)
       @newOrEditSite = ko.computed => if @editingSite() && (!@editingSite().id() || @editingSite().inEditMode()) then @editingSite() else null
       @showSite = ko.computed => if @editingSite()?.id() && !@editingSite().inEditMode() then @editingSite() else null
       window.markers = @markers = {}
@@ -56,10 +57,16 @@ onCollections ->
         site = new Site(@currentCollection(), lat: pos.lat, lng: pos.lng)
         
         site.copyPropertiesToCollection(@currentCollection())
-        if window.model.newSiteProperties
-          for esCode, value of window.model.newSiteProperties
-            field = @currentCollection().findFieldByEsCode esCode
-            field.setValueFromSite(value) if field
+        if window.model.loadingFields()
+          @showLoadingField()
+          @currentCollection().fetchFields =>
+            site.copyPropertiesToCollection(@currentCollection())
+            @hideLoadingField()
+        else
+          if window.model.newSiteProperties
+            for esCode, value of window.model.newSiteProperties
+              field = @currentCollection().findFieldByEsCode esCode
+              field.setValueFromSite(value) if field          
         
         @unselectSite()
         @editingSite site
@@ -158,6 +165,16 @@ onCollections ->
     @hideProgress: ->
       $("#editorContent").css({opacity: 1})
       $('#uploadProgress').fadeOut()
+      $("#editorContent :input").removeAttr('disabled')
+
+    @showLoadingField: ->
+      $("#editorContent").css({opacity: 0.2})
+      $('#loadProgress').fadeIn()
+      $("#editorContent :input").attr("disabled", true)
+
+    @hideLoadingField: ->
+      $("#editorContent").css({opacity: 1})
+      $('#loadProgress').fadeOut()
       $("#editorContent :input").removeAttr('disabled')
 
     @saveSite: ->

@@ -78,6 +78,8 @@ onCollections ->
         return
 
       @fieldsInitialized = true
+      # window.model.showLoadingField()
+      window.model.loadingFields(true)
       $.get "/collections/#{@id}/fields", {}, (data) =>
         @layers($.map(data, (x) => new Layer(x)))
 
@@ -88,6 +90,8 @@ onCollections ->
 
         @fields(fields)
         @refineFields(fields)
+        window.model.loadingFields(false)
+        # window.model.hideLoadingField()
 
     findFieldByEsCode: (esCode) => (field for field in @fields() when field.esCode == esCode)[0]
 
