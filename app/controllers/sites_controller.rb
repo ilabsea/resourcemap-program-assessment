@@ -114,6 +114,8 @@ class SitesController < ApplicationController
         data[:clusters].concat result[:clusters] if result[:clusters]
       end
       render json: data
+    else
+      render json: []
     end
   end
 
@@ -175,6 +177,8 @@ class SitesController < ApplicationController
         data.concat result
       end
       render json: data
+    else
+      render json: []
     end
   end
 
