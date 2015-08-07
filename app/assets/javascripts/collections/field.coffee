@@ -387,8 +387,14 @@ onCollections ->
         name = window.model.currentCollection()?.findSiteNameById(value)
         if value && name then name else ''
       else if @kind == 'calculation' || @kind == 'numeric'
-        value = parseFloat(value)
-        if @digitsPrecision && value then Number((value).toFixed(parseInt(@digitsPrecision))) else value
+        if value != null && value != '' && typeof value != 'undefined'
+          value = parseFloat(value)
+          if @digitsPrecision
+            Number((value).toFixed(parseInt(@digitsPrecision))) 
+          else
+            value
+        else
+          ''
       else
         if value != null && value != '' && typeof value != 'undefined' then value else ''
 
