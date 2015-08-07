@@ -171,6 +171,8 @@ en:
         text_me: "Text Me!"
         submit: "Submit"
         cancel: "Cancel"
+        can_view_data_submit_by_other: "View data submitted by other user"
+        can_edit_data_submit_by_other: "Edit data submitted by other user"
       quotas:
         title: "Quotas"
         messages_sent: "This collection sent"

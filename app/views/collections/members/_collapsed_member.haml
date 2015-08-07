@@ -1,4 +1,4 @@
-%td.member{style: 'cursor:pointer;', colspan: 6}
+%td.member{style: 'cursor:pointer;', colspan: 9}
   .memberHeaderRow
     .memberHeaderColumn.collapsed{style: 'height: 35px;'}
       %img.members-collapse-icon{ko(click: :toggleExpanded, attr: {src: "'#{InsteddRails.url}/theme/images/icons/misc/black/arrowRight.png'"})}
@@ -13,4 +13,8 @@
 
     .permissionColumn.admin.collapsed
       %input{ko(checked: :admin), type: :checkbox}
-    .lastColumn.collapsed
+    .permissionColumn.admin.collapsed{style: 'width:200px'}
+      %input{ko(checked: :can_view_other), type: :checkbox}
+    .permissionColumn.admin.collapsed{style: 'width:200px'}
+      %input{ko(checked: :can_edit_other), type: :checkbox}
+    .lastColumn.collapsed{style: 'width:5px'}

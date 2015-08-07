@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gem 'rails', '3.2.17'
 gem 'mysql2'
-gem 'devise'
+gem 'devise', '2.2.4'
 gem 'haml-rails'
 gem 'decent_exposure'
 gem "instedd-rails", '0.0.17'
@@ -10,7 +10,7 @@ gem "breadcrumbs_on_rails"
 gem "tire"
 gem "valium"
 gem "resque", :require => "resque/server"
-gem 'resque-scheduler', :require => 'resque_scheduler'
+gem 'resque-scheduler', '2.5.5',  :require => 'resque_scheduler'
 gem "nuntium_api", "~> 0.13", :require => "nuntium"
 gem 'ice_cube'
 gem 'knockoutjs-rails'
@@ -24,8 +24,9 @@ gem 'newrelic_rpm'
 gem 'cancan'
 gem 'aws-sdk'
 gem 'whenever', :require => false
-gem 'georuby'
-gem 'dbf', :require => 'dbf'
+gem 'georuby', '2.2.1'
+gem 'dbf', '2.0.7', :require => 'dbf'
+gem "zip-zip"
 gem 'rubyzip', :require => 'zip/zip'
 gem "password_strength"
 gem "ruby-recaptcha"

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150803045233) do
+ActiveRecord::Schema.define(:version => 20150803045511) do
 
   create_table "activities", :force => true do |t|
     t.integer  "user_id"
@@ -150,9 +150,11 @@ ActiveRecord::Schema.define(:version => 20150803045233) do
   create_table "memberships", :force => true do |t|
     t.integer  "user_id"
     t.integer  "collection_id"
-    t.datetime "created_at",                       :null => false
-    t.datetime "updated_at",                       :null => false
-    t.boolean  "admin",         :default => false
+    t.datetime "created_at",                        :null => false
+    t.datetime "updated_at",                        :null => false
+    t.boolean  "admin",          :default => false
+    t.boolean  "can_view_other", :default => false
+    t.boolean  "can_edit_other", :default => false
   end
 
   create_table "messages", :force => true do |t|
@@ -269,6 +271,7 @@ ActiveRecord::Schema.define(:version => 20150803045233) do
     t.string   "external_id"
     t.datetime "start_entry_date"
     t.datetime "end_entry_date"
+    t.integer  "user_id"
   end
 
   create_table "sites_permissions", :force => true do |t|

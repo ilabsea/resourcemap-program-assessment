@@ -4,7 +4,9 @@ onCollections ->
     @exportInRSS: ->
       $.get "/get_user_auth_token", {}, (auth_token) =>
         window.open @currentCollection().link('rss', auth_token)
-    @exportInSHP: -> window.open @currentCollection().link('shp')
+    @exportInSHP: -> 
+      $.get "/get_user_auth_token", {}, (auth_token) =>
+        window.open @currentCollection().link('shp', auth_token)
     @exportInJSON: -> 
       $.get "/get_user_auth_token", {}, (auth_token) =>
         window.open @currentCollection().link('json', auth_token)

@@ -159,6 +159,11 @@ module SearchBase
     self
   end
 
+  def my_site_search id
+    @search.filter :term, user_id: id
+    self
+  end
+
   def date_query(iso_string, field_name)
     # We use a 2 seconds range, not the exact date, because this would be very restrictive
     time = Time.iso8601(iso_string)

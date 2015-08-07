@@ -17,6 +17,7 @@ module Site::IndexUtils
       start_entry_date: site.start_entry_date.strftime(DateFormat),
       end_entry_date: site.end_entry_date.strftime(DateFormat),
       icon: site.collection.icon,
+      user_id: site.user_id
     }
 
     if site.lat? && site.lng?

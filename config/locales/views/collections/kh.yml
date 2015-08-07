@@ -171,6 +171,8 @@ kh:
         text_me: "ផ្ញើរសារអោយខ្ញុំ!"
         submit: "បញ្ជូន"
         cancel: "បោះបង់ចោល"
+        can_view_data_submit_by_other: "អាចមើលទិន្នន័យដែលបញ្ចូលដោយអ្នកប្រើប្រាស់ផ្សេង"
+        can_edit_data_submit_by_other: "អាចកែទិន្នន័យដែលបញ្ចូលដោយអ្នកប្រើប្រាស់ផ្សេង"
       quotas:
         title: "កូតា"
         messages_sent: "ទិន្នន័យ នេះបានផ្ញើរ"

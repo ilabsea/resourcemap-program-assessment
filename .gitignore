@@ -22,3 +22,4 @@ vendor/ruby
 REVISION
 VERSION
 config/aws.yml
+log/*

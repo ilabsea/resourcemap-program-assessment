@@ -2,7 +2,7 @@ class CollectionsController < ApplicationController
   before_filter :setup_guest_user, :if => Proc.new { collection }
   before_filter :authenticate_user!, :except => [:render_breadcrumbs, :index, :alerted_collections], :unless => Proc.new { collection }
   
-  authorize_resource :except => [:render_breadcrumbs], :decent_exposure => true, :id_param => :collection_id
+  authorize_resource :except => [:render_breadcrumbs, :my_membership], :decent_exposure => true, :id_param => :collection_id
 
   expose(:collections){
     if current_user && !current_user.is_guest
@@ -21,6 +21,11 @@ class CollectionsController < ApplicationController
   before_filter :show_properties_breadcrumb, :only => [:members, :settings, :reminders, :quotas, :can_queries]
 
   
+  def my_membership
+    collection = Collection.find params[:collection_id]
+    member = collection.memberships.find_by_user_id current_user.id
+    render :json => member
+  end
 
   def index
     if params[:name].present?
@@ -202,6 +207,7 @@ class CollectionsController < ApplicationController
     search.alerted_search params[:_alert] if params[:_alert] 
     search.sort params[:sort], params[:sort_direction] != 'desc' if params[:sort]
     search.hierarchy params[:hierarchy_code], params[:hierarchy_value] if params[:hierarchy_code]
+    search.my_site_search current_user.id unless current_user.can_view_other? params[:collection_ids][0]
     search.where params.except(:action, :controller, :format, :id, :collection_id, :search, :limit, :offset, :sort, :sort_direction, :hierarchy_code, :hierarchy_value, :_alert, :formula)
 
     search.prepare_filter

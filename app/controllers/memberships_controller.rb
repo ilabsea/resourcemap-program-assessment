@@ -22,6 +22,8 @@ class MembershipsController < ApplicationController
         user_display_name: user_display_name,
         user_phone_number: user_phone_number,
         admin: membership.admin?,
+        can_edit_other: membership.can_edit_other?,
+        can_view_other: membership.can_view_other?,
         layers: (layer_memberships[membership.user_id] || []).map{|x| {layer_id: x.layer_id, read: x.read?, write: x.write?}},
         sites: {
           none: membership.none_sites_permission,
@@ -75,12 +77,29 @@ class MembershipsController < ApplicationController
   end
 
   def set_admin
-    change_admin_flag true
+    change_flag :admin, true
   end
 
   def unset_admin
-    change_admin_flag false
+    change_flag :admin, false
   end
+
+  def set_can_view_other
+    change_flag :can_view_other, true
+  end
+
+  def unset_can_view_other
+    change_flag :can_view_other, false
+  end
+
+  def set_can_edit_other
+    change_flag :can_edit_other, true
+  end
+
+  def unset_can_edit_other
+    change_flag :can_edit_other, false
+  end
+
 
   def register_new_member
     if (params[:user][:email].strip.length == 0)
@@ -121,9 +140,9 @@ class MembershipsController < ApplicationController
 
   private
 
-  def change_admin_flag(new_value)
+  def change_flag(field, new_value)
     membership = collection.memberships.find_by_user_id params[:id]
-    membership.admin = new_value
+    membership[field] = new_value
     membership.save!
 
     render json: :ok
