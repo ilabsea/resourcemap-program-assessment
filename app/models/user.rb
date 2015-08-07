@@ -11,6 +11,9 @@ class User < ActiveRecord::Base
   has_many :channels
   has_many :collections, through: :memberships, order: 'collections.name ASC'
   has_one :user_snapshot
+
+  # owner of site
+  has_many :sites
   
   validates_uniqueness_of :phone_number, :allow_blank => true
   validates_strength_of :password, :with => :email, :if => lambda {|u| u.password.present?}
@@ -22,6 +25,10 @@ class User < ActiveRecord::Base
     memberships.create! collection_id: collection.id, admin: true
     collection.register_gateways_under_user_owner(self)
     collection
+  end
+
+  def can_view_other? collection_id
+    memberships.where(:collection_id => collection_id).first.try(:admin?) || memberships.where(:collection_id => collection_id).first.try(:can_view_other?)
   end
 
   def admins?(collection)

@@ -41,7 +41,16 @@ onCollections ->
       @scrollable = ko.observable(false)
       @startEntryDate = ko.observable data?.start_entry_date
       @endEntryDate = ko.observable data?.end_entry_date
-      
+      @user_id = ko.observable data?.user_id
+      @editable = ko.computed =>
+        member = JSON.parse(collection.memberships().responseText)
+        if member.admin
+          return true
+        if member.can_edit_other
+          return true
+        if data.user_id == member.user_id
+          return true
+        return false
 
     hasLocation: => @position() != null
 
@@ -234,9 +243,10 @@ onCollections ->
       @collection.propagateUpdatedAt(value)
 
     editName: =>
-      if !@collection.currentSnapshot
-        @originalName = @name()
-        @editingName(true)
+      if @editable()
+        if !@collection.currentSnapshot
+          @originalName = @name()
+          @editingName(true)
 
     nameKeyPress: (site, event) =>
       switch event.keyCode
@@ -258,9 +268,10 @@ onCollections ->
       delete @originalName
 
     editLocation: =>
-      if !@collection.currentSnapshot
-        @editingLocation(true)
-        @startEditLocationInMap()
+      if @editable()
+        if !@collection.currentSnapshot
+          @editingLocation(true)
+          @startEditLocationInMap()
 
     startEditLocationInMap: =>
       @originalLocation = @position()

@@ -12,6 +12,7 @@ class SitesController < ApplicationController
 
     search.name_start_with params[:name] if params[:name].present?
     search.alerted_search params[:_alert] if params[:_alert] == "true"
+    search.my_site_search current_user.id unless current_user.can_view_other? params[:collection_id]
     search.offset params[:offset]
     search.limit params[:limit]
 
@@ -31,6 +32,7 @@ class SitesController < ApplicationController
     site_params = JSON.parse params[:site]
     ui_attributes = prepare_from_ui(site_params)
     site = collection.sites.new(ui_attributes.merge(user: current_user))
+    site.user_id = current_user.id
     if site.valid?
       site.save!
       current_user.site_count += 1
@@ -77,9 +79,47 @@ class SitesController < ApplicationController
     end
   end
 
+  # def search
+  #   zoom = params[:z].to_i
+  #   search = MapSearch.new params[:collection_ids], user: current_user
+
+  #   formula = params[:formula].downcase if params[:formula].present?
+    
+  #   search.set_formula formula if formula.present?
+  #   search.zoom = zoom
+  #   search.bounds = params if zoom >= 2
+  #   search.exclude_id params[:exclude_id].to_i if params[:exclude_id].present?
+  #   search.after params[:updated_since] if params[:updated_since]
+  #   search.full_text_search params[:search] if params[:search].present?
+  #   search.alerted_search params[:_alert] if params[:_alert].present?
+  #   search.my_site_search current_user.id unless current_user.can_view_other? params[:collection_ids][0]
+  #   if params[:selected_hierarchies].present?
+  #     search.selected_hierarchy params[:hierarchy_code], params[:selected_hierarchies]
+  #   end
+
+  #   search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :search, :hierarchy_code, :selected_hierarchies, :_alert, :formula)
+    
+  #   search.prepare_filter
+  #   # search.apply_queries 
+
+  #   render json: search.results
+  # end
+
   def search
+    if params[:collection_ids]
+      data = {:sites => [], :clusters => []}
+      params[:collection_ids].each do |id|
+        result = search_by_collection id, params
+        data[:sites].concat result[:sites] if result[:sites]
+        data[:clusters].concat result[:clusters] if result[:clusters]
+      end
+      render json: data
+    end
+  end
+
+  def search_by_collection collection_id, params
     zoom = params[:z].to_i
-    search = MapSearch.new params[:collection_ids], user: current_user
+    search = MapSearch.new [collection_id], user: current_user
 
     formula = params[:formula].downcase if params[:formula].present?
     
@@ -90,6 +130,7 @@ class SitesController < ApplicationController
     search.after params[:updated_since] if params[:updated_since]
     search.full_text_search params[:search] if params[:search].present?
     search.alerted_search params[:_alert] if params[:_alert].present?
+    search.my_site_search current_user.id unless current_user.can_view_other? collection_id
     if params[:selected_hierarchies].present?
       search.selected_hierarchy params[:hierarchy_code], params[:selected_hierarchies]
     end
@@ -99,13 +140,48 @@ class SitesController < ApplicationController
     search.prepare_filter
     # search.apply_queries 
 
-    render json: search.results
+    return search.results
   end
 
+  # def search_alert_site
+  #   zoom = params[:z].to_i
+
+  #   search = MapSearch.new params[:collection_ids], user: current_user
+
+  #   formula = params[:formula].downcase if params[:formula].present?
+    
+  #   search.set_formula formula if formula.present?
+  #   search.zoom = zoom
+  #   search.bounds = params if zoom >= 2
+  #   search.exclude_id params[:exclude_id].to_i if params[:exclude_id].present?
+  #   search.full_text_search params[:search] if params[:search].present?
+  #   search.alerted_search params[:_alert] if params[:_alert].present?
+  #   search.my_site_search current_user.id unless current_user.can_view_other? params[:collection_ids][0]
+  #   if params[:selected_hierarchies].present?
+  #     search.selected_hierarchy params[:hierarchy_code], params[:selected_hierarchies]
+  #   end
+  #   search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :search, :hierarchy_code, :selected_hierarchies, :_alert, :formula)
+    
+  #   # search.apply_queries
+  #   search.prepare_filter
+  #   render json: search.sites_json    
+  # end
+
   def search_alert_site
+    if params[:collection_ids]
+      data = []
+      params[:collection_ids].each do |id|
+        result = search_alert_site_by_collection id, params
+        data.concat result
+      end
+      render json: data
+    end
+  end
+
+  def search_alert_site_by_collection collection_id, params
     zoom = params[:z].to_i
 
-    search = MapSearch.new params[:collection_ids], user: current_user
+    search = MapSearch.new [collection_id], user: current_user
 
     formula = params[:formula].downcase if params[:formula].present?
     
@@ -115,6 +191,7 @@ class SitesController < ApplicationController
     search.exclude_id params[:exclude_id].to_i if params[:exclude_id].present?
     search.full_text_search params[:search] if params[:search].present?
     search.alerted_search params[:_alert] if params[:_alert].present?
+    search.my_site_search current_user.id unless current_user.can_view_other? collection_id
     if params[:selected_hierarchies].present?
       search.selected_hierarchy params[:hierarchy_code], params[:selected_hierarchies]
     end
@@ -122,7 +199,7 @@ class SitesController < ApplicationController
     
     # search.apply_queries
     search.prepare_filter
-    render json: search.sites_json    
+    return search.sites_json    
   end
 
   def destroy

@@ -11,6 +11,8 @@ class @Membership extends Expandable
     else
       @userPhoneNumber = ""
     @admin = ko.observable data?.admin
+    @can_view_other = ko.observable data?.can_view_other
+    @can_edit_other = ko.observable data?.can_edit_other
     @collectionId = ko.observable root.collectionId()
 
     rootLayers = data?.layers ? []
@@ -43,6 +45,14 @@ class @Membership extends Expandable
 
     @admin.subscribe (newValue) =>
       $.post "/collections/#{root.collectionId()}/memberships/#{@userId()}/#{if newValue then 'set' else 'unset'}_admin.json"
+
+    @can_view_other.subscribe (newValue) =>
+      @can_edit_other(false) if newValue == false
+      $.post "/collections/#{root.collectionId()}/memberships/#{@userId()}/#{if newValue then 'set' else 'unset'}_can_view_other.json"
+
+    @can_edit_other.subscribe (newValue) =>
+      @can_view_other(true) if newValue == true
+      $.post "/collections/#{root.collectionId()}/memberships/#{@userId()}/#{if newValue then 'set' else 'unset'}_can_edit_other.json"
 
     @someLayersNone = ko.computed => some nonePermission
 

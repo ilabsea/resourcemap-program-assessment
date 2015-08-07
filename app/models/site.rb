@@ -10,6 +10,9 @@ class Site < ActiveRecord::Base
   belongs_to :collection
   validates_presence_of :name
 
+  #Site belong to user created
+  belongs_to :user
+
   serialize :properties, Hash
   validate :valid_properties
   after_validation :standardize_properties

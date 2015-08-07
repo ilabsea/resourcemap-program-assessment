@@ -25,6 +25,9 @@ onCollections ->
         defaultOptions.concat(@fields().filter((f) -> f.showInGroupBy))
 
       @skippedFields = ko.observableArray()
+      @memberships = ko.computed =>
+        $.get "/collections/#{data.id}/my_membership.json", {}, (data) =>
+          return data
 
     isSearch: => false
     
@@ -46,5 +49,7 @@ onCollections ->
         )
       else if @position()
         window.model.map.panTo @position()
+
+
 
 

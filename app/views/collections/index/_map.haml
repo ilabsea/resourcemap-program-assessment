@@ -224,7 +224,12 @@
                   <!-- ko if: hasValue() && !error() -->
                   <!-- ko if: writeable -->
                   <!-- ko if: kind != 'photo' -->
+                  <!-- ko if: $parents[1].editable() -->
                   %span.value{ko(text: :valueUI, visible: '!editing()', click: 'edit'), style: 'cursor:pointer'}
+                  <!-- /ko -->
+                  <!-- ko ifnot: $parents[1].editable() -->
+                  %span.value{ko(text: :valueUI, visible: '!editing()'), style: 'cursor:pointer'}
+                  <!-- /ko -->
                   <!-- /ko -->
                   <!-- /ko -->
                   <!-- ko if: !writeable -->
@@ -259,8 +264,10 @@
       .tablebottom
         -# if (can? :edit, site)
         - if current_user && !current_user.is_guest
+          <!-- ko if: editable -->
           = link_to t('views.collections.index.edit_site'), 'javascript:void()', class: 'icon fedit black', 'data-bind' => kov(click: 'startEditMode')
           = link_to t('views.collections.index.delete_site'), 'javascript:void()', class: 'icon fdelete black', 'data-bind' => kov(click: '$root.deleteSite')
+          <!-- /ko -->
       <!-- /ko -->
 
     <!-- /ko -->

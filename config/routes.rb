@@ -18,6 +18,7 @@ ResourceMap::Application.routes.draw do
   match 'load_app_cache' => 'home#load_app_cache', :via => 'get'
   get 'plugin/alerts/thresholds' => 'thresholds#index'
   get 'view_photo' => 'sites#view_photo'
+  get 'collections/:collection_id/my_membership' => 'collections#my_membership'
 
   resources :repeats
   resources :collections do
@@ -48,6 +49,10 @@ ResourceMap::Application.routes.draw do
         post 'set_layer_access'
         post 'set_admin'
         post 'unset_admin'
+        post 'set_can_view_other'
+        post 'unset_can_view_other'
+        post 'set_can_edit_other'
+        post 'unset_can_edit_other'
       end
     end
     resources :sites_permission
