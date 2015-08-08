@@ -8,10 +8,15 @@ module Api::V1
     expose(:site) { Site.find(params[:site_id] || params[:id]) }
 
     def index
-      builder = Collection.filter_sites(params)
-      sites_size = builder.size
-      sites_by_page  = Collection.filter_page(params[:limit], params[:offset], builder)
-      render :json => {:sites => sites_by_page, :total => sites_size}
+      search = new_search
+
+      search.my_site_search current_user.id unless current_user.can_view_other? params[:collection_id]
+      search.offset params[:offset]
+      search.limit params[:limit]
+
+      sites_size = search.results.total
+
+      render :json =>{:sites => search.ui_results.map { |x| x['_source'] }, :total => sites_size}
     end
 
     def show
