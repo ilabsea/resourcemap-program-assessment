@@ -33,6 +33,7 @@ module Api::V1
 
     def update
       site.attributes = sanitized_site_params(false).merge(user: current_user)
+
       if site.valid?
         site.save!
         if params[:photosToRemove]

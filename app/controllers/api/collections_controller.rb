@@ -6,6 +6,12 @@ class Api::CollectionsController < ApplicationController
   before_filter :authenticate_api_user!
   skip_before_filter  :verify_authenticity_token
 
+  def my_membership
+    collection = Collection.find params[:collection_id]
+    member = collection.memberships.find_by_user_id current_user.id
+    render :json => member
+  end
+
   def index
     render json: current_user.collections
   end
