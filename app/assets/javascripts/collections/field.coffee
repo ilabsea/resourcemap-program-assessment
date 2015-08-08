@@ -447,20 +447,20 @@ onCollections ->
     validateRange: =>
       if @range
         if @range.minimum && @range.maximum
-          if parseInt(@value()) >= parseInt(@range.minimum) && parseInt(@value()) <= parseInt(@range.maximum)
+          if parseFloat(@value()) >= parseFloat(@range.minimum) && parseFloat(@value()) <= parseFloat(@range.maximum)
             @errorMessage('')
           else
             @errorMessage('Invalid value, value must be in the range of ('+@range.minimum+'-'+@range.maximum+")")
         else
           if @range.maximum
-            if parseInt(@value()) <= parseInt(@range.maximum)
+            if parseFloat(@value()) <= parseFloat(@range.maximum)
               @errorMessage('')
             else
               @errorMessage('Invalid value, value must be less than or equal '+@range.maximum)
             return
           
           if @range.minimum
-            if parseInt(@value()) >= parseInt(@range.minimum)
+            if parseFloat(@value()) >= parseFloat(@range.minimum)
               @errorMessage('')
             else
               @errorMessage('Invalid value, value must be greater than or equal '+@range.minimum)
