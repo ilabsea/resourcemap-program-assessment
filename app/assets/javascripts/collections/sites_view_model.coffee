@@ -74,6 +74,7 @@ onCollections ->
         @getLocations(pos.lat, pos.lng)
         window.model.initDatePicker()
         window.model.initAutocomplete()
+        window.model.initControlKey()
         site.prepareCalculatedField()
         window.model.newOrEditSite().scrollable(false)
         window.model.newOrEditSite().startEntryDate(new Date(Date.now()))

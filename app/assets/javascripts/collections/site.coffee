@@ -385,6 +385,7 @@ onCollections ->
       @prepareCalculatedField()
       window.model.initDatePicker()
       window.model.initAutocomplete()
+      window.model.initControlKey()
       
       for field in @fields()
         field.editing(false)
