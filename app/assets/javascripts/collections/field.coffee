@@ -27,6 +27,9 @@ onCollections ->
       @value.subscribe =>
         if @skippedState() == false && @kind in ["yes_no", "select_one", "select_many", "numeric"]
           @setFieldFocus()
+        # if @kind in ["numeric", "calculation"]
+        #   if window.model.newOrEditSite()
+        #     window.model.newOrEditSite().prepareCalculatedField()
 
       @keyType = if @allowsDecimals() then 'decimal' else 'integer'
 
@@ -390,8 +393,8 @@ onCollections ->
         if value && name then name else ''
       else if @kind == 'calculation' || @kind == 'numeric'
         if value != null && value != '' && value != 'NaN' && typeof value != 'undefined'
-          value = parseFloat(value)
           if @digitsPrecision
+            value = parseFloat(value)
             Number((value).toFixed(parseInt(@digitsPrecision))) 
           else
             value

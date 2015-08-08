@@ -555,11 +555,17 @@ onCollections ->
                     execute_code = field["codeCalculation"]
                     $(".calculation").on("change keyup click", ->
                       $.map(window.model.editingSite().fields(), (fi) ->
+                        value = $('#'+f['kind']+'-input-'+f['code']).val()
                         if fi.code == element_id
-                          if fi.digitsPrecision
-                            fi.value(Number((eval(execute_code)).toFixed(parseInt(fi.digitsPrecision))))
+                          if value
+                            if fi.digitsPrecision
+                              result = Number((eval(execute_code)).toFixed(parseInt(fi.digitsPrecision)))
+                            else
+                              result = eval(execute_code)
+                            fi.value(result)
                           else
-                            fi.value(eval(execute_code))
+                            fi.value('')
+                          
                       )
                     )
                 )
