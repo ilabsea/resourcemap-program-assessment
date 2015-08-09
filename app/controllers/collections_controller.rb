@@ -207,7 +207,7 @@ class CollectionsController < ApplicationController
     search.alerted_search params[:_alert] if params[:_alert] 
     search.sort params[:sort], params[:sort_direction] != 'desc' if params[:sort]
     search.hierarchy params[:hierarchy_code], params[:hierarchy_value] if params[:hierarchy_code]
-    search.my_site_search current_user.id unless current_user.can_view_other? params[:id]
+    search.my_site_search current_user.id unless current_user.can_view_other? params[:collection_id]
     search.where params.except(:action, :controller, :format, :id, :collection_id, :search, :limit, :offset, :sort, :sort_direction, :hierarchy_code, :hierarchy_value, :_alert, :formula)
 
     search.prepare_filter

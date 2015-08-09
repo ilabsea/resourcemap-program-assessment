@@ -48,22 +48,24 @@ onCollections ->
         else if condition.field_id == 'location_missing'
           filters.push(new FilterByLocationMissing(condition.id))
         else
-          field = @currentCollection().findFieldByEsCode(condition.field_id)
-          if field.kind == 'text' || field.kind == 'phone' || field.kind == 'email' || field.kind == 'user'
-            filters.push(new FilterByTextProperty(field, condition.operator, condition.field_value, condition.id))
-          else if field.kind == 'numeric'
-            filters.push(new FilterByNumericProperty(field, condition.operator, condition.field_value, condition.id))
-          else if field.kind == 'yes_no'
-            filters.push(new FilterByYesNoProperty(field, condition.field_value, condition.id))
-          else if field.kind == 'date'
-            filters.push(new FilterByDateProperty(field, condition.operator, condition.field_date_from, condition.field_date_to, condition.id))
-          else if field.kind == 'hierarchy'
-            filters.push(new FilterByHierarchyProperty(field, "under", condition.field_value, "", condition.id))
-          else if field.kind == 'select_one' || field.kind == 'select_many'
-            filters.push(new FilterBySelectProperty(field, condition.field_value, "", condition.id))
-          else if field.kind == 'site'
-            id = @currentCollection().findSiteIdByName(condition.field_value)
-            filters.push(new FilterBySiteProperty(field, condition.operator, condition.field_value, id, condition.id))
+          
+          if @currentCollection().fields().length > 0
+            field = @currentCollection().findFieldByEsCode(condition.field_id)
+            if field.kind == 'text' || field.kind == 'phone' || field.kind == 'email' || field.kind == 'user'
+              filters.push(new FilterByTextProperty(field, condition.operator, condition.field_value, condition.id))
+            else if field.kind == 'numeric'
+              filters.push(new FilterByNumericProperty(field, condition.operator, condition.field_value, condition.id))
+            else if field.kind == 'yes_no'
+              filters.push(new FilterByYesNoProperty(field, condition.field_value, condition.id))
+            else if field.kind == 'date'
+              filters.push(new FilterByDateProperty(field, condition.operator, condition.field_date_from, condition.field_date_to, condition.id))
+            else if field.kind == 'hierarchy'
+              filters.push(new FilterByHierarchyProperty(field, "under", condition.field_value, "", condition.id))
+            else if field.kind == 'select_one' || field.kind == 'select_many'
+              filters.push(new FilterBySelectProperty(field, condition.field_value, "", condition.id))
+            else if field.kind == 'site'
+              id = @currentCollection().findSiteIdByName(condition.field_value)
+              filters.push(new FilterBySiteProperty(field, condition.operator, condition.field_value, id, condition.id))
 
       @filters(filters)
     
