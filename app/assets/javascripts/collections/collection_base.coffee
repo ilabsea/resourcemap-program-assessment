@@ -91,7 +91,7 @@ onCollections ->
         @fields(fields)
         @refineFields(fields)
         window.model.loadingFields(false)
-        # window.model.hideLoadingField()
+        window.model.hideLoadingField()
 
     findFieldByEsCode: (esCode) => (field for field in @fields() when field.esCode == esCode)[0]
 

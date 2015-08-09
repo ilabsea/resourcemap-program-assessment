@@ -56,17 +56,14 @@ onCollections ->
         pos = @originalSiteLocation = @currentPosition
         site = new Site(@currentCollection(), lat: pos.lat, lng: pos.lng)
         
-        site.copyPropertiesToCollection(@currentCollection())
-        if window.model.loadingFields()
+        while window.model.loadingFields()
           @showLoadingField()
-          @currentCollection().fetchFields =>
-            site.copyPropertiesToCollection(@currentCollection())
-            @hideLoadingField()
-        else
-          if window.model.newSiteProperties
-            for esCode, value of window.model.newSiteProperties
-              field = @currentCollection().findFieldByEsCode esCode
-              field.setValueFromSite(value) if field          
+
+        site.copyPropertiesToCollection(@currentCollection())
+        if window.model.newSiteProperties
+          for esCode, value of window.model.newSiteProperties
+            field = @currentCollection().findFieldByEsCode esCode
+            field.setValueFromSite(value) if field          
         
         @unselectSite()
         @editingSite site
