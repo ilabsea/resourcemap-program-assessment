@@ -55,30 +55,38 @@ onCollections ->
 
         pos = @originalSiteLocation = @currentPosition
         site = new Site(@currentCollection(), lat: pos.lat, lng: pos.lng)
-        
-        while window.model.loadingFields()
-          @showLoadingField()
-        @hideLoadingField()
-        site.copyPropertiesToCollection(@currentCollection())
-        if window.model.newSiteProperties
-          for esCode, value of window.model.newSiteProperties
-            field = @currentCollection().findFieldByEsCode esCode
-            field.setValueFromSite(value) if field          
-        
-        @unselectSite()
-        @editingSite site
-        @editingSite().startEditLocationInMap()
-        @getLocations(pos.lat, pos.lng)
-        window.model.initDatePicker()
-        window.model.initAutocomplete()
-        window.model.initControlKey()
-        site.prepareCalculatedField()
-        window.model.newOrEditSite().scrollable(false)
-        window.model.newOrEditSite().startEntryDate(new Date(Date.now()))
-        for field in window.model.newOrEditSite().fields()
-          if field.skippedState() == false && field.kind == 'yes_no'
-            field.setFieldFocus()
-        $('#name').focus()
+        @showLoadingField()
+        $.get "/collections/#{@currentCollection().id}/fields", {}, (data) =>
+          @currentCollection().layers($.map(data, (x) => new Layer(x)))
+
+          fields = []
+          for layer in @currentCollection().layers()
+            for field in layer.fields
+              fields.push(field)
+
+          @currentCollection().fields(fields)
+
+          site.copyPropertiesToCollection(@currentCollection())
+          if window.model.newSiteProperties
+            for esCode, value of window.model.newSiteProperties
+              field = @currentCollection().findFieldByEsCode esCode
+              field.setValueFromSite(value) if field          
+          
+          @unselectSite()
+          @editingSite site
+          @editingSite().startEditLocationInMap()
+          @getLocations(pos.lat, pos.lng)
+          window.model.initDatePicker()
+          window.model.initAutocomplete()
+          window.model.initControlKey()
+          site.prepareCalculatedField()
+          window.model.newOrEditSite().scrollable(false)
+          window.model.newOrEditSite().startEntryDate(new Date(Date.now()))
+          for field in window.model.newOrEditSite().fields()
+            if field.skippedState() == false && field.kind == 'yes_no'
+              field.setFieldFocus()
+          $('#name').focus()
+          @hideLoadingField()
 
     @editSite: (site) ->
       initialized = @initMap()
