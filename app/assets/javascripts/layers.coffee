@@ -14,8 +14,14 @@ onLayers -> if $('#layers-main').length > 0
     $('.location_form').submit()
     window.model.startUploadLocation()
 
+  #show loading
+  $('#loadProgress').show()
+
   $.get "/collections/#{collectionId}/layers.json", {}, (layers) =>
     window.model = new MainViewModel(collectionId, layers)
     ko.applyBindings window.model
 
     $('.hidden-until-loaded').show()
+    $('#loadProgress').hide() #hide loading
+
+

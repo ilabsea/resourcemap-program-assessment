@@ -122,6 +122,7 @@ ResourceMap::Application.routes.draw do
     get 'collections/:id/geo' => 'collections#geo_json',as: :geojson
     get 'sites/:id' => 'sites#show', as: :site
     get 'activity' => 'activities#index', as: :activity
+    get 'collections/:collection_id/my_membership' => 'collections#my_membership'
     # match 'collections/:id/update_sites_under_collection' => 'collections#update_sites_under_collection', :via => :put
     # put 'collections/:id/update_sites_under_collection' => 'collections#update_sites_under_collection', as: :collections
     resources :tokens, :only => [:index, :destroy]

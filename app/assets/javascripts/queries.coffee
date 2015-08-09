@@ -12,7 +12,10 @@ onQueries -> if $('#queries-main').length > 0
 
   window.model = new MainViewModel(collectionId)
   ko.applyBindings window.model
-  
+
+  #show loading
+  $('#loadProgress').show()
+    
   $.get "/collections/#{collectionId}/layers.json", {}, (layers) ->
     layers = $.map layers, (layer) -> new Layer layer
     window.model.layers(layers)
@@ -21,3 +24,4 @@ onQueries -> if $('#queries-main').length > 0
       window.model.queries(queries)      
       $('.hidden-until-loaded').show()
       window.model.initDatePicker()
+      $('#loadProgress').hide() #hide loading
