@@ -616,7 +616,7 @@ onCollections ->
           @currentCollection().fields(fields)
           @prepareTable()        
       else
-      @prepareTable()
+        @prepareTable()
 
     @prepareTable: ->
       @queryParams = $.url().param()
