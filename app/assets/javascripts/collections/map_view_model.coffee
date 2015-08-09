@@ -602,6 +602,22 @@ onCollections ->
       @mapSitesCount count
 
     @showTable: ->
+      if window.model.loadingFields()
+        $.get "/collections/#{@currentCollection().id}/fields", {}, (data) =>
+          window.model.loadingFields(false)
+          @currentCollection().layers($.map(data, (x) => new Layer(x)))
+
+          fields = []
+          for layer in @currentCollection().layers()
+            for field in layer.fields
+              fields.push(field)
+
+          @currentCollection().fields(fields)
+          @prepareTable()        
+      else
+        @prepareTable()
+
+    @prepareTable: ->
       @queryParams = $.url().param()
       @exitSite() if @editingSite()
       @editingSite(null)
