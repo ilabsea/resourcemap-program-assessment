@@ -180,14 +180,14 @@ onCollections ->
       $("#editorContent :input").removeAttr('disabled')
 
     @showLoadingField: ->
-      $("#editorContent").css({opacity: 0.2})
+      $(".tablescroll").css({opacity: 0.2})
       $('#loadProgress').fadeIn()
-      $("#editorContent :input").attr("disabled", true)
+      $(".tablescroll :input").attr("disabled", true)
 
     @hideLoadingField: ->
-      $("#editorContent").css({opacity: 1})
+      $(".tablescroll").css({opacity: 1})
       $('#loadProgress').fadeOut()
-      $("#editorContent :input").removeAttr('disabled')
+      $(".tablescroll :input").removeAttr('disabled')
 
     @saveSite: ->
       return unless @editingSite().valid()
