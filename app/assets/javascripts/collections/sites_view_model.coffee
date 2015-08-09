@@ -58,7 +58,7 @@ onCollections ->
         
         while window.model.loadingFields()
           @showLoadingField()
-
+        @hideLoadingField()
         site.copyPropertiesToCollection(@currentCollection())
         if window.model.newSiteProperties
           for esCode, value of window.model.newSiteProperties
