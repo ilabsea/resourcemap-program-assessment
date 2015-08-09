@@ -602,8 +602,17 @@ onCollections ->
       @mapSitesCount count
 
     @showTable: ->
+      @queryParams = $.url().param()
+      @exitSite() if @editingSite()
+      @editingSite(null)
+      @oldSelectedSite = null
+      delete @markers
+      delete @clusters
+      delete @map
+      @showingMap(false)      
       @showLoadingField()
-      if window.model.loadingFields()
+
+      if window.model.loadingFields() && @currentCollection()
         $.get "/collections/#{@currentCollection().id}/fields", {}, (data) =>
           window.model.loadingFields(false)
           @currentCollection().layers($.map(data, (x) => new Layer(x)))
@@ -619,14 +628,6 @@ onCollections ->
         @prepareTable()
 
     @prepareTable: ->
-      @queryParams = $.url().param()
-      @exitSite() if @editingSite()
-      @editingSite(null)
-      @oldSelectedSite = null
-      delete @markers
-      delete @clusters
-      delete @map
-      @showingMap(false)
       @refreshTimeago()
       setTimeout(@makeFixedHeaderTable, 10)
       setTimeout(window.adjustContainerSize, 10)
