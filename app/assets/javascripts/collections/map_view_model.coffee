@@ -602,6 +602,7 @@ onCollections ->
       @mapSitesCount count
 
     @showTable: ->
+      @showLoadingField()
       if window.model.loadingFields()
         $.get "/collections/#{@currentCollection().id}/fields", {}, (data) =>
           window.model.loadingFields(false)
@@ -615,7 +616,7 @@ onCollections ->
           @currentCollection().fields(fields)
           @prepareTable()        
       else
-        @prepareTable()
+      @prepareTable()
 
     @prepareTable: ->
       @queryParams = $.url().param()
@@ -629,6 +630,7 @@ onCollections ->
       @refreshTimeago()
       setTimeout(@makeFixedHeaderTable, 10)
       setTimeout(window.adjustContainerSize, 10)
+      @hideLoadingField()
 
     @makeFixedHeaderTable: ->
       unless @showingMap()
