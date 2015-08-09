@@ -48,6 +48,7 @@ module Api::V1
     def create
       site = build_site
       create_state = site.id ? false : true #to create or update
+      site.user_id = current_user.id
       if site.save
         if create_state
           current_user.site_count += 1
