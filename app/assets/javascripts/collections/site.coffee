@@ -493,6 +493,7 @@ onCollections ->
 
         @copyPropertiesToFields()
         $('a#previewimg').fancybox()
+        window.model.hideLoadingField()
         callback() if callback && typeof(callback) == 'function'
 
     copyPropertiesToFields: =>
