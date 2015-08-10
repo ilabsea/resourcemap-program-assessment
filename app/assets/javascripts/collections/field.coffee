@@ -593,6 +593,8 @@ onCollections ->
     isPluginKind: => -1 isnt PLUGIN_FIELDS.indexOf @kind
 
     exitEditing: ->
+      if @kind == 'location' #clear the last result of location
+        @resultLocations(@locations)
       @editing(false)
       @writeable = @originalWriteable
 

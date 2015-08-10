@@ -204,7 +204,7 @@ onCollections ->
 
     @setAlertedSites: (sites) =>
       @clearAlertedSites()
-      bounds = window.model.map.getBounds()
+      bounds = window.model.map.getBounds() if window.model.map
       for site in sites
         latlng = new google.maps.LatLng(site.lat_analyzed,site.lng_analyzed)
         isMapContainedSite = @isMapContainedSite(site, latlng, bounds)
