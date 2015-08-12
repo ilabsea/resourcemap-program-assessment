@@ -70,8 +70,16 @@ onCollections ->
         date = new Date(value)
         date.setTime(date.getTime() + date.getTimezoneOffset() * 60000)
         value = field.datePickerFormat(date)
+      else if field.kind == 'location'
+        value = @findLocationLabelByCode(field)
       else
         field.valueUIFor(value)
+
+    findLocationLabelByCode: (field) =>
+      for location in field.locations
+        if location.code  == @properties()[field.esCode]
+          return location.name
+      return ''
 
     highlightedPropertyValue: (field) =>
       window.model.highlightSearch(@propertyValue(field))

@@ -580,7 +580,7 @@ onCollections ->
       for option in @resultLocations()
         if option.code == code
           return option.name
-      null
+      ''
 
     # In the table view, use a fixed size width for each property column,
     # which depends on the length of the name.
@@ -593,8 +593,9 @@ onCollections ->
     isPluginKind: => -1 isnt PLUGIN_FIELDS.indexOf @kind
 
     exitEditing: ->
-      if @kind == 'location' #clear the last result of location
+      if @kind == 'location'
         @resultLocations(@locations)
+
       @editing(false)
       @writeable = @originalWriteable
 
