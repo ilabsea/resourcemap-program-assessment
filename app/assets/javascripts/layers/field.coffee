@@ -7,6 +7,9 @@ onLayers ->
       @code = ko.observable data?.code
       @kind = ko.observable data?.kind
       @threshold_ids = data?.threshold_ids ? []
+
+      @editableCode = ko.observable(true)
+      @deletable = ko.observable(true)
       
       @is_enable_field_logic = ko.observable data?.is_enable_field_logic ? false
       @is_enable_range = data?.is_enable_range
@@ -37,6 +40,38 @@ onLayers ->
         
       @error = ko.computed => @nameError() || @codeError() || @impl().error()
       @valid = ko.computed => !@error()
+      @oldcode = ko.observable data?.code
+      @code.subscribe =>
+        unless @editableCode()
+          @changeCodeInCalculationField()
+
+    changeCodeInCalculationField: =>
+      $.map(model.layers(), (x, index) =>
+        fields = x.fields()
+        new_fields = []
+        $.map(fields, (f) =>
+          if f.kind() == "calculation"
+            f["config"]["code_calculation"]
+            search = "($" + @oldcode() + ")"
+            replace = "($" + @code() + ")"
+            re = new RegExp(search, 'g')
+            f["config"]["code_calculation"] =  @replaceAll(f["config"]["code_calculation"], search , replace)
+            f.impl().codeCalculation(f["config"]["code_calculation"])
+            $.map(f.impl().dependent_fields(), (df, index) =>
+              if df.id().toString() == @id().toString()
+                f.impl().dependent_fields()[index].code(@code())
+            )
+          new_fields.push(f)
+        )
+        model.layers()[index].fields(new_fields)
+      )
+      @oldcode(@code())
+
+    escapeRegExp: (string) =>
+      return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+
+    replaceAll: (string, find, replace) =>
+      return string.replace(new RegExp(@escapeRegExp(find), 'g'), replace);
 
     hasName: => $.trim(@name()).length > 0
 
@@ -353,6 +388,6 @@ onLayers ->
       @dependent_fields.remove field
 
     addFieldToCodeCalculation: (field) =>
-      @codeCalculation(@codeCalculation() + '$' + field.code())
+      @codeCalculation(@codeCalculation() + '($' + field.code() + ")")
     toJSON: (json) =>
       json.config = {digits_precision: @digitsPrecision(), allows_decimals: @allowsDecimals(), code_calculation: @codeCalculation(), dependent_fields: $.map(@dependent_fields(), (x) ->  x.toJSON())}

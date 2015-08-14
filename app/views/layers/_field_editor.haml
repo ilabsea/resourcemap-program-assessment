@@ -26,7 +26,7 @@
   %hr/
   %label{ko(css: {error: :codeError})}= t('views.layers.form.field.code')
   %p.smalltext= t('views.layers.form.field.the_abbreviation_used_to_report_via_SMS.')
-  = ko_text_field_tag :code, css: {error: :codeError}
+  = ko_text_field_tag :code, valueUpdate: :afterblur, css: {error: :codeError}
 
   %hr/
   %label
