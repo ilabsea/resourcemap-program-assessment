@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150803045511) do
+ActiveRecord::Schema.define(:version => 20150814025045) do
 
   create_table "activities", :force => true do |t|
     t.integer  "user_id"
@@ -261,16 +261,16 @@ ActiveRecord::Schema.define(:version => 20150803045511) do
     t.decimal  "lng",                            :precision => 10, :scale => 6
     t.integer  "parent_id"
     t.string   "hierarchy"
-    t.datetime "created_at",                                                                             :null => false
-    t.datetime "updated_at",                                                                             :null => false
+    t.datetime "created_at",                                                                                       :null => false
+    t.datetime "updated_at",                                                                                       :null => false
     t.text     "properties"
     t.string   "location_mode",    :limit => 10,                                :default => "automatic"
     t.string   "id_with_prefix"
     t.string   "uuid"
     t.string   "device_id"
     t.string   "external_id"
-    t.datetime "start_entry_date"
-    t.datetime "end_entry_date"
+    t.datetime "start_entry_date",                                              :default => '2015-08-14 02:57:03'
+    t.datetime "end_entry_date",                                                :default => '2015-08-14 02:57:03'
     t.integer  "user_id"
   end
 
