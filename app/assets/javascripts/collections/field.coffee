@@ -119,6 +119,7 @@ onCollections ->
       @errorMessage = ko.observable()
       @error = ko.computed => !!@errorMessage()
       @skippedState = ko.observable(false)
+      @errorClass = ko.computed => if @error() then 'error' else '' # For field number
 
       @is_blocked_by = ko.observableArray([])
       @blocked = ko.computed =>
