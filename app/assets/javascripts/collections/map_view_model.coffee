@@ -610,8 +610,7 @@ onCollections ->
       delete @clusters
       delete @map
       @showingMap(false)      
-      @showLoadingField()
-
+      @showLoadingField()      
       if window.model.loadingFields() && @currentCollection()
         $.get "/collections/#{@currentCollection().id}/fields", {}, (data) =>
           window.model.loadingFields(false)

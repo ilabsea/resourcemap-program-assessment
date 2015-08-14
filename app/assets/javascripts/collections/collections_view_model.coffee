@@ -156,7 +156,10 @@ onCollections ->
       window.adjustContainerSize()
       window.model.updateSitesInfo()
       @showRefindAlertOnMap()
-      @filters([]) if @filters().length == 0
+       
+      if @filters().length == 0
+        window.model.formula = undefined
+        @filters([])
       @getAlertConditions()
 
 

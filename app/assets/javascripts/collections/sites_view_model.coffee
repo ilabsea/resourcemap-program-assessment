@@ -98,6 +98,7 @@ onCollections ->
       initialized = @initMap()
       site.collection.panToPosition(true) unless initialized
       site.collection.fetchSitesMembership()
+      @showLoadingField()
       site.collection.fetchFields =>
         if @processingURL
           @processURL()
