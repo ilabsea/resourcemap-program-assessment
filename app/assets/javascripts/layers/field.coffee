@@ -51,12 +51,10 @@ onLayers ->
         new_fields = []
         $.map(fields, (f) =>
           if f.kind() == "calculation"
-            f.impl().codeCalculation()
             search = "($" + @oldcode() + ")"
             replace = "($" + @code() + ")"
             re = new RegExp(search, 'g')
             f.impl().codeCalculation(@replaceAll(f.impl().codeCalculation(), search , replace))
-            f["config"]["code_calculation"] = f.impl().codeCalculation()
             $.map(f.impl().dependent_fields(), (df, index) =>
               if df.id().toString() == @id().toString()
                 f.impl().dependent_fields()[index].code(@code())
@@ -382,6 +380,7 @@ onLayers ->
     addDependentField: (field) =>
       fields = @dependent_fields().filter (f) -> f.id() is field.id() 
       if fields.length == 0
+        field.editableCode(false)
         @dependent_fields.push(new FieldDependant(field.toJSON()))
 
     removeDependentField: (field) =>

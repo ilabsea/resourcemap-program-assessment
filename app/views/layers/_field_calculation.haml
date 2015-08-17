@@ -26,5 +26,5 @@
     %li.superblyTagItem
       %a{ko(text: :code, click: '$parent.addFieldToCodeCalculation')}
     //ko
-%textarea{ko(value: :codeCalculation, valueUpdate: :afterkeydown), rows: 4, style: "width:275px !important;"}
+%textarea{ko(value: '$parent.impl().codeCalculation', valueUpdate: :afterkeydown), rows: 4, style: "width:275px !important;"}
 <!-- /ko -->

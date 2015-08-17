@@ -279,10 +279,8 @@ Collection.prototype.validateData = function(collectionId){
                   }
                 }
                 if(digitsPrecision){
-                  console.log("Action");
                   value = parseInt(value * Math.pow(10, parseInt(digitsPrecision))) / Math.pow(10, parseInt(digitsPrecision))
                   $("#" + field["code"]).val(value);
-                  console.log(value);
                 }
               
               state =  Collection.valiateMandatoryText(field);
