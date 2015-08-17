@@ -69,7 +69,7 @@ class Site < ActiveRecord::Base
       Site.find_each(batch_size: 100) do |site|
         site.start_entry_date = site.created_at
         site.end_entry_date = site.created_at
-        site.save!
+        site.save!(:validate => false)
         print "\."
       end
     end
