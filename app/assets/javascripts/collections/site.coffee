@@ -552,12 +552,10 @@ onCollections ->
                   when "calculation"
                     fieldValue = "parseFloat($('#" + f["kind"] + "-input-" + f["code"] + "').val())"
 
-                console.log fieldValue
                 field["codeCalculation"] = field["codeCalculation"].replace(new RegExp(fieldName.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'g'), fieldValue);
               )
               # Add change value to dependent field
 
-              console.log field["codeCalculation"]
               $.map(field["dependentFields"], (f) -> 
                 $("#" + f["kind"] + "-input-" + f["code"]).addClass('calculation')
                 element_id = field["code"]
