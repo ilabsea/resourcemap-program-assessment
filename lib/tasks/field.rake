@@ -12,7 +12,9 @@ namespace :field do
       		all_code = all_code.sort_by(&:length)
       		map = {}
       		all_code.reverse.each do |code|
-      			f.config["code_calculation"].gsub! "$#{code}", "${#{code}}"
+            if f.config["code_calculation"]
+      			 f.config["code_calculation"].gsub! "$#{code}", "${#{code}}"
+            end
       		end
         end
     	end
