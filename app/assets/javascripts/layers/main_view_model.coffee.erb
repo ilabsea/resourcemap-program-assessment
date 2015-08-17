@@ -86,9 +86,10 @@ onLayers ->
       used_fields = []
       $.map(fields, (x) =>
         if x.kind() == "calculation"
-          $.map(x["config"]["dependent_fields"], (f) ->
-            used_fields.push(f["id"])
-          )
+          if x["config"]["dependent_fields"]
+            $.map(x["config"]["dependent_fields"], (f) ->
+              used_fields.push(f["id"])
+            )
       )
       return used_fields
 
