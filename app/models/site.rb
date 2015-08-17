@@ -56,7 +56,7 @@ class Site < ActiveRecord::Base
       Site.find_each(batch_size: 100) do |site|
         activity = Activity.find_by_site_id_and_action(site.id, "created")
         site.user_id = activity.user_id
-        site.save!
+        site.save!(:validate => false)
         print "\."
       end
     end
