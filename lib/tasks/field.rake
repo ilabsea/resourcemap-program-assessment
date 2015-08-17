@@ -5,7 +5,7 @@ namespace :field do
     Field.all.each do |f|
     	if f.kind == "calculation"
     		all_code = []
-        if f.config["dependent_fields"]
+        if f.config && f.config["dependent_fields"]
       		f.config["dependent_fields"].each do |index, value|
       			all_code.push value["code"]
       		end
