@@ -51,8 +51,8 @@ onLayers ->
         new_fields = []
         $.map(fields, (f) =>
           if f.kind() == "calculation"
-            search = "($" + @oldcode() + ")"
-            replace = "($" + @code() + ")"
+            search = "${" + @oldcode() + "}"
+            replace = "${" + @code() + "}"
             re = new RegExp(search, 'g')
             f.impl().codeCalculation(@replaceAll(f.impl().codeCalculation(), search , replace))
             $.map(f.impl().dependent_fields(), (df, index) =>
@@ -387,6 +387,6 @@ onLayers ->
       @dependent_fields.remove field
 
     addFieldToCodeCalculation: (field) =>
-      @codeCalculation(@codeCalculation() + '($' + field.code() + ")")
+      @codeCalculation(@codeCalculation() + '${' + field.code() + "}")
     toJSON: (json) =>
       json.config = {digits_precision: @digitsPrecision(), allows_decimals: @allowsDecimals(), code_calculation: @codeCalculation(), dependent_fields: $.map(@dependent_fields(), (x) ->  x.toJSON())}

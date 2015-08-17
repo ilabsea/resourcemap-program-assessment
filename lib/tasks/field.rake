@@ -1,5 +1,6 @@
 namespace :field do
-  desc "change calculation field variable from $x to ($x)"
+  desc "change calculation field variable from $x to ${x}"
+
   task :fix_calculation_field => :environment do
     Field.all.each do |f|
     	if f.kind == "calculation"
@@ -11,10 +12,7 @@ namespace :field do
       		all_code = all_code.sort_by(&:length)
       		map = {}
       		all_code.reverse.each do |code|
-      			f.config["code_calculation"].gsub! "$#{code}", "(##{code})"
-      		end
-      		all_code.reverse.each do |code|
-      			f.config["code_calculation"].gsub! "(##{code})", "($#{code})"
+      			f.config["code_calculation"].gsub! "$#{code}", "${#{code}}"
       		end
         end
     	end
