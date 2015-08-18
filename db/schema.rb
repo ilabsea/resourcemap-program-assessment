@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150818022531) do
+ActiveRecord::Schema.define(:version => 20150818040414) do
 
   create_table "activities", :force => true do |t|
     t.integer  "user_id"
@@ -60,14 +60,18 @@ ActiveRecord::Schema.define(:version => 20150818022531) do
     t.string   "name"
     t.string   "code"
     t.string   "kind"
-    t.datetime "created_at",                          :null => false
-    t.datetime "updated_at",                          :null => false
-    t.binary   "config",        :limit => 2147483647
+    t.datetime "created_at",                                                     :null => false
+    t.datetime "updated_at",                                                     :null => false
+    t.binary   "config",                :limit => 2147483647
     t.integer  "ord"
     t.datetime "valid_since"
     t.datetime "valid_to"
     t.integer  "field_id"
-    t.text     "metadata",      :limit => 16777215
+    t.text     "metadata",              :limit => 16777215
+    t.boolean  "is_mandatory",                                :default => false
+    t.boolean  "is_enable_field_logic",                       :default => false
+    t.boolean  "is_enable_range",                             :default => false
+    t.boolean  "is_display_field"
   end
 
   add_index "field_histories", ["field_id"], :name => "index_field_histories_on_field_id"
