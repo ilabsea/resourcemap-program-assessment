@@ -75,6 +75,12 @@ module Api::V1
       decoded_properties = new_record ? {} : result.properties
       site_properties.each_pair do |es_code, value|
         value = [ value, files[value] ] if fields[es_code].kind_of? Field::PhotoField
+        #parse date from formate %m%d%Y to %d%m%Y for the phone_gap data old version
+        if fields[es_code].kind == 'date' &&  value && !params[:rm_wfp_version]
+          value = Time.strptime(value, '%m/%d/%Y')
+          value = "#{value.day}/#{value.month}/#{value.year}"
+        end
+
         decoded_properties[es_code] = fields[es_code].decode_from_ui(value) if fields[es_code]
       end
 
