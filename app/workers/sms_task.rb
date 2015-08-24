@@ -1,5 +1,5 @@
 class SmsTask
-  @queue = :sms_queue
+  @queue = :sms_queue_lite
   def self.perform users_phone_number, message, suggested_channel, collection_id
     SmsNuntium.notify_sms users_phone_number, message, suggested_channel, collection_id
   end

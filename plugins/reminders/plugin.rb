@@ -5,7 +5,7 @@ class Reminders::Plugin < Plugin
   schedule \
     every: "1m",
     class: "ReminderTask",
-    queue: 'reminder_queue'
+    queue: 'reminder_queue_lite'
 
 	routes {
 		resources :collections do

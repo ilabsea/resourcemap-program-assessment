@@ -1,5 +1,5 @@
 class ImportTask
-  @queue = :import_queue
+  @queue = :import_queue_lite
 
   def self.perform user_id, collection_id, columns_spec
   	begin
