@@ -14,8 +14,10 @@ class LayersController < ApplicationController
         json = layers.includes(:fields).all.as_json(include: :fields).each { |layer|
           layer[:fields].each { |field|
             field['threshold_ids'] = get_associated_field_threshold_ids(field)
+            field['query_ids'] = get_associated_field_query_ids(field)
           }
           layer['threshold_ids'] = Layer.find(layer['id']).get_associated_threshold_ids
+          layer['query_ids'] = Layer.find(layer['id']).get_associated_query_ids
         }
         format.json { render json:  json}
       else
@@ -193,5 +195,22 @@ class LayersController < ApplicationController
     }
 
     associated_field_threshold_ids
+  end
+
+  def get_associated_field_query_ids(field)
+    associated_field_query_ids = []
+    fieldID = field["id"]
+
+    self.collection.queries.map { |query|
+      query.conditions.map { |condition| 
+        conditionFieldID = condition['field_id'].to_i
+        if fieldID == conditionFieldID
+          associated_field_query_ids.push(query.id)
+          break
+        end
+      }
+    }
+
+    associated_field_query_ids
   end
 end
