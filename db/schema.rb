@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150818040414) do
+ActiveRecord::Schema.define(:version => 20150825025040) do
 
   create_table "activities", :force => true do |t|
     t.integer  "user_id"
@@ -24,6 +24,17 @@ ActiveRecord::Schema.define(:version => 20150818040414) do
     t.datetime "updated_at",                          :null => false
     t.string   "item_type"
     t.string   "action"
+  end
+
+  create_table "canned_queries", :force => true do |t|
+    t.string   "name"
+    t.text     "conditions",     :limit => 16777215
+    t.boolean  "isAllSite"
+    t.boolean  "isAllCondition"
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
+    t.integer  "collection_id"
+    t.string   "formula"
   end
 
   create_table "channels", :force => true do |t|
@@ -182,17 +193,6 @@ ActiveRecord::Schema.define(:version => 20150818040414) do
     t.string   "version"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
-  end
-
-  create_table "queries", :force => true do |t|
-    t.string   "name"
-    t.text     "conditions",     :limit => 16777215
-    t.boolean  "isAllSite"
-    t.boolean  "isAllCondition"
-    t.datetime "created_at",                         :null => false
-    t.datetime "updated_at",                         :null => false
-    t.integer  "collection_id"
-    t.string   "formula"
   end
 
   create_table "reminders", :force => true do |t|
