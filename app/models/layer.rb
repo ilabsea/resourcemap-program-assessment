@@ -103,6 +103,23 @@ class Layer < ActiveRecord::Base
     associated_threshold_ids
   end
 
+  def get_associated_query_ids
+
+    layerFieldIDs = self.fields.map { |field| field.id}
+    associated_query_ids = []
+
+    self.collection.queries.map { |query|
+      queryFieldIDs = query.conditions.map { |condition| condition['field_id'].to_i}
+      
+      if (layerFieldIDs - queryFieldIDs).length < layerFieldIDs.length
+        associated_query_ids.push(query.id)
+      end
+
+    }
+
+    associated_query_ids
+  end
+
   private
 
   def field_hash(field)

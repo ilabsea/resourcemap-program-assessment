@@ -7,6 +7,7 @@ onLayers ->
       @code = ko.observable data?.code
       @kind = ko.observable data?.kind
       @threshold_ids = data?.threshold_ids ? []
+      @query_ids = data?.query_ids ? []
 
       @editableCode = ko.observable(true)
       @deletable = ko.observable(true)
