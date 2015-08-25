@@ -108,7 +108,7 @@ class Layer < ActiveRecord::Base
     layerFieldIDs = self.fields.map { |field| field.id}
     associated_query_ids = []
 
-    self.collection.queries.map { |query|
+    self.collection.canned_queries.map { |query|
       queryFieldIDs = query.conditions.map { |condition| condition['field_id'].to_i}
       
       if (layerFieldIDs - queryFieldIDs).length < layerFieldIDs.length

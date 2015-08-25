@@ -201,7 +201,7 @@ class LayersController < ApplicationController
     associated_field_query_ids = []
     fieldID = field["id"]
 
-    self.collection.queries.map { |query|
+    self.collection.canned_queries.map { |query|
       query.conditions.map { |condition| 
         conditionFieldID = condition['field_id'].to_i
         if fieldID == conditionFieldID
