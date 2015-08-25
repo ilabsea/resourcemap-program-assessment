@@ -27,7 +27,7 @@ class Collection < ActiveRecord::Base
   has_many :layer_histories, dependent: :destroy
   has_many :field_histories, dependent: :destroy
   has_many :messages, dependent: :destroy
-  has_many :queries, dependent: :destroy
+  has_many :canned_queries, dependent: :destroy
   
   OPERATOR = {">" => "gt", "<" => "lt", ">=" => "gte", "<=" => "lte", "=>" => "gte", "=<" => "lte", "=" => "eq"}
 
