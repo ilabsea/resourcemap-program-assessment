@@ -181,14 +181,14 @@ onCollections ->
       $("#editorContent :input").removeAttr('disabled')
 
     @showLoadingField: ->
-      $(".tablescroll").css({opacity: 0.2})
+      $("#editorContent").addClass('pointer-disabled')
       $('#loadProgress').fadeIn()
-      $(".tablescroll :input").attr("disabled", true)
+      $("#editorContent :input").attr("disabled", true)
 
     @hideLoadingField: ->
-      $(".tablescroll").css({opacity: 1})
       $('#loadProgress').fadeOut()
-      $(".tablescroll :input").removeAttr('disabled')
+      $("#editorContent").removeClass('pointer-disabled')
+      $("#editorContent :input").removeAttr('disabled')
 
     @saveSite: ->
       return unless @editingSite().valid()
