@@ -171,24 +171,24 @@ onCollections ->
           @editSite site
 
     @showProgress: ->
-      $("#editorContent").css({opacity: 0.2})
+      $(".tablescroll").css({opacity: 0.2})
       $('#uploadProgress').fadeIn()
-      $("#editorContent :input").attr("disabled", true)
+      $(".tablescroll :input").attr("disabled", true)
 
     @hideProgress: ->
-      $("#editorContent").css({opacity: 1})
+      $(".tablescroll").css({opacity: 1})
       $('#uploadProgress').fadeOut()
-      $("#editorContent :input").removeAttr('disabled')
+      $(".tablescroll :input").removeAttr('disabled')
 
     @showLoadingField: ->
-      $("#editorContent").addClass('pointer-disabled')
+      $(".tablescroll").css({opacity: 0.2})
       $('#loadProgress').fadeIn()
-      $("#editorContent :input").attr("disabled", true)
+      $(".tablescroll :input").attr("disabled", true)
 
     @hideLoadingField: ->
+      $(".tablescroll").css({opacity: 1})
       $('#loadProgress').fadeOut()
-      $("#editorContent").removeClass('pointer-disabled')
-      $("#editorContent :input").removeAttr('disabled')
+      $(".tablescroll :input").removeAttr('disabled')
 
     @saveSite: ->
       return unless @editingSite().valid()
@@ -246,7 +246,7 @@ onCollections ->
 
       @loadBreadCrumb()
       @rewriteUrl()
-
+      window.model.hideLoadingField()
       $('a#previewimg').fancybox()
       # Return undefined because otherwise some browsers (i.e. Miss Firefox)
       # would render the Object returned when called from a 'javascript:___'
