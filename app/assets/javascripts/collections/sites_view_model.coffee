@@ -186,9 +186,9 @@ onCollections ->
       $("#editorContent :input").attr("disabled", true)
 
     @hideLoadingField: ->
-      # $('#loadProgress').fadeOut()
-      # $("#editorContent").removeClass('pointer-disabled')
-      # $("#editorContent :input").removeAttr('disabled')
+      $('#loadProgress').fadeOut()
+      $("#editorContent").removeClass('pointer-disabled')
+      $("#editorContent :input").removeAttr('disabled')
 
     @saveSite: ->
       return unless @editingSite().valid()
