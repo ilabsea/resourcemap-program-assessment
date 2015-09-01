@@ -153,8 +153,10 @@ onCollections ->
           @rewriteUrl()
 
         window.adjustContainerSize()
-        window.model.loadingFields(false)
-        window.model.loadingSitePermission(false)
+        if @currentCollection().fields()
+          window.model.loadingFields(false)
+        if @currentCollection().sitesPermission  
+          window.model.loadingSitePermission(false)
         window.model.enableCreateSite()
 
       $('.BreadCrumb').load("/collections/breadcrumbs", { collection_id: collection.id })
@@ -167,7 +169,7 @@ onCollections ->
         @filters([])
       @getAlertConditions()
       $('#createSite').addClass('disabled')
-
+      window.model.enableCreateSite()
 
     @editCollection: (collection) -> window.location = "/collections/#{collection.id}"
 

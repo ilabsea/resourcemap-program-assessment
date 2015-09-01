@@ -10,8 +10,6 @@ onCollections ->
       @sitesPage = 1
       @hasMoreSites = ko.observable true
       @loadingSites = ko.observable true
-      @loadingFields = ko.observable true
-      @loadingSitePermission = ko.observable true
       @siteIds = {}
 
     # Loads SITES_PER_PAGE sites more from the server, it there are more sites.

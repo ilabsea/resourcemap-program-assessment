@@ -11,6 +11,7 @@ onCollections ->
         return
 
       @siteMembershipInitialized = true
+      window.model.loadingSitePermission(true)
       $.get "/collections/#{@id}/sites_permission", {}, (data) =>
         @sitesPermission = new SitesPermission(data)
         window.model.loadingSitePermission(false)

@@ -78,6 +78,7 @@ onCollections ->
         return
 
       @fieldsInitialized = true
+      window.model.loadingFields(true)
       $.get "/collections/#{@id}/fields", {}, (data) =>
         @layers($.map(data, (x) => new Layer(x)))
 

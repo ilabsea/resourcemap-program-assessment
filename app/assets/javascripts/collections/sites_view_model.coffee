@@ -6,8 +6,8 @@ onCollections ->
       @selectedSite = ko.observable()
       @selectedHierarchy = ko.observable()
       @loadingSite = ko.observable(false)
-      @loadingFields = ko.observable(true)
-      @loadingSitePermission = ko.observable(true)
+      @loadingFields = ko.observable(false)
+      @loadingSitePermission = ko.observable(false)
       @newOrEditSite = ko.computed => if @editingSite() && (!@editingSite().id() || @editingSite().inEditMode()) then @editingSite() else null
       @showSite = ko.computed => if @editingSite()?.id() && !@editingSite().inEditMode() then @editingSite() else null
       window.markers = @markers = {}
@@ -195,6 +195,7 @@ onCollections ->
     @enableCreateSite: ->
       if window.model.loadingFields() == false && window.model.loadingSitePermission() == false
         $('#createSite').removeClass('disabled')
+        # window.model.createSite()
 
     @saveSite: ->
       return unless @editingSite().valid()
