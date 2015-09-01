@@ -89,6 +89,7 @@ onCollections ->
         @fields(fields)
         @refineFields(fields)
         window.model.loadingFields(false)
+        $('#createSite').removeClass('disabled')
 
     findFieldByEsCode: (esCode) => (field for field in @fields() when field.esCode == esCode)[0]
 

@@ -138,7 +138,6 @@ onCollections ->
 
       initialized = @initMap()
       collection.panToPosition(true) unless initialized
-
       collection.fetchSitesMembership()
       collection.fetchQueries()
       collection.fetchFields =>
@@ -152,6 +151,7 @@ onCollections ->
           @rewriteUrl()
 
         window.adjustContainerSize()
+
       $('.BreadCrumb').load("/collections/breadcrumbs", { collection_id: collection.id })
       window.adjustContainerSize()
       window.model.updateSitesInfo()
@@ -161,6 +161,7 @@ onCollections ->
         window.model.formula = undefined
         @filters([])
       @getAlertConditions()
+      $('#createSite').addClass('disabled')
 
 
     @editCollection: (collection) -> window.location = "/collections/#{collection.id}"

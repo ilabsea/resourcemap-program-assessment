@@ -48,6 +48,7 @@ onCollections ->
           field.resultLocations(result)
 
     @createSite: ->
+      console.log 'createSite'
       @goBackToTable = true unless @showingMap()
       @showMap =>
         if !@currentPosition.lat
@@ -72,6 +73,7 @@ onCollections ->
           @prepareNewSite(site, pos)
 
     @prepareNewSite: (site, pos) ->
+      
       site.copyPropertiesToCollection(@currentCollection())
       if window.model.newSiteProperties
         for esCode, value of window.model.newSiteProperties
