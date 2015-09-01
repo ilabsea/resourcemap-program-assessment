@@ -6,13 +6,15 @@ onCollections ->
       @siteMembershipInitialized = false
 
     @fetchSitesMembership: (callback)->
-      if @siteMembershipInitialized
+      if @siteMembershipInitialized      
         callback() if typeof(callback) is 'function'
         return
 
       @siteMembershipInitialized = true
       $.get "/collections/#{@id}/sites_permission", {}, (data) =>
         @sitesPermission = new SitesPermission(data)
+        window.model.loadingSitePermission(false)
+        window.model.enableCreateSite()
         callback() if typeof(callback) is 'function'
 
     @readable: (site) ->

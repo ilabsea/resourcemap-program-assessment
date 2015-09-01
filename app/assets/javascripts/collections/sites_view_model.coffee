@@ -7,6 +7,7 @@ onCollections ->
       @selectedHierarchy = ko.observable()
       @loadingSite = ko.observable(false)
       @loadingFields = ko.observable(true)
+      @loadingSitePermission = ko.observable(true)
       @newOrEditSite = ko.computed => if @editingSite() && (!@editingSite().id() || @editingSite().inEditMode()) then @editingSite() else null
       @showSite = ko.computed => if @editingSite()?.id() && !@editingSite().inEditMode() then @editingSite() else null
       window.markers = @markers = {}
@@ -48,7 +49,6 @@ onCollections ->
           field.resultLocations(result)
 
     @createSite: ->
-      console.log 'createSite'
       @goBackToTable = true unless @showingMap()
       @showMap =>
         if !@currentPosition.lat
@@ -73,7 +73,7 @@ onCollections ->
           @prepareNewSite(site, pos)
 
     @prepareNewSite: (site, pos) ->
-      
+
       site.copyPropertiesToCollection(@currentCollection())
       if window.model.newSiteProperties
         for esCode, value of window.model.newSiteProperties
@@ -191,6 +191,10 @@ onCollections ->
       $(".tablescroll").css({opacity: 1})
       $('#loadProgress').fadeOut()
       $(".tablescroll :input").removeAttr('disabled')
+
+    @enableCreateSite: ->
+      if window.model.loadingFields() == false && window.model.loadingSitePermission() == false
+        $('#createSite').removeClass('disabled')
 
     @saveSite: ->
       return unless @editingSite().valid()

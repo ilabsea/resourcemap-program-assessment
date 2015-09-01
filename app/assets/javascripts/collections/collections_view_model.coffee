@@ -106,6 +106,8 @@ onCollections ->
       alert 'delete'
 
     @enterCollection: (collection) ->
+      window.model.loadingFields(true)
+      window.model.loadingSitePermission(true)
       if @showingAlert()
         return if !collection.checked()
       else
@@ -151,6 +153,9 @@ onCollections ->
           @rewriteUrl()
 
         window.adjustContainerSize()
+        window.model.loadingFields(false)
+        window.model.loadingSitePermission(false)
+        window.model.enableCreateSite()
 
       $('.BreadCrumb').load("/collections/breadcrumbs", { collection_id: collection.id })
       window.adjustContainerSize()

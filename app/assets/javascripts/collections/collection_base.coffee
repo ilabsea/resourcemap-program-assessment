@@ -73,7 +73,7 @@ onCollections ->
         callback() if callback && typeof(callback) == 'function'
 
     fetchFields: (callback) =>
-      if @fieldsInitialized
+      if @fieldsInitialized        
         callback() if callback && typeof(callback) == 'function'
         return
 
@@ -89,7 +89,7 @@ onCollections ->
         @fields(fields)
         @refineFields(fields)
         window.model.loadingFields(false)
-        $('#createSite').removeClass('disabled')
+        window.model.enableCreateSite()
 
     findFieldByEsCode: (esCode) => (field for field in @fields() when field.esCode == esCode)[0]
 
