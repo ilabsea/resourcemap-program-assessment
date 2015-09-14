@@ -118,7 +118,6 @@ onCollections ->
 
             @selectSite(site)
             @editingSite(site)
-            @getLocations(site.lat(), site.lng())
             @currentCollection(site.collection)
 
             @loadBreadCrumb()

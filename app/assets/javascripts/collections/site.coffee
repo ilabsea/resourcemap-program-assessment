@@ -385,8 +385,9 @@ onCollections ->
       # Keep the original values, in case the user cancels
       @originalName = @name()
       @originalPosition = @position()
+      selectedSite = model.selectedSite()
 
-      @getLocationFieldOption()
+      @getLocationFieldOption(selectedSite.lat(), selectedSite.lng())
 
       @inEditMode(true)
       @startEditLocationInMap()

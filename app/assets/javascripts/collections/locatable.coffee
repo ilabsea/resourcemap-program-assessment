@@ -15,7 +15,7 @@ onCollections ->
             @lat(latLng?.lat); @lng(latLng?.lng)
         owner: @
 
-      @position.subscribe => @getLocationFieldOption()
+      @position.subscribe => @getLocationFieldOption(@lat(), @lng())
 
       @safe_lat = ko.computed => @safe_six_decimals_string_coordinate @lat()
       @safe_lng = ko.computed => @safe_six_decimals_string_coordinate @lng()
@@ -36,6 +36,6 @@ onCollections ->
       else
         ''
 
-    @getLocationFieldOption: ->
-      window.model.getLocations(@position().k, @position().D) if @position()
+    @getLocationFieldOption: (lat, lng) ->
+      window.model.getLocations(lat, lng)
 
