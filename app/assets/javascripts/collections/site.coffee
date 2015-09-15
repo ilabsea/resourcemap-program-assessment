@@ -385,9 +385,6 @@ onCollections ->
       # Keep the original values, in case the user cancels
       @originalName = @name()
       @originalPosition = @position()
-      selectedSite = model.selectedSite()
-
-      @getLocationFieldOption(selectedSite.lat(), selectedSite.lng())
 
       @inEditMode(true)
       @startEditLocationInMap()
@@ -498,7 +495,7 @@ onCollections ->
           for field in layer.fields
             fields.push(field)
         @fields(fields)
-        @getLocationFieldOption(@lat(), @lng())
+        @getLocationFieldOption()
 
         @copyPropertiesToFields()
         $('a#previewimg').fancybox()

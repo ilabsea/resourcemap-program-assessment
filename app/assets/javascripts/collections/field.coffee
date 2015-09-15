@@ -84,10 +84,7 @@ onCollections ->
                      else
                       []
 
-        @resultLocations = if data.config?.locations?
-                            ko.observableArray $.map data.config.locations, (x) => new Location x
-                           else
-                            ko.observableArray []
+        @resultLocations = ko.observableArray([])
 
         @maximumSearchLength = data.config?.maximumSearchLength
 

@@ -30,11 +30,10 @@ onCollections ->
       return distance
 
     @getLocations: (fromLat, fromLng) =>
-      if window.model.selectedSite()
-        fields = window.model.selectedSite().fields() 
+      if window.model.editingSite()
+        fields = window.model.editingSite().fields()
       else if window.model.currentCollection()
         fields = window.model.currentCollection().fields()
-  
       for field in fields
         if field.kind == 'location'
           result = []
