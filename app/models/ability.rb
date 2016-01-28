@@ -28,5 +28,7 @@ class Ability
     # In progress
     can :max_value_of_property, Collection, :memberships => { :user_id => user.id }
     can :decode_hierarchy_csv, Collection, :memberships => { :user_id => user.id }
+    can :decode_location_csv, Collection, :memberships => { :user_id => user.id }
+    can :download_location_csv, Collection, :memberships => { :user_id => user.id }
   end
 end

@@ -1,10 +1,9 @@
-syntax: glob
-*.log
+/log/
 *.sqlite3
 *.tmp*~
 *.orig
 *.pid
-*.*~
+.~
 .DS_Store
 tmp/*
 public/assets
@@ -23,3 +22,4 @@ vendor/ruby
 REVISION
 VERSION
 config/aws.yml
+log/*

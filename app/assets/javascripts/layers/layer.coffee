@@ -6,10 +6,12 @@ onLayers ->
       @public = ko.observable data?.public
       @ord = ko.observable data?.ord
       @threshold_ids = data?.threshold_ids ? []
+      @query_ids = data?.query_ids ? []
       if data?.fields
         @fields = ko.observableArray($.map(data.fields, (x) => new Field(@, x)))
       else
         @fields = ko.observableArray([])
+      @deletable = ko.observable(true)
       @hasFocus = ko.observable(false)
       @nameError = ko.computed => if @hasName() then null else "the layer's Name is missing"
       @fieldsError = ko.computed =>

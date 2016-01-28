@@ -88,6 +88,10 @@ class ImportWizard::ImportSpecs
         yield ImportWizard::LatFieldSpecs.new(column)
       when 'lng'
         yield ImportWizard::LngFieldSpecs.new(column)
+      when 'start_entry_date'
+        yield ImportWizard::StartEntryDateFieldSpecs.new(column)
+      when 'end_entry_date'
+        yield ImportWizard::EndEntryDateFieldSpecs.new(column)        
       end
     end
   end

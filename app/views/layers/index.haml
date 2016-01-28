@@ -16,7 +16,10 @@
     //ko
 
 .tabsline
-  #layers-main.hidden-until-loaded
+  %div
+    %img{src: '/images/loading.gif',id: 'loadProgress', style: 'position: absolute; left: 0; top: 0; right: 0; bottom: 0;margin: auto; display: none'}
+  %br/
+  #layers-main.hidden-until-loaded{style: ''}
     %h2= t('views.layers.title')
     %p= t('views.layers.description')
 
@@ -24,6 +27,7 @@
       = render '/current_snapshot_message'
 
     %br/
+
     -# Layers
     /ko foreach: layers
     /ko if: $data == $root.currentLayer()
@@ -46,7 +50,12 @@
             .feditor-top
             .feditor-container
               .rightbuttons{style:'width:250px;'}
+                /ko if: deletable()
                 %button.fdelete{ko(click: "$root.deleteField"), style:'margin-top:0px;float:right;', title: t('views.layers.form.remove_field') }
+                //ko
+                /ko if: !deletable()
+                %button.fdelete{ko(click: "$root.alertCannotDelete"), style:'margin-top:0px;float:right;', title: t('views.layers.form.remove_field') }
+                //ko
                 .btupdn{style: 'float:right;'}
                   %button.fmoveup{ko(click: '$root.moveFieldUp', attr: {disabled: '$root.isFirstField($parent, $data)'}, css: {disabled: '$root.isFirstField($parent, $data)'}), style: 'margin-top:0', title: t('views.layers.form.move_field_up')}
                   %button.fmovedown{ko(click: '$root.moveFieldDown', attr: {disabled: '$root.isLastField($parent, $data)'}, css: {disabled: '$root.isLastField($parent, $data)'}), title: t('views.layers.form.move_field_down')}

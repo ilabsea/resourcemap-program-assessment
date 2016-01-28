@@ -6,6 +6,8 @@ onCollections ->
       @selectedSite = ko.observable()
       @selectedHierarchy = ko.observable()
       @loadingSite = ko.observable(false)
+      @loadingFields = ko.observable(false)
+      @loadingSitePermission = ko.observable(false)
       @newOrEditSite = ko.computed => if @editingSite() && (!@editingSite().id() || @editingSite().inEditMode()) then @editingSite() else null
       @showSite = ko.computed => if @editingSite()?.id() && !@editingSite().inEditMode() then @editingSite() else null
       window.markers = @markers = {}
@@ -21,32 +23,83 @@ onCollections ->
     @editingSiteLocation: ->
       @editingSite() && (!@editingSite().id() || @editingSite().inEditMode() || @editingSite().editingLocation())
 
+    @calculateDistance: (fromLat, fromLng, toLat, toLng) => 
+      fromLatlng = new google.maps.LatLng(fromLat, fromLng)
+      toLatlng = new google.maps.LatLng(toLat, toLng)
+      distance = google.maps.geometry.spherical.computeDistanceBetween(fromLatlng, toLatlng)
+      return distance
+
+    @getLocations: (fromLat, fromLng) =>
+      if window.model.editingSite()
+        fields = window.model.editingSite().fields()
+      else if window.model.currentCollection()
+        fields = window.model.currentCollection().fields()
+      for field in fields
+        if field.kind == 'location'
+          result = []
+          for location in field.locations
+            distance = @calculateDistance(fromLat, fromLng, location.latitude, location.longitude)
+            if distance < parseFloat(field.maximumSearchLength)
+              result.push(location)
+          result.sort (a, b) => 
+            return parseFloat(a.distance) - parseFloat(b.distance)
+            
+          result.splice(20, result.length)
+          field.resultLocations(result)
+
     @createSite: ->
       @goBackToTable = true unless @showingMap()
       @showMap =>
-        pos = @originalSiteLocation = @map.getCenter()
-        site = new Site(@currentCollection(), lat: pos.lat(), lng: pos.lng())
-        site.copyPropertiesToCollection(@currentCollection())
-        if window.model.newSiteProperties
-          for esCode, value of window.model.newSiteProperties
-            field = @currentCollection().findFieldByEsCode esCode
-            field.setValueFromSite(value) if field
-        @unselectSite()
-        @editingSite site
-        @editingSite().startEditLocationInMap()
-        window.model.initDatePicker()
-        window.model.initAutocomplete()
-        site.prepareCalculatedField()
-        window.model.newOrEditSite().scrollable(false)
-        for field in window.model.newOrEditSite().fields()
-          if field.skippedState() == false && field.kind == 'yes_no'
-            field.setFieldFocus()
-        $('#name').focus()
+        if !@currentPosition.lat
+          @handleNoGeolocation()
+
+        pos = @originalSiteLocation = @currentPosition
+        site = new Site(@currentCollection(), lat: pos.lat, lng: pos.lng)
+        @showLoadingField()
+        if window.model.loadingFields()
+          $.get "/collections/#{@currentCollection().id}/fields", {}, (data) =>
+            window.model.loadingFields(false)
+            @currentCollection().layers($.map(data, (x) => new Layer(x)))
+
+            fields = []
+            for layer in @currentCollection().layers()
+              for field in layer.fields
+                fields.push(field)
+
+            @currentCollection().fields(fields)
+            @prepareNewSite(site, pos)
+        else
+          @prepareNewSite(site, pos)
+
+    @prepareNewSite: (site, pos) ->
+
+      site.copyPropertiesToCollection(@currentCollection())
+      if window.model.newSiteProperties
+        for esCode, value of window.model.newSiteProperties
+          field = @currentCollection().findFieldByEsCode esCode
+          field.setValueFromSite(value) if field          
+      
+      @unselectSite()
+      @editingSite site
+      @editingSite().startEditLocationInMap()
+      @getLocations(pos.lat, pos.lng)
+      window.model.initDatePicker()
+      window.model.initAutocomplete()
+      window.model.initControlKey()
+      site.prepareCalculatedField()
+      window.model.newOrEditSite().scrollable(false)
+      window.model.newOrEditSite().startEntryDate(new Date(Date.now()))
+      for field in window.model.newOrEditSite().fields()
+        if field.skippedState() == false && field.kind == 'yes_no'
+          field.setFieldFocus()
+      $('#name').focus()
+      @hideLoadingField()      
 
     @editSite: (site) ->
       initialized = @initMap()
       site.collection.panToPosition(true) unless initialized
       site.collection.fetchSitesMembership()
+      @showLoadingField()
       site.collection.fetchFields =>
         if @processingURL
           @processURL()
@@ -118,14 +171,29 @@ onCollections ->
           @editSite site
 
     @showProgress: ->
-      $("#editorContent").css({opacity: 0.2})
+      $(".tablescroll").css({opacity: 0.2})
       $('#uploadProgress').fadeIn()
-      $("#editorContent :input").attr("disabled", true)
+      $(".tablescroll :input").attr("disabled", true)
 
     @hideProgress: ->
-      $("#editorContent").css({opacity: 1})
+      $(".tablescroll").css({opacity: 1})
       $('#uploadProgress').fadeOut()
-      $("#editorContent :input").removeAttr('disabled')
+      $(".tablescroll :input").removeAttr('disabled')
+
+    @showLoadingField: ->
+      $(".tablescroll").css({opacity: 0.2})
+      $('#loadProgress').fadeIn()
+      $(".tablescroll :input").attr("disabled", true)
+
+    @hideLoadingField: ->
+      $(".tablescroll").css({opacity: 1})
+      $('#loadProgress').fadeOut()
+      $(".tablescroll :input").removeAttr('disabled')
+
+    @enableCreateSite: ->
+      if window.model.loadingFields() == false && window.model.loadingSitePermission() == false
+        $('#createSite').removeClass('disabled')
+        # window.model.createSite()
 
     @saveSite: ->
       return unless @editingSite().valid()
@@ -183,7 +251,7 @@ onCollections ->
 
       @loadBreadCrumb()
       @rewriteUrl()
-
+      window.model.hideLoadingField()
       $('a#previewimg').fancybox()
       # Return undefined because otherwise some browsers (i.e. Miss Firefox)
       # would render the Object returned when called from a 'javascript:___'

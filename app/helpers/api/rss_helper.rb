@@ -20,6 +20,8 @@ module Api::RssHelper
     xml.item do
       xml.title source['name']
       xml.pubDate Site.parse_time(source['updated_at']).rfc822
+      xml.startEntryDate Site.parse_time(source['start_entry_date']).rfc822
+      xml.endEntryDate Site.parse_time(source['end_entry_date']).rfc822
       xml.link api_site_url(source['id'], format: :rss)
       xml.guid api_site_url(source['id'], format: :rss)
 

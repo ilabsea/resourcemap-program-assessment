@@ -38,16 +38,25 @@ module Collection::CsvConcern
           header << field.code
         end
       end
+      header << 'start entry date'
+      header << 'end entry date'
       header << 'last updated'
       csv << header
 
       elastic_search_api_results.each do |result|
         source = result['_source']
-        p source
+        p source["uuid"]
         row = [source['id'], source['name'], source['location'].try(:[], 'lat'), source['location'].try(:[], 'lon')]
         fields.each do |field|
           if field.kind == 'yes_no'
             row << (Field.yes?(source['properties'][field.code]) ? 'yes' : 'no')
+          elsif field.kind == 'photo'
+            if source['properties'][field.code].present?
+            # row << "#{Settings.host}/photo_field/#{source['properties'][field.code]}" if source['properties'][field.code].present?
+              row << "http://#{Settings.host}/view_photo?uuid=#{source['uuid']}&file_name=#{source['properties'][field.code]}"
+            else
+              row << ""
+            end
           elsif field.kind == "select_many"
             field.config["options"].each do |option|
               if source['properties'][field.code] and source['properties'][field.code].include? option["code"]
@@ -75,16 +84,25 @@ module Collection::CsvConcern
             row << Array(source['properties'][field.code]).join(", ")
           end
         end
-        if current_user
-          updated_at = Site.iso_string_to_rfc822_with_timezone(source['updated_at'], current_user.time_zone)
-        else
-          updated_at = Site.iso_string_to_rfc822(source['updated_at'])
-        end
-        # row << Site.iso_string_to_rfc822(source['updated_at'])
+
+        updated_at = Site.parse_time(source['updated_at']).strftime("%d/%m/%Y %H:%M:%S")
+        start_entry_date = Site.parse_time(source['start_entry_date']).strftime("%d/%m/%Y %H:%M:%S")
+        end_entry_date = Site.parse_time(source['end_entry_date']).strftime("%d/%m/%Y %H:%M:%S")
+
+        row << start_entry_date
+        row << end_entry_date
         row << updated_at
         csv << row
       end
     end
+  end
+
+  def location_csv(locations)
+    CSV.generate do |csv|
+      locations.each do |location|
+        csv << [location["code"], location["name"], location["latitude"], location["longitude"]]
+      end
+    end      
   end
 
   def sample_csv(user = nil)
@@ -166,6 +184,63 @@ module Collection::CsvConcern
     rescue Exception => ex
       return [{error: ex.message}]
 
+  end
+
+  def decode_location_csv(string)
+    csv = CSV.parse(string)
+
+    items = validate_format_location(csv)
+
+    locations = []
+    items.each do |item|
+      locations.push item[1]
+    end
+    
+    locations
+    
+    rescue Exception => ex
+      return [{error: ex.message}]
+  end
+
+  def validate_format_location(csv)
+    i = 0
+    items = {}
+    csv.each do |row|
+      item = {}
+      if row[0] == 'Code'
+        next
+      else
+        i = i+1
+        item[:order] = i
+
+        if row.length != 4
+          item[:error] = "Wrong format."
+          item[:error_description] = "Invalid column number"
+        else
+
+          #Check unique name
+          name = row[1].strip
+          
+          #Check unique id
+          code = row[0].strip
+          if items.any?{|item| item.second[:code] == code}
+            item[:error] = "Invalid code."
+            item[:error_description] = "location code should be unique"
+            error = true
+          end
+
+          if !error
+            item[:code] = code
+            item[:name] = name
+            item[:latitude] = row[2].strip
+            item[:longitude] = row[3].strip
+          end
+        end
+
+        items[item[:order]] = item
+      end
+    end
+    items
   end
 
   def validate_format(csv)

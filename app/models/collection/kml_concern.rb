@@ -2,7 +2,7 @@ require 'nokogiri'
 module Collection::KmlConcern
   extend ActiveSupport::Concern
 
-  def to_kml results
+  def to_kml(results, current_user)
     fields = {}
     field_options = {}
     field_kinds = {}
@@ -46,6 +46,8 @@ module Collection::KmlConcern
               xml.LookAt {
                 xml.longitude row["location"]["lon"]
                 xml.latitude  row["location"]["lat"]
+                xml.start_entry_date  Site.iso_string_to_rfc822_with_timezone(row['end_entry_date'], current_user.time_zone)
+                xml.end_entry_date  Site.iso_string_to_rfc822_with_timezone(row['end_entry_date'], current_user.time_zone)
                 xml.altitude  0
                 xml.range 32185
                 xml.tilt 0

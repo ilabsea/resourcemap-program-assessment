@@ -27,7 +27,7 @@ class Collection < ActiveRecord::Base
   has_many :layer_histories, dependent: :destroy
   has_many :field_histories, dependent: :destroy
   has_many :messages, dependent: :destroy
-  has_many :queries, dependent: :destroy
+  has_many :canned_queries, dependent: :destroy
   
   OPERATOR = {">" => "gt", "<" => "lt", ">=" => "gte", "<=" => "lte", "=>" => "gte", "=<" => "lte", "=" => "eq"}
 
@@ -179,6 +179,7 @@ class Collection < ActiveRecord::Base
           config: field.config,
           ord: field.ord,
           is_mandatory: field.is_mandatory,
+          is_display_field: field.is_display_field,
           is_enable_field_logic: field.is_enable_field_logic,
           # field_logic_value: field.field_logic_value,
           writeable: user.is_guest ? false : !lms || lms[field.layer_id].write
@@ -205,7 +206,7 @@ class Collection < ActiveRecord::Base
 
   def thresholds_test(site)
     catch(:threshold) {
-      thresholds.each do |threshold|
+      thresholds.order(:ord).each do |threshold|
         threshold.test site.properties if threshold.is_all_site || threshold.sites.any? { |selected| selected["id"] == site.id }
       end
       nil

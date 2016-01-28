@@ -12,7 +12,8 @@ module Field::Base
    { name: 'site', css_class: 'lsite', small_css_class: 'ssite' },
    { name: 'user', css_class: 'luser', small_css_class: 'suser' },
    { name: 'photo', css_class: 'lbutton lphoto', small_css_class: 'sphoto' },
-   { name: 'calculation', css_class: 'lbutton lnumeral', small_css_class: 'snumeral'}]
+   { name: 'calculation', css_class: 'lbutton lnumeral', small_css_class: 'snumeral'},
+   { name: 'location', css_class: 'llocation', small_css_class: 'slocation'}]
 
   BaseKinds.each do |base_kind|
     class_eval %Q(def #{base_kind[:name]}?; kind == '#{base_kind[:name]}'; end)
@@ -42,6 +43,18 @@ module Field::Base
 
   def stored_as_number?
     numeric? || select_one? || select_many?
+  end
+
+  def stoted_as_double?
+    numeric?
+  end
+
+  def storeed_as_long?
+    select_one? || select_many?
+  end
+ 
+  def stored_as_floating_point?
+    numeric? && allow_decimals?
   end
 
   def allow_decimals?
@@ -75,7 +88,7 @@ module Field::Base
       return value
       # return find_hierarchy_name_by_id(value)
     elsif date?
-      return Site.iso_string_to_mdy(value)
+      return Site.iso_string_to_dmy(value)
     else
       return value
     end
@@ -97,7 +110,7 @@ module Field::Base
     elsif hierarchy?
       return find_hierarchy_value value
     elsif date?
-      return Site.iso_string_to_mdy(value)
+      return Site.iso_string_to_dmy(value)
     else
       return value
     end

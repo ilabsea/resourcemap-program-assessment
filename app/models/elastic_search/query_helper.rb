@@ -64,7 +64,6 @@ module ElasticSearch::QueryHelper
           tire_search.filter :range, key => {gte: value}
         end
       end
-
       conditions.length > 0 ? (conditions.join " AND ") : nil
     end
 

@@ -33,9 +33,9 @@ class MapSearch
     listener = clusterer = Clusterer.new(@zoom)
     clusterer.highlight @hierarchy if @hierarchy
     listener = ElasticSearch::SitesAdapter::SkipIdListener.new(listener, @exclude_id) if @exclude_id
-
+    
     set_bounds_filter
-    apply_queries
+    # apply_queries
 
     adapter = ElasticSearch::SitesAdapter.new listener
     adapter.return_property @hierarchy[:code] if @hierarchy[:code]

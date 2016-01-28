@@ -93,7 +93,7 @@ class Layer < ActiveRecord::Base
     self.collection.thresholds.map { |threshold|
 
       thresholdFieldIDs = threshold.conditions.map { |condition| condition['field'].to_i}
-
+      
       if (layerFieldIDs - thresholdFieldIDs).length < layerFieldIDs.length
         associated_threshold_ids.push(threshold.id)
       end
@@ -101,7 +101,23 @@ class Layer < ActiveRecord::Base
     }
 
     associated_threshold_ids
+  end
 
+  def get_associated_query_ids
+
+    layerFieldIDs = self.fields.map { |field| field.id}
+    associated_query_ids = []
+
+    self.collection.canned_queries.map { |query|
+      queryFieldIDs = query.conditions.map { |condition| condition['field_id'].to_i}
+      
+      if (layerFieldIDs - queryFieldIDs).length < layerFieldIDs.length
+        associated_query_ids.push(query.id)
+      end
+
+    }
+
+    associated_query_ids
   end
 
   private

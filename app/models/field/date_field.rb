@@ -50,8 +50,8 @@ class Field::DateField < Field
     true
   end
 
-  def parse_date(m_d_y_value)
-    Time.strptime m_d_y_value, '%m/%d/%Y'
+  def parse_date(d_m_y_value)
+    Time.strptime d_m_y_value, '%d/%m/%Y'
   end
 
 	private

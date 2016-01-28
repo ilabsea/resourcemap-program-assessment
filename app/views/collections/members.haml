@@ -20,7 +20,9 @@
         %col{width: '60px'}
         %col{width: '60px'}
         %col{width: '60px'}
-        %col{width: '420px'}
+        %col{width: '200px'}
+        %col{width: '200px'}
+        %col{width: '20px'}
       %tr
         %th.members-tree{style: '-webkit-border-radius:8px 0 0 0;-moz-border-radius:8px 0 0 0;'} 
           = t('views.collections.members.member')
@@ -32,9 +34,12 @@
         %th.members-permission= t('views.collections.members.read')
         %th.members-permission= t('views.collections.members.update')
         %th.members-permission= t('views.collections.members.admin')
-
+        %th.members-permission= t('views.collections.members.can_view_data_submit_by_other')
+        %th.members-permission= t('views.collections.members.can_edit_data_submit_by_other')
         %th
       %tr{ :class => :membersFirstRow }
+        %td
+        %td
         %td
         %td
         %td

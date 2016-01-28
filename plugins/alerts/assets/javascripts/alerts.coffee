@@ -14,6 +14,9 @@ onThresholds -> if $('#thresholds-main').length > 0
   $.get "/collections/#{collectionId}.json", (collection) ->
     window.model.collectionIcon = collection.icon
 
+  #show loading
+  $('#loadProgress').show()
+
   $.get "/collections/#{collectionId}/fields.json", (layers) ->
     fields = $.map(layers, (layer) -> layer.fields)
     supportedFields = $.map(fields, (field) -> new Field field if !!~supportedKinds.indexOf field.kind)
@@ -25,3 +28,4 @@ onThresholds -> if $('#thresholds-main').length > 0
       thresholds = $.map thresholds, (threshold) -> new Threshold threshold, window.model.collectionIcon
       window.model.thresholds thresholds
       window.model.isReady(true)
+      $('#loadProgress').hide() #hide loading

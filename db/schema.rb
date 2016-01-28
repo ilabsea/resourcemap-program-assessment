@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150504073516) do
+ActiveRecord::Schema.define(:version => 20150825025040) do
 
   create_table "activities", :force => true do |t|
     t.integer  "user_id"
@@ -24,6 +24,17 @@ ActiveRecord::Schema.define(:version => 20150504073516) do
     t.datetime "updated_at",                          :null => false
     t.string   "item_type"
     t.string   "action"
+  end
+
+  create_table "canned_queries", :force => true do |t|
+    t.string   "name"
+    t.text     "conditions"
+    t.boolean  "isAllSite"
+    t.boolean  "isAllCondition"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+    t.integer  "collection_id"
+    t.string   "formula"
   end
 
   create_table "channels", :force => true do |t|
@@ -60,14 +71,18 @@ ActiveRecord::Schema.define(:version => 20150504073516) do
     t.string   "name"
     t.string   "code"
     t.string   "kind"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
-    t.text     "config"
+    t.datetime "created_at",                                                     :null => false
+    t.datetime "updated_at",                                                     :null => false
+    t.binary   "config",                :limit => 2147483647
     t.integer  "ord"
     t.datetime "valid_since"
     t.datetime "valid_to"
     t.integer  "field_id"
     t.text     "metadata"
+    t.boolean  "is_mandatory",                                :default => false
+    t.boolean  "is_enable_field_logic",                       :default => false
+    t.boolean  "is_enable_range",                             :default => false
+    t.boolean  "is_display_field"
   end
 
   add_index "field_histories", ["field_id"], :name => "index_field_histories_on_field_id"
@@ -86,6 +101,7 @@ ActiveRecord::Schema.define(:version => 20150504073516) do
     t.boolean  "is_mandatory",                                :default => false
     t.boolean  "is_enable_field_logic",                       :default => false
     t.boolean  "is_enable_range",                             :default => false
+    t.boolean  "is_display_field"
   end
 
   create_table "import_jobs", :force => true do |t|
@@ -149,9 +165,11 @@ ActiveRecord::Schema.define(:version => 20150504073516) do
   create_table "memberships", :force => true do |t|
     t.integer  "user_id"
     t.integer  "collection_id"
-    t.datetime "created_at",                       :null => false
-    t.datetime "updated_at",                       :null => false
-    t.boolean  "admin",         :default => false
+    t.datetime "created_at",                        :null => false
+    t.datetime "updated_at",                        :null => false
+    t.boolean  "admin",          :default => false
+    t.boolean  "can_view_other", :default => false
+    t.boolean  "can_edit_other", :default => false
   end
 
   create_table "messages", :force => true do |t|
@@ -175,16 +193,6 @@ ActiveRecord::Schema.define(:version => 20150504073516) do
     t.string   "version"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
-  end
-
-  create_table "queries", :force => true do |t|
-    t.string   "name"
-    t.text     "conditions"
-    t.boolean  "isAllSite"
-    t.boolean  "isAllCondition"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
-    t.integer  "collection_id"
   end
 
   create_table "reminders", :force => true do |t|
@@ -223,19 +231,22 @@ ActiveRecord::Schema.define(:version => 20150504073516) do
   create_table "site_histories", :force => true do |t|
     t.integer  "collection_id"
     t.string   "name"
-    t.decimal  "lat",                          :precision => 10, :scale => 6
-    t.decimal  "lng",                          :precision => 10, :scale => 6
+    t.decimal  "lat",                            :precision => 10, :scale => 6
+    t.decimal  "lng",                            :precision => 10, :scale => 6
     t.integer  "parent_id"
     t.string   "hierarchy"
-    t.datetime "created_at",                                                                           :null => false
-    t.datetime "updated_at",                                                                           :null => false
+    t.datetime "created_at",                                                                                       :null => false
+    t.datetime "updated_at",                                                                                       :null => false
     t.text     "properties"
-    t.string   "location_mode",  :limit => 10,                                :default => "automatic"
+    t.string   "location_mode",    :limit => 10,                                :default => "automatic"
     t.string   "id_with_prefix"
     t.datetime "valid_since"
     t.datetime "valid_to"
     t.integer  "site_id"
     t.string   "uuid"
+    t.integer  "user_id"
+    t.datetime "start_entry_date",                                              :default => '2015-08-25 04:48:32'
+    t.datetime "end_entry_date",                                                :default => '2015-08-25 04:48:32'
   end
 
   add_index "site_histories", ["site_id"], :name => "index_site_histories_on_site_id"
@@ -253,18 +264,21 @@ ActiveRecord::Schema.define(:version => 20150504073516) do
   create_table "sites", :force => true do |t|
     t.integer  "collection_id"
     t.string   "name"
-    t.decimal  "lat",                          :precision => 10, :scale => 6
-    t.decimal  "lng",                          :precision => 10, :scale => 6
+    t.decimal  "lat",                            :precision => 10, :scale => 6
+    t.decimal  "lng",                            :precision => 10, :scale => 6
     t.integer  "parent_id"
     t.string   "hierarchy"
-    t.datetime "created_at",                                                                           :null => false
-    t.datetime "updated_at",                                                                           :null => false
+    t.datetime "created_at",                                                                                       :null => false
+    t.datetime "updated_at",                                                                                       :null => false
     t.text     "properties"
-    t.string   "location_mode",  :limit => 10,                                :default => "automatic"
+    t.string   "location_mode",    :limit => 10,                                :default => "automatic"
     t.string   "id_with_prefix"
     t.string   "uuid"
     t.string   "device_id"
     t.string   "external_id"
+    t.datetime "start_entry_date",                                              :default => '2015-08-25 04:48:32'
+    t.datetime "end_entry_date",                                                :default => '2015-08-25 04:48:32'
+    t.integer  "user_id"
   end
 
   create_table "sites_permissions", :force => true do |t|

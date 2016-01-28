@@ -15,8 +15,8 @@ class ApplicationController < ActionController::Base
   expose(:threshold)
   expose(:reminders) { collection.reminders }
   expose(:reminder)
-  expose(:queries) { collection.queries}
-  expose(:query)
+  expose(:queries) { collection.canned_queries}
+  expose(:canned_query)
   expose(:language) { Language.find_by_code I18n.locale.to_s }
 
   expose(:new_search_options) do

@@ -22,16 +22,16 @@ class QueriesController < ApplicationController
 	end
 
   def update
-    query = collection.queries.find params[:id]
+    query = queries.find params[:id]
     query.update_attributes! params[:query]
     query.reload
     render json: query.as_json
   end
 
   def destroy
-    query.destroy
-    Resque.enqueue IndexRecreateTask, query.id
-    render json: query    
+    canned_query.destroy
+    Resque.enqueue IndexRecreateTask, canned_query.id
+    render json: canned_query    
   end
 
   private

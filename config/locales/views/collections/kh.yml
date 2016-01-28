@@ -100,6 +100,8 @@ kh:
         leave_this_collection: "ចាកចេញពីទិន្នន័យ"
         confirm_leave_collection: "តើអ្នពិតជាចង់ចាកចេញពីទិន្នន័យមែនទេ?"
         query: "សំណួរ"
+        start_entry_date: "ពេលចាប់ផ្តើមបញ្ចូលទិន្ន័យ"
+        end_entry_date: "ពេលបញ្ចប់បញ្ចូលទិន្ន័យ"
       form:
         name: "ឈ្មោះ"
         description: "ការពិពណ៌នាសង្ខេប"
@@ -169,6 +171,8 @@ kh:
         text_me: "ផ្ញើរសារអោយខ្ញុំ!"
         submit: "បញ្ជូន"
         cancel: "បោះបង់ចោល"
+        can_view_data_submit_by_other: "អាចមើលទិន្នន័យដែលបញ្ចូលដោយអ្នកប្រើប្រាស់ផ្សេង"
+        can_edit_data_submit_by_other: "អាចកែទិន្នន័យដែលបញ្ចូលដោយអ្នកប្រើប្រាស់ផ្សេង"
       quotas:
         title: "កូតា"
         messages_sent: "ទិន្នន័យ នេះបានផ្ញើរ"

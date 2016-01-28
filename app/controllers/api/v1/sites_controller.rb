@@ -8,10 +8,15 @@ module Api::V1
     expose(:site) { Site.find(params[:site_id] || params[:id]) }
 
     def index
-      builder = Collection.filter_sites(params)
-      sites_size = builder.size
-      sites_by_page  = Collection.filter_page(params[:limit], params[:offset], builder)
-      render :json => {:sites => sites_by_page, :total => sites_size}
+      search = new_search
+
+      search.my_site_search current_user.id unless current_user.can_view_other? params[:collection_id]
+      search.offset params[:offset]
+      search.limit params[:limit]
+
+      sites_size = search.results.total
+
+      render :json =>{:sites => search.ui_results.map { |x| x['_source'] }, :total => sites_size}
     end
 
     def show
@@ -19,15 +24,26 @@ module Api::V1
 
       search.id(site.id)
       @result = search.api_results[0]
-
+      data = site_item_json(@result)
+      #parse date from formate %d%m%Y to %m%d%Y for the phone_gap data old version
+      if !params[:rm_wfp_version] 
+        fields = collection.fields.index_by &:code
+        site_item_json(@result)[:properties].each_pair do |es_code, value|
+          if fields[es_code].kind == 'date'
+            date = Time.strptime(value, '%d/%m/%Y')
+            data[:properties][es_code] = "#{date.strftime('%0m/%d/%Y')}"
+          end
+        end
+      end
       respond_to do |format|
         format.rss
-        format.json { render json: site_item_json(@result) }
+        format.json { render json:  data}
       end
     end
 
     def update
       site.attributes = sanitized_site_params(false).merge(user: current_user)
+
       if site.valid?
         site.save!
         if params[:photosToRemove]
@@ -42,6 +58,7 @@ module Api::V1
     def create
       site = build_site
       create_state = site.id ? false : true #to create or update
+      site.user_id = current_user.id
       if site.save
         if create_state
           current_user.site_count += 1
@@ -68,6 +85,12 @@ module Api::V1
       decoded_properties = new_record ? {} : result.properties
       site_properties.each_pair do |es_code, value|
         value = [ value, files[value] ] if fields[es_code].kind_of? Field::PhotoField
+        #parse date from formate %m%d%Y to %d%m%Y for the phone_gap data old version
+        if fields[es_code].kind == 'date' &&  value &&  value != '' && !params[:rm_wfp_version]
+          value = Time.strptime(value, '%m/%d/%Y')
+          value = "#{value.day}/#{value.month}/#{value.year}"
+        end
+
         decoded_properties[es_code] = fields[es_code].decode_from_ui(value) if fields[es_code]
       end
 

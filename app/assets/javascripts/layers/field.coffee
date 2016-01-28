@@ -6,13 +6,19 @@ onLayers ->
       @name = ko.observable data?.name
       @code = ko.observable data?.code
       @kind = ko.observable data?.kind
+      @threshold_ids = data?.threshold_ids ? []
+      @query_ids = data?.query_ids ? []
+
+      @editableCode = ko.observable(true)
+      @deletable = ko.observable(true)
       
       @is_enable_field_logic = ko.observable data?.is_enable_field_logic ? false
       @is_enable_range = data?.is_enable_range
       @config = data?.config
       @field_logics_attributes = data?.field_logics_attributes
       @metadata = data?.metadata
-      @is_mandatory = data?.is_mandatory      
+      @is_mandatory = data?.is_mandatory 
+      @is_display_field = data?.is_display_field     
 
       @kind_titleize = ko.computed =>
         (@kind().split(/_/).map (word) -> word[0].toUpperCase() + word[1..-1].toLowerCase()).join ' '
@@ -24,8 +30,8 @@ onLayers ->
       @fieldErrorDescription = ko.computed => if @hasName() then "'#{@name()}'" else "number #{@layer().fields().indexOf(@) + 1}"
 
       # Tried doing "@impl = ko.computed" but updates were triggering too often
-      @impl = ko.observable eval("new Field_#{@kind()}(_this)")
-      @kind.subscribe => @impl eval("new Field_#{@kind()}(_this)")
+      @impl = ko.observable eval("new Field_#{@kind()}(this)")
+      @kind.subscribe => @impl eval("new Field_#{@kind()}(this)")
 
       @nameError = ko.computed => if @hasName() then null else "the field #{@fieldErrorDescription()} is missing a Name"
       @codeError = ko.computed =>
@@ -35,6 +41,36 @@ onLayers ->
         
       @error = ko.computed => @nameError() || @codeError() || @impl().error()
       @valid = ko.computed => !@error()
+      @oldcode = ko.observable data?.code
+      @code.subscribe =>
+        unless @editableCode()
+          @changeCodeInCalculationField()
+
+    changeCodeInCalculationField: =>
+      $.map(model.layers(), (x, index) =>
+        fields = x.fields()
+        new_fields = []
+        $.map(fields, (f) =>
+          if f.kind() == "calculation"
+            search = "${" + @oldcode() + "}"
+            replace = "${" + @code() + "}"
+            re = new RegExp(search, 'g')
+            f.impl().codeCalculation(@replaceAll(f.impl().codeCalculation(), search , replace))
+            $.map(f.impl().dependent_fields(), (df, index) =>
+              if df.id().toString() == @id().toString()
+                f.impl().dependent_fields()[index].code(@code())
+            )
+          new_fields.push(f)
+        )
+        model.layers()[index].fields(new_fields)
+      )
+      @oldcode(@code())
+
+    escapeRegExp: (string) =>
+      return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+
+    replaceAll: (string, find, replace) =>
+      return string.replace(new RegExp(@escapeRegExp(find), 'g'), replace);
 
     hasName: => $.trim(@name()).length > 0
 
@@ -59,9 +95,13 @@ onLayers ->
       @selecting = v
 
     buttonClass: =>
+      if @kind() == 'location'
+        return 'llocation'
       FIELD_TYPES[@kind()].css_class
 
     iconClass: =>
+      if @kind() == 'location'
+        return 'slocation'
       FIELD_TYPES[@kind()].small_css_class
 
     toJSON: =>
@@ -74,6 +114,7 @@ onLayers ->
         ord: @ord()
         layer_id: @layer().id()
         is_mandatory: @is_mandatory
+        is_display_field: @is_display_field
         is_enable_field_logic: @is_enable_field_logic
       @impl().toJSON(json)
       json
@@ -81,6 +122,7 @@ onLayers ->
   class @FieldImpl
     constructor: (field) ->
       @field = field
+      @maximumSearchLengthError = -> null
       @error = -> null
 
     toJSON: (json) =>
@@ -108,6 +150,7 @@ onLayers ->
       super(field)
 
       @allowsDecimals = ko.observable field?.config?.allows_decimals == 'true'
+      @digitsPrecision = ko.observable field?.config?.digits_precision
       @is_enable_range = ko.observable field?.is_enable_range ? false
       @minimum = ko.observable field?.config?.range?.minimum
       @maximum = ko.observable field?.config?.range?.maximum
@@ -128,7 +171,7 @@ onLayers ->
 
     toJSON: (json) =>
       json.is_enable_range = @is_enable_range()
-      json.config = {allows_decimals: @allowsDecimals(), range: {minimum: @minimum(), maximum: @maximum()}, field_logics: $.map(@field_logics(), (x) ->  x.toJSON())}    
+      json.config = {digits_precision: @digitsPrecision(), allows_decimals: @allowsDecimals(), range: {minimum: @minimum(), maximum: @maximum()}, field_logics: $.map(@field_logics(), (x) ->  x.toJSON())}    
       return json
 
     saveFieldLogic: (field_logic) =>
@@ -289,9 +332,44 @@ onLayers ->
 
   class @Field_photo extends @FieldImpl
 
+  class @Field_location extends @FieldImpl
+    constructor: (field) ->
+      super(field)
+      @maximumSearchLength = ko.observable(field?.config?.maximumSearchLength)
+      @uploadingLocation = ko.observable(false)
+      @errorUploadingLocation = ko.observable(false)
+      @locations = if field?.config?.locations
+                    ko.observableArray($.map(field?.config?.locations, (x) -> new Location(x)))
+                   else
+                    ko.observableArray()
+
+      @maximumSearchLengthError = ko.computed => 
+        if @maximumSearchLength() && @maximumSearchLength().length >0 
+          null 
+        else 
+          "the field #{@field.fieldErrorDescription()} is missing a maximum search length"
+      @missingFileLocationError = ko.computed =>
+        if @locations() && @locations().length > 0
+          null
+        else
+          "the field #{@field.fieldErrorDescription()} is missing the location file"
+
+      @error = ko.computed =>
+        @missingFileLocationError() || @maximumSearchLengthError()
+
+    setLocation: (locations) =>
+      @locations($.map(locations, (x) -> new Location(x)))
+      @uploadingLocation(false)
+      @errorUploadingLocation(false)
+
+    toJSON: (json)=>
+      json.config = {locations: $.map(@locations(), (x) ->  x.toJSON()), maximumSearchLength: @maximumSearchLength()}
+
   class @Field_calculation extends @FieldImpl
     constructor: (field) ->
       super(field)
+      @allowsDecimals = ko.observable field?.config?.allows_decimals == 'true'
+      @digitsPrecision = ko.observable field?.config?.digits_precision
       @dependent_fields = if field.config?.dependent_fields?
                             ko.observableArray(
                               $.map(field.config.dependent_fields, (x) -> new FieldDependant(x))
@@ -303,12 +381,13 @@ onLayers ->
     addDependentField: (field) =>
       fields = @dependent_fields().filter (f) -> f.id() is field.id() 
       if fields.length == 0
+        field.editableCode(false)
         @dependent_fields.push(new FieldDependant(field.toJSON()))
 
     removeDependentField: (field) =>
       @dependent_fields.remove field
 
     addFieldToCodeCalculation: (field) =>
-      @codeCalculation(@codeCalculation() + '$' + field.code())
+      @codeCalculation(@codeCalculation() + '${' + field.code() + "}")
     toJSON: (json) =>
-      json.config = {code_calculation: @codeCalculation(), dependent_fields: $.map(@dependent_fields(), (x) ->  x.toJSON())}
+      json.config = {digits_precision: @digitsPrecision(), allows_decimals: @allowsDecimals(), code_calculation: @codeCalculation(), dependent_fields: $.map(@dependent_fields(), (x) ->  x.toJSON())}

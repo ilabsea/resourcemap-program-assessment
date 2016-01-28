@@ -12,7 +12,12 @@ class LayersController < ApplicationController
       end
       if current_user_snapshot.at_present?
         json = layers.includes(:fields).all.as_json(include: :fields).each { |layer|
+          layer[:fields].each { |field|
+            field['threshold_ids'] = get_associated_field_threshold_ids(field)
+            field['query_ids'] = get_associated_field_query_ids(field)
+          }
           layer['threshold_ids'] = Layer.find(layer['id']).get_associated_threshold_ids
+          layer['query_ids'] = Layer.find(layer['id']).get_associated_query_ids
         }
         format.json { render json:  json}
       else
@@ -75,6 +80,9 @@ class LayersController < ApplicationController
 
 
         if field[:config]
+          if field[:config][:locations]
+            field[:config][:locations] = field[:config][:locations].values
+          end 
           if field[:config][:options]
             field[:config][:options] = field[:config][:options].values
             field[:config][:options].each { |option| option['id'] = option['id'].to_i }
@@ -93,7 +101,7 @@ class LayersController < ApplicationController
             field[:config][:field_logics] = field[:config][:field_logics].values
             field[:config][:field_logics].each { |field_logic| 
               field_logic['id'] = field_logic['id'].to_i
-              field_logic['value'] = field_logic['value'].to_i
+              field_logic['value'] = field_logic['value'].to_f
               if field_logic['field_id']
                 field_logic['field_id'].each { |field_id|
                   if field_id == ""
@@ -170,5 +178,39 @@ class LayersController < ApplicationController
     end
 
     params[:layer][:fields_attributes] = params[:layer][:fields_attributes].values
+  end
+
+  def get_associated_field_threshold_ids(field)
+    associated_field_threshold_ids = []
+    fieldID = field["id"]
+
+    self.collection.thresholds.map { |threshold|
+      threshold.conditions.map { |condition| 
+        conditionFieldID = condition['field'].to_i
+        if fieldID == conditionFieldID
+          associated_field_threshold_ids.push(threshold.id)
+          break
+        end
+      }
+    }
+
+    associated_field_threshold_ids
+  end
+
+  def get_associated_field_query_ids(field)
+    associated_field_query_ids = []
+    fieldID = field["id"]
+
+    self.collection.canned_queries.map { |query|
+      query.conditions.map { |condition| 
+        conditionFieldID = condition['field_id'].to_i
+        if fieldID == conditionFieldID
+          associated_field_query_ids.push(query.id)
+          break
+        end
+      }
+    }
+
+    associated_field_query_ids
   end
 end

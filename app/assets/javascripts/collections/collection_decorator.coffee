@@ -14,11 +14,11 @@ onCollections ->
 
       @collection = collection
       @currentSnapshot = collection.currentSnapshot
-
       @id = collection.id
       @name = collection.name
       @layers = collection.layers
       @fields = collection.fields
+      @memberships = collection.memberships
       @fieldsInitialized = collection.fieldsInitialized
       @refineFields = collection.fields
       @groupByOptions = collection.groupByOptions
@@ -26,6 +26,7 @@ onCollections ->
       @sitesPermission = collection.sitesPermission
       @thresholds = collection.thresholds
       @showLegend = collection.showLegend
+      @checked = collection.checked
       @showingCollectionAlert = collection.showingCollectionAlert
       @allSites(collection.allSites())
 

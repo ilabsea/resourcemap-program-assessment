@@ -3,6 +3,7 @@ class ImportWizard
 
   class << self
     def enqueue_job(user, collection, columns_spec)
+      # debugger
       mark_job_as_pending user, collection
 
       # Enqueue job with user_id, collection_id, serialized column_spec
@@ -210,7 +211,6 @@ class ImportWizard
 
           # This will update the existing sites
           sites.each { |site| site.save! unless site.new_record? }
-
           # And this will create the new ones
           collection.save!
 
@@ -424,11 +424,23 @@ class ImportWizard
         return
       end
 
+      if column[:header] =~ /start entry date/i
+        column[:use_as] = :start_entry_date
+        column[:kind] = :date
+        return
+      end
+
+      if column[:header] =~ /end entry date/i
+        column[:use_as] = :end_entry_date
+        column[:kind] = :date
+        return
+      end
+
       if column[:header] =~ /last updated/i
         column[:use_as] = :ignore
         column[:kind] = :ignore
         return
-      end
+      end     
 
       if not admin
         column[:use_as] = :ignore

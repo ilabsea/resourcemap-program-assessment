@@ -2,7 +2,7 @@ class CollectionsController < ApplicationController
   before_filter :setup_guest_user, :if => Proc.new { collection }
   before_filter :authenticate_user!, :except => [:render_breadcrumbs, :index, :alerted_collections], :unless => Proc.new { collection }
   
-  authorize_resource :except => [:render_breadcrumbs], :decent_exposure => true, :id_param => :collection_id
+  authorize_resource :except => [:render_breadcrumbs, :my_membership], :decent_exposure => true, :id_param => :collection_id
 
   expose(:collections){
     if current_user && !current_user.is_guest
@@ -21,6 +21,11 @@ class CollectionsController < ApplicationController
   before_filter :show_properties_breadcrumb, :only => [:members, :settings, :reminders, :quotas, :can_queries]
 
   
+  def my_membership
+    collection = Collection.find params[:collection_id]
+    member = collection.memberships.find_by_user_id current_user.id
+    render :json => member
+  end
 
   def index
     if params[:name].present?
@@ -193,17 +198,19 @@ class CollectionsController < ApplicationController
   def search
     search = new_search
 
-    search.after params[:updated_since] if params[:updated_since]
+    formula = params[:formula].downcase if params[:formula].present? 
+
+    search.set_formula formula if formula.present? 
     search.full_text_search params[:search]
     search.offset params[:offset]
     search.limit params[:limit]
     search.alerted_search params[:_alert] if params[:_alert] 
     search.sort params[:sort], params[:sort_direction] != 'desc' if params[:sort]
     search.hierarchy params[:hierarchy_code], params[:hierarchy_value] if params[:hierarchy_code]
-    search.location_missing if params[:location_missing].present?
-    search.where params.except(:action, :controller, :format, :id, :collection_id, :updated_since, :search, :limit, :offset, :sort, :sort_direction, :hierarchy_code, :hierarchy_value, :location_missing, :_alert)
+    search.my_site_search current_user.id unless current_user.can_view_other? params[:collection_id]
+    search.where params.except(:action, :controller, :format, :id, :collection_id, :search, :limit, :offset, :sort, :sort_direction, :hierarchy_code, :hierarchy_value, :_alert, :formula)
 
-    search.apply_queries
+    search.prepare_filter
 
     results = search.results.map do |result|
       source = result['_source']
@@ -211,8 +218,12 @@ class CollectionsController < ApplicationController
       obj = {}
       obj[:id] = source['id']
       obj[:name] = source['name']
+      obj[:icon] = source['icon']
+      obj[:color] = source['color']
       obj[:created_at] = Site.parse_time(source['created_at'])
       obj[:updated_at] = Site.parse_time(source['updated_at'])
+      obj[:start_entry_date] = Site.parse_time(source['start_entry_date']).strftime("%d/%m/%Y %H:%M:%S")
+      obj[:end_entry_date] = Site.parse_time(source['end_entry_date']).strftime("%d/%m/%Y %H:%M:%S")
 
       if source['location']
         obj[:lat] = source['location']['lat']
@@ -233,6 +244,29 @@ class CollectionsController < ApplicationController
     @hierarchy = collection.decode_hierarchy_csv(csv_string)
     @hierarchy_errors = CollectionsController.generate_error_description_list(@hierarchy)
     render layout: false
+  end
+
+  def decode_location_csv
+    csv_string = File.read(params[:file].path, :encoding => 'utf-8')
+    @locations = collection.decode_location_csv(csv_string)
+    @locations_errors = CollectionsController.generate_error_description_location(@locations)
+    render layout: false
+  end
+
+  def self.generate_error_description_location(locations_csv)
+    locations_errors = []
+    locations_csv.each do |item|
+      message = ""
+      
+      if item[:error]
+        message << "Error: #{item[:error]}"
+        message << " " + item[:error_description] if item[:error_description]
+        message << " in line #{item[:order]}." if item[:order]
+      end
+
+      locations_errors << message if !message.blank?
+    end
+    locations_errors.join("<br/>").to_s
   end
 
   def self.generate_error_description_list(hierarchy_csv)

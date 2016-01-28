@@ -29,10 +29,10 @@ onReminders ->
   class @ReminderDateTime
     constructor: (@datetime) ->
 
-    getDate: -> @datetime.strftime '%Y-%m-%d'
+    getDate: -> @datetime.strftime '%d/%m/%Y'
     setDate: (dateString) ->
-      [year, month, date] = dateString.split '-'
-      @datetime.setFullYear year; @datetime.setMonth month-1; @datetime.setDate date
+      [year, month, date] = dateString.split '/'
+      @datetime.setDate date; @datetime.setMonth month-1; @datetime.setFullYear year
       @
 
     getTime: -> @datetime.strftime '%H:%M'
@@ -41,4 +41,4 @@ onReminders ->
       @datetime.setHours hour; @datetime.setMinutes minute
       @
 
-    toString: -> @datetime.strftime '%Y-%m-%dT%H:%M'
+    toString: -> @datetime.strftime '%d/%m/%YT%H:%M'

@@ -6,6 +6,12 @@ class Api::CollectionsController < ApplicationController
   before_filter :authenticate_api_user!
   skip_before_filter  :verify_authenticity_token
 
+  def my_membership
+    collection = Collection.find params[:collection_id]
+    member = collection.memberships.find_by_user_id current_user.id
+    render :json => member
+  end
+
   def index
     render json: current_user.collections
   end
@@ -32,6 +38,12 @@ class Api::CollectionsController < ApplicationController
       format.kml { collection_kml(collection, @results) }
       format.shp { collection_shp(collection, @results) }
     end
+  end
+
+  def download_location_csv
+    field = fields.find(params[:field])
+    location_csv = collection.location_csv(field.config["locations"]) if field.config["locations"]
+    send_data location_csv, type: 'text/csv', filename: "#{field.name}_locations.csv"
   end
 
   def sample_csv
@@ -156,6 +168,7 @@ class Api::CollectionsController < ApplicationController
     search.after params[:updated_since] if params[:updated_since]
     search.full_text_search params[:search] if params[:search]
     search.box *valid_box_coordinates if params[:box]
+    search.my_site_search current_user.id unless current_user.can_view_other? params[:id]
 
     if params[:lat] || params[:lng] || params[:radius]
       [:lat, :lng, :radius].each do |key|
@@ -200,7 +213,7 @@ class Api::CollectionsController < ApplicationController
   end
 
   def collection_kml(collection, results)
-    sites_kml = collection.to_kml results
+    sites_kml = collection.to_kml results, current_user
     send_data sites_kml, type: 'application/vnd.google-earth.kml+xml', filename: "#{collection.name}_sites.kml"
   end
 

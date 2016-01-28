@@ -17,6 +17,8 @@ ResourceMap::Application.routes.draw do
   match 'get_user_auth_token' => "application#get_user_auth_token", :via => 'get'
   match 'load_app_cache' => 'home#load_app_cache', :via => 'get'
   get 'plugin/alerts/thresholds' => 'thresholds#index'
+  get 'view_photo' => 'sites#view_photo'
+  get 'collections/:collection_id/my_membership' => 'collections#my_membership'
 
   resources :repeats
   resources :collections do
@@ -47,6 +49,10 @@ ResourceMap::Application.routes.draw do
         post 'set_layer_access'
         post 'set_admin'
         post 'unset_admin'
+        post 'set_can_view_other'
+        post 'unset_can_view_other'
+        post 'set_can_edit_other'
+        post 'unset_can_edit_other'
       end
     end
     resources :sites_permission
@@ -67,6 +73,7 @@ ResourceMap::Application.routes.draw do
     get 'recreate_index'
     get 'search'
     post 'decode_hierarchy_csv'
+    post 'decode_location_csv'
 
     get 'sites_info'
 
@@ -109,11 +116,13 @@ ResourceMap::Application.routes.draw do
 
   namespace :api do
     get 'collections/:id' => 'collections#show',as: :collection
+    get 'collections/:id/download_location_csv' => 'collections#download_location_csv', as: :download_location_csv
     get 'collections/:id/sample_csv' => 'collections#sample_csv',as: :sample_csv
     get 'collections/:id/count' => 'collections#count',as: :count
     get 'collections/:id/geo' => 'collections#geo_json',as: :geojson
     get 'sites/:id' => 'sites#show', as: :site
     get 'activity' => 'activities#index', as: :activity
+    get 'collections/:collection_id/my_membership' => 'collections#my_membership'
     # match 'collections/:id/update_sites_under_collection' => 'collections#update_sites_under_collection', :via => :put
     # put 'collections/:id/update_sites_under_collection' => 'collections#update_sites_under_collection', as: :collections
     resources :tokens, :only => [:index, :destroy]

@@ -15,6 +15,15 @@
  *= require_fullscreen
 */
 
+.pointer-disabled{
+  opacity: 0.2;
+}
+
+.disabled{
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .blockUI{
   border-radius: 5px !important;
   opacity: 0.35 !important;
@@ -310,3 +319,13 @@ a.lbutton{
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.slocation {
+  background: url("/assets/fields_small_icons/location.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+  display: inline-block;
+  height: 21px;
+  margin: 4px 2px 4px 5px;
+  min-width: 20px;
+  padding-left: 27px;
+  vertical-align: middle;
+ }

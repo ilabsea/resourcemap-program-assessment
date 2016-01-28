@@ -9,7 +9,11 @@ onCollections ->
       @kind = data.kind
       @ord = data.ord
       @is_mandatory = ko.observable data?.is_mandatory ? false 
+      @is_display_field = ko.observable data?.is_display_field ? false
       @is_enable_field_logic = data.is_enable_field_logic
+      @invisible_calculation = ko.computed => 
+                                if @kind == "calculation" && !@is_display_field()
+                                  return "invisible-div"
 
       @photo = '' 
       @preKeyCode = null
@@ -23,21 +27,29 @@ onCollections ->
       @value.subscribe =>
         if @skippedState() == false && @kind in ["yes_no", "select_one", "select_many", "numeric"]
           @setFieldFocus()
+        # if @kind in ["numeric", "calculation"]
+        #   if window.model.newOrEditSite()
+        #     window.model.newOrEditSite().prepareCalculatedField()
 
-
+      @keyType = if @allowsDecimals() then 'decimal' else 'integer'
 
       @hasValue = ko.computed =>
         if @kind == 'yes_no'
           true
+        else if @kind == 'select_many'
+          @value() && @value().length > 0
+        else if @kind == 'numeric'
+          @value() != '' && @value() != null && @value() != undefined
         else
-          @value() && (if @kind == 'select_many' then @value().length > 0 else @value())
+          @value()
 
       @valueUI =  ko.computed
        read: =>  @valueUIFor(@value())
        write: (value) =>
          @value(@valueUIFrom(value))
-
+      
       if @kind == 'numeric'
+        @digitsPrecision = data?.config?.digits_precision
         @range = if data.config?.range?.minimum? || data.config?.range?.maximum?
                   data.config?.range
         
@@ -66,6 +78,16 @@ onCollections ->
 
         @hierarchy = @options
 
+      if @kind == 'location'
+        @locations = if data.config?.locations?
+                      $.map data.config.locations, (x) => new Location x
+                     else
+                      []
+
+        @resultLocations = ko.observableArray([])
+
+        @maximumSearchLength = data.config?.maximumSearchLength
+
       if @kind == 'hierarchy'
         @hierarchy = data.config?.hierarchy
 
@@ -85,6 +107,7 @@ onCollections ->
         @filter = ->
 
       if @kind == 'calculation'
+        @digitsPrecision = data?.config?.digits_precision
         @codeCalculation = data.config?.code_calculation
         @dependentFields = data.config?.dependent_fields
 
@@ -93,6 +116,7 @@ onCollections ->
       @errorMessage = ko.observable()
       @error = ko.computed => !!@errorMessage()
       @skippedState = ko.observable(false)
+      @errorClass = ko.computed => if @error() then 'error' else '' # For field number
 
       @is_blocked_by = ko.observableArray([])
       @blocked = ko.computed =>
@@ -129,35 +153,35 @@ onCollections ->
 
               if @kind == 'numeric' && value != ''
                 if field_logic.condition_type == '<'
-                  if parseInt(value) < field_logic.value
+                  if parseFloat(value) < field_logic.value
                     @setFocusStyleByField(field_logic.field_id)
                     return
                   else
                     @enableSkippedField(@esCode)
 
                 if field_logic.condition_type == '<='
-                  if parseInt(value) <= field_logic.value
+                  if parseFloat(value) <= field_logic.value
                     @setFocusStyleByField(field_logic.field_id)  
                     return
                   else
                     @enableSkippedField(@esCode)
 
                 if field_logic.condition_type == '='
-                  if parseInt(value) == field_logic.value
+                  if parseFloat(value) == field_logic.value
                     @setFocusStyleByField(field_logic.field_id)  
                     return
                   else
                     @enableSkippedField(@esCode)
 
                 if field_logic.condition_type == '>'
-                  if parseInt(value) > field_logic.value
+                  if parseFloat(value) > field_logic.value
                     @setFocusStyleByField(field_logic.field_id)
                     return
                   else
                     @enableSkippedField(@esCode)
 
                 if field_logic.condition_type == '>='
-                  if parseInt(value) >= field_logic.value
+                  if parseFloat(value) >= field_logic.value
                     @setFocusStyleByField(field_logic.field_id)
                     return 
                   else
@@ -326,8 +350,10 @@ onCollections ->
         date = new Date(value)
         date.setTime(date.getTime() + date.getTimezoneOffset() * 60000)
         value = @datePickerFormat(date)
+      else if @kind == 'numeric' || @kind == 'calculation'
+        value = @valueUIFor(value)
 
-      value = '' unless value
+      value = '' if (value == null && value == '')
 
       @value(value)
     
@@ -354,6 +380,8 @@ onCollections ->
         if value then window.t('javascripts.collections.fields.yes') else window.t('javascripts.collections.fields.no')
       else if @kind == 'select_one'
         if value then @labelFor(value) else ''
+      else if @kind == 'location'
+        if value then @labelForLocation(value) else ''
       else if @kind == 'select_many'
         if value then $.map(value, (x) => @labelFor(x)).join(', ') else ''
       else if @kind == 'hierarchy'
@@ -361,9 +389,17 @@ onCollections ->
       else if @kind == 'site'
         name = window.model.currentCollection()?.findSiteNameById(value)
         if value && name then name else ''
-
+      else if @kind == 'calculation' || @kind == 'numeric'
+        if value != null && value != '' && value != 'NaN' && typeof value != 'undefined'
+          if @digitsPrecision
+            value = parseFloat(value)
+            Number((value).toFixed(parseInt(@digitsPrecision))) 
+          else
+            value
+        else
+          ''
       else
-        if value then value else ''
+        if value != null && value != '' && typeof value != 'undefined' then value else ''
 
     valueUIFrom: (value) =>
       if @kind == 'site'
@@ -373,7 +409,8 @@ onCollections ->
         value
 
     datePickerFormat: (date) =>
-      date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear()
+      month = date.getMonth() + 1
+      date.getDate() + '/' + month + '/' + date.getFullYear()
 
     buildHierarchyItems: =>
       @fieldHierarchyItemsMap = {}
@@ -381,6 +418,7 @@ onCollections ->
       @fieldHierarchyItems.unshift new FieldHierarchyItem(@, {id: '', name: window.t('javascripts.collections.fields.no_value')})
 
     edit: =>
+      @editing(true)
       if !window.model.currentCollection()?.currentSnapshot
         @originalValue = @value()
 
@@ -397,24 +435,33 @@ onCollections ->
           @save()
         window.model.initDatePicker(optionsDatePicker)
         window.model.initAutocomplete()
+        window.model.initControlKey()
+
+    validateRangeAndDigitsPrecision: =>
+      @validateRange()
+      @validateDigitsPrecision()
+
+    validateDigitsPrecision: =>
+      if @digitsPrecision and @value() != ""
+        @value(parseInt(@value() * Math.pow(10, parseInt(@digitsPrecision))) / Math.pow(10, parseInt(@digitsPrecision)))
 
     validateRange: =>
       if @range
         if @range.minimum && @range.maximum
-          if parseInt(@value()) >= parseInt(@range.minimum) && parseInt(@value()) <= parseInt(@range.maximum)
+          if parseFloat(@value()) >= parseFloat(@range.minimum) && parseFloat(@value()) <= parseFloat(@range.maximum)
             @errorMessage('')
           else
             @errorMessage('Invalid value, value must be in the range of ('+@range.minimum+'-'+@range.maximum+")")
         else
           if @range.maximum
-            if parseInt(@value()) <= parseInt(@range.maximum)
+            if parseFloat(@value()) <= parseFloat(@range.maximum)
               @errorMessage('')
             else
               @errorMessage('Invalid value, value must be less than or equal '+@range.maximum)
             return
           
           if @range.minimum
-            if parseInt(@value()) >= parseInt(@range.minimum)
+            if parseFloat(@value()) >= parseFloat(@range.minimum)
               @errorMessage('')
             else
               @errorMessage('Invalid value, value must be greater than or equal '+@range.minimum)
@@ -432,18 +479,29 @@ onCollections ->
           return true
       if keyCode > 31 && (keyCode < 48 || keyCode > 57) && (keyCode != 8 && keyCode != 46) && keyCode != 37 && keyCode != 39  #allow right and left arrow key
         return false
-      else 
+      else
         @preKeyCode = keyCode
         return true
 
-    validate_decimal_only: (keyCode) =>
+    validate_digit: (keyCode) =>
       value = $('#'+@kind+'-input-'+@code).val()
-      if (value == null || value == "")&& (keyCode == 229 || keyCode == 190) #prevent dot at the beginning
-        return false
-      if (keyCode != 8 && keyCode != 46) && (keyCode != 190 || value.indexOf('.') != -1) && (keyCode < 48 || keyCode > 57) #prevent multiple dot
-        return false
-      else
-        return true
+      #check digit precision
+      valueAfterSplit = value.split '.'
+      if valueAfterSplit.length >= 2
+        decimalValue = valueAfterSplit[1]
+        ele = document.getElementById(@kind+"-input-"+@code)
+        pos = $.caretPosition(ele)
+        if @digitsPrecision
+          if keyCode == 8 || keyCode == 9 || keyCode == 173 || (keyCode >= 37 && keyCode <=40)
+            return true
+          if pos <= value.indexOf('.')
+            return true
+          if decimalValue.length < parseInt(@digitsPrecision)
+            return true
+          if decimalValue.length >= parseInt(@digitsPrecision)
+            return false
+          
+      return true
 
     keyPress: (field, event) =>
       switch event.keyCode
@@ -452,9 +510,7 @@ onCollections ->
         else
           if field.kind == "numeric"
             if field.allowsDecimals()
-              return @validate_decimal_only(event.keyCode)
-            else
-              return @validate_integer_only(event.keyCode)
+              return @validate_digit(event.keyCode)
           return true     
 
     exit: =>
@@ -518,6 +574,12 @@ onCollections ->
           return option.label
       null
 
+    labelForLocation: (code) =>
+      for option in @resultLocations()
+        if option.code == code
+          return option.name
+      ''
+
     # In the table view, use a fixed size width for each property column,
     # which depends on the length of the name.
     suggestedWidth: =>
@@ -529,6 +591,9 @@ onCollections ->
     isPluginKind: => -1 isnt PLUGIN_FIELDS.indexOf @kind
 
     exitEditing: ->
+      if @kind == 'location'
+        @resultLocations(@locations)
+
       @editing(false)
       @writeable = @originalWriteable
 

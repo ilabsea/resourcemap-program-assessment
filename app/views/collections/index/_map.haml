@@ -1,5 +1,6 @@
 .left.w30.h50{style: 'position: relative'}
   %img{src: '/images/progress.gif',id: 'uploadProgress', style: 'position: absolute; margin: auto; left: 0; top: 0; right: 0; bottom: 0; display: none'}
+  %img{src: '/images/loading.gif',id: 'loadProgress', style: 'position: absolute; margin: auto; left: 0; top: 0; right: 0; bottom: 0; display: none'}  
   #editorContent.left.w30.h50
     <!-- ko if: !loadingSite() -->
 
@@ -90,7 +91,7 @@
             %td.loadmore
               = ko_link_to t('views.collections.index.load_more_sites'), :loadMoreSites, style: 'margin-left: 23px'
           <!-- /ko -->
-          <!-- ko if: hasMoreSites() && loadingSites()-->
+          <!-- ko if: hasMoreSites() && loadingSites() -->
           %tr
             %td.loadmore= t('views.collections.index.loading')
           <!-- /ko -->
@@ -126,8 +127,10 @@
                   .clear
                 %div
                   %label Location:
-                  = ko_text_field_tag :locationText, event: {keydown: :newLocationKeyPress, blur: :moveLocation}, html: {class: 'ux-search right w20', placeholder: t('views.collections.index.search_or_drug_the_pin')}
+                  = ko_text_field_tag :locationText, event: {keydown: :newLocationKeyPress, blur: :moveLocation}, html: {class: 'ux-search right w20', placeholder: t('views.collections.index.search_or_drug_the_pin'), readonly: true}
                   .clear
+                %div
+                  %input{ko(value: :startEntryDate), type: :hidden, name: :startEntryDate}
                 / ko if: collection.readable($data)
                 <!-- ko foreach: layers -->
                 %div
@@ -135,7 +138,7 @@
                   %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;color:grey;cursor:pointer'}
                 <!-- ko if: expanded() -->
                 <!-- ko foreach: fields -->
-                %div
+                %div{ko(attr: {class: "invisible_calculation"})}
                   %span{ko(text: :errorMessage, validationPopover: :errorMessage), style: 'display: none;'}
                   <!-- ko if: is_mandatory -->
                   %label *
@@ -197,7 +200,7 @@
                     %span.value{ko(text: :locationText, visible: '!editingLocation()', click: 'editLocation'), style: 'cursor: pointer'}
                   <!-- /ko -->
                   <!-- ko if: editingLocation() -->
-                  = ko_text_field_tag :locationText, visible: :editingLocation, hasfocus: true, event: {keydown: :locationKeyPress, blur: :saveLocation}, html: {class: 'ux-search'}
+                  = ko_text_field_tag :locationText, visible: :editingLocation, hasfocus: true, event: {keydown: :locationKeyPress, blur: :saveLocation}, html: {class: 'ux-search', readonly: true}
                   <!-- /ko -->
                 - if Settings.mobile_id?
                   %div{style: 'margin-bottom:14px'}
@@ -211,6 +214,7 @@
                   %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;color:grey;cursor:pointer'}
                 <!-- ko if: expanded() -->
                 <!-- ko foreach: fields -->
+                <!-- ko if: kind != "calculation" || ( kind == "calculation" && is_display_field) -->
                 %div{style: 'margin-bottom:14px'}
                   %span{ko(text: :errorMessage, validationPopover: :errorMessage), style: 'display: none;'}
                   %label.field-name{ko(html: "name + '<sup>' + code + '</sup>:'", css: { error: :error })}
@@ -221,7 +225,12 @@
                   <!-- ko if: hasValue() && !error() -->
                   <!-- ko if: writeable -->
                   <!-- ko if: kind != 'photo' -->
+                  <!-- ko if: $parents[1].editable() -->
                   %span.value{ko(text: :valueUI, visible: '!editing()', click: 'edit'), style: 'cursor:pointer'}
+                  <!-- /ko -->
+                  <!-- ko ifnot: $parents[1].editable() -->
+                  %span.value{ko(text: :valueUI, visible: '!editing()'), style: 'cursor:pointer'}
+                  <!-- /ko -->
                   <!-- /ko -->
                   <!-- /ko -->
                   <!-- ko if: !writeable -->
@@ -234,7 +243,12 @@
                   <!-- ko if: !hasValue() &&  !error() -->
                   <!-- ko if: writeable -->
                   <!-- ko if: kind != 'photo' -->
+                  <!-- ko if: $parents[1].editable() -->
                   %span.value{ko(visible: '!editing()', click: 'edit'), style: 'color:grey;cursor:pointer'}= t('views.collections.index.no_value')
+                  <!-- /ko -->
+                  <!-- ko ifnot: $parents[1].editable() -->
+                  %span.value{ko(visible: '!editing()'), style: 'color:grey;cursor:pointer'}= t('views.collections.index.no_value')
+                  <!-- /ko -->
                   <!-- /ko -->
                   <!-- /ko -->
                   <!-- ko if: !writeable -->
@@ -250,13 +264,16 @@
                 <!-- /ko -->
                 <!-- /ko -->
                 <!-- /ko -->
+                <!-- /ko -->
                 / /ko
       <!-- ko if: !$root.currentSnapshot() -->
       .tablebottom
         -# if (can? :edit, site)
         - if current_user && !current_user.is_guest
+          <!-- ko if: editable -->
           = link_to t('views.collections.index.edit_site'), 'javascript:void()', class: 'icon fedit black', 'data-bind' => kov(click: 'startEditMode')
           = link_to t('views.collections.index.delete_site'), 'javascript:void()', class: 'icon fdelete black', 'data-bind' => kov(click: '$root.deleteSite')
+          <!-- /ko -->
       <!-- /ko -->
 
     <!-- /ko -->
@@ -285,14 +302,6 @@
     %br{clear: :all}
   %div.mapcontainer
     %button.icon_button.expand-collapse_button.oleftexpand{ko(click: '$root.toogleExpandFullScreen')}
-    <!-- ko if: $root.shouldShowLocationMissingAlert() -->
-    %a#sites_whitout_location_alert.alert.box.flash_error.drop_shadow(href='javascript:void(window.model.filterByLocationMissing())')
-      %span= t('views.collections.index.there_are_sites_with_no_location_set')
-      %span.right
-        %button.fconfiguration{ko(click: '$root.filterByLocationMissing'), type: 'button', style: 'margin-left:9px'}
-        %span.black= t('views.collections.index.show_them')
-      .clear
-    <!-- /ko -->
 
     #map
     

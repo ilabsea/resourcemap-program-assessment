@@ -23,6 +23,7 @@ onCollections ->
       @ghostMarkers = []
       @mapRequestNumber = 0
       @geocoder = new google.maps.Geocoder()
+      @currentPosition = {}
 
       $.each @collections(), (idx) =>
         @collections()[idx].checked.subscribe (newValue) =>
@@ -30,6 +31,21 @@ onCollections ->
 
       @showingMap.subscribe =>
         @rewriteUrl()
+
+    @getCurrentLocation:->
+      if navigator.geolocation
+        navigator.geolocation.getCurrentPosition ((pos) =>
+          lat = pos.coords.latitude
+          lng = pos.coords.longitude
+          @currentPosition = {lat: lat, lng: lng}
+        ), =>
+          @handleNoGeolocation()
+      else
+        @handleNoGeolocation()
+
+    @handleNoGeolocation: ->
+      pos = window.model.map.getCenter()
+      @currentPosition = {lat: pos.lat(), lng: pos.lng()}
 
     @initMap: ->
       return true unless @showingMap()
@@ -54,6 +70,8 @@ onCollections ->
         mapTypeId: google.maps.MapTypeId.ROADMAP
         scaleControl: true
       @map = new google.maps.Map document.getElementById("map"), mapOptions
+
+      @getCurrentLocation()
 
       # Create a dummy overlay to easily get a position of a marker in pixels
       # See the second answer in http://stackoverflow.com/questions/2674392/how-to-access-google-maps-api-v3-markers-div-and-its-pixel-position
@@ -139,7 +157,7 @@ onCollections ->
           @updateMapSitesCount()
           @getAlertedSites(queryAlertedSites)
           @notifySitesChanged()
-
+          
         callback() if callback && typeof(callback) == 'function'
 
       if query.collection_ids.length == 0
@@ -176,6 +194,7 @@ onCollections ->
         @toggleLegend(false)
       else
         @toggleLegend(true)
+
     
     @getAlertedSites: (query) =>
       window.model.loadingLegend(true)
@@ -185,7 +204,7 @@ onCollections ->
 
     @setAlertedSites: (sites) =>
       @clearAlertedSites()
-      bounds = window.model.map.getBounds()
+      bounds = window.model.map.getBounds() if window.model.map
       for site in sites
         latlng = new google.maps.LatLng(site.lat_analyzed,site.lng_analyzed)
         isMapContainedSite = @isMapContainedSite(site, latlng, bounds)
@@ -237,7 +256,6 @@ onCollections ->
           alertSite = @operateWithCondition(threshold.conditions(), site, threshold.isAllCondition())
           
           if alertSite
-            # console.log threshold.propertyName()+" : "+alertSite.name()
             threshold.alertedSitesNum(threshold.alertedSitesNum()+1)
             break
 
@@ -311,12 +329,14 @@ onCollections ->
         _alert: @showingAlert() if @showingAlert()
         collection_ids: collection_ids
 
+      query.formula = @formula
+
       query.selected_hierarchies = @selectedHierarchy().hierarchyIds() if @selectedHierarchy()
       query.hierarchy_code = window.model.groupBy().esCode if @selectedHierarchy() && window.model.groupBy().esCode
 
       query.exclude_id = @selectedSite().id() if @selectedSite()?.id()
       query.search = @lastSearch() if @lastSearch()
-
+      
       filter.setQueryParams(query) for filter in @filters()
 
       query
@@ -589,10 +609,28 @@ onCollections ->
       delete @markers
       delete @clusters
       delete @map
-      @showingMap(false)
+      @showingMap(false)      
+      @showLoadingField()      
+      if window.model.loadingFields() && @currentCollection()
+        $.get "/collections/#{@currentCollection().id}/fields", {}, (data) =>
+          window.model.loadingFields(false)
+          @currentCollection().layers($.map(data, (x) => new Layer(x)))
+
+          fields = []
+          for layer in @currentCollection().layers()
+            for field in layer.fields
+              fields.push(field)
+
+          @currentCollection().fields(fields)
+          @prepareTable()        
+      else
+        @prepareTable()
+
+    @prepareTable: ->
       @refreshTimeago()
       setTimeout(@makeFixedHeaderTable, 10)
       setTimeout(window.adjustContainerSize, 10)
+      @hideLoadingField()
 
     @makeFixedHeaderTable: ->
       unless @showingMap()
@@ -633,12 +671,42 @@ onCollections ->
       if $(".autocomplete-site-input").length > 0 && $(".autocomplete-site-input").data("autocomplete")
         $(".autocomplete-site-input").data("autocomplete")._renderItem = (ul, item) ->
            $("<li></li>").data("item.autocomplete", item).append("<a>" + item.name + "</a>").appendTo ul
+    @initControlKey: ->
+      $('.key-map-integer').controlKeyInput
+        allowChar: /[0-9\-]/
+        allow: (input, char) ->
+          if char == '-' and ($.caretPosition(input) != 0 or input.value.indexOf(char) != -1)
+            return false
+          true
+        failed: (input, char) ->
+          return
+        success: (input, char) ->
+          return
+
+      $('.key-map-decimal').controlKeyInput
+        allowChar: /[0-9\-\.]/
+        allow: (input, char) ->
+          if char == '-' and ($.caretPosition(input) != 0 or input.value.indexOf(char) != -1)
+            return false
+          if char == '.'
+            if $.caretPosition(input) == 1 && input.value.indexOf('-') == 0
+              return false;
+            if $.caretPosition(input) == 0 or input.value.indexOf(char) != -1
+              return false
+          if $.caretPosition(input) <= input.value.indexOf('.')
+            return true
+          true
+        failed: (input, char) ->
+          return
+        success: (input, char) ->
+          return
 
     @initDatePicker: (options = {}) ->
       @initInsteddPlatform()
       # fix dinamic DOM
       # http://stackoverflow.com/questions/1059107/why-does-jquery-uis-datepicker-break-with-a-dynamic-dom
       $(".ux-datepicker").removeClass('hasDatepicker').datepicker(
+                                                                    dateFormat : "dd/mm/yy",
                                                                     yearRange: "-100:+5",
                                                                     changeMonth: true,
                                                                     changeYear: true

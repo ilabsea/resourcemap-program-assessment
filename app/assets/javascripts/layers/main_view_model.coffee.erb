@@ -3,10 +3,10 @@ onLayers ->
     constructor: (collectionId, layers) ->
       @collectionId = collectionId
       @layers = ko.observableArray $.map(layers, (x) -> new Layer(x))
+      @updateLayerDeletable()
       @currentLayer = ko.observable()
       @currentField = ko.observable()
       @default_select = '(no value)'
-
       @newOption = ko.observable(new Option)
       @newFieldLogic = ko.observable(new FieldLogic)     
       @newAttribute = ko.observable(new Attribute)
@@ -53,7 +53,7 @@ onLayers ->
           []
       @isAddNew = ko.observable(false)
       @is_editing = ko.computed =>
-        if @currentField() and @currentField().kind() == "select_many"
+        if @currentField() and @currentField().kind == "select_many"
           for f in @currentField().impl().selected_field_logics()
             if f.editing() == true
               return true
@@ -61,6 +61,40 @@ onLayers ->
             return true
           return false
         return false
+
+    updateLayerDeletable: =>
+      if @layers().length == 1
+        @layers()[0].deletable(true)
+      dependent_fields = []
+      $.map(@layers(), (x,index) =>
+        fields = @changeEditableAndDeletableField(x.fields())
+        dependent_fields = dependent_fields.concat(fields)
+      )
+      $.map(@layers(), (x, index) =>
+        fields = x.fields()
+        new_fields = []
+        $.map(fields, (f) =>
+          if $.inArray(f.id().toString(), dependent_fields) != -1
+            f.editableCode(false)
+            f.deletable(false)
+          new_fields.push(f)
+        )
+        @layers()[index].fields(new_fields)
+      )
+
+    changeEditableAndDeletableField: (fields) =>
+      used_fields = []
+      $.map(fields, (x) =>
+        if x.kind() == "calculation"
+          if x["config"]["dependent_fields"]
+            $.map(x["config"]["dependent_fields"], (f) ->
+              used_fields.push(f["id"])
+            )
+      )
+      return used_fields
+
+    alertCannotDelete: (field) =>
+      alert("Field can not be deleted. It is being used by calculation field.")
 
     findFieldById: (fieldId) =>
       return field for field in @fields() when field.id == fieldId
@@ -141,7 +175,7 @@ onLayers ->
 
     deleteLayer: (layer) =>
       # if confirm("This layer is being used with #{layer.threshold_ids.length} alerts. The alert associated with this layer will also be deleted.")
-      if layer.threshold_ids.length == 0
+      if layer.threshold_ids.length == 0 && layer.query_ids.length == 0
         $.post "/collections/#{@collectionId}/layers/#{layer.id()}", {threshold_ids: layer.threshold_ids, _method: 'delete'}, =>
           idx = @layers().indexOf(layer)
           for nextLayer in @layers().slice(idx + 1)
@@ -152,7 +186,10 @@ onLayers ->
 
           $.status.showNotice("Layer '#{layer.name()}' successfully deleted", 2000)
       else
+        if layer.threshold_ids.length > 0
           $.status.showError("This layer is being used with #{layer.threshold_ids.length} alert(s), you are not allowed to delete", 2000)
+        else if layer.query_ids.length > 0
+          $.status.showError("This layer is being used with #{layer.query_ids.length} canned query(s), you are not allowed to delete", 2000)
 
     selectingLayer: =>
       alert 'selectingLayer'
@@ -199,15 +236,21 @@ onLayers ->
         i += 1
 
     deleteField: (field) =>
-      idx = @currentLayer().fields().indexOf(field)
-      nextField.ord(nextField.ord() - 1) for nextField in @currentLayer().fields().slice(idx + 1)
-      @currentLayer().fields.remove(field)
-      if @currentLayer().fields().length == 0
-        @currentField(null)
+      if field.threshold_ids.length == 0 && field.query_ids.length == 0
+        idx = @currentLayer().fields().indexOf(field)
+        nextField.ord(nextField.ord() - 1) for nextField in @currentLayer().fields().slice(idx + 1)
+        @currentLayer().fields.remove(field)
+        if @currentLayer().fields().length == 0
+          @currentField(null)
+        else
+          idx -= 1 if idx >= @currentLayer().fields().length
+          @currentField(@currentLayer().fields()[idx])
+          @currentField().hasFocus(true)
       else
-        idx -= 1 if idx >= @currentLayer().fields().length
-        @currentField(@currentLayer().fields()[idx])
-        @currentField().hasFocus(true)
+        if field.threshold_ids.length > 0
+          $.status.showError("This field is being used with #{field.threshold_ids.length} alert(s), you are not allowed to delete", 2000)
+        else if field.query_ids.length > 0
+          $.status.showError("This field is being used with #{field.query_ids.length} canned query(s), you are not allowed to delete", 2000)
 
     newOptionKeyPress: (field, event) =>
       switch event.keyCode
@@ -388,6 +431,29 @@ onLayers ->
         selectable: true,
         position : 'top',
         innerHtml: hierarchy_errors,
+        innerHtmlStyle: {
+            color:'#000000',
+            'background-color' :'white'
+            },
+        themeName:  'bubble',
+        themePath:  '<%= InsteddRails.url %>/theme/images/'
+
+      });
+
+    startUploadLocation: =>
+      @currentField().impl().uploadingLocation(true)
+
+    locationUploaded: (location) =>
+      @currentField().impl().setLocation(location)
+
+    errorUploadingLocation: (locations_errors) =>
+      @currentField().impl().uploadingLocation(false)
+      @currentField().impl().errorUploadingLocation(true)
+
+      $('.error_description_bubble').CreateBubblePopup({
+        selectable: true,
+        position : 'top',
+        innerHtml: locations_errors,
         innerHtmlStyle: {
             color:'#000000',
             'background-color' :'white'

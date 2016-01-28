@@ -21,7 +21,7 @@ class ThresholdsController < ApplicationController
       end
 
       respond_to do |format|
-        format.json { render json: thresholds }
+        format.json { render json: thresholds.order(:ord) }
       end
     end
   end
@@ -41,7 +41,7 @@ class ThresholdsController < ApplicationController
 
   def set_order
     threshold.update_attribute :ord, params[:ord]
-
+    Resque.enqueue IndexRecreateTask, collection.id
     render json: threshold
   end
 

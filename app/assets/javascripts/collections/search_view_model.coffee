@@ -16,7 +16,10 @@ onCollections ->
       
       if $.trim(@search()).length == 0 && @filters().length == 0 && !@sort()
         if @groupBy().esCode == ''
-          @currentCollection(rootCollection)
+          if typeof window.model.formula != 'undefined'
+            @currentCollection(new CollectionSearch(rootCollection, @search(), @filters(), @sort(), @sortDirection()))
+          else
+            @currentCollection(rootCollection)
         else
           @currentCollection(new CollectionHierarchy(rootCollection, @groupBy()))
         @lastSearch(null)
@@ -29,7 +32,6 @@ onCollections ->
         @reloadMapSites()
       else
         window.adjustContainerSize()
-
       @rewriteUrl()
 
       false

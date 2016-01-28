@@ -39,7 +39,18 @@ onCollections ->
       @highlightedName = ko.computed => window.model.highlightSearch(@name())
       @inEditMode = ko.observable(false)
       @scrollable = ko.observable(false)
-      
+      @startEntryDate = ko.observable data?.start_entry_date
+      @endEntryDate = ko.observable data?.end_entry_date
+      @user_id = ko.observable data?.user_id
+      @editable = ko.computed =>
+        member = JSON.parse(collection.memberships().responseText)
+        if member.admin
+          return true
+        if member.can_edit_other
+          return true
+        if data.user_id == member.user_id
+          return true
+        return false
 
     hasLocation: => @position() != null
 
@@ -53,7 +64,22 @@ onCollections ->
 
     propertyValue: (field) =>
       value = @properties()[field.esCode]
-      field.valueUIFor(value)
+      if field.kind == 'date' && $.trim(value).length > 0
+        # Value from server comes with utc time zone and creating a date here gives one
+        # with the client's (browser) time zone, so we convert it back to utc
+        date = new Date(value)
+        date.setTime(date.getTime() + date.getTimezoneOffset() * 60000)
+        value = field.datePickerFormat(date)
+      else if field.kind == 'location'
+        value = @findLocationLabelByCode(field)
+      else
+        field.valueUIFor(value)
+
+    findLocationLabelByCode: (field) =>
+      for location in field.locations
+        if location.code  == @properties()[field.esCode]
+          return location.name
+      return ''
 
     highlightedPropertyValue: (field) =>
       window.model.highlightSearch(@propertyValue(field))
@@ -79,7 +105,9 @@ onCollections ->
         success: ((data) =>
           field.errorMessage("")
           @propagateUpdatedAt(data.updated_at)
-          window.model.updateSitesInfo()),
+          window.model.updateSitesInfo()
+          window.model.currentCollection().reloadSites()
+          window.model.reloadMapSites()),
         global: false
       })
       .fail((data) =>
@@ -100,6 +128,20 @@ onCollections ->
             @photos[field.value()] = field.photo
           if field.originalValue and !field.value()
             @photosToRemove.push(field.originalValue)
+
+    roundNumericDecimalNumber: (collection) =>
+      tmpProperties = this.properties()
+      for field in @fields()
+        if((field.kind == 'numeric' || field.kind == 'calculation') && field.allowsDecimals() && field.digitsPrecision != undefined)
+          $.map(tmpProperties, (value, key) =>
+            if key.toString() == field.esCode.toString()
+              if typeof value != 'number' && field.kind == 'calculation'
+                field.value(value)
+              else
+                field.value(parseInt(value * Math.pow(10, parseInt(field.digitsPrecision))) / Math.pow(10, parseInt(field.digitsPrecision)))
+              tmpProperties[key.toString()] = field.value()
+          )
+      this.properties(tmpProperties)
 
     copyPropertiesFromCollection: (collection) =>
       oldProperties = @properties()
@@ -209,9 +251,10 @@ onCollections ->
       @collection.propagateUpdatedAt(value)
 
     editName: =>
-      if !@collection.currentSnapshot
-        @originalName = @name()
-        @editingName(true)
+      if @editable()
+        if !@collection.currentSnapshot
+          @originalName = @name()
+          @editingName(true)
 
     nameKeyPress: (site, event) =>
       switch event.keyCode
@@ -233,9 +276,10 @@ onCollections ->
       delete @originalName
 
     editLocation: =>
-      if !@collection.currentSnapshot
-        @editingLocation(true)
-        @startEditLocationInMap()
+      if @editable()
+        if !@collection.currentSnapshot
+          @editingLocation(true)
+          @startEditLocationInMap()
 
     startEditLocationInMap: =>
       @originalLocation = @position()
@@ -341,11 +385,13 @@ onCollections ->
       # Keep the original values, in case the user cancels
       @originalName = @name()
       @originalPosition = @position()
+
       @inEditMode(true)
       @startEditLocationInMap()
       @prepareCalculatedField()
       window.model.initDatePicker()
       window.model.initAutocomplete()
+      window.model.initControlKey()
       
       for field in @fields()
         field.editing(false)
@@ -428,6 +474,9 @@ onCollections ->
         name: @name()
       json.lat = @lat() if @lat()
       json.lng = @lng() if @lng()
+      unless @id() #set entry date for new site only
+        json.start_entry_date = @startEntryDate()
+        json.end_entry_date = new Date(Date.now())
       json.properties = @properties() if @properties()
       json
 
@@ -446,9 +495,11 @@ onCollections ->
           for field in layer.fields
             fields.push(field)
         @fields(fields)
+        @getLocationFieldOption()
 
         @copyPropertiesToFields()
         $('a#previewimg').fancybox()
+        window.model.hideLoadingField()
         callback() if callback && typeof(callback) == 'function'
 
     copyPropertiesToFields: =>
@@ -482,10 +533,10 @@ onCollections ->
                   j++
                 i++
               $.map(field["dependentFields"], (f) -> 
-                fieldName = "$" + f["code"]
-                fieldValue = "$" + f["code"]
+                fieldName = "${" + f["code"]+"}"
+                fieldValue = "${" + f["code"]+"}"
                 switch f["kind"]
-                  when "text", "email", "phone", "calculation"
+                  when "text", "email", "phone"
                     fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + "').val()"
                   when "date"
                     fieldValue = "$('#" + f["kind"] + "-input-" + f["id"] + "').val()"
@@ -496,20 +547,33 @@ onCollections ->
                     fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + " option:selected').text()"
                   when "yes_no"
                     fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + "')[0].checked"
+                  when "calculation"
+                    fieldValue = "parseFloat($('#" + f["kind"] + "-input-" + f["code"] + "').val())"
+
                 field["codeCalculation"] = field["codeCalculation"].replace(new RegExp(fieldName.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'g'), fieldValue);
               )
               # Add change value to dependent field
+
               $.map(field["dependentFields"], (f) -> 
-                # element_id = "#" +field["kind"] + "-input-" + field["code"]
+                $("#" + f["kind"] + "-input-" + f["code"]).addClass('calculation')
                 element_id = field["code"]
                 $.map(window.model.editingSite().fields(), (fi) ->
                   if fi.code == element_id
+
                     execute_code = field["codeCalculation"]
-                    $("#" + f["kind"] + "-input-" + f["code"]).addClass('calculation')
                     $(".calculation").on("change keyup click", ->
                       $.map(window.model.editingSite().fields(), (fi) ->
+                        value = $('#'+f['kind']+'-input-'+f['code']).val()
                         if fi.code == element_id
-                          fi.value(eval(execute_code))
+                          if value
+                            if fi.digitsPrecision
+                              result = Number((eval(execute_code)).toFixed(parseInt(fi.digitsPrecision)))
+                            else
+                              result = eval(execute_code)
+                            fi.value(result)
+                          else
+                            fi.value('')
+                          
                       )
                     )
                 )

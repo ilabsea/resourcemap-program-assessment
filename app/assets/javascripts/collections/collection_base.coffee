@@ -73,11 +73,12 @@ onCollections ->
         callback() if callback && typeof(callback) == 'function'
 
     fetchFields: (callback) =>
-      if @fieldsInitialized
+      if @fieldsInitialized        
         callback() if callback && typeof(callback) == 'function'
         return
 
       @fieldsInitialized = true
+      window.model.loadingFields(true)
       $.get "/collections/#{@id}/fields", {}, (data) =>
         @layers($.map(data, (x) => new Layer(x)))
 
@@ -88,6 +89,8 @@ onCollections ->
 
         @fields(fields)
         @refineFields(fields)
+        window.model.loadingFields(false)
+        window.model.enableCreateSite()
 
     findFieldByEsCode: (esCode) => (field for field in @fields() when field.esCode == esCode)[0]
 

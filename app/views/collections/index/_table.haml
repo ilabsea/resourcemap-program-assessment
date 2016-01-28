@@ -7,6 +7,7 @@
     %button.icon_button.ftable.right{ko(click: '$root.showTable', css: "{active: !$root.showingMap()}")}
     %button.icon_button.fmap.right{ko(click: '$root.showMap', css: "{active: $root.showingMap()}")}
     %br{clear: "all"}
+
 .tablescroll
   %table.GralTable.tableview
     %thead
@@ -32,6 +33,9 @@
 -# Collection sites
 <!-- ko if: !editingSite() -->
 <!-- ko with: currentCollection -->
+
+%img{src: '/images/loading.gif',id: 'loadProgress', style: 'position: absolute; margin: auto; left: 0; top: 0; right: 0; bottom: 0;display:none'} 
+
 .tableheader.expanded{style: 'height:34px;'}
   %div{style: "float:left"}
     %span{style: "width:auto; float:left"}
@@ -55,6 +59,8 @@
     <!-- ko foreach: $root.currentCollection().fields() -->
     %col{ko(attr: { width: 'suggestedWidth()' })}
     <!-- /ko -->
+    %col{width: '180'}
+    %col{width: '180'}
     %col{width: '150'}
     %thead
       %tr
@@ -76,6 +82,12 @@
           %button{ko(style: {background: "'transparent url(#{InsteddRails.url}/theme/images/icons/misc/grey/arrow' + ($root.sortDirection() ? 'Up' : 'Down') + '.png) no-repeat scroll center'", height: "'11px'", cssFloat: "'right'", float: "'right'", borderStyle: "'none'"})}
           <!-- /ko -->
         <!-- /ko -->
+
+        %th{style: 'width:180px'}
+          %span{style: 'display:inline'}= t('views.collections.index.start_entry_date')
+        %th{style: 'width:180px'}
+          %span{style: 'display:inline'}= t('views.collections.index.end_entry_date')
+
         %th{ko(click: '$root.sortByDate'), style: 'width:100%;min-width:100px;cursor:pointer'}
           %span{style: 'display:inline'}= t('views.collections.index.last_update')
           <!-- ko if: $root.sort() == 'updated_at' -->

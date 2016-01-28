@@ -10,6 +10,9 @@ class Site < ActiveRecord::Base
   belongs_to :collection
   validates_presence_of :name
 
+  #Site belong to user created
+  belongs_to :user
+
   serialize :properties, Hash
   validate :valid_properties
   after_validation :standardize_properties
@@ -46,6 +49,31 @@ class Site < ActiveRecord::Base
       end
     end
     props
+  end
+
+  def self.add_created_user_id
+    Site.transaction do
+      Site.find_each(batch_size: 100) do |site|
+        activity = Activity.find_by_site_id_and_action(site.id, "created")
+        site.user_id = activity.user_id
+        site.save!(:validate => false)
+        print "\."
+      end
+    end
+    print 'Done!'
+  end
+
+  
+  def self.add_start_and_end_entry_date
+    Site.transaction do
+      Site.find_each(batch_size: 100) do |site|
+        site.start_entry_date = site.created_at
+        site.end_entry_date = site.created_at
+        site.save!(:validate => false)
+        print "\."
+      end
+    end
+    print 'Done!'
   end
 
   def self.get_id_and_name sites
@@ -111,6 +139,7 @@ class Site < ActiveRecord::Base
   end
 
   def valid_properties
+    return unless valid_lat_lng
     fields = collection.fields.index_by(&:es_code)
     fields_mandatory = collection.fields.find_all_by_is_mandatory(true)
     properties.each do |es_code, value|
@@ -124,7 +153,28 @@ class Site < ActiveRecord::Base
       end
     end
   end
-    # fields_mandatory.each do |f|
-    #   errors.add(:properties, {f.id.to_s => "#{f.code} is required."})
-    # end
+
+  def valid_lat_lng
+    valid = false
+      
+    if lat
+      if (lat >= -90) && (lat <= 90)
+        valid = true
+      else
+        errors.add(:lat, "latitude must be in the range of -90 to 90")
+        return false
+      end
+    end
+
+    if lng
+      if (lng >= -180) && (lng <= 180)
+        valid = true
+      else
+        errors.add(:lng, "longitude must be in the range of -180 to 180")
+        return false
+      end
+    end
+
+    return valid
+  end
 end
