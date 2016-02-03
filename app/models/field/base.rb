@@ -131,7 +131,7 @@ module Field::Base
     elsif numeric?
       value = -39.2
     elsif date?
-      value = Field::DateField.new.decode('4/23/1851')
+      value = Field::DateField.new.decode('23/4/1851')
     elsif user?
       return '' if user.nil?
       value = user.email
