@@ -59,6 +59,7 @@ group :development do
   gem 'dist', :git => 'https://github.com/manastech/dist.git'
   gem 'ruby-prof', :git => 'https://github.com/ruby-prof/ruby-prof.git'
   gem 'mailcatcher'
+  gem 'annotate'
 end
 
 # Gems used only for assets and not required

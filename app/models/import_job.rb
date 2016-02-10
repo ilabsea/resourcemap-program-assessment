@@ -1,3 +1,18 @@
+# == Schema Information
+#
+# Table name: import_jobs
+#
+#  id                :integer          not null, primary key
+#  status            :string(255)
+#  original_filename :string(255)
+#  finished_at       :datetime
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  user_id           :integer
+#  collection_id     :integer
+#  exception         :text
+#
+
 class ImportJob < ActiveRecord::Base
   # The status field captures the lifecycle of an ImportJob. Currently it is:
   #

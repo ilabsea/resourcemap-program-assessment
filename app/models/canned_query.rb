@@ -1,3 +1,18 @@
+# == Schema Information
+#
+# Table name: canned_queries
+#
+#  id             :integer          not null, primary key
+#  name           :string(255)
+#  conditions     :text
+#  isAllSite      :boolean
+#  isAllCondition :boolean
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  collection_id  :integer
+#  formula        :string(255)
+#
+
 class CannedQuery < ActiveRecord::Base
   serialize :conditions, Array
   belongs_to :collection 

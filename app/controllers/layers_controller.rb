@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: layers
+#
+#  id            :integer          not null, primary key
+#  collection_id :integer
+#  name          :string(255)
+#  public        :boolean
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  ord           :integer
+#
+
 class LayersController < ApplicationController
   before_filter :authenticate_user!
   before_filter :authenticate_collection_admin!, :except => [:index]

@@ -1,3 +1,20 @@
+# == Schema Information
+#
+# Table name: activities
+#
+#  id            :integer          not null, primary key
+#  user_id       :integer
+#  collection_id :integer
+#  layer_id      :integer
+#  field_id      :integer
+#  site_id       :integer
+#  data          :binary(214748364
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  item_type     :string(255)
+#  action        :string(255)
+#
+
 class ActivitiesController < ApplicationController
 
   expose(:collections) { 
