@@ -31,9 +31,17 @@
   %hr/
   %label
     = t('views.layers.form.field.mandatory')
-  %p.smalltext= t('views.layers.form.field.this_field_must_be_report_on_every_report') 
+  %p.smalltext= t('views.layers.form.field.this_field_must_be_report_on_every_report')
   = ko_check_box_tag :is_mandatory, css: {error: :codeError}
-  
+
+  /ko if: kind() == 'numeric'
+  %hr/
+  %label
+    = t('views.layers.form.field.custom_widgeted')
+  %p.smalltext= t('views.layers.form.field.do_not_display_in_form_as_being_used_in_custom_widget')
+  = ko_check_box_tag :custom_widgeted, css: {error: :codeError}
+  //ko
+
 
   /ko if: kind() == 'select_one' || kind() == 'select_many'
   %hr/
@@ -58,7 +66,7 @@
   %hr/
   = ko_check_box_tag 'impl().is_enable_range', css: {error: :codeError}
   %label
-    Enable Range  
+    Enable Range
 
   %div{ko(if: 'impl().is_enable_range'), style: 'width:275px'}
     %br/
@@ -81,14 +89,14 @@
   %label
     = t('views.layers.form.field.enable_skip_logic_for_this_field')
   %div{ko(if: :is_enable_field_logic)}
-    = render :partial => "field_logic_numeric"    
+    = render :partial => "field_logic_numeric"
   //ko
 
   /ko if: kind() == 'yes_no'
   %hr/
   = ko_check_box_tag :is_enable_field_logic, css: {error: :codeError}
   %label
-    = t('views.layers.form.field.enable_skip_logic_for_this_field')  
+    = t('views.layers.form.field.enable_skip_logic_for_this_field')
 
   %div{ko(if: :is_enable_field_logic)}
     = render :partial => "field_logic_yes_no"
@@ -98,7 +106,7 @@
   %hr/
   = ko_check_box_tag :is_enable_field_logic, css: {error: :codeError}
   %label
-    = t('views.layers.form.field.enable_skip_logic_for_this_field') 
+    = t('views.layers.form.field.enable_skip_logic_for_this_field')
 
   %div{ko(if: :is_enable_field_logic)}
     = render :partial => "field_logic_select_many"
@@ -112,7 +120,7 @@
     = t('views.layers.form.field.enable_skip_logic_for_this_field')
 
   %div{ko(if: :is_enable_field_logic)}
-    = render :partial => "field_logic_select_one"  
+    = render :partial => "field_logic_select_one"
   //ko
   //ko
   //ko
@@ -125,7 +133,7 @@
   %hr/
   %label
     = t('views.layers.form.field.display_on_form_entry')
-  %p.smalltext= t('views.layers.form.field.show_this_field_and_value_on_form_entry') 
+  %p.smalltext= t('views.layers.form.field.show_this_field_and_value_on_form_entry')
   = ko_check_box_tag :is_display_field, css: {error: :codeError}
   %hr/
   %label
@@ -173,7 +181,7 @@
   %hr/
   %label{ko(css: {error: 'impl().locationError'})}= t('views.layers.form.field.import_places')
   %p.smalltext
-    = t('views.layers.form.field.upload_a_csv') 
+    = t('views.layers.form.field.upload_a_csv')
     Code, LocationName, Latitude, Longitude
     /ko ifnot: impl().errorUploadingLocation()
     /ko if: config  && config.locations
@@ -200,7 +208,7 @@
         %span{ko(text: :code)}
         %span ,
         %span{ko(text: :name)}
-  
+
   //ko
   //ko
 

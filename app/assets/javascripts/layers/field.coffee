@@ -11,14 +11,15 @@ onLayers ->
 
       @editableCode = ko.observable(true)
       @deletable = ko.observable(true)
-      
+
       @is_enable_field_logic = ko.observable data?.is_enable_field_logic ? false
       @is_enable_range = data?.is_enable_range
       @config = data?.config
       @field_logics_attributes = data?.field_logics_attributes
       @metadata = data?.metadata
-      @is_mandatory = data?.is_mandatory 
-      @is_display_field = data?.is_display_field     
+      @is_mandatory = data?.is_mandatory
+      @is_display_field = data?.is_display_field
+      @custom_widgeted = data?.custom_widgeted
 
       @kind_titleize = ko.computed =>
         (@kind().split(/_/).map (word) -> word[0].toUpperCase() + word[1..-1].toLowerCase()).join ' '
@@ -38,7 +39,7 @@ onLayers ->
         if !@hasCode() then return "the field #{@fieldErrorDescription()} is missing a Code"
         if (@code() in ['lat', 'long', 'name', 'resmap-id', 'last updated']) then return "the field #{@fieldErrorDescription()} code is reserved"
         null
-        
+
       @error = ko.computed => @nameError() || @codeError() || @impl().error()
       @valid = ko.computed => !@error()
       @oldcode = ko.observable data?.code
@@ -116,6 +117,7 @@ onLayers ->
         is_mandatory: @is_mandatory
         is_display_field: @is_display_field
         is_enable_field_logic: @is_enable_field_logic
+        custom_widgeted: @custom_widgeted
       @impl().toJSON(json)
       json
 
@@ -171,7 +173,7 @@ onLayers ->
 
     toJSON: (json) =>
       json.is_enable_range = @is_enable_range()
-      json.config = {digits_precision: @digitsPrecision(), allows_decimals: @allowsDecimals(), range: {minimum: @minimum(), maximum: @maximum()}, field_logics: $.map(@field_logics(), (x) ->  x.toJSON())}    
+      json.config = {digits_precision: @digitsPrecision(), allows_decimals: @allowsDecimals(), range: {minimum: @minimum(), maximum: @maximum()}, field_logics: $.map(@field_logics(), (x) ->  x.toJSON())}
       return json
 
     saveFieldLogic: (field_logic) =>
@@ -217,7 +219,7 @@ onLayers ->
 
                         field_logic_no = new FieldLogic
                         field_logic_no.id(0)
-                        field_logic_no.value(0)     
+                        field_logic_no.value(0)
                         field_logic_no.label("No")
 
                         ko.observableArray([field_logic_no, field_logic_yes])
@@ -253,7 +255,7 @@ onLayers ->
     addOption: (option) =>
       option.id @nextId
       @options.push option
-      @nextId += 1 
+      @nextId += 1
 
     toJSON: (json) =>
       json.config = {options: $.map(@options(), (x) -> x.toJSON()), next_id: @nextId}
@@ -276,7 +278,7 @@ onLayers ->
           id = 0
         field_logic.id id
         @field_logics.push field_logic
-                        
+
     toJSON: (json) =>
       json.config = {options: $.map(@options(), (x) -> x.toJSON()), next_id: @nextId,field_logics: $.map(@field_logics(), (x) ->  x.toJSON())}
 
@@ -343,10 +345,10 @@ onLayers ->
                    else
                     ko.observableArray()
 
-      @maximumSearchLengthError = ko.computed => 
-        if @maximumSearchLength() && @maximumSearchLength().length >0 
-          null 
-        else 
+      @maximumSearchLengthError = ko.computed =>
+        if @maximumSearchLength() && @maximumSearchLength().length >0
+          null
+        else
           "the field #{@field.fieldErrorDescription()} is missing a maximum search length"
       @missingFileLocationError = ko.computed =>
         if @locations() && @locations().length > 0
@@ -379,7 +381,7 @@ onLayers ->
       @field = ko.observable()
       @codeCalculation = ko.observable field.config?.code_calculation ? ""
     addDependentField: (field) =>
-      fields = @dependent_fields().filter (f) -> f.id() is field.id() 
+      fields = @dependent_fields().filter (f) -> f.id() is field.id()
       if fields.length == 0
         field.editableCode(false)
         @dependent_fields.push(new FieldDependant(field.toJSON()))

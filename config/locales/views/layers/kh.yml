@@ -88,3 +88,5 @@ kh:
           dependent_field: "ហ្វៀល ដែលអាស្រ័យ"
           maximum_search_length: "ចម្ងាយស្វែងរកអតិបរមា ( ម៉ែត្រ )"
           import_places: "នាំចូល កន្លែង"
+          custom_widgeted: "custom widget (kh)"
+          do_not_display_in_form_as_being_used_in_custom_widget: "Do not display in form as being used in custom widget(kh)"
