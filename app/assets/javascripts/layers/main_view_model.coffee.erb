@@ -8,7 +8,7 @@ onLayers ->
       @currentField = ko.observable()
       @default_select = '(no value)'
       @newOption = ko.observable(new Option)
-      @newFieldLogic = ko.observable(new FieldLogic)     
+      @newFieldLogic = ko.observable(new FieldLogic)
       @newAttribute = ko.observable(new Attribute)
       @optionValid = ko.computed =>
         $.trim(@newOption().code()).length > 0 && $.trim(@newOption().label()).length > 0
@@ -17,7 +17,7 @@ onLayers ->
         ($.trim(@newFieldLogic().value()).length > 0 || $.trim(@newFieldLogic().condition_type()).length > 0) && $.trim(@newFieldLogic().field_id()).length > 0
 
       @fieldSelectManyLogicValid = ko.computed =>
-        # $.trim(@newFieldLogic().value()).length > 0      
+        # $.trim(@newFieldLogic().value()).length > 0
         true
 
       @attributeValid = ko.computed =>
@@ -33,13 +33,17 @@ onLayers ->
           "#{margin}px"
         else
           0
-          
+
       @tmpSelectedField = ko.observable()
 
       @fields = ko.observableArray()
+      @customWidgetedFields = ko.observableArray()
+      @selectedCustomWidgetField = ko.observable()
+
       for layer in layers
         for field in layer.fields
           @fields.push(field)
+          @customWidgetedFields.push(field) if field.custom_widgeted
 
       @savingLayer = ko.observable(false)
 
@@ -61,6 +65,10 @@ onLayers ->
             return true
           return false
         return false
+
+    addCustomWidgetedFieldItem: =>
+      alert @selectedCustomWidgetField().code
+      @selectedCustomWidgetField(null)
 
     updateLayerDeletable: =>
       if @layers().length == 1
@@ -305,7 +313,7 @@ onLayers ->
     addOptionFieldLogic: (field) =>
       option = $.map(@currentField().impl().options(), (x) -> x if x.id() == field.value())
       if option.length > 0
-        field_logic_value = new FieldLogicValue( 
+        field_logic_value = new FieldLogicValue(
           label:option[0].label()
           value: option[0].id()
         )
@@ -352,7 +360,7 @@ onLayers ->
         @newFieldLogic().field_id(field.field_id())
         @newFieldLogic().value(field.value())
         @newFieldLogic().condition_type(field.condition_type())
-      if @currentField().kind() == 'select_many'      
+      if @currentField().kind() == 'select_many'
         for f in @currentField().impl().selected_field_logics()
           if f.editing() == true
             f.selected_options(@currentFieldLogic.selected_options())
@@ -369,7 +377,7 @@ onLayers ->
         @newFieldLogic(field)
         if field.condition_type() == "all"
           $("#all")[0].checked = true
-        else 
+        else
           $("#any")[0].checked = true
 
     cancelFieldLogic: (field) =>
@@ -389,9 +397,9 @@ onLayers ->
             f.field_id(@currentFieldLogic.field_id())
             f.condition_type(@currentFieldLogic.condition_type())
             f.editing(false)
-        @currentFieldLogic = null   
+        @currentFieldLogic = null
 
-      field.editing(false) 
+      field.editing(false)
     updateFieldLogic: (field) =>
       field.editing(false)
 

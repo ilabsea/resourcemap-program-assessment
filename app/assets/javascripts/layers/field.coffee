@@ -393,3 +393,21 @@ onLayers ->
       @codeCalculation(@codeCalculation() + '${' + field.code() + "}")
     toJSON: (json) =>
       json.config = {digits_precision: @digitsPrecision(), allows_decimals: @allowsDecimals(), code_calculation: @codeCalculation(), dependent_fields: $.map(@dependent_fields(), (x) ->  x.toJSON())}
+
+  class @Field_custom_widget extends @FieldImpl
+    constructor: (field) ->
+      super(field)
+      @attributes = if field.metadata?
+                      ko.observableArray($.map(field.metadata, (x) -> new Attribute(x)))
+                    else
+                      ko.observableArray()
+      @advancedExpanded = ko.observable false
+
+    toggleAdvancedExpanded: =>
+      @advancedExpanded(not @advancedExpanded())
+
+    addAttribute: (attribute) =>
+      @attributes.push attribute
+
+    toJSON: (json) =>
+      json.metadata = $.map(@attributes(), (x) -> x.toJSON())

@@ -13,7 +13,9 @@ module Field::Base
    { name: 'user', css_class: 'luser', small_css_class: 'suser' },
    { name: 'photo', css_class: 'lbutton lphoto', small_css_class: 'sphoto' },
    { name: 'calculation', css_class: 'lbutton lnumeral', small_css_class: 'snumeral'},
-   { name: 'location', css_class: 'llocation', small_css_class: 'slocation'}]
+   { name: 'location', css_class: 'llocation', small_css_class: 'slocation'},
+   { name: 'custom_widget', css_class: 'lcustom_widget', small_css_class: 'scustom_widget'},
+ ]
 
   BaseKinds.each do |base_kind|
     class_eval %Q(def #{base_kind[:name]}?; kind == '#{base_kind[:name]}'; end)
@@ -52,7 +54,7 @@ module Field::Base
   def storeed_as_long?
     select_one? || select_many?
   end
- 
+
   def stored_as_floating_point?
     numeric? && allow_decimals?
   end

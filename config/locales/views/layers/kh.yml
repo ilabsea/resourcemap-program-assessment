@@ -31,6 +31,7 @@ kh:
         phone: "លេខទូរស័ព្ធ"
         calculation: "គណនា"
         location: "កន្លែង នៅក្បែរ"
+        custom_widget: "Custom Widget"
       form:
         remove_field: "លុបហ្វៀល"
         move_field_up: "រំកិលហ្វៀលឡើង"
@@ -90,3 +91,4 @@ kh:
           import_places: "នាំចូល កន្លែង"
           custom_widgeted: "custom widget (kh)"
           do_not_display_in_form_as_being_used_in_custom_widget: "Do not display in form as being used in custom widget(kh)"
+          select_fields: "Select fields(kh)"
