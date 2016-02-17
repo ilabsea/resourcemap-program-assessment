@@ -138,6 +138,8 @@
     %button.clist-add{ko(click: '$root.addCustomWidgetedFieldItem',
                          enable: '$root.customWidgetedFields().length >0'),
                          title: 'Add another option'}
+    %textarea{"data-bind" => "rev_ckeditor: $root.customWidgetEditor", class: 'ckeditor'}
+      Hello
   //ko
 
   /ko if: kind() == 'photo'

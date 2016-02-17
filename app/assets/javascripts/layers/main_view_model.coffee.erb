@@ -39,6 +39,7 @@ onLayers ->
       @fields = ko.observableArray()
       @customWidgetedFields = ko.observableArray()
       @selectedCustomWidgetField = ko.observable()
+      @customWidgetEditor = ko.observable("Hello Editor")
 
       for layer in layers
         for field in layer.fields
@@ -67,6 +68,7 @@ onLayers ->
         return false
 
     addCustomWidgetedFieldItem: =>
+      alert @customWidgetEditor()
       alert @selectedCustomWidgetField().code
       @selectedCustomWidgetField(null)
 

@@ -31,6 +31,8 @@ gem "password_strength"
 gem "ruby-recaptcha"
 gem 'i18n-coffee'
 
+gem 'ckeditor_rails'
+
 group :test do
   gem 'shoulda-matchers'
   gem 'ci_reporter'
