@@ -126,21 +126,24 @@
   //ko
 
   /ko if: kind() == 'custom_widget'
-  %div
+  %div{"style" => "padding: 5px 0px;"}
     %span.smalltext.left{style: 'padding-right:18px;padding-top:10px;'}= t('views.layers.form.field.select_fields')
     = select_tag nil, nil, 'data-bind'=> "options: $root.customWidgetedFields,
                                              optionsText: 'name',
                                              value: $root.selectedCustomWidgetField,
-                                             optionsCaption: window.model.default_select ",
-                              'style'=> 'height:30px;margin-left:0px;'
-    %div{"data-bind" => "visible: $root.selectedCustomWidgetField"}
-      %span{"data-bind"=>"text: $root.selectedCustomWidgetField() ? $root.selectedCustomWidgetField().name : 'unknown'"}
+                                             optionsCaption: window.model.default_select, css: { error: !$root.selectedCustomWidgetField() } ",
+                                            'style'=> 'height:30px;margin-left:0px; margin-bottom: 8px;'
+
     %button.clist-add{ko(click: '$root.addCustomWidgetedFieldItem',
                          enable: '$root.customWidgetedFields().length >0'),
                          title: 'Add another option'}
-    %textarea{"data-bind" => "rev_ckeditor: $root.customWidgetEditor", class: 'ckeditor'}
+
+    %textarea{"data-bind" => "tinymce: impl().widgetContent", class: 'tinymce'}
       Hello
   //ko
+
+
+
 
   /ko if: kind() == 'photo'
 

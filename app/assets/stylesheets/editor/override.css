@@ -1,0 +1,3 @@
+.mce-tinymce .mce-container .mce-panel .mce-fullscreen {
+  z-index: 1000;
+}

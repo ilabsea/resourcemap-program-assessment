@@ -29,9 +29,9 @@
 //= require jquery_control_key_input
 //= require validate_key
 
-//= require ckeditor-jquery
-//= require ckeditor-ko
-//= require ckeditor/config
+//= require tinymce-jquery
+//= require editor/config
+//= require editor/tinymce-ko
 
 //= require i18n
 //= require_tree .

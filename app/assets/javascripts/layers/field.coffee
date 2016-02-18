@@ -397,17 +397,6 @@ onLayers ->
   class @Field_custom_widget extends @FieldImpl
     constructor: (field) ->
       super(field)
-      @attributes = if field.metadata?
-                      ko.observableArray($.map(field.metadata, (x) -> new Attribute(x)))
-                    else
-                      ko.observableArray()
-      @advancedExpanded = ko.observable false
-
-    toggleAdvancedExpanded: =>
-      @advancedExpanded(not @advancedExpanded())
-
-    addAttribute: (attribute) =>
-      @attributes.push attribute
-
+      @widgetContent = ko.observable field?.config?.widgetContent
     toJSON: (json) =>
-      json.metadata = $.map(@attributes(), (x) -> x.toJSON())
+      json.config = { widgetContent: @widgetContent()}

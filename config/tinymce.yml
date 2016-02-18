@@ -1,0 +1,18 @@
+default:
+  selector: textarea.table-editor
+  toolbar: styleselect | bold italic | undo redo | table
+  menubar: false
+  statusbar: false
+  plugins:
+    - image
+    - link
+  skins:
+    - lightgray-gradient
+
+alternate:
+  selector: textarea.table-editor
+  toolbar: styleselect | bold italic | undo redo | table
+  menubar: false
+  statusbar: false
+  plugins:
+    - table

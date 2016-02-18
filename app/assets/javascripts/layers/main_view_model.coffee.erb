@@ -39,7 +39,6 @@ onLayers ->
       @fields = ko.observableArray()
       @customWidgetedFields = ko.observableArray()
       @selectedCustomWidgetField = ko.observable()
-      @customWidgetEditor = ko.observable("Hello Editor")
 
       for layer in layers
         for field in layer.fields
@@ -68,9 +67,18 @@ onLayers ->
         return false
 
     addCustomWidgetedFieldItem: =>
-      alert @customWidgetEditor()
-      alert @selectedCustomWidgetField().code
-      @selectedCustomWidgetField(null)
+      window.currentField = @currentField().impl()
+      if @selectedCustomWidgetField()
+        fieldCode = @selectedCustomWidgetField().code
+        @addTextToCustomWidgetedEditor(fieldCode)
+      else
+        alert("Please select a field")
+
+    addTextToCustomWidgetedEditor: (text) ->
+      window.activeEditor.execCommand('mceInsertContent', false, @addPatternToText(text))
+
+    addPatternToText: (text) ->
+      "{#{text}}"
 
     updateLayerDeletable: =>
       if @layers().length == 1
