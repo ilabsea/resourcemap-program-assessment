@@ -11,6 +11,7 @@
  *= require_self
  *= require fixedheadertable
  *= require editor/override
+ *= require editor/custom_widget
  *= require_tree .
  *= require jquery.fancybox
  *= require_fullscreen
