@@ -40,7 +40,8 @@ onCollections ->
 
       @widgetContent = ko.computed =>
         if(@kind == "custom_widget")
-          data?.config?.widgetContent
+          @buildBindCustomFields data.config.widgetContent
+          # data?.config?.widgetContent
         else
           ""
 
@@ -136,6 +137,11 @@ onCollections ->
           field_object.block({message: ""})
         else
           field_object.unblock()
+
+    buildBindCustomFields: (widgetContent) =>
+      regExp = /\{([^}]*)\}/g
+      result = widgetContent.replace(regExp, '<input type="text" name="custom-input-$1" id="custom-input-$1" class="custom key-map-integer"/>')
+      return result
 
     refresh_skip: =>
       if(@is_blocked_by())
