@@ -141,7 +141,6 @@ onCollections ->
     replaceCustomFieldByInput: (widgetContent) =>
       regExp = /\{([^}]*)\}/g
       widget = widgetContent.replace(regExp, '<input type="text" name="custom-input-$1" id="custom-input-$1" class="custom key-map-integer"/>')
-      return widget
 
     refresh_skip: =>
       if(@is_blocked_by())
