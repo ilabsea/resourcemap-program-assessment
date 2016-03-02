@@ -143,6 +143,9 @@ onCollections ->
           )
       this.properties(tmpProperties)
 
+    getCustomFieldValueFromWidget: (field) =>
+      $('#custom-input-'+field.code).val()
+
     copyPropertiesFromCollection: (collection) =>
       oldProperties = @properties()
 
@@ -152,6 +155,9 @@ onCollections ->
       for field in @fields()
         if field.kind == 'hierarchy' && @id()
           hierarchyChanges.push({field: field, oldValue: oldProperties[field.esCode], newValue: field.value()})
+
+        if field.custom_widgeted == true
+          field.value(@getCustomFieldValueFromWidget(field))
 
         if field.value() != null
           value = field.value()
@@ -244,7 +250,7 @@ onCollections ->
               $.handleAjaxError(data)
           catch error
             $.handleAjaxError(data))
-  
+
 
     propagateUpdatedAt: (value) =>
       @updatedAt(value)
@@ -392,7 +398,7 @@ onCollections ->
       window.model.initDatePicker()
       window.model.initAutocomplete()
       window.model.initControlKey()
-      
+
       for field in @fields()
         field.editing(false)
         field.originalValue = field.value()
@@ -532,7 +538,7 @@ onCollections ->
                     field["dependentFields"][j] = tmp
                   j++
                 i++
-              $.map(field["dependentFields"], (f) -> 
+              $.map(field["dependentFields"], (f) ->
                 fieldName = "${" + f["code"]+"}"
                 fieldValue = "${" + f["code"]+"}"
                 switch f["kind"]
@@ -554,7 +560,7 @@ onCollections ->
               )
               # Add change value to dependent field
 
-              $.map(field["dependentFields"], (f) -> 
+              $.map(field["dependentFields"], (f) ->
                 $("#" + f["kind"] + "-input-" + f["code"]).addClass('calculation')
                 element_id = field["code"]
                 $.map(window.model.editingSite().fields(), (fi) ->
@@ -573,7 +579,7 @@ onCollections ->
                             fi.value(result)
                           else
                             fi.value('')
-                          
+
                       )
                     )
                 )
