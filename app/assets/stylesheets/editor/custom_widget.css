@@ -1,10 +1,25 @@
 .custom_widget-wrapper table {
   border: 1px solid #ccc;
+  width: 100% !important;
+  table-layout: fixed;
 }
+
 .custom_widget-wrapper tr {
   border: 1px solid #ccc;
+  height: auto !important;
 }
 
 .custom_widget-wrapper td {
   border: 1px solid #ccc;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.custom_widget-wrapper td .custom {
+  width: 90%;
+  float: left;
+  margin-left: 2px;
+  border: none ;
+  box-shadow: none;
+  text-align: center;
 }

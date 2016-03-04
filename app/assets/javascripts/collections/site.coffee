@@ -159,9 +159,6 @@ onCollections ->
         if field.kind == 'hierarchy' && @id()
           hierarchyChanges.push({field: field, oldValue: oldProperties[field.esCode], newValue: field.value()})
 
-        if field.custom_widgeted == true
-          field.value(@getCustomFieldValueFromWidget(field))
-
         if field.value() != null
           value = field.value()
 
@@ -406,7 +403,8 @@ onCollections ->
         field.editing(false)
         field.originalValue = field.value()
         field.setFieldFocus() if field.kind in ["yes_no", "numeric", "select_one", "select_many"]
-        @setCustomWidgetValue(field) if field.kind == "custom_widget"
+        # @setCustomWidgetValue(field) if field.kind == "custom_widget"
+        new CustomWidget(field).bind() if field.custom_widgeted
       window.model.newOrEditSite().scrollable(false)
       $('#name').focus()
 

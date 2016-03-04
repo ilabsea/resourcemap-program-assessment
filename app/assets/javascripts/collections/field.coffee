@@ -41,7 +41,6 @@ onCollections ->
       @widgetContent = ko.computed =>
         if(@kind == "custom_widget")
           @replaceCustomFieldByInput data.config.widgetContent
-          # data?.config?.widgetContent
         else
           ""
 
@@ -133,14 +132,14 @@ onCollections ->
       @is_blocked_by = ko.observableArray([])
       @blocked = ko.computed =>
         field_object = @get_dom_object(this)
-        if @is_blocked_by() != undefined and @is_blocked_by().length > 0
+        if @is_blocked_by() != undefined and @is_blocked_by().length> 0
           field_object.block({message: ""})
         else
           field_object.unblock()
 
     replaceCustomFieldByInput: (widgetContent) =>
       regExp = /\{([^}]*)\}/g
-      widget = widgetContent.replace(regExp, '<input type="text" name="custom-input-$1" id="custom-input-$1" class="custom key-map-integer"/>')
+      widget = widgetContent.replace(regExp, '<input type="text" name="custom-input-$1" data-bind="value: value" id="custom-input-$1" class="custom key-map-integer"/>')
 
     refresh_skip: =>
       if(@is_blocked_by())
@@ -379,6 +378,7 @@ onCollections ->
           @enableSkippedField @esCode
         else
           window.model.newOrEditSite().scrollable(true)
+
     removeFocusStyle: =>
       $('div').removeClass('focus')
       $('input:not(#name)').removeClass('focus')

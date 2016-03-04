@@ -11,7 +11,7 @@ onCollections ->
       @newOrEditSite = ko.computed => if @editingSite() && (!@editingSite().id() || @editingSite().inEditMode()) then @editingSite() else null
       @showSite = ko.computed => if @editingSite()?.id() && !@editingSite().inEditMode() then @editingSite() else null
       window.markers = @markers = {}
-      
+
     @loadBreadCrumb: ->
       params = {}
       if @selectedSite()
@@ -23,7 +23,7 @@ onCollections ->
     @editingSiteLocation: ->
       @editingSite() && (!@editingSite().id() || @editingSite().inEditMode() || @editingSite().editingLocation())
 
-    @calculateDistance: (fromLat, fromLng, toLat, toLng) => 
+    @calculateDistance: (fromLat, fromLng, toLat, toLng) =>
       fromLatlng = new google.maps.LatLng(fromLat, fromLng)
       toLatlng = new google.maps.LatLng(toLat, toLng)
       distance = google.maps.geometry.spherical.computeDistanceBetween(fromLatlng, toLatlng)
@@ -41,9 +41,9 @@ onCollections ->
             distance = @calculateDistance(fromLat, fromLng, location.latitude, location.longitude)
             if distance < parseFloat(field.maximumSearchLength)
               result.push(location)
-          result.sort (a, b) => 
+          result.sort (a, b) =>
             return parseFloat(a.distance) - parseFloat(b.distance)
-            
+
           result.splice(20, result.length)
           field.resultLocations(result)
 
@@ -77,8 +77,8 @@ onCollections ->
       if window.model.newSiteProperties
         for esCode, value of window.model.newSiteProperties
           field = @currentCollection().findFieldByEsCode esCode
-          field.setValueFromSite(value) if field          
-      
+          field.setValueFromSite(value) if field
+
       @unselectSite()
       @editingSite site
       @editingSite().startEditLocationInMap()
@@ -90,10 +90,11 @@ onCollections ->
       window.model.newOrEditSite().scrollable(false)
       window.model.newOrEditSite().startEntryDate(new Date(Date.now()))
       for field in window.model.newOrEditSite().fields()
-        if field.skippedState() == false && field.kind == 'yes_no'
-          field.setFieldFocus()
+        new CustomWidget(field).bind() if field.custom_widgeted
+        field.setFieldFocus() if field.skippedState() == false && field.kind == 'yes_no'
+
       $('#name').focus()
-      @hideLoadingField()      
+      @hideLoadingField()
 
     @editSite: (site) ->
       initialized = @initMap()
@@ -324,7 +325,7 @@ onCollections ->
         for field in layer.fields
           if field["kind"] == "calculation"
             # Replace $field code to actual jQuery object
-            $.map(field["dependentFields"], (f) -> 
+            $.map(field["dependentFields"], (f) ->
               fieldName = "$" + f["code"]
               fieldValue = "$" + f["code"]
               switch f["kind"]
@@ -340,7 +341,7 @@ onCollections ->
 
             )
             # Add change value to dependent field
-            $.map(field["dependentFields"], (f) -> 
+            $.map(field["dependentFields"], (f) ->
               # element_id = "#" +field["kind"] + "-input-" + field["code"]
               element_id = field["code"]
               $.map(window.model.editingSite().fields(), (fi) ->
