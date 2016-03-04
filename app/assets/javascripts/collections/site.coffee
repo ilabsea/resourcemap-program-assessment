@@ -62,9 +62,6 @@ onCollections ->
           return false
       return true
 
-    customFields: =>
-      @fields().filter((f) -> f. custom_widgeted == true)
-
     propertyValue: (field) =>
       value = @properties()[field.esCode]
       if field.kind == 'date' && $.trim(value).length > 0
@@ -145,9 +142,6 @@ onCollections ->
               tmpProperties[key.toString()] = field.value()
           )
       this.properties(tmpProperties)
-
-    getCustomFieldValueFromWidget: (field) =>
-      $('#custom-input-'+field.code).val()
 
     copyPropertiesFromCollection: (collection) =>
       oldProperties = @properties()
@@ -403,14 +397,9 @@ onCollections ->
         field.editing(false)
         field.originalValue = field.value()
         field.setFieldFocus() if field.kind in ["yes_no", "numeric", "select_one", "select_many"]
-        # @setCustomWidgetValue(field) if field.kind == "custom_widget"
         new CustomWidget(field).bind() if field.custom_widgeted
       window.model.newOrEditSite().scrollable(false)
       $('#name').focus()
-
-    setCustomWidgetValue:(field) =>
-      for field in @customFields()
-        $('#custom-input-'+field.code).val(field.value())
 
     exitEditMode: (saved) =>
       @inEditMode(false)
