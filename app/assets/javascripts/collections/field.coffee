@@ -38,12 +38,16 @@ onCollections ->
       @isForCustomWidget = ko.computed ->
         data.custom_widgeted
 
-      @widgetContent = ko.computed =>
+      @widgetContentAsInputView = ko.computed =>
         if(@kind == "custom_widget")
           @replaceCustomFieldByInput data.config.widgetContent
         else
           ""
-
+      @widgetContentAsSpanView = ko.computed =>
+        if(@kind == "custom_widget")
+          @replaceCustomFieldBySpan data.config.widgetContent
+        else
+          ""
       @hasValue = ko.computed =>
         if @kind == 'yes_no'
           true
@@ -138,8 +142,12 @@ onCollections ->
           field_object.unblock()
 
     replaceCustomFieldByInput: (widgetContent) =>
-      regExp = /\{([^}]*)\}/g
+      regExp = new RegExp /\{([^}]*)\}/g
       widget = widgetContent.replace(regExp, '<input type="text" name="custom-input-$1" data-bind="value: value" id="custom-input-$1" class="custom key-map-integer"/>')
+
+    replaceCustomFieldBySpan: (widgetContent) =>
+      regExp = /\{([^}]*)\}/g
+      widget = widgetContent.replace(regExp, '<span data-bind="text: value" id="custom-span-$1" class="custom"></span>')
 
     refresh_skip: =>
       if(@is_blocked_by())

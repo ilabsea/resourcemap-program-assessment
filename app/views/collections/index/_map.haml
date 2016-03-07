@@ -254,6 +254,12 @@
                   <!-- /ko -->
                   <!-- /ko -->
                   <!-- /ko -->
+
+                  <!-- ko if: kind == 'custom_widget' && !editing() -->
+                  %div{style: "position: relative", class: 'custom_widget-wrapper'}
+                    %p{"data-bind" => "html: widgetContentAsSpanView"}
+                  <!-- /ko -->
+
                   <!-- ko if: !writeable -->
                   %span.value{style: 'color:grey'}= t('views.collections.index.no_value')
                   <!-- /ko -->
