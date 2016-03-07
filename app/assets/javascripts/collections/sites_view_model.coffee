@@ -125,10 +125,8 @@ onCollections ->
           $('a#previewimg').fancybox()
 
     @rebindCustomWidgetView: () ->
-      for field in @editingSite().fields()
-        if field.custom_widgeted
-          new CustomWidget(field).bindWithSpan()
-
+      for field in @editingSite().customWidgetFields()
+        new CustomWidget(field).bindWithSpan()
 
     @editSiteFromId: (siteId, collectionId) ->
       site = @siteIds[siteId]
@@ -259,6 +257,7 @@ onCollections ->
 
       @loadBreadCrumb()
       @rewriteUrl()
+      @rebindCustomWidgetView()
       window.model.hideLoadingField()
       $('a#previewimg').fancybox()
       # Return undefined because otherwise some browsers (i.e. Miss Firefox)
