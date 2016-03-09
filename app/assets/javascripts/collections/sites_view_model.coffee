@@ -242,6 +242,7 @@ onCollections ->
       field.exitEditing() for field in @currentCollection().fields()
       if @editingSite()?.inEditMode()
         @editingSite().exitEditMode()
+        @rebindCustomWidgetView()
       else
         if @editingSite()
           # Unselect site if it's not on the tree
@@ -257,7 +258,7 @@ onCollections ->
 
       @loadBreadCrumb()
       @rewriteUrl()
-      @rebindCustomWidgetView()
+
       window.model.hideLoadingField()
       $('a#previewimg').fancybox()
       # Return undefined because otherwise some browsers (i.e. Miss Firefox)
