@@ -40,12 +40,12 @@ onCollections ->
 
       @widgetContentAsInputView = ko.computed =>
         if(@kind == "custom_widget")
-          @replaceCustomFieldByInput data.config.widgetContent
+          @replaceCustomFieldByInput data.config.widgetContent.replace(/&nbsp;/g, '')
         else
           ""
       @widgetContentAsSpanView = ko.computed =>
         if(@kind == "custom_widget")
-          @replaceCustomFieldBySpan data.config.widgetContent
+          @replaceCustomFieldBySpan data.config.widgetContent.replace(/&nbsp;/g, '')
         else
           ""
       @hasValue = ko.computed =>
@@ -143,7 +143,7 @@ onCollections ->
 
     replaceCustomFieldByInput: (widgetContent) =>
       regExp = new RegExp /\{([^}]*)\}/g
-      widget = widgetContent.replace(regExp, '<input type="text" name="custom-input-$1" data-bind="value: value" id="custom-input-$1" class="custom key-map-integer"/>')
+      widget = widgetContent.replace(regExp, '<input type="text" placeholder="$1" name="custom-input-$1" data-bind="value: value" id="custom-input-$1" class="custom key-map-integer"/>')
 
     replaceCustomFieldBySpan: (widgetContent) =>
       regExp = /\{([^}]*)\}/g
