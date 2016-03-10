@@ -4,6 +4,7 @@
 
 .custom_widget-wrapper table {
   border: 1px solid #ccc;
+  width: auto !important;
 }
 
 .custom_widget-wrapper tr {
