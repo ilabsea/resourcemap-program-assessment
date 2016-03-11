@@ -4,7 +4,12 @@ onCollections ->
       @field = field
 
     bindWithInput: ->
-      ko.applyBindings(@field, document.getElementById('custom-input-'+@field.code))
+      # bind if only the field exist in the view
+      if $('#custom-input-'+@field.code).length > 0
+        ko.applyBindings(@field, document.getElementById('custom-input-'+@field.code))
+
 
     bindWithSpan: ->
-      ko.applyBindings(@field, document.getElementById('custom-span-'+@field.code))
+      # bind if only the field exist in the view
+      if $('#custom-span-'+@field.code).length > 0
+        ko.applyBindings(@field, document.getElementById('custom-span-'+@field.code))

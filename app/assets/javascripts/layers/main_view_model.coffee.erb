@@ -37,13 +37,13 @@ onLayers ->
       @tmpSelectedField = ko.observable()
 
       @fields = ko.observableArray()
-      @customWidgetedFields = ko.observableArray()
-      @selectedCustomWidgetField = ko.observable()
+      @customWidgetedFields = ko.computed =>
+        fields = []
+        for layer in @layers()
+          fields = fields.concat(layer.fields().filter (f) => f.custom_widgeted)
+        fields
 
-      for layer in layers
-        for field in layer.fields
-          @fields.push(field)
-          @customWidgetedFields.push(field) if field.custom_widgeted
+      @selectedCustomWidgetField = ko.observable()
 
       @savingLayer = ko.observable(false)
 
@@ -69,7 +69,7 @@ onLayers ->
     addCustomWidgetedFieldItem: =>
       window.currentField = @currentField().impl()
       if @selectedCustomWidgetField()
-        fieldCode = @selectedCustomWidgetField().code
+        fieldCode = @selectedCustomWidgetField().code()
         @addTextToCustomWidgetedEditor(fieldCode)
       else
         alert("Please select a field")
