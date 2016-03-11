@@ -215,6 +215,7 @@ onCollections ->
 
         if @editingSite().inEditMode()
           @editingSite().exitEditMode(true)
+          @rebindCustomWidgetView()
         else
           @editingSite().deleteMarker()
           @exitSite()
@@ -222,7 +223,7 @@ onCollections ->
         $('a#previewimg').fancybox()
         window.model.updateSitesInfo()
         @reloadMapSites()
-        @rebindCustomWidgetView()
+        # @rebindCustomWidgetView()
 
       callbackError = () =>
         @hideProgress()
