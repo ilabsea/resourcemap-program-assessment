@@ -245,7 +245,7 @@
                   <!-- /ko -->
                   <!-- ko if: !hasValue() &&  !error() -->
                   <!-- ko if: writeable -->
-                  <!-- ko if: kind != 'photo' -->
+                  <!-- ko if: kind != 'photo' && !kind == 'custom_widget' -->
                   <!-- ko if: $parents[1].editable() -->
                   %span.value{ko(visible: '!editing()', click: 'edit'), style: 'color:grey;cursor:pointer'}= t('views.collections.index.no_value')
                   <!-- /ko -->
