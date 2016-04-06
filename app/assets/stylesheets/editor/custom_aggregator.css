@@ -1,0 +1,22 @@
+.lcustom_aggregator {
+  background-image: url("/assets/fields_large_icons/custom_aggregator.png");
+  background-color: transparent;
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  border: medium none;
+  cursor: pointer;
+  display: inline-block;
+  height: 59px;
+  margin: 0 5px 0 0;
+  width: 59px;
+}
+
+.scustom_aggregator{
+  background: url("/assets/fields_small_icons/custom_aggregator.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+  display: inline-block;
+  height: 21px;
+  margin: 4px 2px 4px 5px;
+  min-width: 20px;
+  padding-left: 27px;
+  vertical-align: middle;
+ }

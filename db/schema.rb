@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160210073106) do
+ActiveRecord::Schema.define(:version => 20160406074958) do
 
   create_table "activities", :force => true do |t|
     t.integer  "user_id"
@@ -103,6 +103,7 @@ ActiveRecord::Schema.define(:version => 20160210073106) do
     t.boolean  "is_enable_range",                             :default => false
     t.boolean  "is_display_field"
     t.boolean  "custom_widgeted",                             :default => false
+    t.boolean  "is_custom_aggregator",                        :default => false
   end
 
   create_table "import_jobs", :force => true do |t|

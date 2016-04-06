@@ -19,8 +19,8 @@
 #  site_id          :integer
 #  uuid             :string(255)
 #  user_id          :integer
-#  start_entry_date :datetime         default(2016-02-10 04:24:35 UTC)
-#  end_entry_date   :datetime         default(2016-02-10 04:24:35 UTC)
+#  start_entry_date :datetime         default(2016-03-01 07:17:27 UTC)
+#  end_entry_date   :datetime         default(2016-03-01 07:17:27 UTC)
 #
 
 require 'spec_helper'

@@ -1,6 +1,6 @@
 onLayers ->
   class @MainViewModel
-    constructor: (collectionId, layers) ->
+    constructor: (collectionId, layers, collectionList) ->
       @collectionId = collectionId
       @layers = ko.observableArray $.map(layers, (x) -> new Layer(x))
       @updateLayerDeletable()
@@ -10,6 +10,7 @@ onLayers ->
       @newOption = ko.observable(new Option)
       @newFieldLogic = ko.observable(new FieldLogic)
       @newAttribute = ko.observable(new Attribute)
+      @collectionList = window.collectionList
       @optionValid = ko.computed =>
         $.trim(@newOption().code()).length > 0 && $.trim(@newOption().label()).length > 0
 
@@ -37,6 +38,7 @@ onLayers ->
       @tmpSelectedField = ko.observable()
 
       @fields = ko.observableArray()
+
       @customWidgetedFields = ko.computed =>
         fields = []
         for layer in @layers()
@@ -44,6 +46,7 @@ onLayers ->
         fields
 
       @selectedCustomWidgetField = ko.observable()
+      @selectedCollectionCustomAggregator = ko.observable()
 
       @savingLayer = ko.observable(false)
 

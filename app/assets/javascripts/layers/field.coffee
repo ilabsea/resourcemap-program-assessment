@@ -397,6 +397,26 @@ onLayers ->
   class @Field_custom_widget extends @FieldImpl
     constructor: (field) ->
       super(field)
-      @widgetContent = ko.observable field?.config?.widgetContent
+      @widgetContent = ko.observable field?.config?.widget_content
     toJSON: (json) =>
-      json.config = { widgetContent: @widgetContent()}
+      json.config = { widget_content: @widgetContent()}
+
+  class @Field_custom_aggregator extends @FieldImpl
+    constructor: (field) ->
+      super(field)
+      filteredCollections = @findCollectionById(field?.config?.collection_aggregator)
+      @selectedCollectionAggregator = ko.observable(filteredCollections[0])
+
+    findCollectionById: (id) =>
+      @collectionList().filter (collection) ->
+        console.log "comparison: #{collection.id}, #{window.collectionId}",
+        collection.id == parseInt(id)
+
+    # cannot get it from window.model since this variable does not exist yet
+    # we are forming the new MainViewModel constructor
+    collectionList: =>
+      window.collectionList
+
+    toJSON: (json) =>
+      json.is_custom_aggregator = true
+      json.config = {collection_aggregator: @selectedCollectionAggregator()?.id}

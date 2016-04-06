@@ -29,6 +29,17 @@
   = ko_text_field_tag :code, valueUpdate: :afterblur, css: {error: :codeError}
 
   %hr/
+  /ko if: kind() == 'custom_aggregator'
+  %div{"style" => "padding: 5px 0px;"}
+    %span.smalltext.left{style: 'padding-right:18px;padding-top:10px;'}= t('views.layers.form.field.select_fields')
+    = select_tag nil, nil, 'data-bind'=> "options: $root.collectionList,
+                                             optionsText: 'name',
+                                             value: impl().selectedCollectionAggregator,
+                                             optionsCaption: window.model.default_select, css: { error: !impl().selectedCollectionAggregator() } ",
+                                            'style'=> 'height:30px;margin-left:0px; margin-bottom: 8px;'
+
+
+  //ko
   %label
     = t('views.layers.form.field.mandatory')
   %p.smalltext= t('views.layers.form.field.this_field_must_be_report_on_every_report')
@@ -141,9 +152,6 @@
     %textarea{"data-bind" => "tinymce: impl().widgetContent", class: 'tinymce'}
       Hello
   //ko
-
-
-
 
   /ko if: kind() == 'photo'
 

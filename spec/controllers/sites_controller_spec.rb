@@ -17,8 +17,8 @@
 #  uuid             :string(255)
 #  device_id        :string(255)
 #  external_id      :string(255)
-#  start_entry_date :datetime         default(2016-02-10 04:24:35 UTC)
-#  end_entry_date   :datetime         default(2016-02-10 04:24:35 UTC)
+#  start_entry_date :datetime         default(2015-08-14 02:57:03 UTC)
+#  end_entry_date   :datetime         default(2015-08-14 02:57:03 UTC)
 #  user_id          :integer
 #
 
