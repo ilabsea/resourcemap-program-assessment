@@ -20,3 +20,10 @@
   padding-left: 27px;
   vertical-align: middle;
  }
+
+ .s-select {
+   height:30px;
+   margin-left:0px;
+   margin-bottom: 8px;
+   width: 130px;
+ }

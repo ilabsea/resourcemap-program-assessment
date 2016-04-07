@@ -38,12 +38,28 @@ onLayers ->
       @tmpSelectedField = ko.observable()
 
       @fields = ko.observableArray()
-
-      @customWidgetedFields = ko.computed =>
+      @fieldList = ko.computed =>
+        return @fields() if @fields().length > 0
         fields = []
         for layer in @layers()
-          fields = fields.concat(layer.fields().filter (f) => f.custom_widgeted)
-        fields
+          fields = fields.concat(layer.fields())
+        fields.sort (first, second)->
+          firstItem = first.name().toLowerCase()
+          secondItem = second.name().toLowerCase()
+          if firstItem < secondItem
+            return -1
+          else if firstItem == secondItem
+            return 0
+          else
+            return 1
+        @fields(fields)
+        return @fields()
+
+
+
+      @customWidgetedFields = ko.computed =>
+        @fieldList().filter (f) => f.custom_widgeted
+
 
       @selectedCustomWidgetField = ko.observable()
       @selectedCollectionCustomAggregator = ko.observable()

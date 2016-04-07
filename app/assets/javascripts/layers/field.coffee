@@ -404,13 +404,44 @@ onLayers ->
   class @Field_custom_aggregator extends @FieldImpl
     constructor: (field) ->
       super(field)
+      @selectedFilteredFieldPrimary = ko.observable()
+      @selectedFilteredFieldSecondary = ko.observable()
+
+      @selectedCollectionFieldPrimary = ko.observable()
+      @selectedCollectionFieldSecondary = ko.observable()
+
+      @selectedCollectionFieldListStore = ko.observableArray()
+
       filteredCollections = @findCollectionById(field?.config?.collection_aggregator)
-      @selectedCollectionAggregator = ko.observable(filteredCollections[0])
+      @selectedCollection = ko.observable(filteredCollections[0])
+
+
+
+      @selectedCollectionFieldList = ko.computed =>
+        @findFieldByCollectionId(@selectedCollection().id)
+      # @selectedCollection.subscribe =>
+      #   @findFieldByCollectionId(@selectedCollection().id)
+
 
     findCollectionById: (id) =>
       @collectionList().filter (collection) ->
         console.log "comparison: #{collection.id}, #{window.collectionId}",
         collection.id == parseInt(id)
+
+    findFieldByCollectionId: (collectionId) =>
+      @selectedCollectionFieldListStore(null)
+      $.get "/collections/#{collectionId}/basic_fields.json", {}, (fields) =>
+        fields.sort (first, second)->
+          firstItem = first.name.toLowerCase()
+          secondItem = second.name.toLowerCase()
+          if firstItem < secondItem
+            return -1
+          else if firstItem == secondItem
+            return 0
+          else
+            return 1
+        @selectedCollectionFieldListStore(fields)
+
 
     # cannot get it from window.model since this variable does not exist yet
     # we are forming the new MainViewModel constructor
@@ -419,4 +450,8 @@ onLayers ->
 
     toJSON: (json) =>
       json.is_custom_aggregator = true
-      json.config = {collection_aggregator: @selectedCollectionAggregator()?.id}
+      json.config = {
+        collection_aggregator: @selectedCollection()?.id,
+        filter_field_primary: @selectedFilteredFieldPrimary()?.id,
+        filter_field_secondary: @selectedFilteredFieldSecondary()?.id
+      }

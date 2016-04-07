@@ -20,6 +20,7 @@ ResourceMap::Application.routes.draw do
   get 'view_photo' => 'sites#view_photo'
   get 'collections/:collection_id/my_membership' => 'collections#my_membership'
 
+
   resources :repeats
   resources :collections do
     post  :send_new_member_sms
@@ -27,8 +28,8 @@ ResourceMap::Application.routes.draw do
     get  :message_quota
     get :sites_by_term
 
-    resources :queries    
-
+    resources :queries
+    resources :basic_fields, only: ['index']
     resources :sites do
       get :visible_layers_for
     end
@@ -60,7 +61,7 @@ ResourceMap::Application.routes.draw do
     get 'members'
     get 'settings'
     get 'quotas'
-    
+
     get 'csv_template'
     get 'max_value_of_property'
 
@@ -109,7 +110,7 @@ ResourceMap::Application.routes.draw do
     post 'status', :on => :member
     post 'try'
   end
-  
+
   # resources :can_queries
 
   match 'terms_and_conditions' => redirect("http://instedd.org/terms-of-service/")
@@ -126,8 +127,8 @@ ResourceMap::Application.routes.draw do
     # match 'collections/:id/update_sites_under_collection' => 'collections#update_sites_under_collection', :via => :put
     # put 'collections/:id/update_sites_under_collection' => 'collections#update_sites_under_collection', as: :collections
     resources :tokens, :only => [:index, :destroy]
-    resources :collections do      
-      member do 
+    resources :collections do
+      member do
         put 'update_sites'
         get 'get_fields'
         get 'get_sites_conflict'
@@ -140,7 +141,7 @@ ResourceMap::Application.routes.draw do
     match 'collections/:collection_id/memberships' => 'memberships#update', :via => :put
     match 'collections/:collection_id/register_new_member' => 'memberships#register_new_member', :via => :post
     match 'collections/:collection_id/destroy_member' => 'memberships#destroy_member', :via => :delete
-    
+
     devise_scope :user do
       post '/users' => 'registrations#create'
       post '/users/sign_in' => 'sessions#create'
@@ -184,7 +185,7 @@ ResourceMap::Application.routes.draw do
     match 'quota' => 'quota#index', via: :get
   end
 
-  offline = Rack::Offline.configure do  
+  offline = Rack::Offline.configure do
     cache "assets/mobile.js"
     cache "assets/mobile.css"
 
@@ -200,7 +201,7 @@ ResourceMap::Application.routes.draw do
     cache "images/favicon.ico"
     network "*"
   end
-  match "/application.manifest" => offline 
+  match "/application.manifest" => offline
 
   # TODO: deprecate later
   match 'collections/:collection_id/fred_api/v1/facilities/:id' => 'fred_api#show_facility', :via => :get
