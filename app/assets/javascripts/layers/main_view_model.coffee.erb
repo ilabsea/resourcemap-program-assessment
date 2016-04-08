@@ -2,7 +2,8 @@ onLayers ->
   class @MainViewModel
     constructor: (collectionId, layers, collectionList) ->
       @collectionId = collectionId
-      @layers = ko.observableArray $.map(layers, (x) -> new Layer(x))
+      @fields = ko.observableArray()
+      @layers = ko.observableArray $.map(layers, (x) => new Layer(x, @))
       @updateLayerDeletable()
       @currentLayer = ko.observable()
       @currentField = ko.observable()
@@ -37,7 +38,6 @@ onLayers ->
 
       @tmpSelectedField = ko.observable()
 
-      @fields = ko.observableArray()
       @fieldList = ko.computed =>
         return @fields() if @fields().length > 0
         fields = []

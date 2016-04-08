@@ -21,9 +21,30 @@
   vertical-align: middle;
  }
 
- .s-select {
+ .c-select{
    height:30px;
    margin-left:0px;
    margin-bottom: 8px;
+ }
+
+ .s-select {
    width: 130px;
+ }
+
+ .m-select {
+   width: 245px;
+ }
+
+.list{
+  list-style: none;
+  padding: 0px;
+  margin: 0px;
+}
+
+ .list-item div{
+   display: inline-block;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+   width: 235px;
  }

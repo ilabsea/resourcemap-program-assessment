@@ -30,58 +30,7 @@
 
   %hr/
   /ko if: kind() == 'custom_aggregator'
-  %div{"style" => "padding: 5px 0px;"}
-    %label Disign custom field as you want it to look like
-    %span.smalltext.left{style: 'padding-right:18px;padding-top:10px;'} Collections
-    = select_tag nil, nil, 'data-bind'=> "options: $root.collectionList,
-                                             optionsText: 'name',
-                                             value: impl().selectedCollection,
-                                             optionsCaption: window.model.default_select, css: { error: !impl().selectedCollection() } ",
-                                            'class'=> 's-select'
-
-  %table
-    %tr
-      %th
-        Current
-      %th
-        Selected
-    %tr
-      %td
-        %div{"style" => "padding: 5px 0px;"}
-          %span.smalltext.left{style: 'padding-right:18px;padding-top:10px;'}= t('views.layers.form.field.select_fields')
-          = select_tag nil, nil, 'data-bind'=> "options: $root.fieldList,
-                                                   optionsText: 'name',
-                                                   value: impl().selectedFilteredFieldPrimary,
-                                                   optionsCaption: window.model.default_select, css: { error: !impl().selectedFilteredFieldPrimary() } ",
-                                                  'class'=> 's-select'
-      %td
-        %div{"style" => "padding: 5px 0px;"}
-          %span.smalltext.left{style: 'padding-right:18px;padding-top:10px;'}= t('views.layers.form.field.select_fields')
-          = select_tag nil, nil, 'data-bind'=> "options: impl().selectedCollectionFieldListStore,
-                                                   optionsText: 'name',
-                                                   value: impl().selectedCollectionFieldPrimary,
-                                                   optionsCaption: window.model.default_select, css: { error: !impl().selectedCollectionFieldPrimary() } ",
-                                                  'class'=> 's-select'
-
-    %tr
-      %td
-        %div{"style" => "padding: 5px 0px;"}
-          %span.smalltext.left{style: 'padding-right:18px;padding-top:10px;'}= t('views.layers.form.field.select_fields')
-          = select_tag nil, nil, 'data-bind'=> "options: $root.fieldList,
-                                                   optionsText: 'name',
-                                                   value: impl().selectedFilteredFieldSecondary,
-                                                   optionsCaption: window.model.default_select, css: { error: !impl().selectedFilteredFieldSecondary() } ",
-                                                  'class'=> 's-select'
-      %td
-        %div{"style" => "padding: 5px 0px;"}
-          %span.smalltext.left{style: 'padding-right:18px;padding-top:10px;'}= t('views.layers.form.field.select_fields')
-          = select_tag nil, nil, 'data-bind'=> "options: impl().selectedCollectionFieldListStore,
-                                                   optionsText: 'name',
-                                                   value: impl().selectedCollectionFieldSecondary,
-                                                   optionsCaption: window.model.default_select, css: { error: !impl().selectedCollectionFieldSecondary() } ",
-                                                  'class'=> 's-select'
-
-
+  =render 'field_aggregator'
   //ko
   %label
     = t('views.layers.form.field.mandatory')
@@ -186,7 +135,7 @@
                                              optionsText: 'name',
                                              value: $root.selectedCustomWidgetField,
                                              optionsCaption: window.model.default_select, css: { error: !$root.selectedCustomWidgetField() } ",
-                                            'style'=> 'height:30px;margin-left:0px; margin-bottom: 8px;'
+                                             class: 'c-select m-select'
 
     %button.clist-add{ko(click: '$root.addCustomWidgetedFieldItem',
                          enable: '$root.customWidgetedFields().length >0'),
