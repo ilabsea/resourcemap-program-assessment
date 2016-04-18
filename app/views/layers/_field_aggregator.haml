@@ -3,6 +3,7 @@
   %span.smalltext.left{style: 'padding-right:18px;padding-top:10px;'} Collections
   = select_tag nil, nil, 'data-bind'=> "options: $root.collectionList,
                                            optionsText: 'name',
+                                           optionsValue: 'id',
                                            value: impl().selectedCollection,
                                            optionsCaption: window.model.default_select, css: { error: !impl().selectedCollection() } ",
                                           'class'=> 's-select'
@@ -19,6 +20,7 @@
         %span.smalltext.left{style: 'padding-right:18px;padding-top:10px;'}= t('views.layers.form.field.select_fields')
         = select_tag nil, nil, 'data-bind'=> "options: $root.fieldList,
                                                  optionsText: 'name',
+                                                 optionsValue: 'id',
                                                  value: impl().selectedFilteredFieldPrimary,
                                                  optionsCaption: window.model.default_select, css: { error: !impl().selectedFilteredFieldPrimary() } ",
                                                 'class'=> 'c-select s-select'
@@ -27,6 +29,7 @@
         %span.smalltext.left{style: 'padding-right:18px;padding-top:10px;'}= t('views.layers.form.field.select_fields')
         = select_tag nil, nil, 'data-bind'=> "options: impl().selectedCollectionFieldList,
                                                  optionsText: 'name',
+                                                 optionsValue: 'id',
                                                  value: impl().selectedCollectionFieldPrimary,
                                                  optionsCaption: window.model.default_select, css: { error: !impl().selectedCollectionFieldPrimary() } ",
                                                 'class'=> 'c-select s-select'
@@ -37,6 +40,7 @@
         %span.smalltext.left{style: 'padding-right:18px;padding-top:10px;'}= t('views.layers.form.field.select_fields')
         = select_tag nil, nil, 'data-bind'=> "options: $root.fieldList,
                                                  optionsText: 'name',
+                                                 optionsValue: 'id',
                                                  value: impl().selectedFilteredFieldSecondary,
                                                  optionsCaption: window.model.default_select, css: { error: !impl().selectedFilteredFieldSecondary() } ",
                                                 'class'=> 'c-select s-select'
@@ -45,6 +49,7 @@
         %span.smalltext.left{style: 'padding-right:18px;padding-top:10px;'}= t('views.layers.form.field.select_fields')
         = select_tag nil, nil, 'data-bind'=> "options: impl().selectedCollectionFieldList,
                                                  optionsText: 'name',
+                                                 optionsValue: 'id',
                                                  value: impl().selectedCollectionFieldSecondary,
                                                  optionsCaption: window.model.default_select, css: { error: !impl().selectedCollectionFieldSecondary() } ",
                                                 'class'=> 'c-select s-select'
@@ -52,7 +57,6 @@
 %div{"style" => "padding: 5px 0px;"}
   %label Aggregator Type
   = select_tag nil, nil, 'data-bind'=> "options: impl().aggregatorTypeList,
-                                           optionsText: 'name',
                                            value: impl().selectedAggregatorType,
                                            optionsCaption: window.model.default_select, css: { error: !impl().selectedAggregatorType() } ",
                                           'class'=> ''

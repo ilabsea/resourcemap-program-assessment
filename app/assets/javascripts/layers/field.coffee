@@ -406,54 +406,31 @@ onLayers ->
       super(field)
       @_fieldList = ko.observableArray([])
 
-      @selectedFilteredFieldPrimary = ko.observable()
-      @selectedFilteredFieldSecondary = ko.observable()
+      @selectedFilteredFieldPrimary = ko.observable(field.config?.selected_filter_field_primary)
+      @selectedFilteredFieldSecondary = ko.observable(field.config?.selected_filter_field_secondary)
 
-      @selectedCollectionFieldPrimary = ko.observable()
-      @selectedCollectionFieldSecondary = ko.observable()
+      @selectedCollectionFieldPrimary = ko.observable(field.config?.selected_collection_field_primary)
+      @selectedCollectionFieldSecondary = ko.observable(field.config?.selected_collection_field_secondary)
 
       @selectedCollectionFieldList = ko.observableArray([])
-
-      @selectedCollection = ko.observable()
+      @selectedCollection = ko.observable(field.config?.selected_collection)
 
       @selectedCollection.subscribe =>
-        @findFieldByCollectionId(@selectedCollection()?.id)
-      # set default values
-      # @selectedCollection()
-      @selectedFilteredFieldPrimary(@findFieldById(field.config.selected_filtered_field_primary))
+        @findFieldByCollectionId(@selectedCollection())
 
-      @aggregatorTypeList = [{name: 'SUM'}]
-      @selectedAggregatorType = ko.observable()
+      @aggregatorTypeList = ['SUM']
+      @selectedAggregatorType = ko.observable(field.config?.selected_aggregator_type)
       @selectedCustomWidgetFieldList = ko.computed =>
         @selectedCollectionFieldList().filter ((field) -> field.custom_widgeted)
 
       @selectedCustomWidgetField = ko.observable()
-
-      @aggregatedFieldList = ko.observableArray([])
-
-
-    addCustomWidgetedFieldItem: =>
-      if @selectedCustomWidgetField() && @selectedCustomWidgetField() not in @aggregatedFieldList()
-        @aggregatedFieldList.push @selectedCustomWidgetField()
-
-    removeCustomWidgetedFieldItem: (item) =>
-      @aggregatedFieldList.remove(item)
-
-    model: =>
-      window.test = @field.layer().parent()
-
-    findFieldById: (id) =>
-      result = @fieldList().filter (field) -> field.id == pareseInt(id)
-      result[0]
-
-    findCollectionById: (id) =>
-      result = @collectionList().filter (collection) ->
-        collection.id == parseInt(id)
-      result[0]
+      # data get stored in hash format, not in array's
+      @aggregatedFieldList = ko.observableArray($.map(field.config?.aggregated_field_list, (x) =>  {code: x.code, name: x.name}))
+      console.log 'list : ' , @aggregatedFieldList()
 
     findFieldByCollectionId: (collectionId) =>
-      return false if !collectionId
-      @selectedCollectionFieldList([])
+      return @selectedCollectionFieldList([]) if !collectionId
+
       $.get "/collections/#{collectionId}/basic_fields.json", {}, (fields) =>
         fields.sort (first, second)->
           firstItem = first.name.toLowerCase()
@@ -465,6 +442,33 @@ onLayers ->
           else
             return 1
         @selectedCollectionFieldList(fields)
+        #Initially selectedCollectionFieldList is empty then selectedCollectionFieldPrimary will be forced to undefined
+        @selectedCollectionFieldPrimary(@field.config?.selected_collection_field_primary)
+        @selectedCollectionFieldSecondary(@field.config?.selected_collection_field_secondary)
+
+    addCustomWidgetedFieldItem: =>
+      if @selectedCustomWidgetField() && @selectedCustomWidgetField() not in @aggregatedFieldList()
+        found = false
+        for aggregatedField in @aggregatedFieldList()
+          if @selectedCustomWidgetField().code == aggregatedField.code
+            found = true
+            break
+        @aggregatedFieldList.push @selectedCustomWidgetField() if found == false
+
+    removeCustomWidgetedFieldItem: (item) =>
+      @aggregatedFieldList.remove(item)
+
+    model: =>
+      window.test = @field.layer().parent()
+
+    findFieldById: (id) =>
+      result = @fieldList().filter (field) -> field.id == parseInt(id)
+      result[0]
+
+    findCollectionById: (id) =>
+      result = @collectionList().filter (collection) ->
+        collection.id == parseInt(id)
+      result[0]
 
 
     # cannot get it from window.model since this variable does not exist yet
@@ -479,11 +483,10 @@ onLayers ->
       return @_fieldList() if @_fieldList().length > 0
       fields = []
       for layer in @layerList()
-        console.log "layer: ", layer
-        fields = fields.concat(layer.fields())
+        fields = fields.concat(layer.fields)
       fields.sort (first, second)->
-        firstItem = first.name().toLowerCase()
-        secondItem = second.name().toLowerCase()
+        firstItem = first.name.toLowerCase()
+        secondItem = second.name.toLowerCase()
         if firstItem < secondItem
           return -1
         else if firstItem == secondItem
@@ -496,15 +499,15 @@ onLayers ->
     toJSON: (json) =>
       json.is_custom_aggregator = true
       json.config = {
-        collection_aggregator: @selectedCollection()?.id,
+        selected_collection: @selectedCollection(),
 
-        filter_field_primary: @selectedFilteredFieldPrimary()?.id,
-        filter_field_secondary: @selectedFilteredFieldSecondary()?.id,
+        selected_filter_field_primary: @selectedFilteredFieldPrimary(),
+        selected_filter_field_secondary: @selectedFilteredFieldSecondary(),
 
-        selected_collection_field_primary: @selectedCollectionFieldPrimary()?.id,
-        selected_collection_field_secondary: @selectedCollectionFieldSecondary()?.id,
+        selected_collection_field_primary: @selectedCollectionFieldPrimary(),
+        selected_collection_field_secondary: @selectedCollectionFieldSecondary(),
 
         selected_aggregator_type: @selectedAggregatorType(),
-        aggregated_field_list: $.map(@aggregatedFieldList(), (x) =>  x.code)
+        aggregated_field_list: $.map(@aggregatedFieldList(), (x) =>  {code: x.code, name: x.name})
 
       }
