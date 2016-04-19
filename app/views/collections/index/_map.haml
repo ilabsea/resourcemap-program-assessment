@@ -139,7 +139,7 @@
                   %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;color:grey;cursor:pointer'}
                 <!-- ko if: expanded() -->
                 <!-- ko foreach: fields -->
-                <!-- ko if: !isForCustomWidget() -->
+                <!-- ko if: !isForCustomWidget() && kind != "custom_aggregator" -->
                 %div{ko(attr: {class: "invisible_calculation"})}
                   %span{ko(text: :errorMessage, validationPopover: :errorMessage), style: 'display: none;'}
                   <!-- ko if: is_mandatory -->
