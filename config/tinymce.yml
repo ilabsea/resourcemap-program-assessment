@@ -3,6 +3,7 @@ default:
   toolbar: styleselect | bold italic | undo redo | table
   menubar: false
   statusbar: false
+  table_toolbar: ""
   plugins:
     - image
     - link

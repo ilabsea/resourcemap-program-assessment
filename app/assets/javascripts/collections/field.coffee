@@ -39,13 +39,13 @@ onCollections ->
         data.custom_widgeted
 
       @widgetContentAsInputView = ko.computed =>
-        if(@kind == "custom_widget")
-          @replaceCustomFieldByInput data.config.widgetContent.replace(/&nbsp;/g, '')
+        if(@kind == "custom_widget" && data.config?.widget_content != undefined)
+          @replaceCustomFieldByInput data.config?.widget_content?.replace(/&nbsp;/g, '')
         else
           ""
       @widgetContentAsSpanView = ko.computed =>
-        if(@kind == "custom_widget")
-          @replaceCustomFieldBySpan data.config.widgetContent.replace(/&nbsp;/g, '')
+        if(@kind == "custom_widget" && data.config?.widget_content != undefined)
+          @replaceCustomFieldBySpan data.config?.widget_content.replace(/&nbsp;/g, '')
         else
           ""
       @hasValue = ko.computed =>

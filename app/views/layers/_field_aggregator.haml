@@ -53,7 +53,16 @@
                                                  value: impl().selectedCollectionFieldSecondary,
                                                  optionsCaption: window.model.default_select, css: { error: !impl().selectedCollectionFieldSecondary() } ",
                                                 'class'=> 'c-select s-select'
-
+%div{"style" => "padding: 5px 0px;"}
+  %label Condition
+  = select_tag nil, nil, 'data-bind'=> "options: impl().selectedCollectionFieldList,
+                                           optionsText: 'name',
+                                           optionsValue: 'id',
+                                           value: impl().selectedCollectionConditionField,
+                                           optionsCaption: window.model.default_select, css: { error: !impl().selectedCollectionConditionField() } ",
+                                          'class'=> 'c-select s-select'
+  %span.w06
+    %input{ko(value: "impl().conditionFieldValue"), type: "text"}
 %div{"style" => "padding: 5px 0px;"}
   %label Aggregator Type
   = select_tag nil, nil, 'data-bind'=> "options: impl().aggregatorTypeList,

@@ -411,6 +411,7 @@ onLayers ->
 
       @selectedCollectionFieldPrimary = ko.observable(field.config?.selected_collection_field_primary)
       @selectedCollectionFieldSecondary = ko.observable(field.config?.selected_collection_field_secondary)
+      @selectedCollectionConditionField = ko.observable(field.config?.selected_collection_condition_field)
 
       @selectedCollectionFieldList = ko.observableArray([])
       @selectedCollection = ko.observable(field.config?.selected_collection)
@@ -425,29 +426,22 @@ onLayers ->
 
       @selectedCustomWidgetField = ko.observable()
       # data get stored in hash format, not in array's
-      @aggregatedFieldList = ko.observableArray($.map(field.config?.aggregated_field_list, (x) =>  {code: x.code, name: x.name}))
-      console.log 'list : ' , @aggregatedFieldList()
+      @aggregatedFieldList = ko.observableArray($.map(field.config?.aggregated_field_list || [] , (x) =>  {code: x.code, name: x.name}))
+      @conditionFieldValue = ko.observable(field.config?.condition_field_value)
 
     findFieldByCollectionId: (collectionId) =>
       return @selectedCollectionFieldList([]) if !collectionId
 
       $.get "/collections/#{collectionId}/basic_fields.json", {}, (fields) =>
-        fields.sort (first, second)->
-          firstItem = first.name.toLowerCase()
-          secondItem = second.name.toLowerCase()
-          if firstItem < secondItem
-            return -1
-          else if firstItem == secondItem
-            return 0
-          else
-            return 1
+        fields.sort((x, y) -> if x.name.toLowerCase().trim() < y.name.toLowerCase().trim() then -1 else 1)
         @selectedCollectionFieldList(fields)
         #Initially selectedCollectionFieldList is empty then selectedCollectionFieldPrimary will be forced to undefined
         @selectedCollectionFieldPrimary(@field.config?.selected_collection_field_primary)
         @selectedCollectionFieldSecondary(@field.config?.selected_collection_field_secondary)
+        @selectedCollectionConditionField(@field.config?.selected_collection_condition_field)
 
     addCustomWidgetedFieldItem: =>
-      if @selectedCustomWidgetField() && @selectedCustomWidgetField() not in @aggregatedFieldList()
+      if @selectedCustomWidgetField()
         found = false
         for aggregatedField in @aggregatedFieldList()
           if @selectedCustomWidgetField().code == aggregatedField.code
@@ -508,6 +502,8 @@ onLayers ->
         selected_collection_field_secondary: @selectedCollectionFieldSecondary(),
 
         selected_aggregator_type: @selectedAggregatorType(),
-        aggregated_field_list: $.map(@aggregatedFieldList(), (x) =>  {code: x.code, name: x.name})
+        aggregated_field_list: $.map(@aggregatedFieldList(), (x) =>  {code: x.code, name: x.name}),
+        selected_collection_condition_field: @selectedCollectionConditionField(),
+        condition_field_value: @conditionFieldValue()
 
       }

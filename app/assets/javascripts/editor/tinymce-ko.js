@@ -59,11 +59,13 @@ tinyMCE.init({
   menubar: false,
   statusbar: false,
   toolbar: false,
-  skin: "lightgray-gradient"
+  skin: "lightgray-gradient",
+  table_toolbar: ""
 });
 
 tinymce.init({
         themes: "modern",
+        table_toolbar: "",
         plugins: [
             "advlist autolink lists link image charmap print preview anchor",
             "searchreplace visualblocks code fullscreen",
