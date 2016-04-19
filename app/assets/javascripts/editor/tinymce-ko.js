@@ -11,6 +11,7 @@ ko.bindingHandlers.tinymce = {
                            'insertdatetime table contextmenu paste code']
         options.menubar =  false
         options.toolbar = "alignleft aligncenter table styleselect bold fullscreen"
+        options.table_toolbar = ''
 
         options.setup = function (editor) {
           editor.on('focus', function(e){
@@ -54,22 +55,13 @@ ko.bindingHandlers.tinymce = {
     }
 };
 
-tinyMCE.init({
-  // skin_url: '/assets/tinymce/skins/custom/'
-  menubar: false,
-  statusbar: false,
-  toolbar: false,
-  skin: "lightgray-gradient",
-  table_toolbar: ""
-});
-
-tinymce.init({
-        themes: "modern",
-        table_toolbar: "",
-        plugins: [
-            "advlist autolink lists link image charmap print preview anchor",
-            "searchreplace visualblocks code fullscreen",
-            "insertdatetime media table contextmenu paste"
-        ],
-        toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
-    });
+// tinymce.init({
+//         themes: "modern",
+//         table_toolbar: "",
+//         plugins: [
+//             "advlist autolink lists link image charmap print preview anchor",
+//             "searchreplace visualblocks code fullscreen",
+//             "insertdatetime media table contextmenu paste"
+//         ],
+//         toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+//     });
