@@ -62,6 +62,7 @@ group :development do
   gem 'ruby-prof', :git => 'https://github.com/ruby-prof/ruby-prof.git'
   gem 'mailcatcher'
   gem 'annotate'
+  gem 'pry-rails'
 end
 
 # Gems used only for assets and not required

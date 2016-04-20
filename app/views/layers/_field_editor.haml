@@ -32,10 +32,17 @@
   /ko if: kind() == 'custom_aggregator'
   =render 'field_aggregator'
   //ko
+
   %label
     = t('views.layers.form.field.mandatory')
   %p.smalltext= t('views.layers.form.field.this_field_must_be_report_on_every_report')
   = ko_check_box_tag :is_mandatory, css: {error: :codeError}
+  %br
+  %label
+    Is Criteria
+  %p.smalltext
+    This field will be use to find related site
+  = ko_check_box_tag :is_criteria, css: {error: :codeError}
 
   /ko if: kind() == 'numeric'
   %hr/

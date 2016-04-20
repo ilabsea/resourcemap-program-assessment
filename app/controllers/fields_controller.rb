@@ -19,6 +19,7 @@
 #  is_display_field      :boolean
 #  custom_widgeted       :boolean          default(FALSE)
 #  is_custom_aggregator  :boolean          default(FALSE)
+#  is_criteria           :boolean          default(FALSE)
 #
 
 class FieldsController < ApplicationController

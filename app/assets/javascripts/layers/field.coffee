@@ -14,6 +14,7 @@ onLayers ->
 
       @is_enable_field_logic = ko.observable data?.is_enable_field_logic ? false
       @is_enable_range = data?.is_enable_range
+      @is_criteria = data?.is_criteria
       @config = data?.config
       @field_logics_attributes = data?.field_logics_attributes
       @metadata = data?.metadata
@@ -117,6 +118,7 @@ onLayers ->
         is_mandatory: @is_mandatory
         is_display_field: @is_display_field
         is_enable_field_logic: @is_enable_field_logic
+        is_criteria: @is_criteria
         custom_widgeted: @custom_widgeted
       @impl().toJSON(json)
       json
@@ -426,7 +428,7 @@ onLayers ->
 
       @selectedCustomWidgetField = ko.observable()
       # data get stored in hash format, not in array's
-      @aggregatedFieldList = ko.observableArray($.map(field.config?.aggregated_field_list || [] , (x) =>  {code: x.code, name: x.name}))
+      @aggregatedFieldList = ko.observableArray($.map(field.config?.aggregated_field_list || [] , (x) =>  {id: x.id, code: x.code, name: x.name}))
       @conditionFieldValue = ko.observable(field.config?.condition_field_value)
 
     findFieldByCollectionId: (collectionId) =>
@@ -502,7 +504,7 @@ onLayers ->
         selected_collection_field_secondary: @selectedCollectionFieldSecondary(),
 
         selected_aggregator_type: @selectedAggregatorType(),
-        aggregated_field_list: $.map(@aggregatedFieldList(), (x) =>  {code: x.code, name: x.name}),
+        aggregated_field_list: $.map(@aggregatedFieldList(), (x) =>  {id: x.id, code: x.code, name: x.name}),
         selected_collection_condition_field: @selectedCollectionConditionField(),
         condition_field_value: @conditionFieldValue()
 
