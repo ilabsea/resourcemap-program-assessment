@@ -38,13 +38,14 @@
   %p.smalltext= t('views.layers.form.field.this_field_must_be_report_on_every_report')
   = ko_check_box_tag :is_mandatory, css: {error: :codeError}
   %br
+
   %label
     Is Criteria
   %p.smalltext
     This field will be use to find related site
   = ko_check_box_tag :is_criteria, css: {error: :codeError}
 
-  /ko if: kind() == 'numeric'
+  /ko if: kind() == 'numeric' || kind() == 'custom_aggregator'
   %hr/
   %label
     = t('views.layers.form.field.custom_widgeted')
@@ -150,6 +151,13 @@
 
     %textarea{"data-bind" => "tinymce: impl().widgetContent", class: 'tinymce'}
       Hello
+
+    %label
+      Read-only widgeted
+    %p.smalltext
+      The field will be uneditable
+    = ko_check_box_tag :readonly_custom_widgeted, css: {error: :codeError}
+
   //ko
 
   /ko if: kind() == 'photo'

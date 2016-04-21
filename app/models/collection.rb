@@ -2,20 +2,21 @@
 #
 # Table name: collections
 #
-#  id          :integer          not null, primary key
-#  name        :string(255)
-#  description :text
-#  public      :boolean
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
-#  lat         :decimal(10, 6)
-#  lng         :decimal(10, 6)
-#  min_lat     :decimal(10, 6)
-#  min_lng     :decimal(10, 6)
-#  max_lat     :decimal(10, 6)
-#  max_lng     :decimal(10, 6)
-#  icon        :string(255)
-#  quota       :integer          default(0)
+#  id            :integer          not null, primary key
+#  name          :string(255)
+#  description   :text
+#  public        :boolean
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  lat           :decimal(10, 6)
+#  lng           :decimal(10, 6)
+#  min_lat       :decimal(10, 6)
+#  min_lng       :decimal(10, 6)
+#  max_lat       :decimal(10, 6)
+#  max_lng       :decimal(10, 6)
+#  icon          :string(255)
+#  quota         :integer          default(0)
+#  is_aggregator :boolean          default(FALSE)
 #
 
 class Collection < ActiveRecord::Base
@@ -202,6 +203,7 @@ class Collection < ActiveRecord::Base
           is_display_field: field.is_display_field,
           is_enable_field_logic: field.is_enable_field_logic,
           custom_widgeted: field.custom_widgeted,
+          readonly_custom_widgeted: field.readonly_custom_widgeted,
           # field_logic_value: field.field_logic_value,
           writeable: user.is_guest ? false : !lms || lms[field.layer_id].write
         }

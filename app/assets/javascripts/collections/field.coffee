@@ -12,6 +12,7 @@ onCollections ->
       @is_display_field = ko.observable data?.is_display_field ? false
       @is_enable_field_logic = data.is_enable_field_logic
       @custom_widgeted = data.custom_widgeted
+      @readonly_custom_widgeted = data.readonly_custom_widgeted
       @invisible_calculation = ko.computed =>
                                 if @kind == "calculation" && !@is_display_field()
                                   return "invisible-div"
@@ -40,7 +41,11 @@ onCollections ->
 
       @widgetContentAsInputView = ko.computed =>
         if(@kind == "custom_widget" && data.config?.widget_content != undefined)
-          @replaceCustomFieldByInput data.config?.widget_content?.replace(/&nbsp;/g, '')
+          if @readonly_custom_widgeted == true
+            console.log 'read-only'
+            @replaceCustomFieldBySpan data.config?.widget_content.replace(/&nbsp;/g, '')
+          else
+            @replaceCustomFieldByInput data.config?.widget_content?.replace(/&nbsp;/g, '')
         else
           ""
       @widgetContentAsSpanView = ko.computed =>
@@ -142,12 +147,19 @@ onCollections ->
           field_object.unblock()
 
     replaceCustomFieldByInput: (widgetContent) =>
-      regExp = new RegExp /\{([^}]*)\}/g
-      widget = widgetContent.replace(regExp, '<input type="text" placeholder="$1" name="custom-input-$1" data-bind="value: value" id="custom-input-$1" class="custom key-map-integer"/>')
+      regExp = /\{([^}]*)\}/g
+      replaceBy = """
+                 <input type="text" placeholder="$1" name="custom-widget-$1"
+                        data-bind="value: value" id="custom-widget-$1"
+                        class="custom key-map-integer" />
+                  """
+
+      widget = widgetContent.replace(regExp, replaceBy)
 
     replaceCustomFieldBySpan: (widgetContent) =>
       regExp = /\{([^}]*)\}/g
-      widget = widgetContent.replace(regExp, '<span data-bind="text: value" id="custom-span-$1" class="custom"></span>')
+      replaceBy = '<span data-bind="text: value" id="custom-widget-$1" class="custom"></span>'
+      widget = widgetContent.replace(regExp, replaceBy)
 
     refresh_skip: =>
       if(@is_blocked_by())
@@ -646,3 +658,15 @@ onCollections ->
       @value('')
       $("#" + @code).attr("value",'')
       $("#divUpload-" + @code).hide()
+
+    inputable: =>
+      if (@kind == 'custom_widget' && @readonly_custom_widgeted == true) || @isForCustomWidget() || @kind == 'custom_aggregator'
+        false
+      else
+        true
+
+    visible: =>
+      if (@kind != "calculation" || (@kind == "calculation" && @is_display_field)) && !@isForCustomWidget()
+        true
+      else
+        false

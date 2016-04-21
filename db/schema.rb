@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160419090830) do
+ActiveRecord::Schema.define(:version => 20160422031249) do
 
   create_table "activities", :force => true do |t|
     t.integer  "user_id"
@@ -53,16 +53,17 @@ ActiveRecord::Schema.define(:version => 20160419090830) do
     t.string   "name"
     t.text     "description"
     t.boolean  "public"
-    t.datetime "created_at",                                                :null => false
-    t.datetime "updated_at",                                                :null => false
-    t.decimal  "lat",         :precision => 10, :scale => 6
-    t.decimal  "lng",         :precision => 10, :scale => 6
-    t.decimal  "min_lat",     :precision => 10, :scale => 6
-    t.decimal  "min_lng",     :precision => 10, :scale => 6
-    t.decimal  "max_lat",     :precision => 10, :scale => 6
-    t.decimal  "max_lng",     :precision => 10, :scale => 6
+    t.datetime "created_at",                                                      :null => false
+    t.datetime "updated_at",                                                      :null => false
+    t.decimal  "lat",           :precision => 10, :scale => 6
+    t.decimal  "lng",           :precision => 10, :scale => 6
+    t.decimal  "min_lat",       :precision => 10, :scale => 6
+    t.decimal  "min_lng",       :precision => 10, :scale => 6
+    t.decimal  "max_lat",       :precision => 10, :scale => 6
+    t.decimal  "max_lng",       :precision => 10, :scale => 6
     t.string   "icon"
-    t.integer  "quota",                                      :default => 0
+    t.integer  "quota",                                        :default => 0
+    t.boolean  "is_aggregator",                                :default => false
   end
 
   create_table "field_histories", :force => true do |t|
@@ -93,18 +94,19 @@ ActiveRecord::Schema.define(:version => 20160419090830) do
     t.string   "name"
     t.string   "code"
     t.string   "kind"
-    t.datetime "created_at",                                                     :null => false
-    t.datetime "updated_at",                                                     :null => false
-    t.binary   "config",                :limit => 2147483647
+    t.datetime "created_at",                                                        :null => false
+    t.datetime "updated_at",                                                        :null => false
+    t.binary   "config",                   :limit => 2147483647
     t.integer  "ord"
     t.text     "metadata"
-    t.boolean  "is_mandatory",                                :default => false
-    t.boolean  "is_enable_field_logic",                       :default => false
-    t.boolean  "is_enable_range",                             :default => false
+    t.boolean  "is_mandatory",                                   :default => false
+    t.boolean  "is_enable_field_logic",                          :default => false
+    t.boolean  "is_enable_range",                                :default => false
     t.boolean  "is_display_field"
-    t.boolean  "custom_widgeted",                             :default => false
-    t.boolean  "is_custom_aggregator",                        :default => false
-    t.boolean  "is_criteria",                                 :default => false
+    t.boolean  "custom_widgeted",                                :default => false
+    t.boolean  "is_custom_aggregator",                           :default => false
+    t.boolean  "is_criteria",                                    :default => false
+    t.boolean  "readonly_custom_widgeted",                       :default => false
   end
 
   create_table "import_jobs", :force => true do |t|

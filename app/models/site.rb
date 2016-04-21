@@ -87,7 +87,7 @@ class Site < ActiveRecord::Base
     print 'Done!'
   end
 
-  
+
   def self.add_start_and_end_entry_date
     Site.transaction do
       Site.find_each(batch_size: 100) do |site|
@@ -159,7 +159,7 @@ class Site < ActiveRecord::Base
         value = field.default_value_for_create(collection)
         properties[field.es_code] = value if value
       end
-    end   
+    end
   end
 
   def valid_properties
@@ -180,7 +180,7 @@ class Site < ActiveRecord::Base
 
   def valid_lat_lng
     valid = false
-      
+
     if lat
       if (lat >= -90) && (lat <= 90)
         valid = true

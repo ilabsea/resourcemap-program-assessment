@@ -139,7 +139,7 @@
                   %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;color:grey;cursor:pointer'}
                 <!-- ko if: expanded() -->
                 <!-- ko foreach: fields -->
-                <!-- ko if: !isForCustomWidget() && kind != "custom_aggregator" -->
+                <!-- ko if: inputable() -->
                 %div{ko(attr: {class: "invisible_calculation"})}
                   %span{ko(text: :errorMessage, validationPopover: :errorMessage), style: 'display: none;'}
                   <!-- ko if: is_mandatory -->
@@ -217,7 +217,7 @@
                   %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;color:grey;cursor:pointer'}
                 <!-- ko if: expanded() -->
                 <!-- ko foreach: fields -->
-                <!-- ko if: (kind != "calculation" || ( kind == "calculation" && is_display_field)) && !isForCustomWidget()-->
+                <!-- ko if: visible() -->
                 %div{style: 'margin-bottom:14px'}
                   %span{ko(text: :errorMessage, validationPopover: :errorMessage), style: 'display: none;'}
                   %label.field-name{ko(html: "name + '<sup>' + code + '</sup>:'", css: { error: :error })}

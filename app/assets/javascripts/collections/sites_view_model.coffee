@@ -90,7 +90,7 @@ onCollections ->
       window.model.newOrEditSite().scrollable(false)
       window.model.newOrEditSite().startEntryDate(new Date(Date.now()))
       for field in window.model.newOrEditSite().fields()
-        new CustomWidget(field).bindWithInput() if field.custom_widgeted
+        new CustomWidget(field).bindField() if field.custom_widgeted
         field.setFieldFocus() if field.skippedState() == false && field.kind == 'yes_no'
 
       $('#name').focus()
@@ -126,7 +126,7 @@ onCollections ->
 
     @rebindCustomWidgetView: () ->
       for field in @editingSite().customWidgetFields()
-        new CustomWidget(field).bindWithSpan()
+        new CustomWidget(field).bindField()
 
     @editSiteFromId: (siteId, collectionId) ->
       site = @siteIds[siteId]

@@ -21,6 +21,7 @@ onLayers ->
       @is_mandatory = data?.is_mandatory
       @is_display_field = data?.is_display_field
       @custom_widgeted = data?.custom_widgeted
+      @readonly_custom_widgeted = data?.readonly_custom_widgeted
 
       @kind_titleize = ko.computed =>
         (@kind().split(/_/).map (word) -> word[0].toUpperCase() + word[1..-1].toLowerCase()).join ' '
@@ -120,6 +121,7 @@ onLayers ->
         is_enable_field_logic: @is_enable_field_logic
         is_criteria: @is_criteria
         custom_widgeted: @custom_widgeted
+        readonly_custom_widgeted: @readonly_custom_widgeted
       @impl().toJSON(json)
       json
 
@@ -413,7 +415,7 @@ onLayers ->
 
       @selectedCollectionFieldPrimary = ko.observable(field.config?.selected_collection_field_primary)
       @selectedCollectionFieldSecondary = ko.observable(field.config?.selected_collection_field_secondary)
-      @selectedCollectionConditionField = ko.observable(field.config?.selected_collection_condition_field)
+      @conditionFieldId = ko.observable(field.config?.condition_field_id)
 
       @selectedCollectionFieldList = ko.observableArray([])
       @selectedCollection = ko.observable(field.config?.selected_collection)
@@ -440,7 +442,7 @@ onLayers ->
         #Initially selectedCollectionFieldList is empty then selectedCollectionFieldPrimary will be forced to undefined
         @selectedCollectionFieldPrimary(@field.config?.selected_collection_field_primary)
         @selectedCollectionFieldSecondary(@field.config?.selected_collection_field_secondary)
-        @selectedCollectionConditionField(@field.config?.selected_collection_condition_field)
+        @conditionFieldId(@field.config?.condition_field_id)
 
     addCustomWidgetedFieldItem: =>
       if @selectedCustomWidgetField()
@@ -505,7 +507,7 @@ onLayers ->
 
         selected_aggregator_type: @selectedAggregatorType(),
         aggregated_field_list: $.map(@aggregatedFieldList(), (x) =>  {id: x.id, code: x.code, name: x.name}),
-        selected_collection_condition_field: @selectedCollectionConditionField(),
+        condition_field_id: @conditionFieldId(),
         condition_field_value: @conditionFieldValue()
 
       }

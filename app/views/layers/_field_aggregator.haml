@@ -58,8 +58,8 @@
   = select_tag nil, nil, 'data-bind'=> "options: impl().selectedCollectionFieldList,
                                            optionsText: 'name',
                                            optionsValue: 'id',
-                                           value: impl().selectedCollectionConditionField,
-                                           optionsCaption: window.model.default_select, css: { error: !impl().selectedCollectionConditionField() } ",
+                                           value: impl().conditionFieldId,
+                                           optionsCaption: window.model.default_select, css: { error: !impl().conditionFieldId() } ",
                                           'class'=> 'c-select s-select'
   %span.w06
     %input{ko(value: "impl().conditionFieldValue"), type: "text"}

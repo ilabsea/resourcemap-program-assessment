@@ -400,7 +400,7 @@ onCollections ->
         field.editing(false)
         field.originalValue = field.value()
         field.setFieldFocus() if field.kind in ["yes_no", "numeric", "select_one", "select_many"]
-        new CustomWidget(field).bindWithInput() if field.custom_widgeted
+        new CustomWidget(field).bindField() if field.custom_widgeted
       window.model.newOrEditSite().scrollable(false)
       $('#name').focus()
 
@@ -498,7 +498,7 @@ onCollections ->
         for layer in @layers()
           for field in layer.fields
             fields.push(field)
-            new CustomWidget(field).bindWithSpan() if field.custom_widgeted
+            new CustomWidget(field).bindField() if field.custom_widgeted
         @fields(fields)
         @getLocationFieldOption()
 
