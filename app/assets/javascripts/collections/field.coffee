@@ -150,7 +150,7 @@ onCollections ->
       regExp = /\{([^}]*)\}/g
       replaceBy = """
                  <input type="text" placeholder="$1" name="custom-widget-$1"
-                        data-bind="value: value" id="custom-widget-$1"
+                        data-bind="value: value, attr: {title: name}" id="custom-widget-$1"
                         class="custom key-map-integer" />
                   """
 
