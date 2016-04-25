@@ -409,12 +409,6 @@ onLayers ->
     constructor: (field) ->
       super(field)
       @_fieldList = ko.observableArray([])
-
-      @selectedFilteredFieldPrimary = ko.observable(field.config?.selected_filter_field_primary)
-      @selectedFilteredFieldSecondary = ko.observable(field.config?.selected_filter_field_secondary)
-
-      @selectedCollectionFieldPrimary = ko.observable(field.config?.selected_collection_field_primary)
-      @selectedCollectionFieldSecondary = ko.observable(field.config?.selected_collection_field_secondary)
       @conditionFieldId = ko.observable(field.config?.condition_field_id)
 
       @selectedCollectionFieldList = ko.observableArray([])
@@ -439,9 +433,7 @@ onLayers ->
       $.get "/collections/#{collectionId}/basic_fields.json", {}, (fields) =>
         fields.sort((x, y) -> if x.name.toLowerCase().trim() < y.name.toLowerCase().trim() then -1 else 1)
         @selectedCollectionFieldList(fields)
-        #Initially selectedCollectionFieldList is empty then selectedCollectionFieldPrimary will be forced to undefined
-        @selectedCollectionFieldPrimary(@field.config?.selected_collection_field_primary)
-        @selectedCollectionFieldSecondary(@field.config?.selected_collection_field_secondary)
+        #Initially selectedCollectionFieldList is empty then conditionFieldId will be forced to undefined
         @conditionFieldId(@field.config?.condition_field_id)
 
     addCustomWidgetedFieldItem: =>
@@ -498,13 +490,6 @@ onLayers ->
       json.is_custom_aggregator = true
       json.config = {
         selected_collection: @selectedCollection(),
-
-        selected_filter_field_primary: @selectedFilteredFieldPrimary(),
-        selected_filter_field_secondary: @selectedFilteredFieldSecondary(),
-
-        selected_collection_field_primary: @selectedCollectionFieldPrimary(),
-        selected_collection_field_secondary: @selectedCollectionFieldSecondary(),
-
         selected_aggregator_type: @selectedAggregatorType(),
         aggregated_field_list: $.map(@aggregatedFieldList(), (x) =>  {id: x.id, code: x.code, name: x.name}),
         condition_field_id: @conditionFieldId(),

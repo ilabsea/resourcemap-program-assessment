@@ -28,31 +28,36 @@
   %p.smalltext= t('views.layers.form.field.the_abbreviation_used_to_report_via_SMS.')
   = ko_text_field_tag :code, valueUpdate: :afterblur, css: {error: :codeError}
 
+
   %hr/
-  /ko if: kind() == 'custom_aggregator'
-  =render 'field_aggregator'
-  //ko
-
-  %label
-    = t('views.layers.form.field.mandatory')
-  %p.smalltext= t('views.layers.form.field.this_field_must_be_report_on_every_report')
   = ko_check_box_tag :is_mandatory, css: {error: :codeError}
-  %br
+  %span
+    =t('views.layers.form.field.mandatory')
+  %p.smalltext= t('views.layers.form.field.this_field_must_be_report_on_every_report')
 
-  %label
-    Is Criteria
+  = ko_check_box_tag :is_criteria, css: {error: :codeError}
+  %span Is Criteria
   %p.smalltext
     This field will be use to find related site
-  = ko_check_box_tag :is_criteria, css: {error: :codeError}
 
-  /ko if: kind() == 'numeric' || kind() == 'custom_aggregator'
-  %hr/
-  %label
-    = t('views.layers.form.field.custom_widgeted')
-  %p.smalltext= t('views.layers.form.field.do_not_display_in_form_as_being_used_in_custom_widget')
-  = ko_check_box_tag :custom_widgeted, css: {error: :codeError}
+  /ko if: kind() == 'custom_widget'
+  = ko_check_box_tag :readonly_custom_widgeted, css: {error: :codeError}
+  %span Read-only widgeted
+  %p.smalltext
+    The field will be uneditable
   //ko
 
+  /ko if: kind() == 'numeric' || kind() == 'custom_aggregator'
+  = ko_check_box_tag :custom_widgeted, css: {error: :codeError}
+  %span
+    = t('views.layers.form.field.custom_widgeted')
+  %p.smalltext= t('views.layers.form.field.do_not_display_in_form_as_being_used_in_custom_widget')
+  //ko
+
+  /ko if: kind() == 'custom_aggregator'
+  %hr/
+  =render 'field_aggregator'
+  //ko
 
   /ko if: kind() == 'select_one' || kind() == 'select_many'
   %hr/
@@ -137,7 +142,9 @@
   //ko
 
   /ko if: kind() == 'custom_widget'
+  %hr/
   %div{"style" => "padding: 5px 0px;"}
+    %label Design custom field as you want
     %span.smalltext.left{style: 'padding-right:18px;padding-top:10px;'}= t('views.layers.form.field.select_fields')
     = select_tag nil, nil, 'data-bind'=> "options: $root.customWidgetedFields,
                                              optionsText: 'name',
@@ -150,13 +157,7 @@
                          title: 'Add another option'}
 
     %textarea{"data-bind" => "tinymce: impl().widgetContent", class: 'tinymce'}
-      Hello
 
-    %label
-      Read-only widgeted
-    %p.smalltext
-      The field will be uneditable
-    = ko_check_box_tag :readonly_custom_widgeted, css: {error: :codeError}
 
   //ko
 

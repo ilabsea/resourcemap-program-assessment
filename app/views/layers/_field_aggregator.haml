@@ -1,60 +1,16 @@
-%div{"style" => "padding: 5px 0px;"}
-  %label Disign custom field as you want it to look like
-  %span.smalltext.left{style: 'padding-right:18px;padding-top:10px;'} Collections
-  = select_tag nil, nil, 'data-bind'=> "options: $root.collectionList,
+%div.aggregator-wrapper
+  %label Design custom field as you want
+  %div{style: "padding-top: 10px"}
+    %span.smalltext.left Collections
+    = select_tag nil, nil, 'data-bind'=> "options: $root.collectionList,
                                            optionsText: 'name',
                                            optionsValue: 'id',
                                            value: impl().selectedCollection,
                                            optionsCaption: window.model.default_select, css: { error: !impl().selectedCollection() } ",
-                                          'class'=> 's-select'
+                                          'class'=> 'c-select s-select'
 
-%table
-  %tr
-    %th
-      Current
-    %th
-      Selected
-  %tr
-    %td
-      %div{"style" => "padding: 5px 0px;"}
-        %span.smalltext.left{style: 'padding-right:18px;padding-top:10px;'}= t('views.layers.form.field.select_fields')
-        = select_tag nil, nil, 'data-bind'=> "options: $root.fieldList,
-                                                 optionsText: 'name',
-                                                 optionsValue: 'id',
-                                                 value: impl().selectedFilteredFieldPrimary,
-                                                 optionsCaption: window.model.default_select, css: { error: !impl().selectedFilteredFieldPrimary() } ",
-                                                'class'=> 'c-select s-select'
-    %td
-      %div{"style" => "padding: 5px 0px;"}
-        %span.smalltext.left{style: 'padding-right:18px;padding-top:10px;'}= t('views.layers.form.field.select_fields')
-        = select_tag nil, nil, 'data-bind'=> "options: impl().selectedCollectionFieldList,
-                                                 optionsText: 'name',
-                                                 optionsValue: 'id',
-                                                 value: impl().selectedCollectionFieldPrimary,
-                                                 optionsCaption: window.model.default_select, css: { error: !impl().selectedCollectionFieldPrimary() } ",
-                                                'class'=> 'c-select s-select'
-
-  %tr
-    %td
-      %div{"style" => "padding: 5px 0px;"}
-        %span.smalltext.left{style: 'padding-right:18px;padding-top:10px;'}= t('views.layers.form.field.select_fields')
-        = select_tag nil, nil, 'data-bind'=> "options: $root.fieldList,
-                                                 optionsText: 'name',
-                                                 optionsValue: 'id',
-                                                 value: impl().selectedFilteredFieldSecondary,
-                                                 optionsCaption: window.model.default_select, css: { error: !impl().selectedFilteredFieldSecondary() } ",
-                                                'class'=> 'c-select s-select'
-    %td
-      %div{"style" => "padding: 5px 0px;"}
-        %span.smalltext.left{style: 'padding-right:18px;padding-top:10px;'}= t('views.layers.form.field.select_fields')
-        = select_tag nil, nil, 'data-bind'=> "options: impl().selectedCollectionFieldList,
-                                                 optionsText: 'name',
-                                                 optionsValue: 'id',
-                                                 value: impl().selectedCollectionFieldSecondary,
-                                                 optionsCaption: window.model.default_select, css: { error: !impl().selectedCollectionFieldSecondary() } ",
-                                                'class'=> 'c-select s-select'
-%div{"style" => "padding: 5px 0px;"}
-  %label Condition
+%div.aggregator-wrapper
+  %span.smalltext.left Condition
   = select_tag nil, nil, 'data-bind'=> "options: impl().selectedCollectionFieldList,
                                            optionsText: 'name',
                                            optionsValue: 'id',
@@ -63,12 +19,12 @@
                                           'class'=> 'c-select s-select'
   %span.w06
     %input{ko(value: "impl().conditionFieldValue"), type: "text"}
-%div{"style" => "padding: 5px 0px;"}
-  %label Aggregator Type
+%div.aggregator-wrapper
+  %span.smalltext.left Aggregator type
   = select_tag nil, nil, 'data-bind'=> "options: impl().aggregatorTypeList,
                                            value: impl().selectedAggregatorType,
                                            optionsCaption: window.model.default_select, css: { error: !impl().selectedAggregatorType() } ",
-                                          'class'=> ''
+                                          'class'=> 'c-select s-select'
 
 %div{"style" => "padding: 5px 0px;"}
   = select_tag nil, nil, 'data-bind'=> "options: impl().selectedCustomWidgetFieldList,
@@ -82,7 +38,7 @@
                        title: 'Add another option'}
 
 /ko if: impl().aggregatedFieldList().length > 0
-%div{style: 'border: 1px solid #ccc; padding: 10px 0 0 10px;'}
+%div{style: 'border: 1px solid #ccc; padding:0px 0 0 10px;border-radius: 5px'}
   %ul.list
     /ko foreach: impl().aggregatedFieldList()
     %li.list-item
