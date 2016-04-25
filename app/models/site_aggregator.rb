@@ -21,9 +21,9 @@ class SiteAggregator
   end
 
   def process
-    return if site_criteria_properties_by_code().empty?
+    return if site_criteria_properties.empty?
 
-    search_result = search_ref_sites()
+    search_result = search_ref_sites
     if !search_result.empty?
       if(@site.collection.is_aggregator)
         site_in_aggregator_collections = [@site]
@@ -45,8 +45,6 @@ class SiteAggregator
     builder = {}
     # filter fields from other collections.
     conditions = []
-    p "ref_properties_value :"
-    p ref_properties_value
     ref_properties_value.each do |id, value|
       conditions << { term: { "#{id}" => value } }
     end
@@ -98,14 +96,14 @@ class SiteAggregator
   #                Obj(id: 101, name: "year", code: "year")]
   #
 
-  # site_criteria_properties_by_code =  {"school": "0001", "year": 2015 },
+  # site_criteria_properties =  {"school": "0001", "year": 2015 },
   # expect results: { "100": "001", "101": 2015}
 
   def ref_properties_value
     result = {}
     ref_fields = mapping_fields_in_ref_collection
     ref_fields.each do |field|
-      result["#{field.id}"] = site_criteria_properties_by_code[field.code]
+      result["#{field.id}"] = site_criteria_properties[field.code]
     end
     result
   end
@@ -114,7 +112,7 @@ class SiteAggregator
   # site = Site(properties: {80: '001', 81:'2016', 82: 'Sorya' })
   # expect {'school': '001', year: '2016'}
 
-  def site_criteria_properties_by_code
+  def site_criteria_properties
     field_criterias = @site.collection.fields.where(is_criteria: true)
     results = {}
     field_criterias.each do |field|
