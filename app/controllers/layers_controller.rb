@@ -59,7 +59,7 @@ class LayersController < ApplicationController
     layer = collection.layers.find params[:id]
     fix_layer_fields_for_update
     layer.user = current_user
-    layer.update_attributes! params[:layer]   
+    layer.update_attributes! params[:layer]
     layer.reload
     render json: layer.as_json(include: :fields)
 
@@ -95,7 +95,7 @@ class LayersController < ApplicationController
         if field[:config]
           if field[:config][:locations]
             field[:config][:locations] = field[:config][:locations].values
-          end 
+          end
           if field[:config][:options]
             field[:config][:options] = field[:config][:options].values
             field[:config][:options].each { |option| option['id'] = option['id'].to_i }
@@ -108,11 +108,11 @@ class LayersController < ApplicationController
 
           if field[:is_enable_field_logic] == "false"
             params[:layer][:fields_attributes][field_idx][:config] = params[:layer][:fields_attributes][field_idx][:config].except(:field_logics)
-          end        
+          end
 
           if field[:config][:field_logics]
             field[:config][:field_logics] = field[:config][:field_logics].values
-            field[:config][:field_logics].each { |field_logic| 
+            field[:config][:field_logics].each { |field_logic|
               field_logic['id'] = field_logic['id'].to_i
               field_logic['value'] = field_logic['value'].to_f
               if field_logic['field_id']
@@ -124,11 +124,11 @@ class LayersController < ApplicationController
                   end
                 }
               end
-            }    
+            }
           end
 
           field[:config][:range] = fix_field_config_range(field_idx,field) if field[:is_enable_range]
-          
+
         end
       end
     end
@@ -150,15 +150,15 @@ class LayersController < ApplicationController
           field[:config][:range][:maximum] = field[:config][:range][:maximum].to_i
         end
       end
-    end 
-    return field[:config][:range]   
+    end
+    return field[:config][:range]
   end
 
   def validate_field_logic
-    field[:config][:field_logics].delete_if { |field_logic| !field_logic['layer_id'] }            
+    field[:config][:field_logics].delete_if { |field_logic| !field_logic['layer_id'] }
     if field[:config][:field_logics].length == 0
       params[:layer][:fields_attributes][field_idx][:config] = params[:layer][:fields_attributes][field_idx][:config].except(:field_logics)
-    end    
+    end
   end
 
   def sanitize_items(items)
@@ -198,7 +198,7 @@ class LayersController < ApplicationController
     fieldID = field["id"]
 
     self.collection.thresholds.map { |threshold|
-      threshold.conditions.map { |condition| 
+      threshold.conditions.map { |condition|
         conditionFieldID = condition['field'].to_i
         if fieldID == conditionFieldID
           associated_field_threshold_ids.push(threshold.id)
@@ -215,7 +215,7 @@ class LayersController < ApplicationController
     fieldID = field["id"]
 
     self.collection.canned_queries.map { |query|
-      query.conditions.map { |condition| 
+      query.conditions.map { |condition|
         conditionFieldID = condition['field_id'].to_i
         if fieldID == conditionFieldID
           associated_field_query_ids.push(query.id)

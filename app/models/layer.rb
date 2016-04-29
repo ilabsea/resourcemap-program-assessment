@@ -22,7 +22,7 @@ class Layer < ActiveRecord::Base
   accepts_nested_attributes_for :fields, :allow_destroy => true
 
   validates_presence_of :ord
-
+  attr_accessor :user
   # I'd move this code to a concern, but it works differntly (the fields don't
   # have an id). Must probably be a bug in Active Record.
   after_create :create_created_activity, :unless => :mute_activities
@@ -106,7 +106,7 @@ class Layer < ActiveRecord::Base
     self.collection.thresholds.map { |threshold|
 
       thresholdFieldIDs = threshold.conditions.map { |condition| condition['field'].to_i}
-      
+
       if (layerFieldIDs - thresholdFieldIDs).length < layerFieldIDs.length
         associated_threshold_ids.push(threshold.id)
       end
@@ -123,7 +123,7 @@ class Layer < ActiveRecord::Base
 
     self.collection.canned_queries.map { |query|
       queryFieldIDs = query.conditions.map { |condition| condition['field_id'].to_i}
-      
+
       if (layerFieldIDs - queryFieldIDs).length < layerFieldIDs.length
         associated_query_ids.push(query.id)
       end
