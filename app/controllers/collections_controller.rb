@@ -2,21 +2,22 @@
 #
 # Table name: collections
 #
-#  id            :integer          not null, primary key
-#  name          :string(255)
-#  description   :text
-#  public        :boolean
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  lat           :decimal(10, 6)
-#  lng           :decimal(10, 6)
-#  min_lat       :decimal(10, 6)
-#  min_lng       :decimal(10, 6)
-#  max_lat       :decimal(10, 6)
-#  max_lng       :decimal(10, 6)
-#  icon          :string(255)
-#  quota         :integer          default(0)
-#  is_aggregator :boolean          default(FALSE)
+#  id             :integer          not null, primary key
+#  name           :string(255)
+#  description    :text
+#  public         :boolean
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  lat            :decimal(10, 6)
+#  lng            :decimal(10, 6)
+#  min_lat        :decimal(10, 6)
+#  min_lng        :decimal(10, 6)
+#  max_lat        :decimal(10, 6)
+#  max_lng        :decimal(10, 6)
+#  icon           :string(255)
+#  quota          :integer          default(0)
+#  is_aggregator  :boolean          default(FALSE)
+#  print_template :text
 #
 
 class CollectionsController < ApplicationController
@@ -102,9 +103,11 @@ class CollectionsController < ApplicationController
   def update
     if collection.update_attributes params[:collection]
       collection.recreate_index
-      redirect_to collection_settings_path(collection), notice: I18n.t('views.collections.form.collection_updated', name: collection.name)
+      tab_url = params[:tab] == "print" ? print_template_collection_path(collection) : collection_settings_path(collection)
+      redirect_to tab_url, notice: I18n.t('views.collections.form.collection_updated', name: collection.name)
     else
-      render :settings
+      template = params[:tab] == "print" ? :print_template : :settings
+      render template
     end
   end
 
@@ -376,5 +379,9 @@ class CollectionsController < ApplicationController
     info[:new_site_properties] = collection.new_site_properties
 
     render json: info
+  end
+
+  def print_template
+
   end
 end

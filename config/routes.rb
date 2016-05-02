@@ -28,6 +28,10 @@ ResourceMap::Application.routes.draw do
     get  :message_quota
     get :sites_by_term
 
+    member do
+      get 'print_template'
+    end
+
     resources :queries
     resources :basic_fields, only: ['index']
     resources :sites do

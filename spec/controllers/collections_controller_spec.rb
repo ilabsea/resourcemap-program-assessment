@@ -2,21 +2,22 @@
 #
 # Table name: collections
 #
-#  id            :integer          not null, primary key
-#  name          :string(255)
-#  description   :text
-#  public        :boolean
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  lat           :decimal(10, 6)
-#  lng           :decimal(10, 6)
-#  min_lat       :decimal(10, 6)
-#  min_lng       :decimal(10, 6)
-#  max_lat       :decimal(10, 6)
-#  max_lng       :decimal(10, 6)
-#  icon          :string(255)
-#  quota         :integer          default(0)
-#  is_aggregator :boolean          default(FALSE)
+#  id             :integer          not null, primary key
+#  name           :string(255)
+#  description    :text
+#  public         :boolean
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  lat            :decimal(10, 6)
+#  lng            :decimal(10, 6)
+#  min_lat        :decimal(10, 6)
+#  min_lng        :decimal(10, 6)
+#  max_lat        :decimal(10, 6)
+#  max_lng        :decimal(10, 6)
+#  icon           :string(255)
+#  quota          :integer          default(0)
+#  is_aggregator  :boolean          default(FALSE)
+#  print_template :text
 #
 
 require 'spec_helper'

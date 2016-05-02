@@ -10,7 +10,7 @@ ko.bindingHandlers.tinymce = {
                            'fullscreen',
                            'insertdatetime table contextmenu paste code']
         options.menubar =  false
-        options.toolbar = "alignleft aligncenter table styleselect bold fullscreen"
+        options.toolbar = "alignleft aligncenter table styleselect code fullscreen"
         options.table_toolbar = ''
 
         options.setup = function (editor) {
