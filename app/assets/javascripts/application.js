@@ -30,7 +30,7 @@
 //= require validate_key
 
 //= require tinymce-jquery
-//= require editor/config
+//= require editor/tinymce-init
 //= require editor/tinymce-ko
 
 //= require i18n
@@ -50,11 +50,4 @@ $(document).ready(function() {
      		}
    		});
  	}
-
-	tinyMCE.init({
-		width: 980,
-		selector: 'textarea.custom-tinymce',
-		plugins: [ 'table advlist autolink lists anchor', 'fullscreen', 'insertdatetime table contextmenu paste code'],
-		toolbar: "undo redo | alignleft aligncenter alignright bold italic underline styleselect table code fullscreen "
-	})
 });

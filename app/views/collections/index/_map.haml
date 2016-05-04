@@ -282,6 +282,7 @@
           <!-- ko if: editable -->
           = link_to t('views.collections.index.edit_site'), 'javascript:void()', class: 'icon fedit black', 'data-bind' => kov(click: 'startEditMode')
           = link_to t('views.collections.index.delete_site'), 'javascript:void()', class: 'icon fdelete black', 'data-bind' => kov(click: '$root.deleteSite')
+          = link_to t('views.collections.index.preview'), 'javascript:void()', target: :_blank, class: 'icon fpreview right', 'data-bind' => kov(click: '$root.previewSite')
           <!-- /ko -->
       <!-- /ko -->
 

@@ -267,6 +267,9 @@ onCollections ->
       # value in an href (and this is done in the breadcrumb links).
       undefined
 
+    @previewSite: ->
+      url = "collections/#{@currentCollection().id}/sites/#{@editingSite().id()}"
+      window.location.href = url
     @deleteSite: ->
       if confirm("Are you sure you want to delete #{@editingSite().name()}?")
         @unselectSite()

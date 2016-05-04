@@ -47,9 +47,13 @@ class SitesController < ApplicationController
     search = new_search
 
     search.id params[:id]
+    @site = site
     # If site does not exists, return empty objects
     result = search.ui_results.first['_source'] rescue {}
-    render json: result
+    respond_to do |format|
+      format.html {render :show, layout: "print_template"}
+      format.json {render json: result}
+    end
   end
 
   def create

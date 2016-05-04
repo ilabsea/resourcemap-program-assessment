@@ -91,8 +91,9 @@ en:
         site: "Site"
         lat: "Lat"
         long: "Long"
-        edit_site: "Edit Site"
-        delete_site: "Delete Site"
+        edit_site: "Edit"
+        delete_site: "Delete"
+        preview: "Preview"
         properties: "Properties"
         refresh_captcha: "Refresh CAPTCHA"
         incorrect_please_try_again: "Incorrect please try again"
@@ -183,4 +184,3 @@ en:
         year: "Year"
         remaining_messages: "this collection remain"
         message_quota: " message quota"
-
