@@ -24,7 +24,7 @@
 
 class SitesController < ApplicationController
   before_filter :setup_guest_user, :if => Proc.new { collection && collection.public }
-  before_filter :authenticate_user!, :except => [:index, :search, :search_alert_site, :view_photo], :unless => Proc.new { collection && collection.public }
+  before_filter :authenticate_user!, :except => [:index, :search, :search_alert_site, :view_photo, :share], :unless => Proc.new { collection && collection.public }
 
   authorize_resource :only => [:index, :search, :search_alert_site], :decent_exposure => true
 
@@ -48,7 +48,7 @@ class SitesController < ApplicationController
       @site = collection.sites.find_by_uuid(params[:id])
       render layout: "print_template"
     else
-      raise CanCan::AccessDenied 
+      raise CanCan::AccessDenied
     end
   end
 

@@ -3,8 +3,17 @@
   %p
     Copy the url below to share this site detail in predefined design template with other party
   %a#share-url-dialog{href: "", target: :_blank, style: 'color:#777777;'}
+  %br
+
+  %p
+    If you need a more friendly printable format we suggest to use PDF below
+  %div
+    %p
+      %a#get-pdf{ko(click: :getPdf), href: "", target: :_blank} Get PDF
+
   %div{ style: "margin-left: 15px; padding-top: 10px;"}
     %button{ type: "button", value: "Close", class: "white rm-dialog-cancel" } Close
+
   .clear &nbsp;
 
 :javascript

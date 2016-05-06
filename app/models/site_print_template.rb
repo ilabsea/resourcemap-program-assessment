@@ -11,8 +11,6 @@ class SitePrintTemplate
     @fields = @site.collection.fields
   end
 
-
-
   def translate
     template = @site.collection.print_template
     return "" if template.blank?

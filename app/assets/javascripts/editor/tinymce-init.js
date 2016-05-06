@@ -1,6 +1,7 @@
 $(document).ready(function() {
 	var fontLists = "(ខ្មែរ)Khmer=khmer;"+
 									"(ខ្មែរ)Khmer Moul=moul;"+
+									"(ខ្មែរ)Hanuma=hanuman;"+
 									"Andale Mono=andale mono,times;"+
 									"Arial=arial,helvetica,sans-serif;"+
 									"Arial Black=arial black,avant garde;"+
@@ -35,18 +36,23 @@ $(document).ready(function() {
 									"Mothanna=mothannaregular, sans-serif;"+
 									"Nastaliq=irannastaliqregular, sans-serif";
 
-
-
-
-
-
 	tinyMCE.init({
 		width: 980,
 		selector: 'textarea.custom-tinymce',
 		plugins: [ 'preview print media image table advlist autolink lists anchor',
 							'fullscreen', 'insertdatetime table contextmenu paste code pagebreak'],
 		toolbar: ["undo redo | alignleft aligncenter alignright bold italic underline styleselect " +
-							" fontselect fontsizeselect table code fullscreen pagebreak"],
+							" fontselect fontsizeselect table code fullscreen custom-insert-newpage"],
 		font_formats:  fontLists,
+		setup: function (editor) {
+	    editor.addButton('custom-insert-newpage', {
+	      text: '',
+				title: 'Insert New Page - Page break',
+	      icon: 'pagebreak',
+	      onclick: function () {
+	        editor.insertContent('<p style="page-break-before: always;">&nbsp;<!-- pagebreak --></p>');
+	      }
+	    });
+		}
 	})
 });

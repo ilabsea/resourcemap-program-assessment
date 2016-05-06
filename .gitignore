@@ -6,8 +6,11 @@
 .~
 .DS_Store
 tmp/*
+
 public/assets
 public/photo_field
+public/print
+
 .bundle
 .idea
 spec/reports

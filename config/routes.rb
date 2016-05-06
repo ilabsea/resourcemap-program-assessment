@@ -20,7 +20,7 @@ ResourceMap::Application.routes.draw do
   get 'view_photo' => 'sites#view_photo'
   get 'collections/:collection_id/my_membership' => 'collections#my_membership'
 
-
+  resources :site_pdfs, only: [ :create, :show]
   resources :repeats
   resources :collections do
     post  :send_new_member_sms

@@ -47,7 +47,7 @@ module ApplicationHelper
   end
 
   def google_khmer_fonts
-    ["Khmer", "Moul"].map do |font_name|
+    ["Khmer", "Moul", "Hanuman"].map do |font_name|
       stylesheet_link_tag "https://fonts.googleapis.com/css?family=#{font_name}"
     end.join(" ").html_safe
   end

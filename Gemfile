@@ -32,6 +32,8 @@ gem "ruby-recaptcha"
 gem 'i18n-coffee'
 gem 'tinymce-rails'
 
+gem 'wkhtmltopdf-binary-edge', '~> 0.12.2.1'
+
 group :test do
   gem 'shoulda-matchers'
   gem 'ci_reporter'

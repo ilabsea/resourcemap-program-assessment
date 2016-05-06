@@ -174,11 +174,22 @@ onCollections ->
     @editCollection: (collection) -> window.location = "/collections/#{collection.id}"
 
     @openShareUrlDialog:  ->
-      path = "/collections/#{@currentCollection().id}/sites/#{@editingSite().uuid}/share"
-      url = "#{window.location.protocol}//#{window.location.host}#{path}"
-      $('#share-url-dialog').attr('href', url).text(url)
+      path_share = "/collections/#{@currentCollection().id}/sites/#{@editingSite().uuid}/share"
+      share_url = "#{window.location.protocol}//#{window.location.host}#{path_share}"
+
+      path_pdf = "/collections/#{@currentCollection().id}/sites/#{@editingSite().uuid}/pdf"
+      download_url = "#{window.location.protocol}//#{window.location.host}#{path_pdf}"
+
+      $('#share-url-dialog').attr('href', share_url).text(share_url)
+      $('#download-pdf').attr('href', download_url)
       $("#rm-share-url-dialog").rmDialog().show()
 
+    @getPdf: (event)->
+      path_pdf = "/site_pdfs"
+      data = {id: @editingSite().uuid}
+      $.post path_pdf, data,  ()=>
+        $.status.showNotice('System is generating PDF for your request, once it finishes we will send you a download link to your email.', 60*1000)
+      event.preventDefault()
 
     @openDialog:  ->
       $("#rm-download-history-dialog").rmDialog().show()
