@@ -43,17 +43,21 @@ class SitesController < ApplicationController
     render json: search.ui_results.map { |x| x['_source'] }
   end
 
+  def share
+    if collection.is_published_template
+      @site = collection.sites.find_by_uuid(params[:id])
+      render layout: "print_template"
+    else
+      raise CanCan::AccessDenied 
+    end
+  end
+
   def show
     search = new_search
-
     search.id params[:id]
-    @site = site
     # If site does not exists, return empty objects
     result = search.ui_results.first['_source'] rescue {}
-    respond_to do |format|
-      format.html {render :show, layout: "print_template"}
-      format.json {render json: result}
-    end
+    render json: result
   end
 
   def create

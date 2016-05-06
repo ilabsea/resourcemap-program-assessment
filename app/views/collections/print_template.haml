@@ -3,17 +3,23 @@
 .tabsline.settings-form
   %h2 Print Template
   %p Create Custom Template for site rendering
-  %br/
-
 
 = form_for collection do |f|
-  .smalltext{style: 'float;left'}
-    .template_text
-    -["Site Name", "Creator", "Latitude", "Longtitude"].each do |elm|
-      %a.site-token{href:'#'}
-        [#{elm}]
-  %input{type: 'hidden', value: 'print', name: 'tab'}
-  .field.w60
-    = f.text_area :print_template, class: "custom-tinymce", style: 'width: 1200px;', rows: 15, cols: 150
+
+  %div.row
+    .smalltext{style: 'float;left'}
+      .template_text
+      -["Site Name", "Creator", "Latitude", "Longtitude"].each do |elm|
+        %a.site-token{href:'#'}
+          [#{elm}]
+
+  %div.row
+    %input{type: 'hidden', value: 'print', name: 'tab'}
+    .field.w60
+      = f.text_area :print_template, class: "custom-tinymce", style: 'width: 1200px;', rows: 15, cols: 150
+  %div.row
+    = f.check_box :is_published_template
+    = f.label :is_published_template, "Publish"
+  %div.row
     = f.button 'Save', :class => 'white'
     = link_to 'Cancel', collections_path, :class=> 'grey'

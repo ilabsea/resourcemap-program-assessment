@@ -93,7 +93,7 @@ en:
         long: "Long"
         edit_site: "Edit"
         delete_site: "Delete"
-        preview: "Preview"
+        share_url: "Share secret"
         properties: "Properties"
         refresh_captcha: "Refresh CAPTCHA"
         incorrect_please_try_again: "Incorrect please try again"

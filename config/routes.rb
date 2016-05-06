@@ -36,6 +36,9 @@ ResourceMap::Application.routes.draw do
     resources :basic_fields, only: ['index']
     resources :sites do
       get :visible_layers_for
+      member do
+        get :share
+      end
     end
 
     resources :layers do

@@ -173,8 +173,15 @@ onCollections ->
 
     @editCollection: (collection) -> window.location = "/collections/#{collection.id}"
 
+    @openShareUrlDialog:  ->
+      path = "/collections/#{@currentCollection().id}/sites/#{@editingSite().uuid}/share"
+      url = "#{window.location.protocol}//#{window.location.host}#{path}"
+      $('#share-url-dialog').attr('href', url).text(url)
+      $("#rm-share-url-dialog").rmDialog().show()
+
+
     @openDialog:  ->
-      $(".rm-dialog").rmDialog().show()
+      $("#rm-download-history-dialog").rmDialog().show()
       $("#rm-colllection_id").val(@currentCollection().id)
 
     @tooglefullscreen: ->

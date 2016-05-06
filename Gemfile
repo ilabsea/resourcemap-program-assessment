@@ -30,7 +30,6 @@ gem 'rubyzip', :require => 'zip/zip'
 gem "password_strength"
 gem "ruby-recaptcha"
 gem 'i18n-coffee'
-
 gem 'tinymce-rails'
 
 group :test do

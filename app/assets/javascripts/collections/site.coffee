@@ -8,6 +8,7 @@ onCollections ->
 
     constructor: (collection, data) ->
       @constructorLocatable(data)
+      @uuid = data?.uuid
       @collection = collection
       @selected = ko.observable()
       @id = ko.observable data?.id

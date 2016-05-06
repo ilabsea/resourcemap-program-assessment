@@ -21,6 +21,7 @@ onCollections ->
       @id = data?.id
       @name = data?.name
       @icon = data?.icon
+      @isPublishedTemplate = data?.is_published_template
       @currentSnapshot = if data?.snapshot_name then data?.snapshot_name else ''
       @updatedAt = ko.observable(data?.updated_at)
       @showLegend = ko.observable(false)
@@ -32,7 +33,7 @@ onCollections ->
     loadSites: =>
       $.get @sitesUrl(), (data) =>
         for site in data
-          @addSite @createSite(site)    
+          @addSite @createSite(site)
 
     loadAllSites: =>
       @allSites = ko.observable()
@@ -53,7 +54,7 @@ onCollections ->
     findSiteIdByName: (value) =>
       id = (site for site in window.model.currentCollection().allSites() when site.name is value)[0]?.id
       id
-    
+
     fetchThresholds: (data) =>
       thresholds = []
       for threshold in data
@@ -73,7 +74,7 @@ onCollections ->
         callback() if callback && typeof(callback) == 'function'
 
     fetchFields: (callback) =>
-      if @fieldsInitialized        
+      if @fieldsInitialized
         callback() if callback && typeof(callback) == 'function'
         return
 
