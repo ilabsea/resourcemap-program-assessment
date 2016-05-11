@@ -39,19 +39,18 @@ onCollections ->
       @isForCustomWidget = ko.computed ->
         data.custom_widgeted
 
-      @widgetContentAsInputView = ko.computed =>
+      @widgetContentViewAsInput = ko.computed =>
         if(@kind == "custom_widget" && data.config?.widget_content != undefined)
-          if @readonly_custom_widgeted == true
-            @replaceCustomFieldBySpan data.config?.widget_content
-          else
-            @replaceCustomFieldByInput data.config?.widget_content
+          @replaceCustomWidget data.config?.widget_content
         else
           ""
-      @widgetContentAsSpanView = ko.computed =>
+
+      @widgetContentViewAsSpan = ko.computed =>
         if(@kind == "custom_widget" && data.config?.widget_content != undefined)
-          @replaceCustomFieldBySpan data.config?.widget_content.replace(/&nbsp;/g, '')
+          @replaceCustomWidget data.config?.widget_content, true
         else
           ""
+
       @hasValue = ko.computed =>
         if @kind == 'yes_no'
           true
@@ -145,7 +144,9 @@ onCollections ->
         else
           field_object.unblock()
 
-    replaceCustomFieldByInput: (widgetContent) =>
+    replaceCustomWidget: (widgetContent, readonly) =>
+      isReadonly = ''
+      isReadonly = "data-readonly='readonly'" if readonly == true
       regExp = /(&nbsp;)|\{([^}]*)\}/g
       widget = widgetContent.replace(regExp, (match, space, token)->
         replace = space || token
@@ -153,22 +154,7 @@ onCollections ->
           replaceBy = ''
         else
           replaceBy = """
-                     <input type="text" placeholder="#{replace}" name="custom-widget-#{replace}"
-                            data-bind="value: value, attr: {title: name}" id="custom-widget-#{replace}"
-                            class="custom key-map-integer" />
-                    """
-        return replaceBy
-       )
-
-    replaceCustomFieldBySpan: (widgetContent) =>
-      regExp = /(&nbsp;)|\{([^}]*)\}/g
-      widget = widgetContent.replace(regExp, (match, space, token)->
-        replace = space || token
-        if replace == "&nbsp;"
-          replaceBy = ''
-        else
-          replaceBy = """
-                      <span data-bind="text: value" id="custom-widget-#{replace}" class="custom"></span>
+                      <span id="wrapper-custom-widget-#{replace}" #{isReadonly}></span>
                       """
         return replaceBy
        )
