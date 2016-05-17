@@ -1,5 +1,5 @@
 class SitePdfMailer < ActionMailer::Base
-  default from: "noreply@resourcemap.instedd.org"
+  default from: Settings.default_mail_sender
 
   def notify_email(users_email, email_subject, download_url)
     @download_url = download_url
