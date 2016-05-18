@@ -13,9 +13,9 @@ set :user, 'ilab'
 set :use_sudo, false
 set :group, 'ilab'
 set :deploy_via, :remote_cache
-set :branch, '1.3'
+set :branch, 'wfp_emis'
 
-server '54.169.173.164', :app, :web, :db, primary: true
+server '192.168.1.134', :app, :web, :db, primary: true
 
 default_run_options[:pty] = true
 default_environment['TERM'] = ENV['TERM']
@@ -40,7 +40,7 @@ namespace :deploy do
   end
 
   task :symlink_photo_field, :roles => :app do
-    run "ln -nfs #{shared_path}/photo_field #{release_path}/public/"
+    run "ln -nfs #{shared_path}/photo_field #{release_path}/public/photo_field"
   end
 
   task :symlink_print_pdf, :roles => :app do
