@@ -27,7 +27,7 @@ onCollections ->
     createEditableElement: ->
       if @field.kind == 'numeric'
         node = """
-                 <input type="text" placeholder="#{@field.code}" name="custom-widget-#{@field.code}"
+                 <input type="text" name="custom-widget-#{@field.code}"
                         data-bind="value: value, attr: {title: name}" id="custom-widget-#{@field.code}"
                         class="custom key-map-integer" />
                """
