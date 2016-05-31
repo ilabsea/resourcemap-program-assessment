@@ -21,6 +21,7 @@ module Api::JsonHelper
     obj[:startEntryDate] = Site.parse_time(source['start_entry_date'])
     obj[:endEntryDate] = Site.parse_time(source['end_entry_date'])
     obj[:user_id] = source['user_id'];
+    obj[:collection_id] = source['collection_id'];
 
     if source['location']
       obj[:lat] = source['location']['lat']
