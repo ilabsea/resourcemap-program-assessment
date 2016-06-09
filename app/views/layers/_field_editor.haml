@@ -47,7 +47,7 @@
     The field will be uneditable
   //ko
 
-  /ko if: kind() == 'numeric' || kind() == 'custom_aggregator' || kind() == 'select_one'
+  /ko if: kind() == 'numeric' || kind() == 'custom_aggregator' || kind() == 'select_one' || kind() == 'text'
   = ko_check_box_tag :custom_widgeted, css: {error: :codeError}
   %span
     = t('views.layers.form.field.custom_widgeted')
