@@ -30,6 +30,7 @@
 
 
   %hr/
+  /ko ifnot: kind() == 'custom_widget'
   = ko_check_box_tag :is_mandatory, css: {error: :codeError}
   %span
     =t('views.layers.form.field.mandatory')
@@ -39,6 +40,7 @@
   %span Is Criteria
   %p.smalltext
     This field will be use to find related site
+  //ko
 
   /ko if: kind() == 'custom_widget'
   = ko_check_box_tag :readonly_custom_widgeted, css: {error: :codeError}
