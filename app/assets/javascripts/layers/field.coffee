@@ -427,6 +427,11 @@ onLayers ->
       @aggregatedFieldList = ko.observableArray($.map(field.config?.aggregated_field_list || [] , (x) =>  {id: x.id, code: x.code, name: x.name}))
       @conditionFieldValue = ko.observable(field.config?.condition_field_value)
 
+      @error = ko.computed =>
+        return "the field must reference to a collection " unless @selectedCollection()
+        return "the field must have the aggregator type" unless @selectedAggregatorType()
+        return "the field must have the aggregator field list" if @aggregatedFieldList().length == 0
+
     findFieldByCollectionId: (collectionId) =>
       return @selectedCollectionFieldList([]) if !collectionId
 
