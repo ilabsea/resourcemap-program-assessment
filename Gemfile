@@ -31,6 +31,9 @@ gem "password_strength"
 gem "ruby-recaptcha"
 gem 'i18n-coffee'
 
+gem 'instedd_telemetry', git: 'https://github.com/instedd/telemetry_rails.git'
+gem 'timecop'
+
 group :test do
   gem 'shoulda-matchers'
   gem 'ci_reporter'
