@@ -36,6 +36,9 @@ gem 'rails_serve_static_assets'
 
 gem 'wkhtmltopdf-binary-edge', '~> 0.12.2.1'
 
+gem 'instedd_telemetry', git: 'https://github.com/instedd/telemetry_rails.git'
+gem 'timecop'
+
 group :test do
   gem 'shoulda-matchers'
   gem 'ci_reporter'

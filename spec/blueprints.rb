@@ -99,6 +99,13 @@ Channel.blueprint do
   user
 end
 
+LayerMembership.blueprint do
+  collection
+  read { false }
+  write { false }
+  user
+end
+
 Membership.blueprint do
   user
   collection
@@ -109,4 +116,10 @@ ImportJob.blueprint do
   user
   collection
   status
+end
+
+SiteReminder.blueprint do
+end
+
+SitesPermission.blueprint do
 end

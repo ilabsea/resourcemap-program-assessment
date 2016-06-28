@@ -1,4 +1,13 @@
 GIT
+  remote: https://github.com/instedd/telemetry_rails.git
+  revision: 8ddfee2b94a2c1bef837b0a583538dfa72781948
+  specs:
+    instedd_telemetry (0.0.1)
+      global_phone
+      global_phone_dbgen
+      rails
+
+GIT
   remote: https://github.com/manastech/dist.git
   revision: 44e5deadb0d9f63919fd68de5fce4ffdae2728a7
   specs:
@@ -110,6 +119,9 @@ GEM
       thor (>= 0.13.6)
     formatador (0.2.4)
     georuby (2.2.1)
+    global_phone (1.0.1)
+    global_phone_dbgen (1.0.0)
+      nokogiri (~> 1.5)
     guard (1.8.0)
       formatador (>= 0.2.4)
       listen (>= 1.0.0)
@@ -315,6 +327,7 @@ GEM
     tilt (1.4.1)
     tinymce-rails (4.3.3)
       railties (>= 3.1.1)
+    timecop (0.8.1)
     tire (0.5.8)
       activemodel (>= 3.0)
       activesupport
@@ -371,6 +384,7 @@ DEPENDENCIES
   i18n-coffee
   ice_cube
   instedd-rails (= 0.0.17)
+  instedd_telemetry!
   jasminerice
   jquery-rails (~> 2.0.2)
   knockoutjs-rails
@@ -404,6 +418,7 @@ DEPENDENCIES
   shoulda-matchers
   therubyracer
   tinymce-rails
+  timecop
   tire
   uglifier (>= 1.0.3)
   uuidtools
@@ -413,4 +428,4 @@ DEPENDENCIES
   wkhtmltopdf-binary-edge (~> 0.12.2.1)
 
 BUNDLED WITH
-   1.11.2
+   1.12.4
