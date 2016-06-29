@@ -5,6 +5,7 @@ class Api::CollectionsController < ApplicationController
 
   before_filter :authenticate_api_user!
   skip_before_filter  :verify_authenticity_token
+  before_filter :check_user_member!, :only => [:update_sites]
 
   def my_membership
     collection = Collection.find params[:collection_id]
@@ -217,5 +218,13 @@ class Api::CollectionsController < ApplicationController
     send_data sites_kml, type: 'application/vnd.google-earth.kml+xml', filename: "#{collection.name}_sites.kml"
   end
 
+  def check_user_member!
+    collection = Collection.find_by_id(params[:collection_id])
+    if (current_user.collections.map(&:id).include?(params["collection_id"].to_i)and current_user.admins?(collection))
+      return true
+    else
+      return head 403
+    end
+  end
 
 end
