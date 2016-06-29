@@ -34,8 +34,9 @@ describe Telemetry::Lifespan do
 
   it 'updates the account lifespan' do
     user = User.make created_at: @now - 1.week
+    
+    InsteddTelemetry.should_receive(:timespan_update).with('account_lifespan', {account_id: user.id}, user.created_at, @now)
     Telemetry::Lifespan.touch_user user
-    Telemetry::Lifespan.should_receive(:timespan_update).with('account_lifespan', {account_id: user.id}, user.created_at, @now)
   end
 
 end
