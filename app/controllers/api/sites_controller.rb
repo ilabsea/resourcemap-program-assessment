@@ -5,9 +5,9 @@ class Api::SitesController < ApplicationController
   # before_filter :authenticate_site_user!
 
   before_filter  :authenticate_api_user!
+  before_filter  :check_user_member!
 
   expose(:site)
-  expose(:collection) { site.collection }
 
   def show
     search = new_search
@@ -94,6 +94,17 @@ class Api::SitesController < ApplicationController
     sites_size = builder.size
     sites_by_page  = Collection.filter_page(params[:limit], params[:offset], builder)
     render :json => {:sites => sites_by_page, :total => sites_size}
+  end
+
+  private
+
+  def check_user_member!
+    collection = Collection.find_by_id(params[:collection_id])
+    if (current_user.collections.map(&:id).include?(params["collection_id"].to_i) and current_user.admins?(collection))
+      return true
+    else
+      return head 403
+    end
   end
 
 end
