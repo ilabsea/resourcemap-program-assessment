@@ -221,7 +221,7 @@ class Api::CollectionsController < ApplicationController
 
   def check_user_member_admin!
     collection = Collection.find_by_id(params[:collection_id])
-    if (current_user.collections.map(&:id).include?(params["collection_id"].to_i)and current_user.admins?(collection))
+    if (current_user.collections.map(&:id).include?(params["id"].to_i)and current_user.admins?(collection))
       return true
     else
       return head 403
@@ -229,8 +229,9 @@ class Api::CollectionsController < ApplicationController
   end
 
   def check_user_member!
+    debugger
     collection = Collection.find_by_id(params[:collection_id])
-    if (current_user.collections.map(&:id).include?(params["collection_id"].to_i))
+    if (current_user.collections.map(&:id).include?(params["id"].to_i))
       return true
     else
       return head 403
