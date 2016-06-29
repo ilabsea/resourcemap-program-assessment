@@ -1,6 +1,7 @@
 InsteddTelemetry.setup do |config|
   # Telemetry server URL
   config.server_url = "http://telemetry-stg.instedd.org"
+  config.application = "Resourcemap WFP Production"
   
   config_path = File.join(Rails.root, 'config', 'telemetry.yml')
   custom_config = File.exists?(config_path) ? YAML.load_file(config_path).with_indifferent_access : nil
