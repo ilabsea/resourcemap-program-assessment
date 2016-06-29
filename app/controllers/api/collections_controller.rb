@@ -229,7 +229,6 @@ class Api::CollectionsController < ApplicationController
   end
 
   def check_user_member!
-    debugger
     collection = Collection.find_by_id(params[:collection_id])
     if (current_user.collections.map(&:id).include?(params["id"].to_i))
       return true
