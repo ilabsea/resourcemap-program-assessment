@@ -5,7 +5,7 @@ set :whenever_command, "bundle exec whenever"
 require "whenever/capistrano"
 
 set :rvm_ruby_string, '1.9.3'
-set :rvm_type, :system
+set :rvm_type, :user
 set :application, "resourcemap_wfp"
 set :repository,  "https://github.com/ilabsea/resourcemap-program-assessment"
 set :scm, :git
@@ -13,7 +13,7 @@ set :user, 'ilab'
 set :use_sudo, false
 set :group, 'ilab'
 set :deploy_via, :remote_cache
-set :branch, '1.3'
+set :branch, '1.3.2'
 
 server '54.169.173.164', :app, :web, :db, primary: true
 
@@ -34,7 +34,7 @@ namespace :deploy do
   end
 
   task :symlink_configs, :roles => :app do
-    %W(settings.yml google_maps.key nuntium.yml aws.yml).each do |file|
+    %W(settings.yml google_maps.key nuntium.yml aws.yml telemetry.yml recaptcha.yml).each do |file|
       run "ln -nfs #{shared_path}/#{file} #{release_path}/config/"
     end
   end
