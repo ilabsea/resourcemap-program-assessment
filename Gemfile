@@ -32,6 +32,8 @@ gem "ruby-recaptcha"
 gem 'i18n-coffee'
 gem 'tinymce-rails'
 
+gem 'rails_serve_static_assets'
+
 gem 'wkhtmltopdf-binary-edge', '~> 0.12.2.1'
 
 group :test do
@@ -79,4 +81,4 @@ group :assets do
   gem 'lodash-rails'
 end
 
-gem 'rails_12factor', group: :production
+# gem 'rails_12factor', group: :production
