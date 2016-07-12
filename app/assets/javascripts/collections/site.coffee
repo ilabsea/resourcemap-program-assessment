@@ -171,11 +171,8 @@ onCollections ->
       collection.fetchFields =>
         if @fields().length == 0
           collection.clearFieldValues()
-          for field in collection.fields()
-            @fields.push(field)
-
-          for layer in collection.layers()
-            @layers.push(layer)
+          @fields(collection.fields())
+          @layers(collection.layers())
           @copyPropertiesToFields()
 
     update_site: (json, callback, callbackError) =>
@@ -509,7 +506,7 @@ onCollections ->
         callback() if callback && typeof(callback) == 'function'
 
     copyPropertiesToFields: =>
-      if @properties()
+      if @properties()      
         for field in @fields()
           value = @properties()[field.esCode]
           field.setValueFromSite(value)
