@@ -4,7 +4,7 @@ require 'bundler/capistrano'
 set :whenever_command, "bundle exec whenever"
 require "whenever/capistrano"
 
-set :rvm_ruby_string, '1.9.3'
+set :rvm_ruby_string, '1.9.3-p545'
 set :rvm_type, :system
 set :application, "resourcemap_wfp"
 set :repository,  "https://github.com/ilabsea/resourcemap-program-assessment"
@@ -15,7 +15,7 @@ set :group, 'ilab'
 set :deploy_via, :remote_cache
 set :branch, 'wfp_emis'
 
-server '192.168.1.134', :app, :web, :db, primary: true
+server '54.179.168.26', :app, :web, :db, primary: true
 
 default_run_options[:pty] = true
 default_environment['TERM'] = ENV['TERM']
