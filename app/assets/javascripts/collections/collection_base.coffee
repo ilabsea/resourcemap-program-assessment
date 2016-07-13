@@ -93,6 +93,29 @@ onCollections ->
         window.model.loadingFields(false)
         window.model.enableCreateSite()
 
+    decodeField: (str) =>
+      dict = {}
+      data = (str + '').split('')
+      currChar = data[0]
+      oldPhrase = currChar
+      out = [ currChar ]
+      code = 256
+      phrase = undefined
+      i = 1
+      while i < data.length
+        currCode = data[i].charCodeAt(0)
+        if currCode < 256
+          phrase = data[i]
+        else
+          phrase = if dict[currCode] then dict[currCode] else oldPhrase + currChar
+        out.push phrase
+        currChar = phrase.charAt(0)
+        dict[code] = oldPhrase + currChar
+        code++
+        oldPhrase = phrase
+        i++
+      out.join ''
+
     findFieldByEsCode: (esCode) => (field for field in @fields() when field.esCode == esCode)[0]
 
     clearFieldValues: =>
