@@ -9,6 +9,10 @@ onQueries ->
                   $.map(data.fields, (x) => new Field(@, x))
                 else
                   []
+      @expanded = ko.observable(false)
+
+    toggleExpand: =>
+      @expanded(!@expanded())
 
     toJSON: =>
       id: @id()
