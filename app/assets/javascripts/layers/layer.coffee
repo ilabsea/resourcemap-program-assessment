@@ -44,7 +44,6 @@ onLayers ->
     hasName: => $.trim(@name()).length > 0
 
     expandAllField: (layer)=>
-      console.log(layer)
       $.get "/collections/#{collectionId}/layers/#{layer.id()}.json", {}, (l) =>
         f = ko.observableArray($.map(l["fields"], (x) => new Field(self, x)))
         layer.fields(f())
