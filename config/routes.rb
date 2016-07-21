@@ -45,6 +45,9 @@ ResourceMap::Application.routes.draw do
       member do
         put :set_order
       end
+      collection do 
+        get 'list_layers'
+      end
     end
     resources :fields
 

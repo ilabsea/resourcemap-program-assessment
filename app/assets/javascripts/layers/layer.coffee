@@ -7,6 +7,7 @@ onLayers ->
       @ord = ko.observable data?.ord
       @threshold_ids = data?.threshold_ids ? []
       @query_ids = data?.query_ids ? []
+      @total = ko.observable data?.total ? 0
       if data?.fields
         @fields = ko.observableArray($.map(data.fields, (x) => new Field(@, x)))
       else
@@ -41,6 +42,12 @@ onLayers ->
       @valid = ko.computed => !@error()
 
     hasName: => $.trim(@name()).length > 0
+
+    expandAllField: (layer)=>
+      $.get "/collections/#{collectionId}/layers/#{layer.id()}.json", {}, (l) =>
+        f = ko.observableArray($.map(l["fields"], (x) => new Field(self, x)))
+        layer.fields(f())
+        layer.total(null)
 
     toJSON: =>
       id: @id()
