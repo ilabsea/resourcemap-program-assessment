@@ -1,3 +1,28 @@
+# == Schema Information
+#
+# Table name: site_histories
+#
+#  id               :integer          not null, primary key
+#  collection_id    :integer
+#  name             :string(255)
+#  lat              :decimal(10, 6)
+#  lng              :decimal(10, 6)
+#  parent_id        :integer
+#  hierarchy        :string(255)
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  properties       :text
+#  location_mode    :string(10)       default("automatic")
+#  id_with_prefix   :string(255)
+#  valid_since      :datetime
+#  valid_to         :datetime
+#  site_id          :integer
+#  uuid             :string(255)
+#  user_id          :integer
+#  start_entry_date :datetime         default(2016-03-01 07:17:27 UTC)
+#  end_entry_date   :datetime         default(2016-03-01 07:17:27 UTC)
+#
+
 require 'spec_helper'
 
 describe SiteHistory do

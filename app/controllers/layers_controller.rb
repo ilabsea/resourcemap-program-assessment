@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: layers
+#
+#  id            :integer          not null, primary key
+#  collection_id :integer
+#  name          :string(255)
+#  public        :boolean
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  ord           :integer
+#
+
 class LayersController < ApplicationController
   before_filter :authenticate_user!
   before_filter :authenticate_collection_admin!, :except => [:index]
@@ -11,7 +24,7 @@ class LayersController < ApplicationController
         add_breadcrumb I18n.t('views.collections.tab.layers'), collection_layers_path(collection)
       end
       if current_user_snapshot.at_present?
-        json = layers.includes(:fields).all.as_json(include: :fields).each { |layer|
+        json = layers.includes(:fields).all.as_json(:include => {:fields => {except: [:updated_at, :created_at]}}).each { |layer|
           layer[:fields].each { |field|
             field['threshold_ids'] = get_associated_field_threshold_ids(field)
             field['query_ids'] = get_associated_field_query_ids(field)
@@ -31,6 +44,31 @@ class LayersController < ApplicationController
     end
   end
 
+  def show
+    layers = Layer.where("id=?",params["id"])
+    json = layers.includes(:fields).all.as_json(:include => {:fields => {except: [:updated_at, :created_at]}}).each { |layer|
+      layer[:fields].each { |field|
+        field['threshold_ids'] = get_associated_field_threshold_ids(field)
+        field['query_ids'] = get_associated_field_query_ids(field)
+      }
+      layer['threshold_ids'] = Layer.find(layer['id']).get_associated_threshold_ids
+      layer['query_ids'] = Layer.find(layer['id']).get_associated_query_ids
+    }
+    render :json => json[0]
+  end
+
+  def list_layers
+    if current_user_snapshot.at_present?
+      json = apply_limit_field(layers, 50)
+      render json:  json
+    else
+      render json: layers
+        .includes(:field_histories)
+        .where("field_histories.valid_since <= :date && (:date < field_histories.valid_to || field_histories.valid_to is null)", date: current_user_snapshot.snapshot.date)
+        .as_json(include: :field_histories)
+    end
+  end
+
   def create
     layer = layers.new params[:layer]
     layer.user = current_user
@@ -38,7 +76,7 @@ class LayersController < ApplicationController
     current_user.layer_count += 1
     current_user.update_successful_outcome_status
     current_user.save!(:validate => false)
-    render json: layer.as_json(include: :fields)
+    render json: layer.as_json(:include => {:fields => {except: [:updated_at, :created_at]}})
   end
 
   def update
@@ -46,9 +84,9 @@ class LayersController < ApplicationController
     layer = collection.layers.find params[:id]
     fix_layer_fields_for_update
     layer.user = current_user
-    layer.update_attributes! params[:layer]   
+    layer.update_attributes! params[:layer]
     layer.reload
-    render json: layer.as_json(include: :fields)
+    render json: layer.as_json(:include => {:fields => {except: [:updated_at, :created_at]}})
 
   end
 
@@ -82,7 +120,7 @@ class LayersController < ApplicationController
         if field[:config]
           if field[:config][:locations]
             field[:config][:locations] = field[:config][:locations].values
-          end 
+          end
           if field[:config][:options]
             field[:config][:options] = field[:config][:options].values
             field[:config][:options].each { |option| option['id'] = option['id'].to_i }
@@ -95,11 +133,11 @@ class LayersController < ApplicationController
 
           if field[:is_enable_field_logic] == "false"
             params[:layer][:fields_attributes][field_idx][:config] = params[:layer][:fields_attributes][field_idx][:config].except(:field_logics)
-          end        
+          end
 
           if field[:config][:field_logics]
             field[:config][:field_logics] = field[:config][:field_logics].values
-            field[:config][:field_logics].each { |field_logic| 
+            field[:config][:field_logics].each { |field_logic|
               field_logic['id'] = field_logic['id'].to_i
               field_logic['value'] = field_logic['value'].to_f
               if field_logic['field_id']
@@ -111,11 +149,11 @@ class LayersController < ApplicationController
                   end
                 }
               end
-            }    
+            }
           end
 
           field[:config][:range] = fix_field_config_range(field_idx,field) if field[:is_enable_range]
-          
+
         end
       end
     end
@@ -137,15 +175,15 @@ class LayersController < ApplicationController
           field[:config][:range][:maximum] = field[:config][:range][:maximum].to_i
         end
       end
-    end 
-    return field[:config][:range]   
+    end
+    return field[:config][:range]
   end
 
   def validate_field_logic
-    field[:config][:field_logics].delete_if { |field_logic| !field_logic['layer_id'] }            
+    field[:config][:field_logics].delete_if { |field_logic| !field_logic['layer_id'] }
     if field[:config][:field_logics].length == 0
       params[:layer][:fields_attributes][field_idx][:config] = params[:layer][:fields_attributes][field_idx][:config].except(:field_logics)
-    end    
+    end
   end
 
   def sanitize_items(items)
@@ -185,7 +223,7 @@ class LayersController < ApplicationController
     fieldID = field["id"]
 
     self.collection.thresholds.map { |threshold|
-      threshold.conditions.map { |condition| 
+      threshold.conditions.map { |condition|
         conditionFieldID = condition['field'].to_i
         if fieldID == conditionFieldID
           associated_field_threshold_ids.push(threshold.id)
@@ -202,7 +240,7 @@ class LayersController < ApplicationController
     fieldID = field["id"]
 
     self.collection.canned_queries.map { |query|
-      query.conditions.map { |condition| 
+      query.conditions.map { |condition|
         conditionFieldID = condition['field_id'].to_i
         if fieldID == conditionFieldID
           associated_field_query_ids.push(query.id)
@@ -212,5 +250,21 @@ class LayersController < ApplicationController
     }
 
     associated_field_query_ids
+  end
+
+  def apply_limit_field(layers, limit)
+    json = layers.includes(:fields).all.as_json(:include => {:fields => {except: [:updated_at, :created_at]}}).each { |layer|
+      total_field = layer[:fields].length
+      if( total_field > 50)
+        layer[:fields] = layer[:fields][0..9]
+      end
+      layer[:fields] = layer[:fields][0..9]
+      layer['total'] = total_field
+    }
+    return json
+  end
+
+  def set_limit_field(layer, limit)
+    
   end
 end

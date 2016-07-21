@@ -1,6 +1,6 @@
 .left.w30.h50{style: 'position: relative'}
   %img{src: '/images/progress.gif',id: 'uploadProgress', style: 'position: absolute; margin: auto; left: 0; top: 0; right: 0; bottom: 0; display: none'}
-  %img{src: '/images/loading.gif',id: 'loadProgress', style: 'position: absolute; margin: auto; left: 0; top: 0; right: 0; bottom: 0; display: none'}  
+  %img{src: '/images/loading.gif',id: 'loadProgress', style: 'position: absolute; margin: auto; left: 0; top: 0; right: 0; bottom: 0; display: none'}
   #editorContent.left.w30.h50
     <!-- ko if: !loadingSite() -->
 
@@ -78,6 +78,7 @@
 
 
     .tablescroll.sites
+
       %table.GralTable.CleanTable
         %tbody
           <!-- ko if: !isSearch() && $root.groupBy().esCode != '' -->
@@ -138,6 +139,7 @@
                   %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;color:grey;cursor:pointer'}
                 <!-- ko if: expanded() -->
                 <!-- ko foreach: fields -->
+                <!-- ko if: inputable() -->
                 %div{ko(attr: {class: "invisible_calculation"})}
                   %span{ko(text: :errorMessage, validationPopover: :errorMessage), style: 'display: none;'}
                   <!-- ko if: is_mandatory -->
@@ -153,6 +155,7 @@
                     = render partial: field_edit_view(kind), locals: { single_editing_mode: false, mobile: false }
                     <!-- /ko -->
                   <!-- /ko -->
+                <!-- /ko -->
                 <!-- /ko -->
                 <!-- /ko -->
                 <!-- /ko -->
@@ -214,7 +217,7 @@
                   %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;color:grey;cursor:pointer'}
                 <!-- ko if: expanded() -->
                 <!-- ko foreach: fields -->
-                <!-- ko if: kind != "calculation" || ( kind == "calculation" && is_display_field) -->
+                <!-- ko if: visible() -->
                 %div{style: 'margin-bottom:14px'}
                   %span{ko(text: :errorMessage, validationPopover: :errorMessage), style: 'display: none;'}
                   %label.field-name{ko(html: "name + '<sup>' + code + '</sup>:'", css: { error: :error })}
@@ -242,7 +245,7 @@
                   <!-- /ko -->
                   <!-- ko if: !hasValue() &&  !error() -->
                   <!-- ko if: writeable -->
-                  <!-- ko if: kind != 'photo' -->
+                  <!-- ko if: kind != 'photo' && !kind == 'custom_widget' -->
                   <!-- ko if: $parents[1].editable() -->
                   %span.value{ko(visible: '!editing()', click: 'edit'), style: 'color:grey;cursor:pointer'}= t('views.collections.index.no_value')
                   <!-- /ko -->
@@ -251,6 +254,12 @@
                   <!-- /ko -->
                   <!-- /ko -->
                   <!-- /ko -->
+
+                  <!-- ko if: kind == 'custom_widget' && !editing() -->
+                  %div{style: "position: relative; padding-left: 0px;", class: 'custom_widget-wrapper'}
+                    %p{"data-bind" => "html: widgetContentViewAsSpan"}
+                  <!-- /ko -->
+
                   <!-- ko if: !writeable -->
                   %span.value{style: 'color:grey'}= t('views.collections.index.no_value')
                   <!-- /ko -->
@@ -273,6 +282,10 @@
           <!-- ko if: editable -->
           = link_to t('views.collections.index.edit_site'), 'javascript:void()', class: 'icon fedit black', 'data-bind' => kov(click: 'startEditMode')
           = link_to t('views.collections.index.delete_site'), 'javascript:void()', class: 'icon fdelete black', 'data-bind' => kov(click: '$root.deleteSite')
+          <!-- ko if: $root.currentCollection().isPublishedTemplate -->
+          %div{style: 'float: right; margin-top: 6px; margin-right: 6px;'}
+            = link_to t('views.collections.index.share_url'), 'javascript:void()', target: :_blank, 'data-bind' => kov(click: '$root.openShareUrlDialog')
+          <!-- /ko -->
           <!-- /ko -->
       <!-- /ko -->
 
@@ -304,7 +317,7 @@
     %button.icon_button.expand-collapse_button.oleftexpand{ko(click: '$root.toogleExpandFullScreen')}
 
     #map
-    
+
     <!-- ko if: currentCollection() -->
     <!-- ko with: currentCollection -->
     <!-- ko if: showingCollectionAlert() -->
@@ -313,7 +326,7 @@
       %div{ko(click: '$root.toggleAlertLegend'), style: 'cursor: pointer;line-height: 30px; background-color:#ffffff; vertical-align:middle; padding-left:10px; font-size:15px;border-radius: 5px 5px 5px 5px;'}
         %b Legend
         %img{ko(visible: '$root.loadingLegend'),src: "/assets/load.gif", style: 'width:15px; padding-left:7px'}
-        %img{src: "/assets/round_plus.png", style: 'padding:7px 7px 0px;'}      
+        %img{src: "/assets/round_plus.png", style: 'padding:7px 7px 0px;'}
     <!-- /ko -->
 
     <!-- ko if: $root.toggleLegend() -->
@@ -322,7 +335,7 @@
         %b Legend
         %img{ko(visible: '$root.loadingLegend'),src: "/assets/load.gif", style: 'width:15px; padding-left:7px'}
         %img.right{src: "/assets/round_minus.png", style: 'padding:5px 10px 0px'}
-      
+
       %ul#legend_alert_list{ko(foreach: :thresholds), style: 'min-width:200px;padding-left:5px; padding-right:5px; list-style:none; max-width:350px;'}
 
         <!-- ko if: showingThreshold() -->
@@ -333,7 +346,7 @@
             %span{ko(text: :propertyName)}
             %span :
             %span{ko(text: :alertedSitesNum)}
-        <!-- /ko -->     
+        <!-- /ko -->
       %div{style: 'height: 20px; background-color:#E6E6E6;border-radius: 0px 0px 10px 10px;'}
     <!-- /ko -->
 
@@ -348,19 +361,19 @@
       %div{ko(click: '$root.toggleAlertLegend'), style: 'cursor: pointer;line-height: 30px; background-color:#ffffff; vertical-align:middle; padding-left:10px; font-size:15px;  border-radius: 5px 5px 5px 5px; float: left;'}
         %b Legend
         %img{ko(visible: :loadingLegend),src: "/assets/load.gif", style: 'width:15px; padding-left:7px'}
-        %img{src: "/assets/round_plus.png", style: 'padding:7px 7px 0px 7px'}      
+        %img{src: "/assets/round_plus.png", style: 'padding:7px 7px 0px 7px'}
     <!-- /ko -->
     <!-- ko if: toggleLegend() -->
     %div#alert-legend{style: 'position: absolute; top: 50px; right: 15px; z-index: 99; background-color:white;max-height:350px;border:1px solid #BDBDBD;border-radius:10px'}
-      
+
       %div{ko(click: '$root.toggleAlertLegend'), style: 'cursor: pointer;line-height: 30px; background-color:#E6E6E6; vertical-align:middle; padding-left:10px; font-size:15px; positio; border-radius: 10px 10px 0px 0px;'}
         %b Legend
         %img{ko(visible: :loadingLegend),src: "/assets/load.gif", style: 'width:15px; padding-left:7px'}
         %img.right{src: "/assets/round_minus.png", style: 'padding:5px 10px 0px'}
 
       %div{style: 'overflow: auto;max-height: 290px;border-top:1px solid #BDBDBD;border-bottom:1px solid #BDBDBD;max-width:350px;'}
-        
-        
+
+
         %div{ko(foreach: :collections), style: ''}
           <!-- ko if: checked() -->
           <!-- ko if: showingCollectionAlert() -->
@@ -377,12 +390,11 @@
                   %span :
                   %span{ko(text: :alertedSitesNum)}
               <!-- /ko -->
-             
-          <!-- /ko -->   
-          <!-- /ko -->   
+
+          <!-- /ko -->
+          <!-- /ko -->
     <!-- /ko -->
-         
+
     %div{style: 'height: 20px; background-color:#E6E6E6;border-radius: 0px 0px 10px 10px;'}
     <!-- /ko -->
     <!-- /ko -->
-

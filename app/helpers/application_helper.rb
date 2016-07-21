@@ -45,4 +45,10 @@ module ApplicationHelper
     end
     languages.join(' | ').html_safe
   end
+
+  def google_khmer_fonts
+    ["Khmer", "Moul", "Hanuman"].map do |font_name|
+      stylesheet_link_tag "https://fonts.googleapis.com/css?family=#{font_name}"
+    end.join(" ").html_safe
+  end
 end

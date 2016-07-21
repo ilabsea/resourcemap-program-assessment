@@ -4,7 +4,7 @@ require 'bundler/capistrano'
 set :whenever_command, "bundle exec whenever"
 require "whenever/capistrano"
 
-set :rvm_ruby_string, '1.9.3'
+set :rvm_ruby_string, '1.9.3-p545'
 set :rvm_type, :system
 set :application, "resourcemap_wfp"
 set :repository,  "https://github.com/ilabsea/resourcemap-program-assessment"
@@ -13,9 +13,9 @@ set :user, 'ilab'
 set :use_sudo, false
 set :group, 'ilab'
 set :deploy_via, :remote_cache
-set :branch, '1.3'
+set :branch, 'wfp_emis'
 
-server '54.169.173.164', :app, :web, :db, primary: true
+server '54.179.168.26', :app, :web, :db, primary: true
 
 default_run_options[:pty] = true
 default_environment['TERM'] = ENV['TERM']
@@ -40,7 +40,11 @@ namespace :deploy do
   end
 
   task :symlink_photo_field, :roles => :app do
-    run "ln -nfs #{shared_path}/photo_field #{release_path}/public/"
+    run "ln -nfs #{shared_path}/photo_field #{release_path}/public/photo_field"
+  end
+
+  task :symlink_print_pdf, :roles => :app do
+    run "ln -nfs #{shared_path}/print #{release_path}/public/print"
   end
 
   task :generate_revision_and_version do
@@ -78,6 +82,8 @@ before "deploy:restart", "deploy:migrate"
 after "deploy:update_code", "deploy:symlink_configs"
 
 after "deploy:update_code", "deploy:symlink_photo_field"
+
+after "deploy:update_code", "deploy:symlink_print_pdf"
 
 after "deploy:update", "foreman:export"    # Export foreman scripts
 

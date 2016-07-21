@@ -31,6 +31,8 @@ en:
         phone: "Phone"
         calculation: "Calculation"
         location: "Nearby Places"
+        custom_widget: "Custom Widget"
+        custom_aggregator: "Aggregator"
       form:
         remove_field: "Remove field"
         move_field_up: "Move field up"
@@ -89,3 +91,7 @@ en:
           dependent_field: "Dependent field"
           maximum_search_length: "Maximum search length(meter)"
           import_places: "Import places"
+          custom_widgeted: "Custom Widget"
+          custom_aggregator: "Aggregator"
+          do_not_display_in_form_as_being_used_in_custom_widget: "Do not display in form as being used in custom widget"
+          select_fields: "Select fields"

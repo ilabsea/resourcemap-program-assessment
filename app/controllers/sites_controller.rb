@@ -1,6 +1,30 @@
+# == Schema Information
+#
+# Table name: sites
+#
+#  id               :integer          not null, primary key
+#  collection_id    :integer
+#  name             :string(255)
+#  lat              :decimal(10, 6)
+#  lng              :decimal(10, 6)
+#  parent_id        :integer
+#  hierarchy        :string(255)
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  properties       :text
+#  location_mode    :string(10)       default("automatic")
+#  id_with_prefix   :string(255)
+#  uuid             :string(255)
+#  device_id        :string(255)
+#  external_id      :string(255)
+#  start_entry_date :datetime         default(2015-08-14 02:57:03 UTC)
+#  end_entry_date   :datetime         default(2015-08-14 02:57:03 UTC)
+#  user_id          :integer
+#
+
 class SitesController < ApplicationController
   before_filter :setup_guest_user, :if => Proc.new { collection && collection.public }
-  before_filter :authenticate_user!, :except => [:index, :search, :search_alert_site, :view_photo], :unless => Proc.new { collection && collection.public }
+  before_filter :authenticate_user!, :except => [:index, :search, :search_alert_site, :view_photo, :share], :unless => Proc.new { collection && collection.public }
 
   authorize_resource :only => [:index, :search, :search_alert_site], :decent_exposure => true
 
@@ -19,9 +43,17 @@ class SitesController < ApplicationController
     render json: search.ui_results.map { |x| x['_source'] }
   end
 
+  def share
+    if collection.is_published_template
+      @site = collection.sites.find_by_uuid(params[:id])
+      render layout: "print_template"
+    else
+      raise CanCan::AccessDenied
+    end
+  end
+
   def show
     search = new_search
-
     search.id params[:id]
     # If site does not exists, return empty objects
     result = search.ui_results.first['_source'] rescue {}
@@ -32,15 +64,14 @@ class SitesController < ApplicationController
     site_params = JSON.parse params[:site]
     ui_attributes = prepare_from_ui(site_params)
     site = collection.sites.new(ui_attributes.merge(user: current_user))
-    site.user_id = current_user.id
-    if site.valid?
-      site.save!
-      current_user.site_count += 1
-      current_user.update_successful_outcome_status
-      current_user.save!(:validate => false)
-      render json: site, :layout => false
+    site.user = current_user
+
+    site_aggregator = SiteAggregator.new(site)
+
+    if site_aggregator.save
+      render json: site_aggregator.site, :layout => false
     else
-      render json: site.errors.messages, status: :unprocessable_entity, :layout => false
+      render json: site_aggregator.site.errors.messages, status: :unprocessable_entity, :layout => false
     end
   end
 
@@ -49,14 +80,13 @@ class SitesController < ApplicationController
     site.user = current_user
     site.properties_will_change!
     site.attributes = prepare_from_ui(site_params)
-    if site.valid?
-      site.save!
-      if params[:photosToRemove]
-        Site::UploadUtils.purgePhotos(params[:photosToRemove])
-      end
-      render json: site, :layout => false
+
+    site_aggregator = SiteAggregator.new(site)
+    if site_aggregator.save
+      Site::UploadUtils.purgePhotos(params[:photosToRemove]) if params[:photosToRemove]
+      render json: site_aggregator.site, :layout => false
     else
-      render json: site.errors.messages, status: :unprocessable_entity, :layout => false
+      render json: site_aggregator.site.errors.messages, status: :unprocessable_entity, :layout => false
     end
   end
 
@@ -70,11 +100,12 @@ class SitesController < ApplicationController
     site.properties_will_change!
 
     site.properties[params[:es_code]] = field.decode_from_ui(params[:value])
-    if site.valid?
-      site.save!
-      render json: site, :status => 200, :layout => false
+    site_aggregator = SiteAggregator.new(site)
+
+    if site_aggregator.save
+      render json: site_aggregator.site, :status => 200, :layout => false
     else
-      error_message = site.errors[:properties][0][params[:es_code]]
+      error_message = site_aggregator.site.errors[:properties][0][params[:es_code]]
       render json: {:error_message => error_message}, status: :unprocessable_entity, :layout => false
     end
   end
@@ -84,7 +115,7 @@ class SitesController < ApplicationController
   #   search = MapSearch.new params[:collection_ids], user: current_user
 
   #   formula = params[:formula].downcase if params[:formula].present?
-    
+
   #   search.set_formula formula if formula.present?
   #   search.zoom = zoom
   #   search.bounds = params if zoom >= 2
@@ -98,9 +129,9 @@ class SitesController < ApplicationController
   #   end
 
   #   search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :search, :hierarchy_code, :selected_hierarchies, :_alert, :formula)
-    
+
   #   search.prepare_filter
-  #   # search.apply_queries 
+  #   # search.apply_queries
 
   #   render json: search.results
   # end
@@ -124,7 +155,7 @@ class SitesController < ApplicationController
     search = MapSearch.new [collection_id], user: current_user
 
     formula = params[:formula].downcase if params[:formula].present?
-    
+
     search.set_formula formula if formula.present?
     search.zoom = zoom
     search.bounds = params if zoom >= 2
@@ -138,9 +169,9 @@ class SitesController < ApplicationController
     end
 
     search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :search, :hierarchy_code, :selected_hierarchies, :_alert, :formula)
-    
+
     search.prepare_filter
-    # search.apply_queries 
+    # search.apply_queries
 
     return search.results
   end
@@ -151,7 +182,7 @@ class SitesController < ApplicationController
   #   search = MapSearch.new params[:collection_ids], user: current_user
 
   #   formula = params[:formula].downcase if params[:formula].present?
-    
+
   #   search.set_formula formula if formula.present?
   #   search.zoom = zoom
   #   search.bounds = params if zoom >= 2
@@ -163,10 +194,10 @@ class SitesController < ApplicationController
   #     search.selected_hierarchy params[:hierarchy_code], params[:selected_hierarchies]
   #   end
   #   search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :search, :hierarchy_code, :selected_hierarchies, :_alert, :formula)
-    
+
   #   # search.apply_queries
   #   search.prepare_filter
-  #   render json: search.sites_json    
+  #   render json: search.sites_json
   # end
 
   def search_alert_site
@@ -188,7 +219,7 @@ class SitesController < ApplicationController
     search = MapSearch.new [collection_id], user: current_user
 
     formula = params[:formula].downcase if params[:formula].present?
-    
+
     search.set_formula formula if formula.present?
     search.zoom = zoom
     search.bounds = params if zoom >= 2
@@ -200,10 +231,10 @@ class SitesController < ApplicationController
       search.selected_hierarchy params[:hierarchy_code], params[:selected_hierarchies]
     end
     search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :search, :hierarchy_code, :selected_hierarchies, :_alert, :formula)
-    
+
     # search.apply_queries
     search.prepare_filter
-    return search.sites_json    
+    return search.sites_json
   end
 
   def destroy
@@ -283,7 +314,7 @@ class SitesController < ApplicationController
     decoded_properties = {}
     site_properties = parameters.delete("properties") || {}
     files = params[:fileUpload] || {}
-    
+
     site_properties.each_pair do |es_code, value|
       value = [ value, files[value] ] if fields[es_code].kind == 'photo'
       decoded_properties[es_code] = fields[es_code].decode_from_ui(value)

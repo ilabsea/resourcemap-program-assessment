@@ -1,7 +1,30 @@
+# == Schema Information
+#
+# Table name: collections
+#
+#  id                    :integer          not null, primary key
+#  name                  :string(255)
+#  description           :text
+#  public                :boolean
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  lat                   :decimal(10, 6)
+#  lng                   :decimal(10, 6)
+#  min_lat               :decimal(10, 6)
+#  min_lng               :decimal(10, 6)
+#  max_lat               :decimal(10, 6)
+#  max_lng               :decimal(10, 6)
+#  icon                  :string(255)
+#  quota                 :integer          default(0)
+#  is_aggregator         :boolean          default(FALSE)
+#  print_template        :text
+#  is_published_template :boolean          default(TRUE)
+#
+
 class CollectionsController < ApplicationController
   before_filter :setup_guest_user, :if => Proc.new { collection }
   before_filter :authenticate_user!, :except => [:render_breadcrumbs, :index, :alerted_collections], :unless => Proc.new { collection }
-  
+
   authorize_resource :except => [:render_breadcrumbs, :my_membership], :decent_exposure => true, :id_param => :collection_id
 
   expose(:collections){
@@ -20,7 +43,7 @@ class CollectionsController < ApplicationController
   before_filter :show_collection_breadcrumb, :except => [:index, :new, :create, :render_breadcrumbs]
   before_filter :show_properties_breadcrumb, :only => [:members, :settings, :reminders, :quotas, :can_queries]
 
-  
+
   def my_membership
     collection = Collection.find params[:collection_id]
     member = collection.memberships.find_by_user_id current_user.id
@@ -32,7 +55,7 @@ class CollectionsController < ApplicationController
       render json: Collection.where("name like ?", "%#{params[:name]}%") if params[:name].present?
     else
       add_breadcrumb I18n.t('views.collections.index.collections'), 'javascript:window.model.goToRoot()'
-      
+
       if current_user.is_guest
         if params[:collection_id] && !collection.public?
           flash[:error] = "You need to sign in order to view this collection"
@@ -81,9 +104,11 @@ class CollectionsController < ApplicationController
   def update
     if collection.update_attributes params[:collection]
       collection.recreate_index
-      redirect_to collection_settings_path(collection), notice: I18n.t('views.collections.form.collection_updated', name: collection.name)
+      tab_url = params[:tab] == "print" ? print_template_collection_path(collection) : collection_settings_path(collection)
+      redirect_to tab_url, notice: I18n.t('views.collections.form.collection_updated', name: collection.name)
     else
-      render :settings
+      template = params[:tab] == "print" ? :print_template : :settings
+      render template
     end
   end
 
@@ -115,7 +140,7 @@ class CollectionsController < ApplicationController
   def can_queries
     add_breadcrumb "Can queries", collection_can_queries_path(collection)
   end
-  
+
   def destroy
     if params[:only_sites]
       collection.delete_sites_and_activities
@@ -182,7 +207,7 @@ class CollectionsController < ApplicationController
     search = new_search
 
     search.full_text_search params[:term] if params[:term]
-    search.alerted_search params[:_alert] if params[:_alert] 
+    search.alerted_search params[:_alert] if params[:_alert]
     search.select_fields(['id', 'name', 'properties'])
     search.apply_queries
 
@@ -198,13 +223,13 @@ class CollectionsController < ApplicationController
   def search
     search = new_search
 
-    formula = params[:formula].downcase if params[:formula].present? 
+    formula = params[:formula].downcase if params[:formula].present?
 
-    search.set_formula formula if formula.present? 
+    search.set_formula formula if formula.present?
     search.full_text_search params[:search]
     search.offset params[:offset]
     search.limit params[:limit]
-    search.alerted_search params[:_alert] if params[:_alert] 
+    search.alerted_search params[:_alert] if params[:_alert]
     search.sort params[:sort], params[:sort_direction] != 'desc' if params[:sort]
     search.hierarchy params[:hierarchy_code], params[:hierarchy_value] if params[:hierarchy_code]
     search.my_site_search current_user.id unless current_user.can_view_other? params[:collection_id]
@@ -257,7 +282,7 @@ class CollectionsController < ApplicationController
     locations_errors = []
     locations_csv.each do |item|
       message = ""
-      
+
       if item[:error]
         message << "Error: #{item[:error]}"
         message << " " + item[:error_description] if item[:error_description]
@@ -316,7 +341,7 @@ class CollectionsController < ApplicationController
       s = c.new_search
       s.alerted_search true
       s.apply_queries
-      c.id if s.results.length > 0 
+      c.id if s.results.length > 0
     end
     render json: ids.compact
   end
@@ -355,5 +380,9 @@ class CollectionsController < ApplicationController
     info[:new_site_properties] = collection.new_site_properties
 
     render json: info
+  end
+
+  def print_template
+
   end
 end

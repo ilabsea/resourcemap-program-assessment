@@ -28,18 +28,21 @@
 //= require jquery_strength
 //= require jquery_control_key_input
 //= require validate_key
+
+//= require tinymce-jquery
+//= require editor/tinymce-init
+//= require editor/tinymce-ko
+
 //= require i18n
 //= require_tree .
 //available on sprocket 2.2 and above
-//= stub 'mobile/map' 
-
-
+//= stub 'mobile/map'
 
 // Update the appcache for offline
 
 $(document).ready(function() {
 	if (window.applicationCache) {
-   		applicationCache.addEventListener('updateready', function() {        
+   		applicationCache.addEventListener('updateready', function() {
      		if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
        			window.applicationCache.swapCache();
        			console.log("appcache updated");

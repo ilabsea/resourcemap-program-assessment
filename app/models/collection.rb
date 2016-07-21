@@ -1,3 +1,26 @@
+# == Schema Information
+#
+# Table name: collections
+#
+#  id                    :integer          not null, primary key
+#  name                  :string(255)
+#  description           :text
+#  public                :boolean
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  lat                   :decimal(10, 6)
+#  lng                   :decimal(10, 6)
+#  min_lat               :decimal(10, 6)
+#  min_lng               :decimal(10, 6)
+#  max_lat               :decimal(10, 6)
+#  max_lng               :decimal(10, 6)
+#  icon                  :string(255)
+#  quota                 :integer          default(0)
+#  is_aggregator         :boolean          default(FALSE)
+#  print_template        :text
+#  is_published_template :boolean          default(TRUE)
+#
+
 class Collection < ActiveRecord::Base
   include Collection::CsvConcern
   include Collection::ShpConcern
@@ -28,7 +51,7 @@ class Collection < ActiveRecord::Base
   has_many :field_histories, dependent: :destroy
   has_many :messages, dependent: :destroy
   has_many :canned_queries, dependent: :destroy
-  
+
   OPERATOR = {">" => "gt", "<" => "lt", ">=" => "gte", "<=" => "lte", "=>" => "gte", "=<" => "lte", "=" => "eq"}
 
   attr_accessor :time_zone
@@ -181,6 +204,8 @@ class Collection < ActiveRecord::Base
           is_mandatory: field.is_mandatory,
           is_display_field: field.is_display_field,
           is_enable_field_logic: field.is_enable_field_logic,
+          custom_widgeted: field.custom_widgeted,
+          readonly_custom_widgeted: field.readonly_custom_widgeted,
           # field_logic_value: field.field_logic_value,
           writeable: user.is_guest ? false : !lms || lms[field.layer_id].write
         }
@@ -275,17 +300,17 @@ class Collection < ActiveRecord::Base
     elsif !params[:from].blank?
       from = params[:from]
       builder = builder.where(['sites.created_at >= :from', :from => from])
-    elsif !params[:to].blank? 
+    elsif !params[:to].blank?
       to = params[:to]
       builder = builder.where(['sites.created_at <= :to', :to => to])
     end
-    builder 
+    builder
   end
 
   def self.filter_page limit, offset, builder
     builder = builder.limit limit   if limit
     builder = builder.offset offset if offset
-    builder.find(:all, :order => "sites.created_at DESC") 
+    builder.find(:all, :order => "sites.created_at DESC")
   end
 
   def new_site_properties

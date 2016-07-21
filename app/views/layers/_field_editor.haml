@@ -28,12 +28,38 @@
   %p.smalltext= t('views.layers.form.field.the_abbreviation_used_to_report_via_SMS.')
   = ko_text_field_tag :code, valueUpdate: :afterblur, css: {error: :codeError}
 
+
   %hr/
-  %label
-    = t('views.layers.form.field.mandatory')
-  %p.smalltext= t('views.layers.form.field.this_field_must_be_report_on_every_report') 
+  /ko if: kind() != 'custom_widget' && kind() != 'custom_aggregator'
   = ko_check_box_tag :is_mandatory, css: {error: :codeError}
-  
+  %span
+    =t('views.layers.form.field.mandatory')
+  %p.smalltext= t('views.layers.form.field.this_field_must_be_report_on_every_report')
+
+  = ko_check_box_tag :is_criteria, css: {error: :codeError}
+  %span Is Criteria
+  %p.smalltext
+    This field will be use to find related site
+  //ko
+
+  /ko if: kind() == 'custom_widget'
+  = ko_check_box_tag :readonly_custom_widgeted, css: {error: :codeError}
+  %span Read-only widget
+  %p.smalltext
+    The field will be uneditable
+  //ko
+
+  /ko if: kind() == 'numeric' || kind() == 'custom_aggregator' || kind() == 'select_one' || kind() == 'text'
+  = ko_check_box_tag :custom_widgeted, css: {error: :codeError}
+  %span
+    = t('views.layers.form.field.custom_widgeted')
+  %p.smalltext= t('views.layers.form.field.do_not_display_in_form_as_being_used_in_custom_widget')
+  //ko
+
+  /ko if: kind() == 'custom_aggregator'
+  %hr/
+  =render 'field_aggregator'
+  //ko
 
   /ko if: kind() == 'select_one' || kind() == 'select_many'
   %hr/
@@ -58,7 +84,7 @@
   %hr/
   = ko_check_box_tag 'impl().is_enable_range', css: {error: :codeError}
   %label
-    Enable Range  
+    Enable Range
 
   %div{ko(if: 'impl().is_enable_range'), style: 'width:275px'}
     %br/
@@ -81,14 +107,14 @@
   %label
     = t('views.layers.form.field.enable_skip_logic_for_this_field')
   %div{ko(if: :is_enable_field_logic)}
-    = render :partial => "field_logic_numeric"    
+    = render :partial => "field_logic_numeric"
   //ko
 
   /ko if: kind() == 'yes_no'
   %hr/
   = ko_check_box_tag :is_enable_field_logic, css: {error: :codeError}
   %label
-    = t('views.layers.form.field.enable_skip_logic_for_this_field')  
+    = t('views.layers.form.field.enable_skip_logic_for_this_field')
 
   %div{ko(if: :is_enable_field_logic)}
     = render :partial => "field_logic_yes_no"
@@ -98,7 +124,7 @@
   %hr/
   = ko_check_box_tag :is_enable_field_logic, css: {error: :codeError}
   %label
-    = t('views.layers.form.field.enable_skip_logic_for_this_field') 
+    = t('views.layers.form.field.enable_skip_logic_for_this_field')
 
   %div{ko(if: :is_enable_field_logic)}
     = render :partial => "field_logic_select_many"
@@ -112,9 +138,29 @@
     = t('views.layers.form.field.enable_skip_logic_for_this_field')
 
   %div{ko(if: :is_enable_field_logic)}
-    = render :partial => "field_logic_select_one"  
+    = render :partial => "field_logic_select_one"
   //ko
   //ko
+  //ko
+
+  /ko if: kind() == 'custom_widget'
+  %hr/
+  %div{"style" => "padding: 5px 0px;"}
+    %label Design custom field as you want
+    %span.smalltext.left{style: 'padding-right:18px;padding-top:10px;'}= t('views.layers.form.field.select_fields')
+    = select_tag nil, nil, 'data-bind'=> "options: $root.customWidgetedFields,
+                                             optionsText: 'name',
+                                             value: $root.selectedCustomWidgetField,
+                                             optionsCaption: window.model.default_select, css: { error: !$root.selectedCustomWidgetField() } ",
+                                             class: 'c-select m-select'
+
+    %button.clist-add{ko(click: '$root.addCustomWidgetedFieldItem',
+                         enable: '$root.customWidgetedFields().length >0'),
+                         title: 'Add another option'}
+
+    %textarea{"data-bind" => "tinymce: impl().widgetContent", class: 'tinymce'}
+
+
   //ko
 
   /ko if: kind() == 'photo'
@@ -125,7 +171,7 @@
   %hr/
   %label
     = t('views.layers.form.field.display_on_form_entry')
-  %p.smalltext= t('views.layers.form.field.show_this_field_and_value_on_form_entry') 
+  %p.smalltext= t('views.layers.form.field.show_this_field_and_value_on_form_entry')
   = ko_check_box_tag :is_display_field, css: {error: :codeError}
   %hr/
   %label
@@ -173,7 +219,7 @@
   %hr/
   %label{ko(css: {error: 'impl().locationError'})}= t('views.layers.form.field.import_places')
   %p.smalltext
-    = t('views.layers.form.field.upload_a_csv') 
+    = t('views.layers.form.field.upload_a_csv')
     Code, LocationName, Latitude, Longitude
     /ko ifnot: impl().errorUploadingLocation()
     /ko if: config  && config.locations
@@ -200,7 +246,7 @@
         %span{ko(text: :code)}
         %span ,
         %span{ko(text: :name)}
-  
+
   //ko
   //ko
 

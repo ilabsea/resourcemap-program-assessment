@@ -1,4 +1,4 @@
-%div{ class: "box centered w40 rm-dialog hidden", style: "margin-left: -200px; margin-top: -100px;" }
+%div{ id: "rm-download-history-dialog", class: "box centered w40 rm-dialog hidden", style: "margin-left: -200px; margin-top: -100px;" }
   =form_tag(download_activity_path, :method => "get" ) do
     %h2= t('views.collections.index.download_history')
     - types = { :month => t('views.collections.index.this_month'),
@@ -9,8 +9,8 @@
         %input{ type: "radio",  name: "collection[type]",  value: key, id: "collection_type_#{key}"}
         %label{ for: "collection_type_#{key}"}
           = value
-          
-    %input{"type" => "hidden", "id" => "rm-colllection_id" , "name" => "collection[id]", "value" => "xx" }   
+
+    %input{"type" => "hidden", "id" => "rm-colllection_id" , "name" => "collection[id]", "value" => "" }
     .item
       %input{type: "radio", checked: 'checked',name: "collection[type]",  value: "range", id: "collection_type_range" }
       %label{for: "collection_type_range"}= t('views.collections.index.custom_range')
@@ -30,9 +30,9 @@
 
 :javascript
   $(function(){
-    
+
     $.fn.rmDialog = function(options){
-  
+
         return this.each(function(){
             $(this).show();
             dialog = $(this);
@@ -49,5 +49,3 @@
     });
 
   });
-
-   

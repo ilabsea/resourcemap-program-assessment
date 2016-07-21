@@ -8,6 +8,7 @@ onCollections ->
 
     constructor: (collection, data) ->
       @constructorLocatable(data)
+      @uuid = data?.uuid
       @collection = collection
       @selected = ko.observable()
       @id = ko.observable data?.id
@@ -74,6 +75,9 @@ onCollections ->
         value = @findLocationLabelByCode(field)
       else
         field.valueUIFor(value)
+
+    customWidgetFields: =>
+      @fields().filter((f) -> f. custom_widgeted == true)
 
     findLocationLabelByCode: (field) =>
       for location in field.locations
@@ -167,11 +171,8 @@ onCollections ->
       collection.fetchFields =>
         if @fields().length == 0
           collection.clearFieldValues()
-          for field in collection.fields()
-            @fields.push(field)
-
-          for layer in collection.layers()
-            @layers.push(layer)
+          @fields(collection.fields())
+          @layers(collection.layers())
           @copyPropertiesToFields()
 
     update_site: (json, callback, callbackError) =>
@@ -244,7 +245,7 @@ onCollections ->
               $.handleAjaxError(data)
           catch error
             $.handleAjaxError(data))
-  
+
 
     propagateUpdatedAt: (value) =>
       @updatedAt(value)
@@ -392,11 +393,12 @@ onCollections ->
       window.model.initDatePicker()
       window.model.initAutocomplete()
       window.model.initControlKey()
-      
+
       for field in @fields()
         field.editing(false)
         field.originalValue = field.value()
         field.setFieldFocus() if field.kind in ["yes_no", "numeric", "select_one", "select_many"]
+        new CustomWidget(field).bindField() if field.custom_widgeted
       window.model.newOrEditSite().scrollable(false)
       $('#name').focus()
 
@@ -494,6 +496,7 @@ onCollections ->
         for layer in @layers()
           for field in layer.fields
             fields.push(field)
+            new CustomWidget(field).bindField() if field.custom_widgeted
         @fields(fields)
         @getLocationFieldOption()
 
@@ -503,7 +506,7 @@ onCollections ->
         callback() if callback && typeof(callback) == 'function'
 
     copyPropertiesToFields: =>
-      if @properties()
+      if @properties()      
         for field in @fields()
           value = @properties()[field.esCode]
           field.setValueFromSite(value)
@@ -532,7 +535,7 @@ onCollections ->
                     field["dependentFields"][j] = tmp
                   j++
                 i++
-              $.map(field["dependentFields"], (f) -> 
+              $.map(field["dependentFields"], (f) ->
                 fieldName = "${" + f["code"]+"}"
                 fieldValue = "${" + f["code"]+"}"
                 switch f["kind"]
@@ -554,7 +557,7 @@ onCollections ->
               )
               # Add change value to dependent field
 
-              $.map(field["dependentFields"], (f) -> 
+              $.map(field["dependentFields"], (f) ->
                 $("#" + f["kind"] + "-input-" + f["code"]).addClass('calculation')
                 element_id = field["code"]
                 $.map(window.model.editingSite().fields(), (fi) ->
@@ -573,7 +576,7 @@ onCollections ->
                             fi.value(result)
                           else
                             fi.value('')
-                          
+
                       )
                     )
                 )

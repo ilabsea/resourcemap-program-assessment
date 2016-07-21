@@ -11,14 +11,17 @@ onLayers ->
 
       @editableCode = ko.observable(true)
       @deletable = ko.observable(true)
-      
+
       @is_enable_field_logic = ko.observable data?.is_enable_field_logic ? false
       @is_enable_range = data?.is_enable_range
+      @is_criteria = data?.is_criteria
       @config = data?.config
       @field_logics_attributes = data?.field_logics_attributes
       @metadata = data?.metadata
-      @is_mandatory = data?.is_mandatory 
-      @is_display_field = data?.is_display_field     
+      @is_mandatory = data?.is_mandatory
+      @is_display_field = data?.is_display_field
+      @custom_widgeted = data?.custom_widgeted
+      @readonly_custom_widgeted = data?.readonly_custom_widgeted
 
       @kind_titleize = ko.computed =>
         (@kind().split(/_/).map (word) -> word[0].toUpperCase() + word[1..-1].toLowerCase()).join ' '
@@ -38,7 +41,7 @@ onLayers ->
         if !@hasCode() then return "the field #{@fieldErrorDescription()} is missing a Code"
         if (@code() in ['lat', 'long', 'name', 'resmap-id', 'last updated']) then return "the field #{@fieldErrorDescription()} code is reserved"
         null
-        
+
       @error = ko.computed => @nameError() || @codeError() || @impl().error()
       @valid = ko.computed => !@error()
       @oldcode = ko.observable data?.code
@@ -116,6 +119,9 @@ onLayers ->
         is_mandatory: @is_mandatory
         is_display_field: @is_display_field
         is_enable_field_logic: @is_enable_field_logic
+        is_criteria: @is_criteria
+        custom_widgeted: @custom_widgeted
+        readonly_custom_widgeted: @readonly_custom_widgeted
       @impl().toJSON(json)
       json
 
@@ -171,7 +177,7 @@ onLayers ->
 
     toJSON: (json) =>
       json.is_enable_range = @is_enable_range()
-      json.config = {digits_precision: @digitsPrecision(), allows_decimals: @allowsDecimals(), range: {minimum: @minimum(), maximum: @maximum()}, field_logics: $.map(@field_logics(), (x) ->  x.toJSON())}    
+      json.config = {digits_precision: @digitsPrecision(), allows_decimals: @allowsDecimals(), range: {minimum: @minimum(), maximum: @maximum()}, field_logics: $.map(@field_logics(), (x) ->  x.toJSON())}
       return json
 
     saveFieldLogic: (field_logic) =>
@@ -217,7 +223,7 @@ onLayers ->
 
                         field_logic_no = new FieldLogic
                         field_logic_no.id(0)
-                        field_logic_no.value(0)     
+                        field_logic_no.value(0)
                         field_logic_no.label("No")
 
                         ko.observableArray([field_logic_no, field_logic_yes])
@@ -253,7 +259,7 @@ onLayers ->
     addOption: (option) =>
       option.id @nextId
       @options.push option
-      @nextId += 1 
+      @nextId += 1
 
     toJSON: (json) =>
       json.config = {options: $.map(@options(), (x) -> x.toJSON()), next_id: @nextId}
@@ -276,7 +282,7 @@ onLayers ->
           id = 0
         field_logic.id id
         @field_logics.push field_logic
-                        
+
     toJSON: (json) =>
       json.config = {options: $.map(@options(), (x) -> x.toJSON()), next_id: @nextId,field_logics: $.map(@field_logics(), (x) ->  x.toJSON())}
 
@@ -343,10 +349,10 @@ onLayers ->
                    else
                     ko.observableArray()
 
-      @maximumSearchLengthError = ko.computed => 
-        if @maximumSearchLength() && @maximumSearchLength().length >0 
-          null 
-        else 
+      @maximumSearchLengthError = ko.computed =>
+        if @maximumSearchLength() && @maximumSearchLength().length >0
+          null
+        else
           "the field #{@field.fieldErrorDescription()} is missing a maximum search length"
       @missingFileLocationError = ko.computed =>
         if @locations() && @locations().length > 0
@@ -379,7 +385,7 @@ onLayers ->
       @field = ko.observable()
       @codeCalculation = ko.observable field.config?.code_calculation ? ""
     addDependentField: (field) =>
-      fields = @dependent_fields().filter (f) -> f.id() is field.id() 
+      fields = @dependent_fields().filter (f) -> f.id() is field.id()
       if fields.length == 0
         field.editableCode(false)
         @dependent_fields.push(new FieldDependant(field.toJSON()))
@@ -391,3 +397,107 @@ onLayers ->
       @codeCalculation(@codeCalculation() + '${' + field.code() + "}")
     toJSON: (json) =>
       json.config = {digits_precision: @digitsPrecision(), allows_decimals: @allowsDecimals(), code_calculation: @codeCalculation(), dependent_fields: $.map(@dependent_fields(), (x) ->  x.toJSON())}
+
+  class @Field_custom_widget extends @FieldImpl
+    constructor: (field) ->
+      super(field)
+      @widgetContent = ko.observable field?.config?.widget_content
+    toJSON: (json) =>
+      json.config = { widget_content: @widgetContent()}
+
+  class @Field_custom_aggregator extends @FieldImpl
+    constructor: (field) ->
+      super(field)
+      @_fieldList = ko.observableArray([])
+      @conditionFieldId = ko.observable(field.config?.condition_field_id)
+
+      @selectedCollectionFieldList = ko.observableArray([])
+      @selectedCollection = ko.observable(field.config?.selected_collection)
+
+      @selectedCollection.subscribe =>
+        @findFieldByCollectionId(@selectedCollection())
+
+      @aggregatorTypeList = ['SUM']
+      @selectedAggregatorType = ko.observable(field.config?.selected_aggregator_type)
+      @selectedCustomWidgetFieldList = ko.computed =>
+        @selectedCollectionFieldList().filter ((field) -> field.custom_widgeted)
+
+      @selectedCustomWidgetField = ko.observable()
+      # data get stored in hash format, not in array's
+      @aggregatedFieldList = ko.observableArray($.map(field.config?.aggregated_field_list || [] , (x) =>  {id: x.id, code: x.code, name: x.name}))
+      @conditionFieldValue = ko.observable(field.config?.condition_field_value)
+
+      @error = ko.computed =>
+        return "the field must reference to a collection " unless @selectedCollection()
+        return "the field must have the aggregator type" unless @selectedAggregatorType()
+        return "the field must have the aggregator field list" if @aggregatedFieldList().length == 0
+
+    findFieldByCollectionId: (collectionId) =>
+      return @selectedCollectionFieldList([]) if !collectionId
+
+      $.get "/collections/#{collectionId}/basic_fields.json", {}, (fields) =>
+        fields.sort((x, y) -> if x.name.toLowerCase().trim() < y.name.toLowerCase().trim() then -1 else 1)
+        @selectedCollectionFieldList(fields)
+        #Initially selectedCollectionFieldList is empty then conditionFieldId will be forced to undefined
+        @conditionFieldId(@field.config?.condition_field_id)
+
+    addCustomWidgetedFieldItem: =>
+      if @selectedCustomWidgetField()
+        found = false
+        for aggregatedField in @aggregatedFieldList()
+          if @selectedCustomWidgetField().code == aggregatedField.code
+            found = true
+            break
+        @aggregatedFieldList.push @selectedCustomWidgetField() if found == false
+
+    removeCustomWidgetedFieldItem: (item) =>
+      @aggregatedFieldList.remove(item)
+
+    model: =>
+      window.test = @field.layer().parent()
+
+    findFieldById: (id) =>
+      result = @fieldList().filter (field) -> field.id == parseInt(id)
+      result[0]
+
+    findCollectionById: (id) =>
+      result = @collectionList().filter (collection) ->
+        collection.id == parseInt(id)
+      result[0]
+
+
+    # cannot get it from window.model since this variable does not exist yet
+    # we are forming the new MainViewModel constructor
+    collectionList: =>
+      window.collectionList
+
+    layerList: =>
+      window.layerList
+
+    fieldList: =>
+      return @_fieldList() if @_fieldList().length > 0
+      fields = []
+      for layer in @layerList()
+        fields = fields.concat(layer.fields)
+      fields.sort (first, second)->
+        firstItem = first.name.toLowerCase()
+        secondItem = second.name.toLowerCase()
+        if firstItem < secondItem
+          return -1
+        else if firstItem == secondItem
+          return 0
+        else
+          return 1
+      @_fieldList(fields)
+      return @_fieldList()
+
+    toJSON: (json) =>
+      json.is_custom_aggregator = true
+      json.config = {
+        selected_collection: @selectedCollection(),
+        selected_aggregator_type: @selectedAggregatorType(),
+        aggregated_field_list: $.map(@aggregatedFieldList(), (x) =>  {id: x.id, code: x.code, name: x.name}),
+        condition_field_id: @conditionFieldId(),
+        condition_field_value: @conditionFieldValue()
+
+      }

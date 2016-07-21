@@ -30,6 +30,9 @@ gem 'rubyzip', :require => 'zip/zip'
 gem "password_strength"
 gem "ruby-recaptcha"
 gem 'i18n-coffee'
+gem 'tinymce-rails'
+
+gem 'wkhtmltopdf-binary-edge', '~> 0.12.2.1'
 
 group :test do
   gem 'shoulda-matchers'
@@ -59,6 +62,8 @@ group :development do
   gem 'dist', :git => 'https://github.com/manastech/dist.git'
   gem 'ruby-prof', :git => 'https://github.com/ruby-prof/ruby-prof.git'
   gem 'mailcatcher'
+  gem 'annotate'
+  gem 'pry-rails'
 end
 
 # Gems used only for assets and not required

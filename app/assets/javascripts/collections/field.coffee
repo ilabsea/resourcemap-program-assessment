@@ -8,19 +8,21 @@ onCollections ->
       @name = data.name
       @kind = data.kind
       @ord = data.ord
-      @is_mandatory = ko.observable data?.is_mandatory ? false 
+      @is_mandatory = ko.observable data?.is_mandatory ? false
       @is_display_field = ko.observable data?.is_display_field ? false
       @is_enable_field_logic = data.is_enable_field_logic
-      @invisible_calculation = ko.computed => 
+      @custom_widgeted = data.custom_widgeted
+      @readonly_custom_widgeted = data.readonly_custom_widgeted
+      @invisible_calculation = ko.computed =>
                                 if @kind == "calculation" && !@is_display_field()
                                   return "invisible-div"
 
-      @photo = '' 
+      @photo = ''
       @preKeyCode = null
       @photoPath = '/photo_field/'
       @showInGroupBy = @kind in ['select_one', 'select_many', 'hierarchy']
       @writeable = @originalWriteable = data?.writeable
-      
+
       @allowsDecimals = ko.observable data?.config?.allows_decimals == 'true'
       @originalIsMandatory = data.is_mandatory
       @value = ko.observable()
@@ -32,6 +34,22 @@ onCollections ->
         #     window.model.newOrEditSite().prepareCalculatedField()
 
       @keyType = if @allowsDecimals() then 'decimal' else 'integer'
+
+      # is more semantic
+      @isForCustomWidget = ko.computed ->
+        data.custom_widgeted
+
+      @widgetContentViewAsInput = ko.computed =>
+        if(@kind == "custom_widget" && data.config?.widget_content != undefined)
+          @replaceCustomWidget data.config?.widget_content
+        else
+          ""
+
+      @widgetContentViewAsSpan = ko.computed =>
+        if(@kind == "custom_widget" && data.config?.widget_content != undefined)
+          @replaceCustomWidget data.config?.widget_content, true
+        else
+          ""
 
       @hasValue = ko.computed =>
         if @kind == 'yes_no'
@@ -47,12 +65,12 @@ onCollections ->
        read: =>  @valueUIFor(@value())
        write: (value) =>
          @value(@valueUIFrom(value))
-      
+
       if @kind == 'numeric'
         @digitsPrecision = data?.config?.digits_precision
         @range = if data.config?.range?.minimum? || data.config?.range?.maximum?
                   data.config?.range
-        
+
         @field_logics = if data.config?.field_logics?
                           $.map data.config.field_logics, (x) => new FieldLogic x
                         else
@@ -121,15 +139,30 @@ onCollections ->
       @is_blocked_by = ko.observableArray([])
       @blocked = ko.computed =>
         field_object = @get_dom_object(this)
-        if @is_blocked_by() != undefined and @is_blocked_by().length > 0
+        if @is_blocked_by() != undefined and @is_blocked_by().length> 0
           field_object.block({message: ""})
         else
           field_object.unblock()
 
+    replaceCustomWidget: (widgetContent, readonly) =>
+      isReadonly = ''
+      isReadonly = "data-readonly='readonly'" if readonly == true
+      regExp = /(&nbsp;)|\{([^}]*)\}/g
+      widget = widgetContent.replace(regExp, (match, space, token)->
+        replace = space || token
+        if replace == "&nbsp;"
+          replaceBy = ''
+        else
+          replaceBy = """
+                      <span id="wrapper-custom-widget-#{replace}" #{isReadonly}></span>
+                      """
+        return replaceBy
+       )
+
     refresh_skip: =>
       if(@is_blocked_by())
         tmp = @is_blocked_by()
-        @is_blocked_by(tmp)  
+        @is_blocked_by(tmp)
 
     setFieldFocus: =>
       if window.model.newOrEditSite()
@@ -161,14 +194,14 @@ onCollections ->
 
                 if field_logic.condition_type == '<='
                   if parseFloat(value) <= field_logic.value
-                    @setFocusStyleByField(field_logic.field_id)  
+                    @setFocusStyleByField(field_logic.field_id)
                     return
                   else
                     @enableSkippedField(@esCode)
 
                 if field_logic.condition_type == '='
                   if parseFloat(value) == field_logic.value
-                    @setFocusStyleByField(field_logic.field_id)  
+                    @setFocusStyleByField(field_logic.field_id)
                     return
                   else
                     @enableSkippedField(@esCode)
@@ -183,7 +216,7 @@ onCollections ->
                 if field_logic.condition_type == '>='
                   if parseFloat(value) >= field_logic.value
                     @setFocusStyleByField(field_logic.field_id)
-                    return 
+                    return
                   else
                     @enableSkippedField(@esCode)
 
@@ -204,7 +237,7 @@ onCollections ->
                   if value?
                     for field_value in value
                       for field_logic_value in field_logic.selected_options
-                        if field_value == parseInt(field_logic_value.value)                        
+                        if field_value == parseInt(field_logic_value.value)
                           b = true
                           field_id = field_logic.field_id
                           tmp.push field_value
@@ -215,7 +248,7 @@ onCollections ->
                     return
                   else
                     @enableSkippedField(@esCode) if @value() != null
-          
+
           if @value() != "" && @value() != null && noSkipField
             @enableSkippedField(@esCode)
             return
@@ -227,13 +260,13 @@ onCollections ->
         if window.model.newOrEditSite().scrollable() == true
           @removeFocusStyle()
           if field.kind == "select_one"
-            $('#select_one-input-'+field.code).focus()  
+            $('#select_one-input-'+field.code).focus()
           else if field.kind == "select_many"
             field.expanded(true)
             $('#select-many-input-'+field.code).focus()
-          else if field.kind == "hierarchy"           
+          else if field.kind == "hierarchy"
             $('#'+field.esCode)[0].scrollIntoView(true)
-            $('#'+field.esCode).focus() 
+            $('#'+field.esCode).focus()
           else if field.kind == "yes_no"
             $('#yes_no-input-'+field.code).focus()
           else if field.kind == "photo"
@@ -276,7 +309,7 @@ onCollections ->
       )
 
     disableField: (field, by_field_id) =>
-      field.is_mandatory(false) 
+      field.is_mandatory(false)
       field.skippedState(true)
       field.is_blocked_by([])
       unless field.is_mandatory()
@@ -356,13 +389,14 @@ onCollections ->
       value = '' if (value == null && value == '')
 
       @value(value)
-    
+
     enableScrollFocusView: =>
       if @field_logics.length > 0
-        if @value() == "" 
+        if @value() == ""
           @enableSkippedField @esCode
         else
           window.model.newOrEditSite().scrollable(true)
+
     removeFocusStyle: =>
       $('div').removeClass('focus')
       $('input:not(#name)').removeClass('focus')
@@ -393,7 +427,7 @@ onCollections ->
         if value != null && value != '' && value != 'NaN' && typeof value != 'undefined'
           if @digitsPrecision
             value = parseFloat(value)
-            Number((value).toFixed(parseInt(@digitsPrecision))) 
+            Number((value).toFixed(parseInt(@digitsPrecision)))
           else
             value
         else
@@ -459,7 +493,7 @@ onCollections ->
             else
               @errorMessage('Invalid value, value must be less than or equal '+@range.maximum)
             return
-          
+
           if @range.minimum
             if parseFloat(@value()) >= parseFloat(@range.minimum)
               @errorMessage('')
@@ -500,7 +534,7 @@ onCollections ->
             return true
           if decimalValue.length >= parseInt(@digitsPrecision)
             return false
-          
+
       return true
 
     keyPress: (field, event) =>
@@ -511,7 +545,7 @@ onCollections ->
           if field.kind == "numeric"
             if field.allowsDecimals()
               return @validate_digit(event.keyCode)
-          return true     
+          return true
 
     exit: =>
       @value(@originalValue)
@@ -605,13 +639,13 @@ onCollections ->
 
         value = (new Date()).getTime() + "." + photoExt
         @value(value)
-        
+
         reader = new FileReader()
         reader.onload = (event) =>
           @photo = event.target.result.split(',')[1]
           $("#imgUpload-" + @code).attr('src',event.target.result)
           $("#divUpload-" + @code).show()
-          
+
         reader.readAsDataURL(fileUploads[0])
       else
         @photo = ''
@@ -623,3 +657,14 @@ onCollections ->
       $("#" + @code).attr("value",'')
       $("#divUpload-" + @code).hide()
 
+    inputable: =>
+      if (@kind == 'custom_widget' && @readonly_custom_widgeted == true) || @isForCustomWidget() || @kind == 'custom_aggregator'
+        false
+      else
+        true
+
+    visible: =>
+      if (@kind != "calculation" || (@kind == "calculation" && @is_display_field)) && !@isForCustomWidget()
+        true
+      else
+        false

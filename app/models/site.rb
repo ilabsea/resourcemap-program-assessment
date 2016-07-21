@@ -1,3 +1,27 @@
+# == Schema Information
+#
+# Table name: sites
+#
+#  id               :integer          not null, primary key
+#  collection_id    :integer
+#  name             :string(255)
+#  lat              :decimal(10, 6)
+#  lng              :decimal(10, 6)
+#  parent_id        :integer
+#  hierarchy        :string(255)
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  properties       :text
+#  location_mode    :string(10)       default("automatic")
+#  id_with_prefix   :string(255)
+#  uuid             :string(255)
+#  device_id        :string(255)
+#  external_id      :string(255)
+#  start_entry_date :datetime         default(2015-08-14 02:57:03 UTC)
+#  end_entry_date   :datetime         default(2015-08-14 02:57:03 UTC)
+#  user_id          :integer
+#
+
 class Site < ActiveRecord::Base
   include Activity::AwareConcern
   include Site::ActivityConcern
@@ -63,7 +87,7 @@ class Site < ActiveRecord::Base
     print 'Done!'
   end
 
-  
+
   def self.add_start_and_end_entry_date
     Site.transaction do
       Site.find_each(batch_size: 100) do |site|
@@ -135,7 +159,7 @@ class Site < ActiveRecord::Base
         value = field.default_value_for_create(collection)
         properties[field.es_code] = value if value
       end
-    end   
+    end
   end
 
   def valid_properties
@@ -156,7 +180,7 @@ class Site < ActiveRecord::Base
 
   def valid_lat_lng
     valid = false
-      
+
     if lat
       if (lat >= -90) && (lat <= 90)
         valid = true

@@ -28,8 +28,13 @@
     = f.text_area :description, rows: 3, :readonly =>  !creation && (cannot? :update, collection)
   - if Settings.is_on? :public_collection
     .field.w60
-      = f.label :public
-      = f.check_box :public, :disabled => !creation && (cannot? :update, collection)
+      .field{style: "margin-right: 40px"}
+        = f.label :public
+        = f.check_box :public, :disabled => !creation && (cannot? :update, collection)
+
+      .field
+        = f.label :is_aggregator
+        = f.check_box :is_aggregator, :disabled => !creation && (cannot? :update, collection)
 
   .field.w60
     %label

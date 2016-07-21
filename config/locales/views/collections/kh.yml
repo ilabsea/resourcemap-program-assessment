@@ -93,6 +93,7 @@ kh:
         long: "រយៈបណ្តោយ"
         edit_site: "កែតំបន់"
         delete_site: "លុបតំបន់"
+        share_url: "មើលព្រាង"
         properties: "លក្ខណៈសម្បត្តិ"
         refresh_captcha: "ផ្លាស់ប្តូរអក្សរ ផ្ទៀងផ្ទាត់"
         incorrect_please_try_again: "មិនត្រឹមត្រូវ សូមព្យាយាមម្តងទៀត"
