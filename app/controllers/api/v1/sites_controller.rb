@@ -47,9 +47,9 @@ module Api::V1
         if params[:photosToRemove]
           Site::UploadUtils.purgePhotos(params[:photosToRemove])
         end
-        render json: site_aggregator, :layout => false
+        render json: site_aggregator.site, :layout => false
       else
-        render json: site_aggregator.errors.messages, status: :unprocessable_entity, :layout => false
+        render json: site_aggregator.site.errors.messages, status: :unprocessable_entity, :layout => false
       end
     end
 
@@ -60,9 +60,9 @@ module Api::V1
       site_aggregator = SiteAggregator.new(site)
 
       if site_aggregator.save
-        render json: site_aggregator, status: :created
+        render json: site_aggregator.site, status: :created
       else
-        render json: site_aggregator.errors.messages, status: :unprocessable_entity
+        render json: site_aggregator.site.errors.messages, status: :unprocessable_entity
       end
     end
 

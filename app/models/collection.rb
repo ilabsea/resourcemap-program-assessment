@@ -175,13 +175,11 @@ class Collection < ActiveRecord::Base
 
   def visible_layers_for(user, options = {}, language = nil)
     target_fields = visible_fields_for(user, options, language)
-    layers = target_fields.map(&:layer).uniq.map do |layer|
-      {
-        id: layer.id,
-        name: layer.name,
-        ord: layer.ord,
-      }
+    layers = []
+    target_fields.map(&:layer).uniq.each do |layer|
+      layers << ({ id: layer.id, name: layer.name, ord: layer.ord}) if layer
     end
+
 
     membership = user.membership_in self
     if !user.is_guest && !membership.try(:admin?)
