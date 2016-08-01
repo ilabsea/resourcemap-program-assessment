@@ -74,4 +74,14 @@ class Membership < ActiveRecord::Base
       # collection.layer_memberships.create! :layer_id => options[:layer_id], :user_id => user_id, :read => read, :write => write
     # end
   end
+
+  def self.remove_nil_user
+    Membership.all.each do |m|
+      if m.user.nil?
+        p m.user_id
+        m.destroy()
+      end
+    end
+  end
+  
 end

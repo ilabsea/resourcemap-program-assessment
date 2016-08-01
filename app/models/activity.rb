@@ -417,4 +417,14 @@ class Activity < ActiveRecord::Base
       I18n.t('views.activities.table.nothing')
     end
   end
+
+  def self.remove_nil_user
+    Activity.all.each do |a|
+      if a.user.nil?
+        p a.user_id
+        a.destroy()
+      end
+    end
+  end
+  
 end
