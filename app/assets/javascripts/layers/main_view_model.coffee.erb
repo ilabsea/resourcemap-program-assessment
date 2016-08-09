@@ -150,10 +150,18 @@ onLayers ->
       layer.hasFocus(true)
 
     editLayer: (layer) =>
-      @originalFields = $.map(layer.fields(), (x) -> new Field(layer, x.toJSON()))
-      @currentLayer(layer)
-      @currentField(layer.fields()[0]) if layer.fields().length > 0
-      layer.hasFocus(true)
+      $.get "/collections/#{collectionId}/layers/#{layer.id()}.json", {}, (l) =>
+        @originalFields = $.map(layer.fields(), (x) -> new Field(layer, x.toJSON()))
+        if l["fields"]
+          fields = ko.observableArray($.map(l["fields"], (x) => new Field(layer, x)))
+          layer.fields(fields())
+        else
+        @currentLayer(layer)
+        @currentField(layer.fields()[0]) if layer.fields().length > 0
+        layer.hasFocus(true)
+
+    expandAllField: (layer) =>
+      console.log(layer)
 
     cancelLayer: =>
       if @currentLayer().id()

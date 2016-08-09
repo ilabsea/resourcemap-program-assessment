@@ -29,10 +29,13 @@
     //ko
 
   /ko foreach: $root.layers()
+  %div.coldiv{ko(css: {coldiv: '!expanded()', expdiv: 'expanded()'}), style: 'margin-top:24px;margin-bottom:14px'}
+    %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;color:grey;cursor:pointer'}
+  /ko if: expanded()
   /ko foreach: fields
   /ko if: kind != 'photo' && kind != 'calculation'&& kind != 'location'&& kind != 'identifier'
 
-  #div{ko(click: 'function (data, event) { $root.toggleRefineProperty($data.id) }'), style: 'cursor:pointer;padding-top:6px'}
+  #div{ko(click: 'function (data, event) { $root.toggleRefineProperty($data.id) }'), style: 'cursor:pointer;padding-top:6px; padding-left:30px;'}
     %img{ko(attr: {src: "'#{InsteddRails.url}/theme/images/icons/misc/grey/arrow' + ($root.expandedRefineProperty() == id ? 'Down' : 'Right') + '.png'"}), style: "position:relative;top:1px", width: 11, height: 11}
     %span{ko(text: :name)}
   //ko
@@ -109,6 +112,7 @@
     %select{ko(value: '$root.expandedRefinePropertyValue', options: 'config.options', optionsValue: 'function(o){return o.id }', optionsText: 'function(o){return o.label }')}
     %a.button.white{ko(click: '$root.saveCondition')} OK
     //ko
+  //ko
   //ko
   //ko
   //ko

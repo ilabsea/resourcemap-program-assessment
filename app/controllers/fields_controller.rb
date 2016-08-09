@@ -30,6 +30,7 @@ class FieldsController < ApplicationController
   def index
     options = {}
     options[:snapshot_id] = current_user_snapshot.snapshot.id if !current_user_snapshot.at_present?
+    request.env['HTTP_ACCEPT_ENCODING'] = 'gzip'
     render json: collection.visible_layers_for(current_user, options)
   end
 end

@@ -22,7 +22,7 @@ onLayers -> if $('#layers-main').length > 0
     window.collectionList = collections.filter (collection) -> collection.id != parseInt(window.collectionId)
     createBinding()
 
-  $.get "/collections/#{collectionId}/layers.json", {}, (layers) =>
+  $.get "/collections/#{collectionId}/layers/list_layers.json", {}, (layers) =>
     window.layerList = layers
     createBinding()
 
