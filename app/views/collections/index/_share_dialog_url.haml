@@ -1,20 +1,19 @@
-%div{ class: "box centered w40 rm-dialog hidden", id: "rm-share-url-dialog", style: "margin-left: -200px; margin-top: -100px;" }
-  %h3 Share secret
+%div{ class: "box centered w60 rm-dialog hidden", id: "rm-share-url-dialog", style: "margin-left: -200px; margin-top: -100px;" }
+  %h3
+    = t('views.collections.index.print_report')
   %p
-    Copy the url below to share this site detail in predefined design template with other party
-  %a#share-url-dialog{href: "", target: :_blank, style: 'color:#777777;'}
-  %br
+    Please click on the link below for HTML print view.
+    You can copy this link below to share with others to view this report.
+  %p
+    %a#share-url-dialog{href: "", target: :_blank, style: 'color:#777777;'}
 
-  %p
-    If you need a more friendly printable format we suggest to use PDF below
   %div
     %p
-      %a#get-pdf{ko(click: :getPdf), href: "", target: :_blank} Get PDF
+      %a#get-pdf{ko(click: :getPdf), href: "", target: :_blank, class: 'button white'} Email me Print view in PDF format
 
-  %div{ style: "margin-left: 15px; padding-top: 10px;"}
-    %button{ type: "button", value: "Close", class: "white rm-dialog-cancel" } Close
-
-  .clear &nbsp;
+  %div{ style: "padding-top: 10px;"}
+    %p
+      %button{ type: "button", value: "Close", class: "white rm-dialog-cancel" } Close
 
 :javascript
   $(function(){

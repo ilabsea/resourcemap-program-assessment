@@ -284,7 +284,7 @@
           = link_to t('views.collections.index.delete_site'), 'javascript:void()', class: 'icon fdelete black', 'data-bind' => kov(click: '$root.deleteSite')
           <!-- ko if: $root.currentCollection().isPublishedTemplate -->
           %div{style: 'float: right; margin-top: 6px; margin-right: 6px;'}
-            = link_to t('views.collections.index.share_url'), 'javascript:void()', target: :_blank, 'data-bind' => kov(click: '$root.openShareUrlDialog')
+            = link_to t('views.collections.index.print_report'), 'javascript:void()',style: 'color: #000;', target: :_blank, 'data-bind' => kov(click: '$root.openShareUrlDialog')
           <!-- /ko -->
           <!-- /ko -->
       <!-- /ko -->
