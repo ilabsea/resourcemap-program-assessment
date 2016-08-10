@@ -45,7 +45,7 @@ ResourceMap::Application.routes.draw do
       member do
         put :set_order
       end
-      collection do 
+      collection do
         get 'list_layers'
       end
     end
@@ -160,6 +160,7 @@ ResourceMap::Application.routes.draw do
 
     # v1
     namespace :v1 do
+      resources :site_pdfs, only: [:create]
       resources :collections do
         resources :sites, only: [:create,:index,:update,:show]
         resources :fields, only: [:create,:index,:update,:show]
