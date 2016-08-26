@@ -29,9 +29,6 @@ onCollections ->
       @value.subscribe =>
         if @skippedState() == false && @kind in ["yes_no", "select_one", "select_many", "numeric"]
           @setFieldFocus()
-        # if @kind in ["numeric", "calculation"]
-        #   if window.model.newOrEditSite()
-        #     window.model.newOrEditSite().prepareCalculatedField()
 
       @keyType = if @allowsDecimals() then 'decimal' else 'integer'
 
@@ -158,6 +155,14 @@ onCollections ->
                       """
         return replaceBy
        )
+
+    bindWithCustomWidgetedField: =>
+      if @kind == 'custom_widget'
+        arr_field_wrapper = @widgetContentViewAsInput().match(/wrapper-custom-widget-[^"]+/g)
+        for field_wrapper in arr_field_wrapper
+          field_code = field_wrapper.split("wrapper-custom-widget-")[1]
+          field = window.model.findFieldByCode(field_code)
+          new CustomWidget(field).bindField()
 
     refresh_skip: =>
       if(@is_blocked_by())
