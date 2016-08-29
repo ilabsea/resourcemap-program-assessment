@@ -90,7 +90,6 @@ onCollections ->
       window.model.newOrEditSite().scrollable(false)
       window.model.newOrEditSite().startEntryDate(new Date(Date.now()))
       for field in window.model.newOrEditSite().fields()
-        new CustomWidget(field).bindField() if field.custom_widgeted
         field.setFieldFocus() if field.skippedState() == false && field.kind == 'yes_no'
 
       $('#name').focus()
@@ -121,12 +120,11 @@ onCollections ->
             @currentCollection(site.collection)
             @hideLoadingField()
             @loadBreadCrumb()
-            @rebindCustomWidgetView()
           $('a#previewimg').fancybox()
 
-    @rebindCustomWidgetView: () ->
-      for field in @editingSite().customWidgetFields()
-        new CustomWidget(field).bindField()
+    @rebindCustomWidgetView: =>
+      for field in window.model.editingSite().fields()
+        field.bindWithCustomWidgetedField()
 
     @editSiteFromId: (siteId, collectionId) ->
       site = @siteIds[siteId]
@@ -223,7 +221,7 @@ onCollections ->
         $('a#previewimg').fancybox()
         window.model.updateSitesInfo()
         @reloadMapSites()
-        # @rebindCustomWidgetView()
+        @rebindCustomWidgetView()
 
       callbackError = () =>
         @hideProgress()
@@ -366,3 +364,8 @@ onCollections ->
                   )
               )
             )
+
+    # @findFieldByCode: (code) =>
+    #   console.log 'editing'
+    #   console.log window.model.editingSite()
+    #   (field for field in window.model.editingSite().fields() when field.code == code)[0]
