@@ -87,8 +87,8 @@ onLayers ->
       return unless @selecting
 
       if window.model.currentLayer() != @layer()
-        destinationOrd = @layer().fields().length + 1
-        @ord(destinationOrd)
+        window.model.moveFieldCrossLayer(@, @layer())
+
         $("a[id='#{@name()}']").html("Move to layer '#{@layer().name()}' upon save")
       else
         $("a[id='#{@name()}']").html('Move to layer...')

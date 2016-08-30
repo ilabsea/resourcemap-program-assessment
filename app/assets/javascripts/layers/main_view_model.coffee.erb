@@ -265,6 +265,10 @@ onLayers ->
     moveFieldUp: (field) =>
       @moveFieldDown @currentLayer().fields()[field.ord() - 2]
 
+    moveFieldCrossLayer: (field, destinationLayer) =>
+      lastFieldInDestinationLayer = destinationLayer.fields()[destinationLayer.fields().length - 1]
+      field.ord(lastFieldInDestinationLayer.ord() + 1)
+
     newField: (kind) =>
       @currentField(new Field(@currentLayer(), kind: kind, ord: @currentLayer().fields().length + 1))
       @currentLayer().fields.push(@currentField())
