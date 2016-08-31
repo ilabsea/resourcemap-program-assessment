@@ -2,7 +2,7 @@ class QueriesController < ApplicationController
 	before_filter :authenticate_user!, :except => [:index]
 	before_filter :authenticate_collection_admin!, :only => [:create]
   before_filter :fix_conditions, only: [:create, :update]
-	
+
 	def index
 		respond_to do |format|
       format.html do
@@ -10,7 +10,7 @@ class QueriesController < ApplicationController
         add_breadcrumb I18n.t('views.collections.index.properties'), collection_path(collection)
         add_breadcrumb I18n.t('views.collections.tab.can_queries'), collection_thresholds_path(collection)
       end
-      format.json { render json: queries }      
+      format.json { render json: queries }
     end
 	end
 
@@ -31,7 +31,7 @@ class QueriesController < ApplicationController
   def destroy
     canned_query.destroy
     Resque.enqueue IndexRecreateTask, canned_query.id
-    render json: canned_query    
+    render json: canned_query
   end
 
   private

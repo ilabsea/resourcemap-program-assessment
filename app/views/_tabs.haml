@@ -18,4 +18,5 @@
     - if Settings.is_on? :channels
       = tab t('views.collections.tab.quotas'), collection_quotas_path(collection)
     = tab t('views.collections.tab.can_queries'), collection_queries_path(collection)
+    = tab t('views.collections.tab.report_queries'), collection_report_queries_path(collection)
     = tab 'Print template', print_template_collection_path(collection)

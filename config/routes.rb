@@ -32,6 +32,7 @@ ResourceMap::Application.routes.draw do
       get 'print_template'
     end
 
+    resources :report_queries
     resources :queries
     resources :basic_fields, only: ['index']
     resources :sites do

@@ -1,0 +1,96 @@
+/ko if: field()
+/ko if: field().kind == 'text' || field().kind == 'user' || field().kind == 'email' || field().kind == 'phone'
+%span{ko(text: 'field().name')}
+/ko if: operator() == '='
+%span start with
+%span{ko(text: :fieldValue)}
+//ko 
+/ko if: operator() == 'empty'
+%span has no value
+//ko
+//ko
+
+/ko if: field().kind == 'site'
+%span{ko(text: 'field().name')}
+/ko if: operator() == '='
+%span is
+%span{ko(text: :fieldValue)}
+//ko 
+/ko if: operator() == 'empty'
+%span has no value
+//ko               
+//ko
+
+
+/ko if: field().kind == 'yes_no'
+%span{ko(text: 'field().name')}
+%span is
+%span{ko(text: :fieldValue)}
+//ko                
+
+/ko if: field().kind == 'numeric'
+%span{ko(text: 'field().name')}
+/ko if: operator() == '='
+%span equals
+%span{ko(text: :fieldValue)}
+//ko
+/ko if: operator() == '<'
+%span is less than
+%span{ko(text: :fieldValue)}
+//ko
+/ko if: operator() == '<='
+%span is less than or equal to
+%span{ko(text: :fieldValue)}
+//ko
+/ko if: operator() == '>'
+%span is greater than
+%span{ko(text: :fieldValue)}
+//ko
+/ko if: operator() == '>='
+%span is greater than or equal to
+%span{ko(text: :fieldValue)}
+//ko
+/ko if: operator() == 'empty'
+%span has no value
+//ko
+//ko
+
+/ko if: field().kind == 'date'
+%span{ko(text: 'field().name')}
+/ko if: operator() == '='
+%span is between
+%span{ko(text: :fieldDateFrom)}
+%span to
+%span{ko(text: :fieldDateTo)}                
+//ko 
+/ko if: operator() == 'empty'
+%span has no value
+//ko
+//ko
+
+/ko if: field().kind == 'select_one' || field().kind == 'select_many'
+%span{ko(text: 'field().name')}
+%span is
+%span{ko(text: '$root.bindOptionLabel(field(), fieldValue())')} 
+//ko
+
+/ko if: field().kind == 'hierarchy'
+%span{ko(text: 'field().name')}
+%span is
+%span{ko(text: '$root.bindHierarchyLabel(field(), fieldValue())')}
+//ko
+
+//ko
+
+/ko ifnot: field()
+/ko if: fieldId() == 'location_missing'
+%span location is missing
+//ko
+
+/ko if: fieldId() == 'update'
+%span update
+%span{ko(text: :fieldValue)}
+//ko
+
+//ko
+
