@@ -1,0 +1,158 @@
+- content_for :head do
+  :css
+    .error { color: red; }
+
+= render '/tabs'
+
+-# Hierarchy item template
+%script{type: "text/html", id: "hierarchy-items-template"}
+  %div
+    %a{ko(click: :toggleExpand, style: {marginLeft: "'' + (level() * 20) + 'px'"}), href: 'javascript:void(0)'}
+      %img{ko(attr: {src: "'#{InsteddRails.url}/theme/images/icons/18/black/folder' + (expanded() ? '_open' : '') + '.png'"}), style: 'position:relative;top:2px'}
+      %span{ko(text: :name)}
+    /ko if: expanded
+    /ko template: {name: 'hierarchy-items-template', foreach: hierarchyItems}
+    //ko
+    //ko
+= render 'report_queries/refine_hierarchy_items_template'
+.tabsline
+  %div
+    %img{src: '/images/loading.gif',id: 'loadProgress', style: 'position: absolute; left: 0; top: 0; right: 0; bottom: 0;margin: auto; display: none'}
+  %br/
+  #report-queries-main.hidden-until-loaded
+    - if current_user_snapshot.at_present? && collection_admin?
+      %h2= t('views.report_queries.title')
+      %p= t('views.report_queries.description')
+      /ko foreach: report_queries
+
+      /ko if: isEditing
+      .box.w90
+        %h1.header_text
+          = t('views.report_queries.properties')
+        .middlebuttons
+        %label{ko(css: {error: 'nameError'})}
+          = t('views.report_queries.name')
+        %br
+        %input{ko(value: :name),type: :text, style: 'width:240px'}
+        %br
+        %br
+        = t('views.report_queries.conditions.description')
+        %br
+        %br
+        /ko foreach :conditions
+        .box.grey{style: 'height:15px; margin-bottom:7px; width: 10px; float: left'}
+          %span{ko(text: :id)}
+        .box.grey.w60{style: 'height:15px; margin-bottom:7px; margin-left: 40px;'}
+          = render 'report_queries/condition_template'
+          .rightbuttons
+            %button.fclose{ ko(click: '$parent.removeCondition'), title: 'Remove condition' }
+        //ko
+        /ko if : conditions().length > 0
+        .middlebuttons
+        %label{ko(css: {error: 'formalaError'})}
+          = t('views.report_queries.formula')
+        %br
+        %textarea{ko(value: :formula,click: '$root.autoExpand'), style: 'width:240px; height: 20px'}
+        %br
+        //ko
+        %button.farrow{ko(click: '$root.refineReportQuery'), title: 'Refine query' }
+          = t('views.report_queries.refine_query')
+
+        /ko if: isRefineReportQuery
+        = render 'report_queries/refine_query_template'
+        //ko
+        .bottom-actions
+          %button.white{ ko(click: '$root.saveReportQuery', enable: :valid) }
+            = t('views.report_queries.save')
+          %a.tgrey{ ko(click: '$root.cancelReportQuery'), href: 'javascript:void(0)' }
+            = t('views.report_queries.cancel')
+          /ko if: !valid()
+          %span{ ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:20px' }
+            = t('views.report_queries.cannot_save')
+          //ko
+      %br
+      //ko
+
+      /ko ifnot: isEditing
+      .box.grey.w60
+        .rightbuttons
+          %button.fdelete{ ko(click: '$root.removeReportQuery'), title: 'Remove query' }
+        .toptitle
+          %span{ko(text: :name)}
+          &rarr;
+          = t('views.report_queries.conditions.description')
+          /ko foreach :conditions
+          %span
+            /ko if: $index() == $parent.conditions().length-1 && $parent.conditions().length > 1
+            %span and
+            //ko
+            = render 'report_queries/condition_template'
+            /ko if: $index() < $parent.conditions().length-1 && $parent.conditions().length > 1
+            %span ,
+            //ko
+          //ko
+        %button.farrow{ ko(click: '$root.editReportQuery'), title: 'Edit query' }
+          = t('views.report_queries.edit')
+      %br
+      //ko
+
+      //ko
+
+      /ko with: newReportQuery
+      .box.w90
+        %h1.header_text
+          = t('views.report_queries.properties')
+        .middlebuttons
+          %label{ko(css: {error: 'nameError'})}
+            = t('views.report_queries.name')
+          %br
+          %input{ko(value: :name),type: :text, style: 'width:240px'}
+          %br
+          %br
+          %div
+            = t('views.report_queries.conditions.description')
+            %br
+            %br
+            /ko foreach :conditions
+            .box.grey{style: 'height:15px; margin-bottom:7px; width: 10px; float: left'}
+              %span{ko(text: :id)}
+            .box.grey.w60{style: 'height:15px; margin-bottom:7px; margin-left: 40px;'}
+              = render 'report_queries/condition_template'
+              .rightbuttons
+                %button.fclose{ko(click: '$parent.removeCondition'), title: 'Remove condition' }
+            //ko
+            /ko if : conditions().length > 0
+            .middlebuttons
+            %label{ko(css: {error: 'formalaError'})}
+              = t('views.report_queries.formula')
+            %br
+            %textarea{ko(value: :formula,click: '$root.autoExpand'), style: 'width:240px; height: 20px'}
+            %br
+            //ko
+
+            %button.farrow{ko(click: '$root.refineReportQuery'), title: 'Refine query' }
+              = t('views.report_queries.refine_query')
+
+            /ko if: isRefineReportQuery
+            = render 'report_queries/refine_query_template'
+            //ko
+
+          %br{clear: :all}
+          .bottom-actions
+            %button.white{ ko(click: '$root.saveReportQuery', enable: :valid) }
+              = t('views.report_queries.save')
+            %a.tgrey{ ko(click: '$root.cancelReportQuery'), href: 'javascript:void(0)' }
+              = t('views.report_queries.cancel')
+            /ko if: !valid()
+            %span{ ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:20px' }
+              = t('views.report_queries.cannot_save')
+            //ko
+      //ko
+
+      /ko ifnot: isEditing
+      .box.grey.add{ ko(click: 'addReportQuery')}
+        %span
+          = t('views.report_queries.add_new_query')
+        %button.cadd.right{title: 'Add new report query'}
+        %br{clear: :all}
+      //ko
