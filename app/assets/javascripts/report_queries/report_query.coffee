@@ -1,42 +1,90 @@
 onReportQueries ->
   class @ReportQuery
     constructor: (data) ->
-      @id = ko.observable data?.id
+      @id = data?.id
       @name = ko.observable data?.name
-      @formula = ko.observable data?.formula
+      @condition = ko.observable data?.condition
+      @conditionFields = if data?.condition_fields
+                           ko.observableArray $.map(data.condition_fields, (x) => new Condition(x))
+                         else
+                           ko.observableArray()
 
-      @conditions = if data?.conditions
-                      ko.observableArray $.map(data.conditions, (x) => new Condition(x))
-                    else
-                      ko.observableArray()
+      @groupByFieldsOptions = ko.observable()
+      @selectedGroupByField = ko.observable(@groupByFieldsOptions()?[0])
+      @groupByFields = if data?.group_by_fields
+                          ko.observableArray $.map(data.group_by_fields, (x) => window.model.findFieldById(x))
+                       else
+                          ko.observableArray()
+
+      @aggregateFields = if data?.aggregate_fields
+                           ko.observableArray $.map(data.aggregate_fields, (x) => new Aggregate(x))
+                         else
+                           ko.observableArray()
+
+      @isEditing = ko.observable()
 
       @nameError = ko.computed => if @hasName()  then null else "the query's name is missing"
-      @queryError = ko.computed => if @conditions().length > 0  then null else "the query must have at least one condition refined"
-      @formalaError = ko.computed => @hasFormulaError() || @LogicalOperatorError()
-      @error = ko.computed => @nameError() || @queryError() || @formalaError()
+      @conditionFieldError = ko.computed => if @hasConditionFields()  then null else "the query must have at least one condition"
+      @conditionError = ko.computed => if @hasCondition()  then null else "the query's condition is missing"
+      @groupByFieldError = ko.computed => if @hasGroupByFields()  then null else "the query must have at least one group by"
+      @aggregateFieldError = ko.computed => if @hasAggregateFields()  then null else "the query must have at least one aggregate"
+      @error = ko.computed => @nameError() || @conditionFieldError() || @conditionError() || @groupByFieldError() || @aggregateFieldError()
       @valid = ko.computed => !@error()
-      @isEditing = ko.observable(false)
-      @isRefineReportQuery = ko.observable(false)
 
     hasName: => $.trim(@name()).length > 0
+    hasCondition: => $.trim(@condition()).length > 0
+    hasConditionFields: => @conditionFields().length > 0
+    hasGroupByFields: => @groupByFields().length > 0
+    hasAggregateFields: => @aggregateFields().length > 0
 
-    hasFormula: => $.trim(@formula()).length > 0
-
-    hasFormulaError: => if @hasFormula() then null else "the formula is missing"
 
     LogicalOperatorError: => if @isLogicalOperatorExpr().status then null else "the formula #{@isLogicalOperatorExpr().msg}"
 
-    addCondition: =>
-      @conditions.push(new Condition)
+    addConditionField: (condition) =>
+      condition.id = @conditionId()
+      @conditionFields.push(condition)
+      window.model.newCondition(new Condition())
 
-    removeCondition: (condition) =>
-      @conditions.remove(condition)
+    conditionId: =>
+      if @conditionFields().length > 0
+        numCondition = @conditionFields().length
+        lastCondition = @conditionFields()[numCondition - 1]
+        return parseInt(lastCondition.id) + 1
+      else
+        return 1
+
+    removeConditionField: (condition) =>
+      @conditionFields.remove(condition)
+
+    addGroupByField: =>
+      @groupByFields.push(@selectedGroupByField())
+
+    removeGroupByField: (field) =>
+      @groupByFields.remove(field)
+
+    addAggregatField: (aggregate) =>
+      aggregate.id = @aggregateId()
+      @aggregateFields.push(aggregate)
+      window.model.newAggregate(new Aggregate())
+
+    aggregateId: =>
+      if @aggregateFields().length > 0
+        numAggregate = @aggregateFields().length
+        lastAggregate = @aggregateFields()[numAggregate - 1]
+        return parseInt(lastAggregate.id) + 1
+      else
+        return 1
+
+    removeAggregateField: (field) =>
+      @aggregateFields.remove(field)
 
     toJSON: =>
-      id: @id()
+      id: @id
       name: @name()
-      formula: @formula()
-      conditions: $.map(@conditions(), (x) -> x.toJSON())
+      condition_fields: $.map(@conditionFields(), (x) -> x.toJSON())
+      group_by_fields: $.map(@groupByFields(), (x) -> x.id)
+      aggregate_fields: $.map(@aggregateFields(), (x) -> x.toJSON())
+      condition: @condition()
 
     tokenize: =>
       results = []

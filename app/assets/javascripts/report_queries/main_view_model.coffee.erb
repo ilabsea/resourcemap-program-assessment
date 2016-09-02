@@ -4,129 +4,13 @@ onReportQueries ->
       @collectionId = collectionId
       @newReportQuery = ko.observable()
       @newCondition = ko.observable(new Condition)
+      @newAggregate = ko.observable(new Aggregate)
+
       @isEditing = ko.observable(false)
       @layers = ko.observableArray()
-      @report_queries = ko.observableArray()
+
+      @reportQueries = ko.observableArray()
       @currentReportQuery = ko.observable()
-      @sites = ko.observableArray()
-      @expandedRefineProperty = ko.observable()
-      @expandedRefinePropertyValue = ko.observable()
-      @expandedRefinePropertyOperator = ko.observable()
-
-      @expandedRefinePropertyDateFrom = ko.observable()
-      @expandedRefinePropertyDateTo = ko.observable()
-      @expandedRefinePropertyHierarchy = ko.observable()
-      @expandedRefinePropertyHierarchy.subscribe (item) -> item?.select()
-      @isRefineReportQuery = ko.observable(false)
-      @validCondition = ko.computed =>
-        field = @findFieldById(@expandedRefineProperty())
-        if field
-          if field.kind == 'date'
-            if @expandedRefinePropertyOperator() != 'empty' && @expandedRefinePropertyDateFrom() && @expandedRefinePropertyDateTo() then return true
-          else
-            if @expandedRefinePropertyOperator() != 'empty' && @expandedRefinePropertyValue() then return true
-          if @expandedRefinePropertyOperator() == 'empty' then return true
-        else if @expandedRefineProperty() == 'update' && @expandedRefinePropertyValue() then return true
-        return false
-
-    bindHierarchyLabel: (field, value) ->
-      for key,item of field.fieldHierarchyItemsMap
-        if key == value
-          return item
-
-    bindOptionLabel: (field, value) ->
-      for option in field.config.options
-        if option.id == parseInt(value)
-          return option.label
-
-    toggleRefineProperty: (property) ->
-      if @expandedRefineProperty() == property
-        @expandedRefineProperty(null)
-        @newCondition(null)
-      else
-        @expandedRefineProperty(null)
-        @expandedRefinePropertyValue(null)
-        @expandedRefineProperty(property)
-        @newCondition(new Condition)
-        window.model.initDatePicker (p, inst) =>
-          id = inst.id
-          $("##{id}").change()
-
-    autoExpand: =>
-      $('textarea').autogrow()
-
-    refineReportQuery: =>
-      if @currentReportQuery().isRefineReportQuery()
-        @currentReportQuery().isRefineReportQuery(false)
-      else
-        @currentReportQuery().isRefineReportQuery(true)
-
-    saveCondition: =>
-      @nextId =  @currentReportQuery().conditions()?.next_id || @currentReportQuery().conditions().length + 1
-      condition = new Condition()
-      condition.id @nextId
-      @nextId++
-
-      condition.fieldId(@expandedRefineProperty())
-      field = @findFieldById(@expandedRefineProperty())
-      if field?
-        if field.kind == 'date'
-          condition.fieldDateFrom(@expandedRefinePropertyDateFrom())
-          condition.fieldDateTo(@expandedRefinePropertyDateTo())
-        else if field.kind == 'hierarchy'
-          condition.fieldValue(@expandedRefinePropertyHierarchy().id)
-        else
-          condition.fieldValue(@expandedRefinePropertyValue())
-      else if @expandedRefineProperty() == 'update'
-        condition.fieldValue(@expandedRefinePropertyValue())
-
-      condition.operator(@expandedRefinePropertyOperator())
-      @currentReportQuery().conditions.push(condition)
-      @currentReportQuery().conditions().next_id = @nextId
-      @toggleRefineProperty(@expandedRefineProperty()) unless @expandedRefineProperty() == 'location_missing'
-      condition
-
-    findFieldById: (id) =>
-      for layer in @layers()
-        for field in layer.fields
-          if field.id == id
-            return field
-    removeReportQuery: (report_query) =>
-      if window.confirm 'Are you sure to delete this report_query?'
-        @deleteReportQuery = report_query
-        $.post "/collections/#{@collectionId}/report_queries/#{report_query.id()}.json", { _method: 'delete' }, @removeReportQueryCallback
-
-    removeReportQueryCallback: =>
-      @report_queries.remove @deleteReportQuery
-      delete @deleteReportQuery
-    cancelEditingReportQuery: =>
-      for report_query in @report_queries()
-        if report_query.isEditing()
-          @report_queries.replace report_query, @originalReportQuery
-        else
-          report_query.isEditing(false)
-    clearUnsavedReportQuery: (report_query) =>
-      @report_queries.replace report_query, @originalReportQuery
-    cancelReportQuery: =>
-      @isEditing(false)
-      @newReportQuery(null)
-      @currentReportQuery().isEditing(false)
-      if @currentReportQuery().id()
-        @report_queries.replace @currentReportQuery(), @originalReportQuery
-      else
-        @report_queries.remove @currentReportQuery()
-
-    editReportQuery: (report_query) =>
-      @clearUnsavedReportQuery(@currentReportQuery())  if @originalReportQuery
-      @originalReportQuery = new ReportQuery(report_query.toJSON())
-      @expandedRefineProperty(null)
-      @expandedRefinePropertyValue(null)
-      @newReportQuery(null)
-
-      @cancelEditingReportQuery()
-      @currentReportQuery report_query
-      @isEditing(true)
-      @currentReportQuery().isEditing(true)
 
     addReportQuery: =>
       @newReportQuery(new ReportQuery)
@@ -136,33 +20,58 @@ onReportQueries ->
     saveReportQuery: =>
       @isEditing(false)
       json = {report_query: @currentReportQuery().toJSON()}
-      json.report_query.conditions.next_id = @nextId
-      if @currentReportQuery().id()
+      if @currentReportQuery().id
         json._method = 'put'
-        $.post "/collections/#{@collectionId}/report_queries/#{@currentReportQuery().id()}.json", json, @saveReportQueryCallback
+        $.post "/collections/#{@collectionId}/report_queries/#{@currentReportQuery().id}.json", json, @saveReportQueryCallback
       else
-        @report_queries.push(@currentReportQuery())
+        @reportQueries.push(@currentReportQuery())
         $.post "/collections/#{@collectionId}/report_queries.json", json, @saveReportQueryCallback
 
     saveReportQueryCallback: (data) =>
-      @currentReportQuery().id(data?.id)
+      @currentReportQuery().id = data?.id
       @currentReportQuery().isEditing(false)
       @currentReportQuery null
       @newReportQuery null
 
-    afterkeydown: =>
-      alert 'down'
+    cancelReportQuery: (data) =>
+      @isEditing(false)
+      @newReportQuery(null)
+      @currentReportQuery().isEditing(false)
+      if @currentReportQuery().id
+        @reportQueries.replace @currentReportQuery(), @originalReportQuery
+      else
+        @reportQueries.remove @currentReportQuery()
 
-    initInsteddPlatform:  ->
-      $.instedd.init_components() if $.instedd
+    editReportQuery: (reportQuery) =>
+      @clearUnsavedReportQuery(@currentReportQuery())  if @originalReportQuery
+      @originalReportQuery = new ReportQuery(reportQuery.toJSON())
+      @newReportQuery(null)
+      @cancelEditingReportQuery()
+      @currentReportQuery reportQuery
+      @isEditing(true)
+      @currentReportQuery().isEditing(true)
 
-    initDatePicker: (options = {}) =>
-      @initInsteddPlatform()
-      # fix dinamic DOM
-      # http://stackoverflow.com/questions/1059107/why-does-jquery-uis-datepicker-break-with-a-dynamic-dom
-      $(".ux-datepicker").removeClass('hasDatepicker').datepicker(
-                                                                    dateFormat : "dd/mm/yy",
-                                                                    yearRange: "-100:+5",
-                                                                    changeMonth: true,
-                                                                    changeYear: true
-                                                                  )
+    clearUnsavedReportQuery: (reportQuery) =>
+      @reportQueries.replace reportQuery, @originalReportQuery
+
+    cancelEditingReportQuery: =>
+      for reportQuery in @reportQueries()
+        if reportQuery.isEditing()
+          @reportQueries.replace reportQuery, @originalReportQuery
+        else
+          reportQuery.isEditing(false)
+
+    removeReportQuery: (reportQuery) =>
+      if window.confirm 'Are you sure to delete this query?'
+        @deleteReportQuery = reportQuery
+        $.post "/collections/#{@collectionId}/report_queries/#{reportQuery.id}.json", { _method: 'delete' }, @removeReportQueryCallback
+
+    removeReportQueryCallback: =>
+      @reportQueries.remove @deleteReportQuery
+      delete @deleteReportQuery
+
+    findFieldById: (id) =>
+      for layer in @layers()
+        for field in layer.fields
+          if parseInt(field.id) == parseInt(id)
+            return field

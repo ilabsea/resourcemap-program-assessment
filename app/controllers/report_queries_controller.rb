@@ -17,7 +17,7 @@
 class ReportQueriesController < ApplicationController
   before_filter :authenticate_user!, :except => [:index]
   before_filter :authenticate_collection_admin!, :only => [:create]
-  before_filter :fix_conditions, only: [:create, :update]
+  before_filter :fix_params, only: [:create, :update]
 
   def index
     respond_to do |format|
@@ -31,7 +31,7 @@ class ReportQueriesController < ApplicationController
   end
 
   def create
-    query = report_queries.new params[:query]
+    query = report_queries.new params[:report_query]
     query.save
 
     render json: query
@@ -39,20 +39,21 @@ class ReportQueriesController < ApplicationController
 
   def update
     query = report_queries.find params[:id]
-    query.update_attributes! params[:query]
+    query.update_attributes! params[:report_query]
     query.reload
     render json: query.as_json
   end
 
   def destroy
-    canned_query.destroy
-    Resque.enqueue IndexRecreateTask, canned_query.id
-    render json: canned_query
+    report_query.destroy
+    render json: report_query
   end
 
   private
-  def fix_conditions
-    params[:query][:conditions] = params[:query][:conditions].values
+  def fix_params
+    params[:report_query][:condition_fields] = params[:report_query][:condition_fields].values
+    params[:report_query][:aggregate_fields] = params[:report_query][:aggregate_fields].values
+    params
   end
 
 end

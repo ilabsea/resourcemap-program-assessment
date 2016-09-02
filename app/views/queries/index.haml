@@ -22,8 +22,8 @@
   #queries-main.hidden-until-loaded
     - if current_user_snapshot.at_present? && collection_admin?
       %h2= t('views.queries.title')
-      %p= t('views.queries.description')      
-      /ko foreach: queries   
+      %p= t('views.queries.description')
+      /ko foreach: queries
 
       /ko if: isEditing
       .box.w90
@@ -32,7 +32,7 @@
         .middlebuttons
         %label{ko(css: {error: 'nameError'})}
           = t('views.queries.name')
-        %br 
+        %br
         %input{ko(value: :name),type: :text, style: 'width:240px'}
         %br
         %br
@@ -46,21 +46,21 @@
           = render 'queries/condition_template'
           .rightbuttons
             %button.fclose{ ko(click: '$parent.removeCondition'), title: 'Remove condition' }
-        //ko  
-        /ko if : conditions().length > 0 
+        //ko
+        /ko if : conditions().length > 0
         .middlebuttons
         %label{ko(css: {error: 'formalaError'})}
           = t('views.queries.formula')
-        %br 
+        %br
         %textarea{ko(value: :formula,click: '$root.autoExpand'), style: 'width:240px; height: 20px'}
-        %br  
+        %br
         //ko
         %button.farrow{ko(click: '$root.refineQuery'), title: 'Refine query' }
-          = t('views.queries.refine_query') 
-        
+          = t('views.queries.refine_query')
+
         /ko if: isRefineQuery
         = render 'queries/refine_query_template'
-        //ko        
+        //ko
         .bottom-actions
           %button.white{ ko(click: '$root.saveQuery', enable: :valid) }
             = t('views.queries.save')
@@ -69,7 +69,7 @@
           /ko if: !valid()
           %span{ ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:20px' }
             = t('views.queries.cannot_save')
-          //ko          
+          //ko
       %br
       //ko
 
@@ -78,34 +78,34 @@
         .rightbuttons
           %button.fdelete{ ko(click: '$root.removeQuery'), title: 'Remove query' }
         .toptitle
-          %span{ko(text: :name)} 
-          &rarr; 
-          = t('views.queries.conditions.description') 
+          %span{ko(text: :name)}
+          &rarr;
+          = t('views.queries.conditions.description')
           /ko foreach :conditions
-          %span    
+          %span
             /ko if: $index() == $parent.conditions().length-1 && $parent.conditions().length > 1
             %span and
-            //ko    
+            //ko
             = render 'queries/condition_template'
             /ko if: $index() < $parent.conditions().length-1 && $parent.conditions().length > 1
             %span ,
-            //ko   
-          //ko        
+            //ko
+          //ko
         %button.farrow{ ko(click: '$root.editQuery'), title: 'Edit query' }
           = t('views.queries.edit')
       %br
       //ko
 
       //ko
-    
+
       /ko with: newQuery
-      .box.w90        
+      .box.w90
         %h1.header_text
           = t('views.queries.properties')
         .middlebuttons
           %label{ko(css: {error: 'nameError'})}
             = t('views.queries.name')
-          %br 
+          %br
           %input{ko(value: :name),type: :text, style: 'width:240px'}
           %br
           %br
@@ -120,24 +120,24 @@
               = render 'queries/condition_template'
               .rightbuttons
                 %button.fclose{ko(click: '$parent.removeCondition'), title: 'Remove condition' }
-            //ko 
-            /ko if : conditions().length > 0 
+            //ko
+            /ko if : conditions().length > 0
             .middlebuttons
             %label{ko(css: {error: 'formalaError'})}
               = t('views.queries.formula')
-            %br 
+            %br
             %textarea{ko(value: :formula,click: '$root.autoExpand'), style: 'width:240px; height: 20px'}
-            %br  
-            //ko 
-            
-            %button.farrow{ko(click: '$root.refineQuery'), title: 'Refine query' } 
-              = t('views.queries.refine_query')              
+            %br
+            //ko
+
+            %button.farrow{ko(click: '$root.refineQuery'), title: 'Refine query' }
+              = t('views.queries.refine_query')
 
             /ko if: isRefineQuery
             = render 'queries/refine_query_template'
             //ko
-          
-          %br{clear: :all}       
+
+          %br{clear: :all}
           .bottom-actions
             %button.white{ ko(click: '$root.saveQuery', enable: :valid) }
               = t('views.queries.save')
@@ -147,7 +147,7 @@
             %span{ ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:20px' }
               = t('views.queries.cannot_save')
             //ko
-      //ko      
+      //ko
 
       /ko ifnot: isEditing
       .box.grey.add{ ko(click: 'addQuery')}
@@ -156,4 +156,3 @@
         %button.cadd.right{title: 'Add new query'}
         %br{clear: :all}
       //ko
-

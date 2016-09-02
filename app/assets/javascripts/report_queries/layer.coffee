@@ -9,6 +9,8 @@ onReportQueries ->
                   $.map(data.fields, (x) => new Field(@, x))
                 else
                   []
+      @fieldsNumericOnly = @fields.filter (field) -> field.kind == 'numeric'
+
       @expanded = ko.observable(false)
 
     toggleExpand: =>
