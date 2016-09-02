@@ -364,8 +364,3 @@ onCollections ->
                   )
               )
             )
-
-    # @findFieldByCode: (code) =>
-    #   console.log 'editing'
-    #   console.log window.model.editingSite()
-    #   (field for field in window.model.editingSite().fields() when field.code == code)[0]

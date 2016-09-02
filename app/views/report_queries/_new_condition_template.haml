@@ -1,0 +1,14 @@
+/ko with: $root.newCondition()
+%select{"data-bind" => 'foreach: $root.layers(), value: field, selectedOptions: selectedField'}
+  %optgroup{"data-bind" => "attr: {label: name}, foreach: fields", style: ''}
+    %option{"data-bind" => "text: name, option: name, value: $data"}
+
+%span is
+
+%select{ko(value: :operator, options: :operatorOptions, optionsText: "'label'")}
+
+%input{ko(value: :value), type: :text}
+
+%button.fadd{ ko(click: '$parent.addCondition'), title: 'Add condition' }
+
+//ko

@@ -20,8 +20,7 @@ onReportQueries -> if $('#report-queries-main').length > 0
     layers = $.map layers, (layer) -> new Layer layer
     window.model.layers(layers)
     $.get "/collections/#{collectionId}/report_queries.json", {}, (report_queries) ->
-      report_queries = $.map report_queries, (query) -> new Query(query)
-      window.model.report_queries(report_queries)
+      reportQueries = $.map report_queries, (query) -> new ReportQuery(query)
+      window.model.reportQueries(reportQueries)
       $('.hidden-until-loaded').show()
-      window.model.initDatePicker()
       $('#loadProgress').hide() #hide loading
