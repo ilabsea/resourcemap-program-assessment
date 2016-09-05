@@ -21,7 +21,7 @@
   %br/
   .report-query#report-queries-main.hidden-until-loaded
     - if current_user_snapshot.at_present? && collection_admin?
-      %h2 Report Queries
+      %h2= t('views.report_queries.title')
       %p= t('views.report_queries.description')
 
       /ko foreach: reportQueries
@@ -32,7 +32,7 @@
         .toptitle
           %span{ko(text: :name)}
         %button.farrow{ ko(click: '$root.editReportQuery'), title: 'Edit query' }
-          = t('views.queries.edit')
+          = t('views.report_queries.edit')
       //ko
 
       /ko if: isEditing

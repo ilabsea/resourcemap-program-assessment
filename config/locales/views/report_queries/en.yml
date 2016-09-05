@@ -1,16 +1,13 @@
 en:
   views:
     report_queries:
-      title: "Queries"
+      title: "Report Queries"
       description: "Manage report_queries of this collection's sites"
       name: "Name"
-      formula: "Formula"
-      refine_report_query: "Refine report_query"
-      properties: "Properties"
+      conditon_fields: "Condition Fields"
+      conditon: "Condition"
+      group_by_fields: "Group by fields"
+      aggregate_fields: "Aggregate fields"
       edit: "Edit"
-      cancel: "Cancel"
       save: "Save"
-      cannot_save: "Can't save"
-      add_new_report_query: "Add new report_query"
-      conditions:
-        description: "Find all sites where"
+      cancel: "Cancel"
