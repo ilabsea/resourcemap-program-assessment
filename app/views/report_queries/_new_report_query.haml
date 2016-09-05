@@ -1,10 +1,11 @@
 .control.clearfix
   %label{ko(css: {error: 'nameError'})}
     = t('views.report_queries.name')
-  %input{ko(value: :name),type: :text, style: 'width:240px'}
+  %input.w30{ko(value: :name),type: :text}
 
 .control.clearfix
-  %label{ko(css: {error: 'conditionFieldError'})} Condition fields
+  %label{ko(css: {error: 'conditionFieldError'})}
+    = t('views.report_queries.condition_fields')
   %div.select
     /ko with: $root.newCondition()
     %div
@@ -36,11 +37,13 @@
     //ko
 
 .control.clearfix
-  %label{ko(css: {error: 'conditionError'})} Conditions
-  %input{ko(value: :condition), type: :text}
+  %label{ko(css: {error: 'conditionError'})}
+    = t('views.report_queries.condition')
+  %input.w30{ko(value: :condition), type: :text}
 
 .control.clearfix
-  %label{ko(css: {error: 'groupByFieldError'})} Group By Fields
+  %label{ko(css: {error: 'groupByFieldError'})}
+    = t('views.report_queries.group_by_fields')
   %div.select
     %div
       %select{"data-bind" => 'foreach: $root.layers(), value: selectedGroupByField, selectedOptions: groupByFieldsOptions'}
@@ -63,7 +66,8 @@
     //ko
 
 .control.clearfix
-  %label{ko(css: {error: 'aggregateFieldError'})} Aggregate
+  %label{ko(css: {error: 'aggregateFieldError'})}
+    = t('views.report_queries.aggregate_fields')
   %div.select
     /ko with: $root.newAggregate()
     %div
@@ -94,9 +98,10 @@
 .control.clearfix
   %label
   %div.list
-    %button.white{ ko(click: '$root.saveReportQuery', enable: :valid) } Save
+    %button.white{ ko(click: '$root.saveReportQuery', enable: :valid) }
+      = t('views.report_queries.save')
     %a.tgrey{ ko(click: '$root.cancelReportQuery'), href: 'javascript:void(0)' }= t('views.plugins.alerts.form.cancel')
     /ko if: !valid()
     %span{ ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:20px' }
-      = t('views.queries.cannot_save')
+      = t('views.report_queries.cannot_save')
     //ko

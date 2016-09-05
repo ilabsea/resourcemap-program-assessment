@@ -1,16 +1,13 @@
 kh:
   views:
     report_queries:
-      title: "សំណួរ"
-      description: "គ្រប់គ្រងសំណួររបស់ទិន្នន័យតំបន់នេះ"
-      name: "ឈ្មោះ"
-      formula: "រូបមន្ត"
-      refine_report_query: "បង្កេីតលក្ខខណ្ឌ"
-      properties: "លក្ខណៈសម្បត្តិ"
-      edit: "កែសម្រួល"
-      cancel: "បោះបង់ចោល"
-      save: "រក្សាទុកសំណួរ"
-      cannot_save: "មិនអាចរក្សាទុកសំណួរ"
-      add_new_report_query: "បន្ថែមសំណួរថ្មី"
-      conditions:
-        description: "រកតំបន់ទាំងអស់ដែល"
+      title: "Report Queries"
+      description: "Manage report_queries of this collection's sites"
+      name: "Name"
+      conditon_fields: "Condition Fields"
+      conditon: "Condition"
+      group_by_fields: "Group by fields"
+      aggregate_fields: "Aggregate fields"
+      edit: 'Edit'
+      save: "Save"
+      cancel: "Cancel"
