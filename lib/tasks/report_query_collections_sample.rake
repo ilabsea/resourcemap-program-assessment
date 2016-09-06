@@ -42,7 +42,7 @@ namespace :report_query_collection do
       properties = {}
 
       layer.fields.each do |field|
-        value = field.kind == "text" ? "text-#{field.id}" : (i%5) + 1
+        value = field.kind == "text" ? "text-#{rand(5)%5 + 1}" : rand(5)%5 + 1
         properties[field.id.to_s] = value
       end
 
