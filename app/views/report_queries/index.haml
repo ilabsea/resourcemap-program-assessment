@@ -10,11 +10,7 @@
     %a{ko(click: :toggleExpand, style: {marginLeft: "'' + (level() * 20) + 'px'"}), href: 'javascript:void(0)'}
       %img{ko(attr: {src: "'#{InsteddRails.url}/theme/images/icons/18/black/folder' + (expanded() ? '_open' : '') + '.png'"}), style: 'position:relative;top:2px'}
       %span{ko(text: :name)}
-    /ko if: expanded
-    /ko template: {name: 'hierarchy-items-template', foreach: hierarchyItems}
-    //ko
-    //ko
-= render 'report_queries/refine_hierarchy_items_template'
+
 .tabsline
   %div
     %img{src: '/images/loading.gif',id: 'loadProgress', style: 'position: absolute; left: 0; top: 0; right: 0; bottom: 0;margin: auto; display: none'}
