@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160506015614) do
+ActiveRecord::Schema.define(:version => 20160830092229) do
 
   create_table "activities", :force => true do |t|
     t.integer  "user_id"
@@ -120,6 +120,7 @@ ActiveRecord::Schema.define(:version => 20160506015614) do
     t.integer  "user_id"
     t.integer  "collection_id"
     t.text     "exception"
+    t.text     "kinds"
   end
 
   create_table "languages", :force => true do |t|
@@ -252,8 +253,8 @@ ActiveRecord::Schema.define(:version => 20160506015614) do
     t.integer  "site_id"
     t.string   "uuid"
     t.integer  "user_id"
-    t.datetime "start_entry_date",                                              :default => '2016-03-01 07:17:27'
-    t.datetime "end_entry_date",                                                :default => '2016-03-01 07:17:27'
+    t.datetime "start_entry_date",                                              :default => '2016-05-24 02:28:03'
+    t.datetime "end_entry_date",                                                :default => '2016-05-24 02:28:03'
   end
 
   add_index "site_histories", ["site_id"], :name => "index_site_histories_on_site_id"
@@ -283,8 +284,8 @@ ActiveRecord::Schema.define(:version => 20160506015614) do
     t.string   "uuid"
     t.string   "device_id"
     t.string   "external_id"
-    t.datetime "start_entry_date",                                              :default => '2015-08-14 02:57:03'
-    t.datetime "end_entry_date",                                                :default => '2015-08-14 02:57:03'
+    t.datetime "start_entry_date",                                              :default => '2016-05-24 02:28:03'
+    t.datetime "end_entry_date",                                                :default => '2016-05-24 02:28:03'
     t.integer  "user_id"
   end
 

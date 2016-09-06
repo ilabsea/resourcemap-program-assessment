@@ -45,7 +45,7 @@ ResourceMap::Application.routes.draw do
       member do
         put :set_order
       end
-      collection do
+      collection do 
         get 'list_layers'
       end
     end
@@ -72,6 +72,8 @@ ResourceMap::Application.routes.draw do
     get 'settings'
     get 'quotas'
 
+    get 'upload_members'
+
     get 'csv_template'
     get 'max_value_of_property'
 
@@ -91,15 +93,22 @@ ResourceMap::Application.routes.draw do
     resource :import_wizard, only: [] do
        get 'index'
        post 'upload_csv'
+       post 'upload_members_csv'
        get 'adjustments'
+       get 'adjustments_members'
        get 'guess_columns_spec'
+       get 'get_columns_members_spec'
        post 'execute'
+       post 'execute_import_members'
        post 'validate_sites_with_columns'
+       post 'validate_members_with_columns'
        get 'get_visible_sites/:page' => 'import_wizards#get_visible_sites'
        get 'import_in_progress'
+       get 'import_members_in_progress'
        get 'import_finished'
        get 'import_failed'
        get 'job_status'
+       get 'job_member_status'
        get 'cancel_pending_jobs'
        get 'logs'
      end
@@ -129,6 +138,7 @@ ResourceMap::Application.routes.draw do
     get 'collections/:id' => 'collections#show',as: :collection
     get 'collections/:id/download_location_csv' => 'collections#download_location_csv', as: :download_location_csv
     get 'collections/:id/sample_csv' => 'collections#sample_csv',as: :sample_csv
+    get 'collections/:id/sample_members_csv' => 'collections#sample_members_csv',as: :sample_members_csv
     get 'collections/:id/count' => 'collections#count',as: :count
     get 'collections/:id/geo' => 'collections#geo_json',as: :geojson
     get 'sites/:id' => 'sites#show', as: :site
@@ -160,11 +170,54 @@ ResourceMap::Application.routes.draw do
 
     # v1
     namespace :v1 do
-      resources :site_pdfs, only: [:create]
       resources :collections do
         resources :sites, only: [:create,:index,:update,:show]
         resources :fields, only: [:create,:index,:update,:show]
       end
+    end
+
+    # v2
+    namespace :v2 do
+      resources :collections, except: [:update] do
+        resources :memberships, only: [:index, :create, :destroy] do
+          member do
+            post :set_admin
+            post :unset_admin
+          end
+          collection do
+            get 'invitable'
+          end
+        end
+
+        resources :layers, except: [:show, :new, :edit] do
+          resources :fields, only: [:create]
+        end
+
+        resources :fields, only: [:index] do
+          collection do
+            get 'mapping'
+          end
+        end
+
+        member do
+          get 'sample_csv', as: :sample_csv
+          get 'count', as: :count
+          get 'geo', as: :geojson, to: "collections#geo_json"
+          post 'sites', to: 'sites#create'
+          post 'update_sites', to: 'collections#bulk_update'
+        end
+      end
+
+      resources :sites, only: [:show, :destroy, :update] do
+        member do
+          post :update_property
+          post :partial_update
+        end
+      end
+      get 'histogram/:field_id', to: 'collections#histogram_by_field', as: :histogram_by_field
+      get 'collections/:collection_id/sites/:id/histories' => 'sites#histories', as: :histories
+      get 'activity' => 'activities#index', as: :activity
+      resources :tokens, :only => [:index, :destroy]
     end
   end
 

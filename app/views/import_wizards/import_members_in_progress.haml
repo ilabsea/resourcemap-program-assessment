@@ -1,0 +1,33 @@
+:css
+  .ignored, .ignored input, .ignored select { color: grey; }
+
+:javascript
+  window.kinds = #{Field::kinds}
+
+= render '/tabs'
+
+.tabsline
+  %h2= t('views.import_wizards.title')
+  %p= t('views.import_wizards.importing_data')
+
+= render 'steps', :step => 3
+
+%br
+
+%h2#import-members-in-progress.loading
+  = t('views.import_wizards.importing')
+
+.grey
+  %br
+  = t('views.import_wizards.we_are_now_importing_data', filename: import_job.original_filename, when: time_ago_in_words(import_job.updated_at))
+  %br
+  %br
+  = t('views.import_wizards.you_can_leave_this_screen')
+
+%br
+%br
+
+.pending_jobs
+  = link_button_to t('views.import_wizards.cancel_import'), cancel_pending_jobs_collection_import_wizard_path, :class => "grey" , :style => "margin: auto;"
+.in_progress{style: 'display: none'}
+  = t('views.import_wizards.import_in_progress')

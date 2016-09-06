@@ -13,7 +13,7 @@
 
 class LayersController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :authenticate_collection_admin!, :except => [:index, :list_layers]
+  before_filter :authenticate_collection_admin!, :except => [:index]
   before_filter :fix_field_config, only: [:create, :update]
 
   def index
@@ -60,7 +60,7 @@ class LayersController < ApplicationController
   def list_layers
     if current_user_snapshot.at_present?
       json = apply_limit_field(layers, 50)
-      render json:  json
+      render json:  json, root: false
     else
       render json: layers
         .includes(:field_histories)
@@ -265,6 +265,6 @@ class LayersController < ApplicationController
   end
 
   def set_limit_field(layer, limit)
-
+    
   end
 end

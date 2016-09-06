@@ -52,9 +52,20 @@ class Api::CollectionsController < ApplicationController
     end
   end
 
+  def sample_members_csv
+    respond_to do |format|
+      format.csv { collection_sample_members_csv(collection) }
+    end
+  end
+
   def collection_sample_csv(collection)
     sample_csv = collection.sample_csv current_user
     send_data sample_csv, type: 'text/csv', filename: "#{collection.name}_sites.csv"
+  end
+
+  def collection_sample_members_csv(collection)
+    sample_csv = collection.sample_members_csv current_user
+    send_data sample_csv, type: 'text/csv', filename: "#{collection.name}_members.csv"
   end
 
   def count

@@ -14,6 +14,7 @@ kh:
       edit: "កែតម្រូវ"
       add_layer: "បន្ថែមស្រទាប់"
       add_new_layer: "បន្ថែមស្រទាប់ថ្​​​មី"
+      copy_layer: "ចម្លង ស្រទាប់"
       fields:
         title: "ហ្វៀល"
         text: "អក្សរ"

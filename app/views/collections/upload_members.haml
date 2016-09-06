@@ -1,0 +1,46 @@
+:javascript
+  $(function() { $('#upload').change(function() { $('#upload_form').submit() }); });
+
+= render '/tabs'
+
+.tabsline
+  %h2= t('views.collections.import_members.title')
+  %p= t('views.collections.import_members.description')
+  %br/
+
+  - if (import_job && import_job.status_finished?)
+    .grey
+      = t('views.collections.import_members.finish_note', filename: import_job.original_filename, when: time_ago_in_words(import_job.finished_at))
+      %br
+      %br
+
+  - if (import_job && import_job.status_failed?)
+    .grey
+      = t('views.collections.import_members.fail_note', filename: import_job.original_filename, when: time_ago_in_words(import_job.finished_at))
+      %br
+      = t('views.collections.import_members.please_contact_instedd_for_support')
+      %br
+      %br
+
+  - if current_user_snapshot.at_present?
+    = render 'step', :step => 1
+
+    %br
+
+    %h2.orange= t('views.collections.import_members.upload_your_csv_file')
+    .box.plain.grey{:style => 'width: 66%'}
+      .black= t('views.collections.import_members.we_recommend_you_to_download_the_csv')
+      %ul
+        %li= t('views.collections.import_members.remove_rows')
+        %li= t('views.collections.import_members.add_rows')
+        %li= t('views.collections.import_members.remove_columns')
+
+    - if collection.memberships.exists?
+      = link_to t('views.collections.import_members.download_csv_template'), api_sample_members_csv_path(collection, format: 'csv'), class: "icon fimport black"
+
+    %form#upload_form{action: upload_members_csv_collection_import_wizard_path(collection), method: :post, enctype: 'multipart/form-data'}
+      %input{type: :hidden, name: 'authenticity_token', value: form_authenticity_token}
+      .icon.fexport.black= t('views.collections.import_members.upload_a_csv')
+      %input#upload{type: :file, name: :file}
+  - else
+    = render '/current_snapshot_message'

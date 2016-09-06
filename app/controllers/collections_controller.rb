@@ -41,8 +41,10 @@ class CollectionsController < ApplicationController
 
   before_filter :show_collections_breadcrumb, :only => [:index, :new]
   before_filter :show_collection_breadcrumb, :except => [:index, :new, :create, :render_breadcrumbs]
-  before_filter :show_properties_breadcrumb, :only => [:members, :settings, :reminders, :quotas, :can_queries]
+  before_filter :show_properties_breadcrumb, :only => [:upload_members, :members, :settings, :reminders, :quotas, :can_queries]
 
+  expose(:import_job) { ImportJob.last_for current_user, collection }
+  expose(:failed_import_jobs) { ImportJob.where(collection_id: collection.id).where(status: 'failed').order('id desc').page(params[:page]).per_page(10) }
 
   def my_membership
     collection = Collection.find params[:collection_id]
@@ -121,8 +123,16 @@ class CollectionsController < ApplicationController
     end
   end
 
+  def upload_members
+    add_breadcrumb I18n.t('views.collections.tab.members'), collection_upload_members_path(collection)
+  end
+
   def members
     add_breadcrumb I18n.t('views.collections.tab.members'), collection_members_path(collection)
+  end
+
+  def upload_members
+    add_breadcrumb I18n.t('views.collections.tab.upload_members'), collection_members_path(collection)
   end
 
   def reminders
