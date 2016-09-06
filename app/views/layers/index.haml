@@ -121,15 +121,16 @@
 
       - if current_user_snapshot.at_present?
         .rightbuttons
+          / ko if: !$root.savingLayer() && !$root.currentLayer()
+          .btupdn
+            %button.fmoveup{ko(click: '$root.moveLayerUp', attr: {disabled: '$root.isFirstLayer($data)'}, css: {disabled: '$root.isFirstLayer($data)'}), title: t('views.layers.move_layer_up')}
+            %button.fmovedown{ko(click: '$root.moveLayerDown', attr: {disabled: '$root.isLastLayer($data)'}, css: {disabled: '$root.isLastLayer($data)'}), title: t('views.layers.move_layer_down')}
+          / /ko
+          / ko if: !$root.savingLayer() && !$root.currentLayer()
           - if current_user_snapshot.at_present? && collection_admin?
-            / ko if: !$root.savingLayer() && !$root.currentLayer()
-            .btupdn
-              %button.fmoveup{ko(click: '$root.moveLayerUp', attr: {disabled: '$root.isFirstLayer($data)'}, css: {disabled: '$root.isFirstLayer($data)'}), title: t('views.layers.move_layer_up')}
-              %button.fmovedown{ko(click: '$root.moveLayerDown', attr: {disabled: '$root.isLastLayer($data)'}, css: {disabled: '$root.isLastLayer($data)'}), title: t('views.layers.move_layer_down')}
-            / /ko
-            / ko if: !$root.savingLayer() && !$root.currentLayer()
+            %button.farrange{ko(click: '$root.copyLayer'), title: t('views.layers.copy_layer') }
             %button.fdelete{ko(click: '$root.deleteLayer'), title: t('views.layers.remove_layer') }
-            / /ko
+          / /ko
 
       .middlebuttons
         /ko foreach: fields
@@ -137,7 +138,7 @@
         //ko
         %br/
         / ko if: total
-        Total field
+        Total field 
         %b
           %a{ko(click: :expandAllField, text: :total), href: 'javascript:void(0)'}
         / /ko

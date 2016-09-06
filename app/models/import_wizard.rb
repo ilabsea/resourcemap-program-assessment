@@ -15,7 +15,7 @@ class ImportWizard
       delete_file(user, collection)
     end
 
-     def import(user, collection, original_filename, contents)
+    def import(user, collection, original_filename, contents)
       # Store representation of import job in database to enable status tracking later
       ImportJob.uploaded original_filename, user, collection
 
@@ -26,6 +26,23 @@ class ImportWizard
       begin
         File.open(file_for(user, collection), "wb") { |file| file << contents }
         csv = read_csv_for(user, collection)
+        raise CSV::MalformedCSVError, "all rows must have the same number of columns." unless csv.all?{|e| e.count == csv[0].count}
+      rescue CSV::MalformedCSVError => ex
+        raise "The file is not a valid CSV: #{ex.message}"
+      end
+    end
+
+    def import_members(user, collection, original_filename, contents)
+      # Store representation of import job in database to enable status tracking later
+      ImportJob.uploaded_members original_filename, user, collection
+
+      FileUtils.mkdir_p TmpDir
+
+      raise "Invalid file format. Only CSV files are allowed." unless File.extname(original_filename) == '.csv'
+
+      begin
+        File.open(file_member_for(user, collection), "wb") { |file| file << contents }
+        csv = read_csv_member_for(user, collection)
         raise CSV::MalformedCSVError, "all rows must have the same number of columns." unless csv.all?{|e| e.count == csv[0].count}
       rescue CSV::MalformedCSVError => ex
         raise "The file is not a valid CSV: #{ex.message}"
@@ -46,6 +63,40 @@ class ImportWizard
       validated_data[:errors] = calculate_errors(user, collection, columns_spec, csv_columns, csv[0])
       # TODO: implement pagination
       validated_data
+    end
+
+    def validate_members_with_columns(user, collection, columns_spec)
+      columns_spec.map!{|c| c.with_indifferent_access}
+      csv = read_csv_member_for(user, collection)
+      csv_columns = csv[1.. -1].transpose
+
+      validated_data = {}
+      validated_data[:members] = get_sites(csv, user, collection, columns_spec, 1)
+      validated_data[:members_count] = csv.length - 1
+
+      csv[0].map! { |r| r.strip if r }
+
+      validated_data[:errors] = calculate_member_errors(user, collection, columns_spec, csv_columns, csv[0])
+      # TODO: implement pagination
+      validated_data
+    end
+
+    def calculate_member_errors(user, collection, columns_spec, csv_columns, header)
+      #Add index to each column spec
+      columns_spec.each_with_index do |column_spec, column_index|
+        column_spec[:index] = column_index
+      end
+
+      sites_errors = {}
+
+      # Columns validation
+
+      proc_select_new_fields = Proc.new{columns_spec.select{|spec| spec[:use_as].to_s == 'new_field'}}
+      sites_errors[:duplicated_email] = calculate_duplicated_email(proc_select_new_fields, 'code')
+      sites_errors[:existed_email] = calculate_existed_email(proc_select_new_fields, 'label')
+      sites_errors[:missing_email] = calculate_missing_email(proc_select_new_fields, 'label')
+
+      sites_errors
     end
 
     def calculate_errors(user, collection, columns_spec, csv_columns, header)
@@ -122,6 +173,37 @@ class ImportWizard
         processed_csv_columns << csv_column.map{|csv_field_value| {value: csv_field_value} }
       end
       processed_csv_columns
+    end
+
+    def get_columns_members_spec(user, collection)
+      rows = []
+      CSV.foreach(file_for user, collection) do |row|
+        rows << row
+      end
+      [
+        {
+          "header" => "email","kind" => "text","code" => "email","label" => "Email","use_as" => "new_field"
+        },
+        {
+          "header" => "None","kind" => "yesno","code" => "none","label" => "None","use_as" => "new_field"
+        },
+        {
+          "header" => "Read","kind" => "yesno","code" => "read","label" => "Read","use_as" => "new_field"
+        },
+        {
+          "header" => "Update","kind" => "yesno","code" => "update","label" => "Update","use_as" => "new_field"
+        },
+        {
+          "header" => "Admin","kind" => "yesno","code" => "admin","label" => "Admin","use_as" => "new_field"
+        },
+        {
+          "header" => "View data submitted by other user","kind" => "yesno","code" => "viewdatasubmittedbyotheruser", "label" => "View Data Submitted By Other User","use_as" => "new_field"
+        },
+        {
+          "header" => "Edit data submitted by other user","kind" => "yesno","code" => "editdatasubmittedbyotheruser", "label" => "Edit Data Submitted By Other
+ User","use_as" => "new_field"
+        }
+      ]
     end
 
     def guess_columns_spec(user, collection)
@@ -347,6 +429,18 @@ class ImportWizard
       existing_columns
     end
 
+    def calculate_duplicated_email(columns_spec, collection)
+      return false 
+    end
+
+    def calculate_existed_email(columns_spec, collection)
+      return false 
+    end
+
+    def calculate_missing_email(columns_spec, collection)
+      return false 
+    end
+
     def validate_column_value(column_spec, field_value, field, collection)
       if field.new_record?
         validate_format_value(column_spec, field_value, collection)
@@ -488,8 +582,23 @@ class ImportWizard
       csv
     end
 
+    def read_csv_member_for(user, collection)
+      csv = CSV.read(file_member_for(user, collection))
+
+      # Remove empty rows at the end
+      while (last = csv.last) && last.empty?
+        csv.pop
+      end
+
+      csv
+    end
+
     def file_for(user, collection)
       "#{TmpDir}/#{user.id}_#{collection.id}.csv"
+    end
+
+    def file_member_for(user, collection)
+      "#{TmpDir}/#{user.id}_#{collection.id}_members.csv"
     end
   end
 end

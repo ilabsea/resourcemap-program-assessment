@@ -6,6 +6,7 @@ onLayers ->
       @layers = ko.observableArray $.map(layers, (x) => new Layer(x, @))
       @updateLayerDeletable()
       @currentLayer = ko.observable()
+      @bufferNewLayer = ko.observable()
       @currentField = ko.observable()
       @default_select = '(no value)'
       @newOption = ko.observable(new Option)
@@ -175,7 +176,7 @@ onLayers ->
     saveLayer: =>
       @savingLayer(true)
       json = {layer: @currentLayer().toJSON()}
-
+      console.log(json)
       if @currentLayer().id()
         json._method = 'put'
         $.post "/collections/#{@collectionId}/layers/#{@currentLayer().id()}.json", json, @saveLayerCallback
@@ -236,6 +237,70 @@ onLayers ->
         else if layer.query_ids.length > 0
           $.status.showError("This layer is being used with #{layer.query_ids.length} canned query(s), you are not allowed to delete", 2000)
 
+    copyLayer: (layer)=>
+      @bufferNewLayer = ko.observable()
+      @bufferNewLayer(new Layer(layer, @))
+      @bufferNewLayer().name(layer.name())
+      @bufferNewLayer().fields(layer.fields())
+      @bufferNewLayer().total(layer.total())
+      @bufferNewLayer(@append_copy())
+      @bufferNewLayer().ord(@layers().length + 1)
+      @bufferNewLayer().id(undefined)
+      @savingLayer(true)
+      json = {layer: @bufferNewLayer().toJSON()}
+      $.post "/collections/#{@collectionId}/layers.json", json, @saveCopyLayerCallback
+
+    saveCopyLayerCallback: (data) =>
+      #if layer is new, we need to set id
+      $.status.showNotice(window.t('javascripts.layers.successfully_copied', {name: @bufferNewLayer().name()}), 2000)
+      @bufferNewLayer().id(data.id)
+      layersToReloadOrder = [@bufferNewLayer()]
+
+      i = 0
+      while i < @bufferNewLayer().fields().length
+        field = @bufferNewLayer().fields()[i]
+        dataField = (dataField for dataField in data.fields when dataField.code is field.code())
+        if dataField.length
+          i += 1
+          #if field is new, we need to set id
+          field.id(dataField[0].id)
+        else
+          field.layer().fields.push(field)
+          layersToReloadOrder.push(field.layer())
+          @bufferNewLayer().fields.remove(field)
+          # i does not change because we just removed an element
+
+      @reloadOrder(layer) for layer in layersToReloadOrder
+      @savingLayer(false)
+      @layers.push(@bufferNewLayer())
+
+    append_copy: () =>
+      appendName = @generateUniqueLayerName(@bufferNewLayer().name(), 0)
+      layerName = @bufferNewLayer().name() + appendName
+      @bufferNewLayer().name(layerName)
+      $.map(@bufferNewLayer().fields(), (f) =>
+        f.code(f.code() + appendName)
+        f.id(undefined)
+      )
+      return @bufferNewLayer()
+
+    generateUniqueLayerName: (name, i)=>
+      append = " copy_" + i
+      newName = name + append
+      console.log(newName)
+      if @existedLayerName(newName)
+        i = i + 1
+        return @generateUniqueLayerName(name, i)
+      else
+        return append
+
+    existedLayerName: (name) =>
+      match = false
+      $.map(@layers(), (l) =>
+        if(l.name().trim() == name.trim())
+          match = true
+      )
+      return match
     selectingLayer: =>
       alert 'selectingLayer'
 

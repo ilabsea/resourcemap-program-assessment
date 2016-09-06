@@ -1,0 +1,61 @@
+onImportMembersWizard ->
+  class @Usage
+    constructor: (@name, @code) ->
+
+  class @MainViewModel
+    initialize: (collectionId, columns, field_kinds) ->
+      @collectionId = collectionId
+
+      @columns = ko.observableArray $.map(columns,  (x, index) -> new Column(x, index))
+      @visibleColumns = ko.observableArray @columns()
+      @members = ko.observableArray()
+      @membersCount = ko.observable(0)
+      @visibleMembers = ko.observableArray()
+      @showingColumns = ko.observable('all')
+      @columnTemplateVisibility = ko.observable(false)
+
+      @selectedColumn = ko.observable()
+
+      @hasId = ko.computed =>
+        window.arrayAny(@columns(), (c) => c.usage() == 'id')
+
+      @error = ko.computed =>
+        window.arrayAny([], (s) => window.arrayAny(s, (f) => f.error)) || window.arrayAny(@columns(), (c) => c.errors().length > 0)
+
+      @validationErrors = ko.observable()
+
+      @validationErrors.subscribe  =>
+        @recalculateErrorsForColumns()
+
+      @valid = ko.computed => !@error()
+      @importing = ko.observable false
+      @importError = ko.observable false
+
+    recalculateErrorsForColumns: =>
+      for column in @columns()
+        new_errors = @validationErrors().errorsForColumn(column.index)
+        column.errors(new_errors)
+    
+    startImport: =>
+      @importing(true)
+      columns = $.map(@columns(), (x) -> x.toJSON())
+      $.ajax "/collections/#{@collectionId}/import_wizard/execute_import_members.json",
+        type: 'POST'
+        data: {columns: columns},
+        success: =>
+          window.location = "/collections/#{@collectionId}/import_wizard/import_members_in_progress"
+        error: =>
+          @importing(false)
+          @importError(true)
+
+    loadVisibleMembers: =>
+      visible_columns_indexes = $.map(@visibleColumns(), (c) -> c.index)
+      @visibleMembers(@members())
+
+    loadMembers: (preview) =>
+      # This method is called after server validations, after changing a column usage or after requesting the sites for the first time.
+      members = $.map(preview.members, (x) -> new Member(x))
+      @members(members)
+      @membersCount(preview.memberss_count)
+      @validationErrors(new ValidationErrors(preview.errors))
+      @loadVisibleMembers()

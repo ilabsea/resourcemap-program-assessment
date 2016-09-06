@@ -14,6 +14,7 @@ en:
       edit: "Edit"
       add_layer: "Add layer"
       add_new_layer: "Add new layer"
+      copy_layer: "Copy layer"
       fields:
         title: "Fields"
         text: "Text"

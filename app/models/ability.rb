@@ -23,7 +23,7 @@ class Ability
     end
 
     # Member Abilities
-    can [:csv_template, :upload_csv, :unload_current_snapshot, :load_snapshot, :register_gateways, :message_quota, :reminders, :settings, :quotas], Collection, :memberships => { :user_id => user.id }
+    can [:csv_template, :upload_csv, :unload_current_snapshot, :load_snapshot, :register_gateways, :message_quota, :reminders, :settings, :quotas, :upload_members], Collection, :memberships => { :user_id => user.id }
 
     # In progress
     can :max_value_of_property, Collection, :memberships => { :user_id => user.id }

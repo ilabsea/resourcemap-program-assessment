@@ -5,6 +5,7 @@ class ImportWizardsController < ApplicationController
   before_filter :authenticate_collection_admin!, only: :logs
 
   expose(:import_job) { ImportJob.last_for current_user, collection }
+  expose(:import_job_member) { ImportJob.last_member_for current_user, collection }
   expose(:failed_import_jobs) { ImportJob.where(collection_id: collection.id).where(status: 'failed').order('id desc').page(params[:page]).per_page(10) }
 
   def index
@@ -22,16 +23,37 @@ class ImportWizardsController < ApplicationController
     end
   end
 
+  def upload_members_csv
+    begin
+      ImportWizard.import_members current_user, collection, params[:file].original_filename, params[:file].read
+      redirect_to adjustments_members_collection_import_wizard_path(collection)
+    rescue => ex
+      redirect_to collection_upload_members_path(collection), :alert => ex.message
+    end
+  end
+
   def guess_columns_spec
     render json: ImportWizard.guess_columns_spec(current_user, collection)
+  end
+
+  def get_columns_members_spec
+    render json: ImportWizard.get_columns_members_spec(current_user, collection)
   end
 
   def adjustments
     add_breadcrumb I18n.t('views.collections.tab.import_wizard'), collection_import_wizard_path(collection)
   end
 
+  def adjustments_members
+    add_breadcrumb I18n.t('views.collections.tab.members'), collection_import_wizard_path(collection)
+  end
+
   def validate_sites_with_columns
     render json: ImportWizard.validate_sites_with_columns(current_user, collection, JSON.parse(params[:columns]))
+  end
+
+  def validate_members_with_columns
+    render json: ImportWizard.validate_members_with_columns(current_user, collection, JSON.parse(params[:columns]))
   end
 
   def execute
@@ -43,9 +65,26 @@ class ImportWizardsController < ApplicationController
       render json: :ok
     end
   end
+  
+  def execute_import_members
+    debugger
+    columns = params[:columns].values
+    if current_user.admins? collection
+      ImportWizard.enqueue_job current_user, collection, params[:columns].values
+      render json: :ok
+    else
+      render text: I18n.t('views.import_wizards.cant_create_new_fields'), status: :unauthorized
+    end
+  end
 
   def import_in_progress
     redirect_to import_finished_collection_import_wizard_path(collection) if import_job.status_finished?
+
+    add_breadcrumb I18n.t('views.collections.tab.import_wizard'), collection_import_wizard_path(collection)
+  end
+
+  def import_members_in_progress
+    redirect_to import_finished_collection_import_wizard_path(collection) if import_job_member.status_finished?
 
     add_breadcrumb I18n.t('views.collections.tab.import_wizard'), collection_import_wizard_path(collection)
   end
@@ -66,6 +105,10 @@ class ImportWizardsController < ApplicationController
 
   def job_status
     render json: {:status => import_job.status}
+  end
+
+  def job_member_status
+    render json: {:status => import_job_member.status}
   end
 
   def logs

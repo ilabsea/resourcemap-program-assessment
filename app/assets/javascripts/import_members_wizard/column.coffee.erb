@@ -1,0 +1,78 @@
+onImportMembersWizard ->
+  class @Column extends Module
+    @include Rollbackable
+
+    constructor: (data, index) ->
+      @header = ko.observable()
+      @index = index
+
+      # How to use this column (new field? existing field? id? name? lat? lng? ignore?)
+      @usage = ko.observable()
+
+      # For existing fields
+      @layer = ko.observable()
+      @field = ko.observable()
+
+      # For new fields
+      @kind = ko.observable()
+      @code = ko.observable()
+      @label = ko.observable()
+
+      # For new select_one or select_many fields
+      @selectKind = ko.observable()
+
+      @iconClass = ko.observable()
+
+      @errors = ko.observableArray()
+
+      @callModuleConstructors(arguments)
+
+    update: (data) =>
+      @usage data.use_as
+      @header data.header
+
+      @layer(if data.layer_id then window.model.findLayer(data.layer_id) else null)
+      @field(if @layer() then @layer().findField(data.field_id) else null)
+
+      @kind data.kind
+      @code data.code
+      @label data.label
+
+      @selectKind(if @kind() == 'select_one' || @kind() == 'select_many' then data.selectKind else null)
+
+      @iconClass(@computeIconClass())
+
+    toJSON: =>
+      json =
+        use_as: @usage()
+        header: @header()
+      if @usage() == 'existing_field'
+        json.layer_id = @layer().id
+        json.field_id = @field().id
+      if @usage() == 'new_field'
+        json.kind = @kind()
+        json.code = @code()
+        json.label = @label()
+        json.selectKind = @selectKind() if @kind() == 'select_one' || @kind() == 'select_many'
+      json
+
+    computeIconClass: =>
+      kind = switch @usage()
+        when 'existing_field' then @field().kind
+        when 'new_field' then  @kind()
+        when 'lat' then 'location'
+        when 'lng'then 'location'
+        else @usage()
+      "f#{kind}"
+
+    saveAndClose: =>
+      $.fancybox.close()
+      window.model.set_column_visibility(false)
+      @commit()
+      window.model.validateSites()
+
+    discardAndClose: =>
+      $.fancybox.close()
+      window.model.set_column_visibility(false)
+      @rollback()
+
