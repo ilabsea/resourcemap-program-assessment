@@ -110,3 +110,7 @@ ImportJob.blueprint do
   collection
   status
 end
+
+ReportQuery.blueprint do
+  name { Faker::Name.name }
+end
