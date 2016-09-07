@@ -421,7 +421,6 @@ class Activity < ActiveRecord::Base
   def self.remove_nil_user
     Activity.all.each do |a|
       if a.user.nil?
-        p a.user_id
         a.destroy()
       end
     end

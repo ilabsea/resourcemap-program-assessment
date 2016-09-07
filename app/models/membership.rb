@@ -78,7 +78,6 @@ class Membership < ActiveRecord::Base
   def self.remove_nil_user
     Membership.all.each do |m|
       if m.user.nil?
-        p m.user_id
         m.destroy()
       end
     end
