@@ -23,6 +23,10 @@
   float: left;
 }
 
+.box.grey{
+  margin-top: 10px;
+}
+
 .control .box span{
   margin-right: 0px;
 }
