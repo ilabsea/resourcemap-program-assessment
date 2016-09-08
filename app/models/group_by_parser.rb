@@ -18,7 +18,7 @@ class GroupByParser
         exp["#{facet_tag}"] = facet_per_aggregator(agg_field_id)
       else
         facet_filter_values.each do |facet_filter_value|
-          facet_tag = facet_filter_value.values.join("_") + "_" + agg_field_id # // KampongCham_2015
+          facet_tag = facet_filter_value.values.join("_") + "_#{agg_field_id}" # // KampongCham_2015_aggrefieldx
           exp["#{facet_tag}"] = facet_per_aggregator(agg_field_id, facet_filter_value)
         end
       end

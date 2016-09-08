@@ -25,7 +25,7 @@ class ReportQueriesController < ApplicationController
         add_breadcrumb I18n.t('views.collections.index.properties'), collection_path(collection)
         add_breadcrumb I18n.t('views.collections.tab.can_queries'), collection_thresholds_path(collection)
       end
-      format.json { render json: report_queries }
+      format.json { render json: report_queries.order('id DESC') }
     end
   end
 

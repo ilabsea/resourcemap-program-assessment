@@ -6,12 +6,30 @@ class ReportQuerySearch
     @index_name = Collection.index_name(@report_query.collection_id)
   end
 
+  # group_by_fields = [10,11]
+  # aggregate_fields = [{field_id: 15}, {field_id: 16}]
+  # @output {"10" => "Province", "11" => "District", "15" => "Women", "16" => "Affected"}
+  def table_fields
+    group_by_field_ids = @report_query.group_by_fields
+    agg_field_ids = @report_query.aggregate_fields.map{|item| item['field_id']}
+    field_ids = agg_field_ids.concat(group_by_field_ids).uniq
+    p field_ids
+
+    fields = Field.find(field_ids)
+    result = {}
+    fields.each do |field|
+      result[field.id] = field.name
+    end
+    result
+  end
+
   def query
     result_query = query_builder
     if(!@report_query.aggregate_fields.empty?)
       result_query['facets'] = facet_builder
     end
     result_query['size'] = DEFAULT_SIZE
+    Rails.logger.debug { result_query }
     response = Tire.search(@index_name, result_query).results
     @result = response.results.map { |item| item["_source"]["properties"].values.join(", ")}
     @facet = response.facets
@@ -44,9 +62,11 @@ class ReportQuerySearch
       }
     }
     response = Tire.search(@index_name, query).results
-    {
-      "#{field_id}" => response.facets[field_id]["terms"].map{|item| item['term']}
-    }
+
+
+    terms = response.facets[field_id.to_s]["terms"]
+    result = { "#{field_id}" => terms.map{|item| item['term']} }
+    result
   end
 
   # ["field_id_1", "field_id_2"]
