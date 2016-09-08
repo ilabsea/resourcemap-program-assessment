@@ -2,7 +2,7 @@ class ReportQueryTemplatesController < ApplicationController
   before_filter :authenticate_user!
 
   def index
-    @report_query_templates = collection.report_query_templates.all
+    @report_query_templates = collection.report_query_templates.order('id DESC')
   end
 
   def new
@@ -42,7 +42,11 @@ class ReportQueryTemplatesController < ApplicationController
   end
 
   # GET /:id/report
-  def report
+  def show
+    template = collection.report_query_templates.find(params[:id])
+    report_query = template.report_query
+    @report = ReportQuerySearch.new(report_query)
+    @report.query
 
   end
 

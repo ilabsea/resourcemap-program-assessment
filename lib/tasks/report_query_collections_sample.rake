@@ -26,7 +26,7 @@ namespace :report_query_collection do
       { name: :house_hold, type: :numeric },
       {  name: :women_effected, type: :numeric },
       {  name: :village_name, type: :text },
-      {  name: :year, type: :numeric } ].each_with_index do |field, index|
+      {  name: :year, type: :numeric, offset: 2010 } ].each_with_index do |field, index|
 
       field_type = field_types[field[:type]]
 
@@ -37,13 +37,16 @@ namespace :report_query_collection do
                                ord: index + 1 ).first_or_create
 
     end
-
+    mapper = { year: 2010, district_name: 'district ', village_name: 'village ', province_id: 1}
     (1..100).each do |i|
       properties = {}
 
       layer.fields.each do |field|
-        value = field.kind == "text" ? "text-#{rand(5)%5 + 1}" : rand(5)%5 + 1
-        properties[field.id.to_s] = value
+        if field.kind == "text"
+          properties[field.id.to_s] = "#{mapper[field.name.to_sym]}#{rand(5)%5 + 1} "
+        elsif field.kind == "numeric"
+          properties[field.id.to_s] = (mapper[field.name.to_sym] || 0 ) + rand(5)%5 + 1
+        end
       end
 
       inc = i * Random.rand(10)/100

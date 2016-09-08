@@ -1,7 +1,7 @@
 .control.clearfix
   %label{ko(css: {error: 'nameError'})}
     = t('views.report_queries.name')
-  %input.w30{ko(value: :name),type: :text}
+  %input.w60{ko(value: :name),type: :text}
 
 .control.clearfix
   %label
@@ -95,11 +95,11 @@
       %button.pclose{ ko(click: '$parent.removeAggregateField') }
     //ko
 
-.control.clearfix
+.clearfix
   %label
   %div.list
     %button.white{ ko(click: '$root.saveReportQuery', enable: :valid) }
-      = t('views.report_queries.save')
+      =t('views.report_queries.save')
     %a.tgrey{ ko(click: '$root.cancelReportQuery'), href: 'javascript:void(0)' }= t('views.plugins.alerts.form.cancel')
     /ko if: !valid()
     %span{ ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:20px' }
