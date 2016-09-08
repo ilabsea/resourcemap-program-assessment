@@ -28,6 +28,12 @@ ResourceMap::Application.routes.draw do
     get  :message_quota
     get :sites_by_term
 
+    resources :report_query_templates do
+      member do
+        get 'report'
+      end
+    end
+
     member do
       get 'print_template'
     end

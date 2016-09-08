@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160830092229) do
+ActiveRecord::Schema.define(:version => 20160908035848) do
 
   create_table "activities", :force => true do |t|
     t.integer  "user_id"
@@ -289,6 +289,18 @@ ActiveRecord::Schema.define(:version => 20160830092229) do
   end
 
   add_index "report_queries", ["collection_id"], :name => "index_report_queries_on_collection_id"
+
+  create_table "report_query_templates", :force => true do |t|
+    t.string   "name"
+    t.text     "template"
+    t.integer  "collection_id"
+    t.integer  "report_query_id"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+  end
+
+  add_index "report_query_templates", ["collection_id"], :name => "index_report_query_templates_on_collection_id"
+  add_index "report_query_templates", ["report_query_id"], :name => "index_report_query_templates_on_report_query_id"
 
   create_table "share_channels", :force => true do |t|
     t.integer  "channel_id"

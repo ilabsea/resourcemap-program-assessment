@@ -1,0 +1,19 @@
+<%= form_for [collection, @report_query_template]  do |f| %>
+  <div class="field w60">
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
+
+  <div class="field w60">
+    <%= f.label 'Insert Report Query' %>
+    <%= f.select :report_query_id, options_for_select(collection.report_queries.map{|r| [r.name, r.id]}) %>
+  </div>
+
+  <div class="row">
+    <%= f.text_area :template, class: "custom-tinymce", style: 'width: 1200px;' %>
+  </div>
+  <div class="row">
+    <%= f.button 'Save', class: 'white' %>
+    <%= link_to 'Cancel', collections_path, :class=> 'grey'%>
+  </div>
+<% end %>
