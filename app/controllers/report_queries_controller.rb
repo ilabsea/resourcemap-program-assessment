@@ -17,7 +17,6 @@
 class ReportQueriesController < ApplicationController
   before_filter :authenticate_user!, :except => [:index]
   before_filter :authenticate_collection_admin!, :only => [:create]
-  before_filter :fix_params, only: [:create, :update]
 
   def index
     respond_to do |format|
@@ -47,13 +46,6 @@ class ReportQueriesController < ApplicationController
   def destroy
     report_query.destroy
     render json: report_query
-  end
-
-  private
-  def fix_params
-    params[:report_query][:condition_fields] = params[:report_query][:condition_fields].values
-    params[:report_query][:aggregate_fields] = params[:report_query][:aggregate_fields].values
-    params
   end
 
 end
