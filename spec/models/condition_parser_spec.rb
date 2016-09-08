@@ -1,6 +1,16 @@
 require 'spec_helper'
 
 describe ConditionParser do
+  describe '.validate' do
+    context 'with valid expression' do
+      it "return true" do
+        expr = "(1and2or(3and 4) and(5 or 6 or (7and8)) )"
+        result = ConditionParser.sanitize(expr)
+        expect(result).to eq "( 1 and 2 or ( 3 and 4 ) and ( 5 or 6 or ( 7 and 8 ) ) )"
+      end
+    end
+  end
+
   context "expression without parentesis" do
     it "return parsed query" do
       condition = ConditionParser.new(" 1 or 2 and 3 or 4")

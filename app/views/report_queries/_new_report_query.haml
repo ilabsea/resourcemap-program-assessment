@@ -4,7 +4,7 @@
   %input.w30{ko(value: :name),type: :text}
 
 .control.clearfix
-  %label{ko(css: {error: 'conditionFieldError'})}
+  %label
     = t('views.report_queries.condition_fields')
   %div.select
     /ko with: $root.newCondition()
@@ -37,7 +37,7 @@
     //ko
 
 .control.clearfix
-  %label{ko(css: {error: 'conditionError'})}
+  %label
     = t('views.report_queries.condition')
   %input.w30{ko(value: :condition), type: :text}
 

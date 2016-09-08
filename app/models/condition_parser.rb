@@ -4,6 +4,23 @@ class ConditionParser
     @position = 0
   end
 
+  #(1and2or(3and 4) and(5 or 6 or (7and8)) )
+  def self.sanitize(expression)
+    scanner = StringScanner.new(expression)
+    pattern = /\(|\)|(and)|(or)|\s+|\d+/
+    result = []
+    while !scanner.eos? do
+      item = scanner.scan(pattern)
+      result << item unless item.strip.empty?
+      return nil if item.nil?
+    end
+    result.join(" ")
+  end
+
+  def self.validate
+
+  end
+
   def current_token
     @tokens[@position]
   end

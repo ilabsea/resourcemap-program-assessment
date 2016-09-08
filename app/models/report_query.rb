@@ -22,8 +22,17 @@ class ReportQuery < ActiveRecord::Base
   validates :name, presence: true
 
   belongs_to :collection
+  has_many :templates, class_name: 'ReportQueryTemplate', dependent: :destroy
 
   attr_accessible :aggregate_fields, :condition,  :condition_fields,
                   :group_by_fields, :name, :parse_condition
+
+  before_save :sanitize_condition
+
+
+  # (1 or 3)and2
+  def sanitize_condition
+    self.condition = ConditionParser.sanitize(self.condition)
+  end
 
 end
