@@ -3,32 +3,32 @@ onReportQueries ->
     constructor: (data) ->
       @id = data?.id
       @name = ko.observable data?.name
-      @condition = ko.observable data?.condition
+      @condition = ko.observable data?.condition ? ""
       @conditionFields = if data?.condition_fields
                            ko.observableArray $.map(data.condition_fields, (x) => new Condition(x))
                          else
-                           ko.observableArray()
+                           ko.observableArray([])
 
       @groupByFieldsOptions = ko.observable()
       @selectedGroupByField = ko.observable(@groupByFieldsOptions()?[0])
       @groupByFields = if data?.group_by_fields
                           ko.observableArray $.map(data.group_by_fields, (x) => window.model.findFieldById(x))
                        else
-                          ko.observableArray()
+                          ko.observableArray([])
 
       @aggregateFields = if data?.aggregate_fields
                            ko.observableArray $.map(data.aggregate_fields, (x) => new Aggregate(x))
                          else
-                           ko.observableArray()
+                           ko.observableArray([])
 
       @isEditing = ko.observable()
 
       @nameError = ko.computed => if @hasName()  then null else "the query's name is missing"
-      @conditionFieldError = ko.computed => if @hasConditionFields()  then null else "the query must have at least one condition"
-      @conditionError = ko.computed => if @hasCondition()  then null else "the query's condition is missing"
+      # @conditionFieldError = ko.computed => if @hasConditionFields()  then null else "the query must have at least one condition"
+      # @conditionError = ko.computed => if @hasCondition()  then null else "the query's condition is missing"
       @groupByFieldError = ko.computed => if @hasGroupByFields()  then null else "the query must have at least one group by"
       @aggregateFieldError = ko.computed => if @hasAggregateFields()  then null else "the query must have at least one aggregate"
-      @error = ko.computed => @nameError() || @conditionFieldError() || @conditionError() || @groupByFieldError() || @aggregateFieldError()
+      @error = ko.computed => @nameError() || @groupByFieldError() || @aggregateFieldError()
       @valid = ko.computed => !@error()
 
     hasName: => $.trim(@name()).length > 0

@@ -20,12 +20,21 @@ onReportQueries ->
     saveReportQuery: =>
       @isEditing(false)
       json = {report_query: @currentReportQuery().toJSON()}
+
+      option = {
+                  type: "POST",
+                  contentType: "application/json; charset=utf-8",
+                  data: JSON.stringify(json),
+                  success: @saveReportQueryCallback
+                }
       if @currentReportQuery().id
-        json._method = 'put'
-        $.post "/collections/#{@collectionId}/report_queries/#{@currentReportQuery().id}.json", json, @saveReportQueryCallback
+        option["type"] = "PUT"
+        option["url"] = "/collections/#{@collectionId}/report_queries/#{@currentReportQuery().id}.json"
       else
         @reportQueries.push(@currentReportQuery())
-        $.post "/collections/#{@collectionId}/report_queries.json", json, @saveReportQueryCallback
+        option["url"] = "/collections/#{@collectionId}/report_queries.json"
+
+      $.ajax option
 
     saveReportQueryCallback: (data) =>
       @currentReportQuery().id = data?.id
