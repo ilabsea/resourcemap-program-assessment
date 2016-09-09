@@ -15,9 +15,9 @@
 #
 
 class ReportQuery < ActiveRecord::Base
-  serialize :condition_fields
-  serialize :group_by_fields
-  serialize :aggregate_fields
+  serialize :condition_fields, Array
+  serialize :group_by_fields, Array
+  serialize :aggregate_fields, Array
 
   validates :name, presence: true
 

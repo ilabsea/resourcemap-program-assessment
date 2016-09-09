@@ -26,9 +26,9 @@ onReportQueries ->
       @nameError = ko.computed => if @hasName()  then null else "the query's name is missing"
       # @conditionFieldError = ko.computed => if @hasConditionFields()  then null else "the query must have at least one condition"
       # @conditionError = ko.computed => if @hasCondition()  then null else "the query's condition is missing"
-      @groupByFieldError = ko.computed => if @hasGroupByFields()  then null else "the query must have at least one group by"
+      # @groupByFieldError = ko.computed => if @hasGroupByFields()  then null else "the query must have at least one group by"
       @aggregateFieldError = ko.computed => if @hasAggregateFields()  then null else "the query must have at least one aggregate"
-      @error = ko.computed => @nameError() || @groupByFieldError() || @aggregateFieldError()
+      @error = ko.computed => @nameError() || @aggregateFieldError()
       @valid = ko.computed => !@error()
 
     hasName: => $.trim(@name()).length > 0
