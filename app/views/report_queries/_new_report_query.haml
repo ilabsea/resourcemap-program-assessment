@@ -10,17 +10,20 @@
     /ko with: $root.newCondition()
     %div
       %select{"data-bind" => 'foreach: $root.layers(), value: field, selectedOptions: selectedField'}
+        /ko if: $index() == 0
+        %option{value: ""} (no value)
+        //ko
         %optgroup{"data-bind" => "attr: {label: name}, foreach: fields", style: ''}
           %option{"data-bind" => "text: name, option: name, value: $data"}
 
       %span is
 
-      %select{ko(value: :operator, options: :operatorOptions, optionsText: "'label'")}
+      %select{ko(value: :operator, options: :operatorOptions, optionsText: "'label'", optionsCaption: "'(no value)'")}
 
       %input{ko(value: :value), type: :text}
 
     %div{style: 'margin-top:-2px'}
-      %button.padd{ ko(click: '$parent.addConditionField'), title: 'Add condition' }
+      %button.padd{ ko(click: '$parent.addConditionField', enable: :valid), title: 'Add condition' }
 
     //ko
 
@@ -47,10 +50,13 @@
   %div.select
     %div
       %select{"data-bind" => 'foreach: $root.layers(), value: selectedGroupByField, selectedOptions: groupByFieldsOptions'}
+        /ko if: $index() == 0
+        %option{value: ""} (no value)
+        //ko
         %optgroup{"data-bind" => "attr: {label: name}, foreach: fields", style: ''}
           %option{"data-bind" => "text: name, option: name, value: $data"}
     %div{style: 'margin-top:-4px'}
-      %button.padd{ ko(click: :addGroupByField)}
+      %button.padd{ ko(click: :addGroupByField, enable: :groupByFieldError)}
 
 .control.clearfix
   %label
@@ -72,14 +78,17 @@
     /ko with: $root.newAggregate()
     %div
       %select{"data-bind" => 'foreach: $root.layers(), value: field, selectedOptions: selectedField'}
+        /ko if: $index() == 0
+        %option{value: ""} (no value)
+        //ko
         /ko if: fieldsNumericOnly.length > 0
         %optgroup{"data-bind" => "attr: {label: name}, foreach: fieldsNumericOnly", style: ''}
           %option{"data-bind" => "text: name, option: name, value: $data"}
         //ko
 
-      %select{ko(value: :aggregator, options: :aggregatorOptions, optionsText: "'label'")}
+      %select{ko(value: :aggregator, options: :aggregatorOptions, optionsText: "'label'", optionsCaption: "'(no value)'")}
     %div{style: 'margin-top:-4px'}
-      %button.padd{ ko(click: '$parent.addAggregatField') }
+      %button.padd{ ko(click: '$parent.addAggregatField', enable: :valid) }
 
     //ko
 

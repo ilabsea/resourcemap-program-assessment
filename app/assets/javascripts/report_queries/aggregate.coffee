@@ -20,6 +20,15 @@ onReportQueries ->
                   else
                     ko.observable(data?.aggregator)
 
+      @fieldError = ko.computed => if @hasField() then null else "the aggregate field must selected"
+      @aggregatorError = ko.computed => if @hasAggregator() then null else "the aggregate field must selected"
+
+      @error = ko.computed => @fieldError() || @aggregatorError()
+      @valid = ko.computed => !@error()
+
+    hasField: => @field() != ""
+    hasAggregator: => @aggregator()?
+
     findAggregatorByValue: (value)=>
       @aggregatorOptions.filter((x) -> x.value == value)[0]
 
