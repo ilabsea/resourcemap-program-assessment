@@ -45,9 +45,7 @@ class ReportQueryTemplatesController < ApplicationController
   def show
     template = collection.report_query_templates.find(params[:id])
     report_query = template.report_query
-    @report = ReportQuerySearch.new(report_query)
-    @report.query
-
+    @result = ReportQuerySearch.new(report_query).query
   end
 
 end
