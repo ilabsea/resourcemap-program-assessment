@@ -21,8 +21,14 @@ onReportQueries ->
       @value = ko.observable(data?.value)
 
       @valueError = ko.computed => if @hasValue()  then null else "the condition field's value is missing"
-      @error = ko.computed => @valueError()
+      @fieldError = ko.computed => if @hasField() then null else "the condition field must selected"
+      @operatorError = ko.computed => if @hasOperator() then null else "the operator must selected"
+
+      @error = ko.computed => @fieldError() || @operatorError() || @valueError()
       @valid = ko.computed => !@error()
+
+    hasField: => @field()?
+    hasOperator: => @operator()?
 
     hasValue: => $.trim(@value()).length > 0
     # setField:
