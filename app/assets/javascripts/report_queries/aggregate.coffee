@@ -3,6 +3,7 @@ onReportQueries ->
     constructor: (data) ->
       @id = data?.id
       @aggregatorOptions = [
+        {label: 'Count', value: 'count'},
         {label: 'Sum', value: 'sum'},
         {label: 'Min', value: 'min'},
         {label: 'Max', value: 'max'},

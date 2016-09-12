@@ -142,6 +142,14 @@ class Field < ActiveRecord::Base
     "are not valid for the type #{kind}"
   end
 
+  def type
+    if self.kind == "numeric"
+      return self.config && self.config["allows_decimals"] == "true" ? "float" : "int"
+    else
+      return self.kind
+    end
+  end
+
   # Enables caching options and other info for a read-only usage
   # of this field, so that validations and such can be performed faster.
   def cache_for_read

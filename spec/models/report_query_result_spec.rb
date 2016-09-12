@@ -214,6 +214,32 @@ describe ReportQueryResult do
     end
 
     let(:report_query_result) { ReportQueryResult.new(report_query, elastic_result) }
+    describe '#transform' do
+      it 'return an array with head as field names and body as value' do
+        query_result = { "3.0_district 5 _2012.0"=>{"1019"=>7.0, "1020"=>6.0},
+                         "3.0_district 5 _2011.0"=>{"1019"=>4.0, "1020"=>3.0},
+                         "3.0_district 4 _2015.0"=>{"1019"=>2.0, "1020"=>5.0},
+                         "3.0_district 4 _2014.0"=>{"1019"=>5.0, "1020"=>4.0}
+                       }
+        hash_mapping_result = {"1017" => {"name" => "Province", "type" => "int"},
+                               "1018" => {"name" => "District", "type" => 'text'},
+                               "1022" => {"name" => "Year", "type" => 'int'},
+                               "1019" => {"name" => "Household", "type" => 'float'},
+                               "1020" => {"name" => "Women effected", "type" => 'int'}
+                             }
+        report_query_result.stub(:hash_mapping) {hash_mapping_result}
+        table_result = report_query_result.transform(query_result)
+
+        expected = [["Province", "District", "Year", "Household", "Women effected"],
+                    [3, "district 5 ", 2012, 7.0, 6],
+                    [3, "district 5 ", 2011, 4.0, 3],
+                    [3, "district 4 ", 2015, 2.0, 5],
+                    [3, "district 4 ", 2014, 5.0, 4]]
+
+        expect(table_result).to eq expected
+      end
+    end
+
     describe "#agg_function_types" do
       it "return aggregate function" do
         expect(report_query_result.agg_function_types).to eq({"1019"=>"total", "1020"=>"total"} )
