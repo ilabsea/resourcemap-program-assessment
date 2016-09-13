@@ -1,17 +1,17 @@
 require 'spec_helper'
 
-describe ReportQueryResult do
+describe ReportQuerySearchResult do
 
   context 'with group by fields' do
     let(:report_query) { ReportQuery.make(name: "3 fields",
                                           condition_fields: [
-                                            {"id"=>"1", "field_id"=>1017, "operator"=>"=", "value"=>"3"},
-                                            {"id"=>"2", "field_id"=>1019, "operator"=>">", "value"=>"3"},
-                                            {"id"=>"3", "field_id"=>1020, "operator"=>">", "value"=>"4"}],
-                                          group_by_fields: [1017, 1018, 1022],
+                                            {"id"=>"1", "field_id"=>"1017", "operator"=>"=", "value"=>"3"},
+                                            {"id"=>"2", "field_id"=>"1019", "operator"=>">", "value"=>"3"},
+                                            {"id"=>"3", "field_id"=>"1020", "operator"=>">", "value"=>"4"}],
+                                          group_by_fields: ["1017", "1018", "1022"],
                                           aggregate_fields: [
-                                            {"id"=>"1", "field_id"=>1019, "aggregator"=>"sum"},
-                                            {"id"=>2, "field_id"=>1020, "aggregator"=>"sum"}],
+                                            {"id"=>"1", "field_id"=>"1019", "aggregator"=>"sum"},
+                                            {"id"=>"2", "field_id"=>"1020", "aggregator"=>"sum"}],
                                           condition: "1 and ( 2 or 3 )",
                                           collection_id: 219)}
     let(:elastic_result) do
@@ -213,7 +213,7 @@ describe ReportQueryResult do
       }
     end
 
-    let(:report_query_result) { ReportQueryResult.new(report_query, elastic_result) }
+    let(:report_query_result) { ReportQuerySearchResult.new(report_query, elastic_result) }
     describe '#transform' do
       it 'return an array with head as field names and body as value' do
         query_result = { "3.0_district 5 _2012.0"=>{"1019"=>7.0, "1020"=>6.0},
@@ -274,8 +274,8 @@ describe ReportQueryResult do
                           condition_fields: [],
                           group_by_fields: [],
                           aggregate_fields: [
-                            {"id"=>1, "field_id"=>1019, "aggregator"=>"sum"},
-                            {"id"=>2, "field_id"=>1020, "aggregator"=>"sum"}],
+                            {"id"=>"1", "field_id"=>"1019", "aggregator"=>"sum"},
+                            {"id"=>"2", "field_id"=>"1020", "aggregator"=>"sum"}],
                           condition: "",
                           collection_id: 219})
       end
@@ -303,7 +303,7 @@ describe ReportQueryResult do
            "std_deviation"=>1.4585952145814822}
          }
       end
-      let(:report_query_result) { ReportQueryResult.new(report_query, elastic_result) }
+      let(:report_query_result) { ReportQuerySearchResult.new(report_query, elastic_result) }
       it "return a hash with empty key and value of aggregator" do
         expected = {""=>{"1019"=>294.0, "1020"=>295.0}}
         result = report_query_result.normalize

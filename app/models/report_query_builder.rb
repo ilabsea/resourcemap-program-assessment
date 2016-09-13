@@ -14,18 +14,20 @@ module ReportQueryBuilder
   end
 
   def parse_condition
-    ConditionParser.new(@report_query.condition).parse do |current_token|
+    parse_result = ConditionParser.new(@report_query.condition).parse do |current_token|
       query_filters[current_token]
     end
+    parse_result
   end
 
   def query_filters
     results = {}
     @report_query.condition_fields.each do |condition_field|
+      condition_field_id = condition_field["id"]
       if(condition_field["operator"] == "=" )
-        results[condition_field["id"]] = self.query_filter_term(condition_field)
+        results[condition_field_id] = self.query_filter_term(condition_field)
       else
-        results[condition_field["id"]] = self.query_filter_range(condition_field)
+        results[condition_field_id] = self.query_filter_range(condition_field)
       end
     end
     results
@@ -51,8 +53,8 @@ module ReportQueryBuilder
     operator_type = operator_types[operator]
     {
       "range" => {
-        "#{field_id}" => {
-          "#{operator_type}" => "#{value}"
+        field_id => {
+          operator_type => value
         }
       }
     }
@@ -63,7 +65,7 @@ module ReportQueryBuilder
     value = condition_field["value"]
     {
       "term" => {
-        "#{field_id}" => "#{value}"
+        field_id => value
       }
     }
   end

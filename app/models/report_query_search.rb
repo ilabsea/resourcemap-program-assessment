@@ -10,14 +10,18 @@ class ReportQuerySearch
 
   def query
     result_query = query_builder
-    result_query['facets'] = GroupByBuilder.new(@report_query).facet unless @report_query.aggregate_fields.empty?
-    result_query['size'] = DEFAULT_SIZE
+    result_query['facets'] = ReportQueryGroupByBuilder.new(@report_query).facet unless @report_query.aggregate_fields.empty?
+    result_query['size'] = ReportQuerySearch::DEFAULT_SIZE
 
-    Rails.logger.debug { result_query }
+    query_log(result_query)
 
     response = Tire.search(@index_name, result_query).results
     @result = response.results.map { |item| item["_source"]["properties"].values.join(", ")}
     @facet = response.facets
-    ReportQueryResult.new(@report_query, @facet).as_table
+    ReportQuerySearchResult.new(@report_query, @facet).as_table
+  end
+
+  def query_log result_query
+    Rails.logger.debug { result_query }
   end
 end

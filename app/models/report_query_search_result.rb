@@ -1,4 +1,4 @@
-class ReportQueryResult
+class ReportQuerySearchResult
   DELIMITER = '_'
 
   def initialize(report_query, facet_result)
@@ -18,7 +18,9 @@ class ReportQueryResult
     }
     @field_aggregator_mapper = {}
     @report_query.aggregate_fields.each do |agg_field|
-      @field_aggregator_mapper["#{agg_field['field_id']}"] = aggregator_mapping[agg_field['aggregator']]
+      agg_field_id = agg_field['field_id']
+      agg_type = agg_field['aggregator']
+      @field_aggregator_mapper[agg_field_id] = aggregator_mapping[agg_type]
     end
     @field_aggregator_mapper
   end
@@ -50,7 +52,8 @@ class ReportQueryResult
     fields = Field.find(table_field_ids)
     result = {}
     fields.each do |field|
-      result["#{field.id}"] = {"name" => field.name, "type" => field.type }
+      field_id_str = field.id.to_s
+      result[field_id_str] = {"name" => field.name, "type" => field.type }
     end
     result
   end
@@ -68,22 +71,21 @@ class ReportQueryResult
     first = true # contruct table head from the first record
 
     query_normalized.each do |key, agg_values|
-      field_values = key.split(ReportQueryResult::DELIMITER)
+      field_values = key.split(ReportQuerySearchResult::DELIMITER)
       row = []
       position = 0 # cache index after loop
       field_values.each do |field_value|
-        data_type = "text"
         if(first)
           field_id = @report_query.group_by_fields[position]
-          hash_mapping_result["#{field_id}"]
-          head_fields << hash_mapping_result["#{field_id}"]
+          hash_mapping_result[field_id]
+          head_fields << hash_mapping_result[field_id]
         end
         row << (head_fields[position]["type"] == 'int' ?  field_value.to_i : field_value)
         position +=1
       end
 
       agg_values.each do |field_id, field_value|
-        head_fields << hash_mapping_result["#{field_id}"] if first
+        head_fields << hash_mapping_result[field_id] if first
         row << (head_fields[position]["type"] == 'int' ?  field_value.to_i : field_value)
         position += 1
       end
@@ -97,7 +99,7 @@ class ReportQueryResult
   def normalize_term_stats
     results = {}
     @facet_result.each do |key, search_value|
-      key_names = key.split(DELIMITER)
+      key_names = key.split(ReportQuerySearchResult::DELIMITER)
 
       key_result = key_names[0..-2]  # [3, district5]
 
@@ -105,7 +107,7 @@ class ReportQueryResult
 
       search_value["terms"].each do |term|
         builtin_aggre = term['term']
-        record_key = (key_result + [builtin_aggre]).join(DELIMITER)  # [3, district5, 2012]
+        record_key = (key_result + [builtin_aggre]).join(ReportQuerySearchResult::DELIMITER)  # [3, district5, 2012]
 
         results[record_key] = results[record_key] || {}
 

@@ -80,7 +80,7 @@ onReportQueries ->
       id: @id
       name: @name()
       condition_fields: $.map(@conditionFields(), (x) -> x.toJSON())
-      group_by_fields: $.map(@groupByFields(), (x) -> x.id)
+      group_by_fields: $.map(@groupByFields(), (x) -> "#{x.id}")
       aggregate_fields: $.map(@aggregateFields(), (x) -> x.toJSON())
       condition: @condition()
 
