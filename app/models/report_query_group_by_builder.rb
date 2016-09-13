@@ -1,4 +1,4 @@
-class GroupByBuilder
+class ReportQueryGroupByBuilder
   include ReportQueryBuilder
   attr_accessor :field_with_distinct_values, :term_stat_field
 
@@ -16,7 +16,6 @@ class GroupByBuilder
     # leave last field as built in aggr, the rest for combination condition
     fields_combination_conditions = @report_query.group_by_fields[0..-2]
 
-
     # store possible unique value for condition combination
     distinct_field_values = [] #
 
@@ -31,11 +30,11 @@ class GroupByBuilder
 
       if(facet_filter_values.empty?)
         facet_tag =  value_field # // KampongCham_2015
-        exp["#{facet_tag}"] = facet_term_stats_by_field(value_field)
+        exp[facet_tag] = facet_term_stats_by_field(value_field)
       else
         facet_filter_values.each do |facet_filter_value|
           facet_tag = facet_filter_value.values.join("_") + "_#{value_field}" # // KampongCham_2015_aggrefieldx
-          exp["#{facet_tag}"] = facet_term_stats_by_field(value_field, facet_filter_value)
+          exp[facet_tag] = facet_term_stats_by_field(value_field, facet_filter_value)
         end
       end
     end
@@ -47,28 +46,34 @@ class GroupByBuilder
     @report_query.aggregate_fields.each do |agg_field|
       stat_field = agg_field["field_id"]
       facet_tag =  stat_field # // "province"
-      exp["#{facet_tag}"] = facet_statistical_by_field(stat_field)
+      exp[facet_tag] = facet_statistical_by_field(stat_field)
     end
     exp
   end
 
-  # {"province" => ['Kpc', 'PP']}
-  def distinct_value(field_id)
 
+  def distinct_value_query(field_id)
     query = query_builder
     query['facets'] = {
-      "#{field_id}" => {
+      field_id => {
         "terms" => {
           "field" => field_id
         }
       }
     }
+    query
+  end
+
+  # {"province" => ['Kpc', 'PP']}
+  def distinct_value(field_id)
+    result = { }
+    query = distinct_value_query(field_id)
+
     index_name = Collection.index_name(@report_query.collection_id)
     response = Tire.search(index_name, query).results
 
-
-    terms = response.facets[field_id.to_s]["terms"]
-    result = { "#{field_id}" => terms.map{|item| item['term']} }
+    terms = response.facets[field_id]["terms"]
+    result[field_id] = terms.map{ |item| item['term'] }
     result
   end
 
@@ -76,27 +81,27 @@ class GroupByBuilder
   def facet_statistical_by_field agg_field_id
     {
       "statistical" => {
-           "field" => "#{agg_field_id}"
-       }
+        "field" => agg_field_id
+      }
     }
   end
 
-  # facet_filter_value = {province: 'kpc', year: 2015}
+  # facet_filter_value = { "province" => 'kpc', "year" => 2015}
   def facet_term_stats_by_field value_field, facet_filter_value = {}
     #take last field as built in field
     key_field = @report_query.group_by_fields[-1]
 
     result = {
       "terms_stats" => {
-        "key_field" => "#{key_field}",
-        "value_field" => "#{value_field}"
-      },
+        "key_field" => key_field,
+        "value_field" => value_field
+      }
     }
 
     if(!facet_filter_value.empty?)
       terms = []
       facet_filter_value.each do |field_id, field_value|
-        term = { "term" => {"#{field_id}" => field_value }}
+        term = { "term" => { field_id => field_value }}
         terms <<  term
       end
       result["facet_filter"] = {
@@ -108,7 +113,7 @@ class GroupByBuilder
     result
   end
 
-  # fields is a list of group by  with distinct value = [ { province: ['Kpc', 'Pp' ] }, { year: [ 2016, 2017] } ]
+  # fields is a list of group by  with distinct value = [ { "province" => ['Kpc', 'Pp' ] }, { "year" => [ 2016, 2017] } ]
   def combine_tags(distinct_field_values)
     result = []
     build_combine_tags(distinct_field_values, result)
@@ -122,23 +127,24 @@ class GroupByBuilder
     field_key = pop_field.keys.first
     field_values = pop_field.values.flatten
 
-
-    # [ { province: ['KampongCham', 'Phnom Penh' ] },
-    #  { year: [ 2016, 2017] } ]
-    # {province: 'kpc'}, {province: 'php'}
-    # {province: 'kpc', year: 2016}, {province: 'php', year: 2016}
-    # {province: 'kpc', year: 2016}, {province: 'php', year: 2016}
+    # [ { "province" => ['KampongCham', 'Phnom Penh' ] },
+    #  { "year" => [ 2016, 2017] } ]
+    # {"province" => 'kpc'}, {"province" => 'php'}
+    # {"province" => 'kpc', "year" => 2016}, {"province" => 'php', "year" => 2016}
+    # {"province" => 'kpc', "year" => 2016}, {"province" => 'php', "year" => 2016}
 
     empty_result = result.empty?
     temps = []
 
     field_values.each_with_index do |value, index|
       if(empty_result)
-         temps << { "#{field_key}" => value}
+        temp = {}
+        temp[field_key] = value
+        temps << temp
       else
         result.each do |result_item|
           temp = result_item.clone
-          temp["#{field_key}"] = value
+          temp[field_key] = value
           temps << temp
         end
       end
@@ -147,7 +153,5 @@ class GroupByBuilder
     result = temps
     build_combine_tags(fields, result)
   end
-
-
 
 end

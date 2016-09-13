@@ -17,4 +17,5 @@
 require 'spec_helper'
 
 describe ReportQuery do
+  
 end

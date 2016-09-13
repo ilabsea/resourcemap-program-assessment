@@ -1,35 +1,35 @@
 require 'spec_helper'
 
-describe GroupByBuilder do
+describe ReportQueryGroupByBuilder do
   let!(:field_with_distinct_values) do
    [
-      { province: ['Kpc', 'Pp' ] },
-      { year: [ 2016, 2017] },
-      { district: ['Tektla', 'Beung kok', 'Krek'] }
+      { "province" => ['Kpc', 'Pp' ] },
+      { "year" => [ 2016, 2017] },
+      { "district" => ['Tektla', 'Beung kok', 'Krek'] }
     ]
   end
 
   let!(:agg_fields) do
     [
-     {"id"=>"1", "field_id"=>1019, "aggregator"=>"sum"},
-     {"id"=>"2", "field_id"=>1020, "aggregator"=>"sum"}
+     {"id"=>"1", "field_id"=>"1019", "aggregator"=>"sum"},
+     {"id"=>"2", "field_id"=>"1020", "aggregator"=>"sum"}
    ]
   end
 
   let(:report_query) { ReportQuery.make(name: "3 fields",
                                         condition_fields: [
-                                          {"id"=>"1", "field_id"=>1017, "operator"=>"=", "value"=>"3"},
-                                          {"id"=>"2", "field_id"=> 1019, "operator"=>">", "value"=>"3"},
-                                          {"id"=>"3", "field_id"=> 1020, "operator"=>">", "value"=>"4"}],
-                                        group_by_fields: [1017, 1018, 1022],
+                                          {"id"=>"1", "field_id"=>"1017", "operator"=>"=", "value"=>"3"},
+                                          {"id"=>"2", "field_id"=> "1019", "operator"=>">", "value"=>"3"},
+                                          {"id"=>"3", "field_id"=> "1020", "operator"=>">", "value"=>"4"}],
+                                        group_by_fields: ["1017", "1018", "1022"],
                                         aggregate_fields: [
-                                          {"id"=>"1", "field_id"=> 1019, "aggregator"=>"sum"},
-                                          {"id"=>2, "field_id"=> 1020, "aggregator"=>"sum"}],
+                                          {"id"=>"1", "field_id"=> "1019", "aggregator"=>"sum"},
+                                          {"id"=>"2", "field_id"=> "1020", "aggregator"=>"sum"}],
                                         condition: "1 and ( 2 or 3 )",
                                         collection_id: 219)}
 
   let(:group_by_builder) {
-    GroupByBuilder.new(report_query)
+    ReportQueryGroupByBuilder.new(report_query)
   }
 
   describe "#combine_tags" do
@@ -42,7 +42,7 @@ describe GroupByBuilder do
 
     context "with single group by field" do
       it 'return single field hash' do
-        fields = [{ province: ['Kpc', 'Pp' ] }]
+        fields = [{ "province" => ['Kpc', 'Pp' ] }]
         result = group_by_builder.combine_tags fields
         expect(result).to eq [  { "province" => "Kpc" }, { "province" => "Pp"}]
       end
@@ -50,8 +50,8 @@ describe GroupByBuilder do
 
     context "with more than multiple group by fields" do
       it 'return multiple field hash' do
-        fields = [ { province: ['Kpc', 'Pp' ] },
-                   { year: [ 2016, 2017] } ]
+        fields = [ { "province" => ['Kpc', 'Pp' ] },
+                   { "year" => [ 2016, 2017] } ]
         result = [ {"province"=>"Kpc", "year"=>2016},
                      {"province"=>"Pp", "year"=>2016},
                      {"province"=>"Kpc", "year"=>2017},
@@ -65,8 +65,8 @@ describe GroupByBuilder do
 
   describe '#facet_term_stats' do
     before(:each) do
-      group_by_builder.stub(:distinct_value).with(1017).and_return({province: ['Kpc', 'Pp' ]})
-      group_by_builder.stub(:distinct_value).with(1018).and_return({ year: [ 2016, 2017] })
+      group_by_builder.stub(:distinct_value).with("1017").and_return({"province" => ['Kpc', 'Pp' ]})
+      group_by_builder.stub(:distinct_value).with("1018").and_return({ "year" => [ 2016, 2017] })
     end
 
     it 'return facet filters for aggregate_fields' do
@@ -196,9 +196,16 @@ describe GroupByBuilder do
         expect(group_by_builder.facet_term_stats_by_field( 'agg_field_id', { "province" => "Kpc", "year" => 2016 })).to eq result
       end
     end
-
   end
 
+  describe '.distinct_value_query' do
+    it "return query for distinct_value for field" do
+      group_by_builder.stub(:query_builder).and_return({ "query" => { "match_all" => {} }})
+      result = group_by_builder.distinct_value_query("1018")
+      expected = {"query"=>{"match_all"=>{}}, "facets"=>{"1018"=>{"terms"=>{"field"=>"1018"}}}}
+      expect(result).to eq expected
+    end
+  end
 
 
 end

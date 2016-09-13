@@ -44,7 +44,7 @@ onReportQueries ->
       allOperators.filter((x) -> x.value == value)[0]
 
     toJSON: =>
-      id: @id
-      field_id: @field().id
+      id: "#{@id}"
+      field_id: "#{@field().id}"
       operator: @operator().value
       value: @value()
