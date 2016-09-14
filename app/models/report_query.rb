@@ -20,9 +20,10 @@ class ReportQuery < ActiveRecord::Base
   serialize :aggregate_fields, Array
 
   validates :name, presence: true
+  validates :name, uniqueness: true
 
   belongs_to :collection
-  has_many :templates, class_name: 'ReportQueryTemplate', dependent: :destroy
+  has_many :report_query_templates, dependent: :restrict
 
   attr_accessible :aggregate_fields, :condition,  :condition_fields,
                   :group_by_fields, :name, :parse_condition
@@ -32,7 +33,7 @@ class ReportQuery < ActiveRecord::Base
 
   # (1 or 3)and2
   def sanitize_condition
-    self.condition = ConditionParser.sanitize(self.condition)
+    condition = ConditionParser.sanitize(condition) if !condition.nil?
   end
 
 end

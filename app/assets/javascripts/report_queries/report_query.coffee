@@ -26,8 +26,13 @@ onReportQueries ->
       @nameError = ko.computed => if @hasName()  then null else "the query's name is missing"
       @groupByFieldError = ko.computed => @hasGroupByFields()
       @aggregateFieldError = ko.computed => if @hasAggregateFields()  then null else "the query must have at least one aggregate"
-      @error = ko.computed => @nameError() || @aggregateFieldError()
+      @error = ko.computed => @nameError() || @nameExist() || @aggregateFieldError()
       @valid = ko.computed => !@error()
+
+    nameExist: =>
+      for reportQuery in window.model.reportQueries()
+        if reportQuery.id != window.model.currentReportQuery()?.id && @name().trim() == reportQuery.name().trim()
+          return "the query'name is already exist"
 
     hasName: => $.trim(@name()).length > 0
     hasCondition: => $.trim(@condition()).length > 0
@@ -78,7 +83,7 @@ onReportQueries ->
 
     toJSON: =>
       id: @id
-      name: @name()
+      name: @name().trim()
       condition_fields: $.map(@conditionFields(), (x) -> x.toJSON())
       group_by_fields: $.map(@groupByFields(), (x) -> "#{x.id}")
       aggregate_fields: $.map(@aggregateFields(), (x) -> x.toJSON())

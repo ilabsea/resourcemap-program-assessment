@@ -1,13 +1,6 @@
-<%= render '/tabs' %>
 <div class="container">
-  <div class=""> Result </div>
-  <table class="GralTable tableview">
-    <% @result.each do |row| %>
-        <tr>
-          <% row.each do |col| %>
-            <td><%= col %></td>
-          <% end %>
-        </tr>
-    <% end %>
-  </table>
+  <% render_result = render('result', template: @template ) %>
+  <div id='report-query-template'>
+    <%= @template.translate_template(render_result).html_safe %>
+  </div>
 </div>

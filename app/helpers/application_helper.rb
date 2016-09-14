@@ -51,4 +51,5 @@ module ApplicationHelper
       stylesheet_link_tag "https://fonts.googleapis.com/css?family=#{font_name}"
     end.join(" ").html_safe
   end
+
 end

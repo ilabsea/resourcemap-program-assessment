@@ -1,7 +1,24 @@
+# == Schema Information
+#
+# Table name: report_query_templates
+#
+#  id              :integer          not null, primary key
+#  name            :string(255)
+#  template        :text
+#  collection_id   :integer
+#  report_query_id :integer
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  uuid            :string(255)
+#
+
 class ReportQueryTemplatesController < ApplicationController
   before_filter :authenticate_user!
 
   def index
+    show_collection_breadcrumb
+    add_breadcrumb I18n.t('views.collections.index.properties'), collection_path(collection)
+    add_breadcrumb 'Report Query Template', collection_report_query_templates_path(collection)
     @report_query_templates = collection.report_query_templates.order('id DESC')
   end
 
@@ -43,9 +60,8 @@ class ReportQueryTemplatesController < ApplicationController
 
   # GET /:id/report
   def show
-    template = collection.report_query_templates.find(params[:id])
-    report_query = template.report_query
-    @result = ReportQuerySearch.new(report_query).query
+    @template = collection.report_query_templates.find_by_uuid(params[:id])
+    render layout: "print_template"
   end
 
 end
