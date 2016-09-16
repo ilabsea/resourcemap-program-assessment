@@ -1,4 +1,10 @@
 <%= render '/tabs' %>
+<!-- <script type='text/javascript' >
+  setInterval(function(){
+    window.location.reload()
+  }, 5000)
+
+</script> -->
 
 <div class="tabsline settings-form" >
   <h2>Report Template</h2>
@@ -13,18 +19,32 @@
     <th>ID</th>
     <th>Name</th>
     <th>Report Query</th>
-    <th>Action</th>
+    <!-- <th>File</th>
+    <th>Report</th> -->
+    <th width="100">Action</th>
   </tr>
 <% @report_query_templates.each do |template| %>
   <tr>
     <td><%= template.id %></td>
     <td><%= template.name %></td>
     <td><%= template.report_query.name %></td>
+    <!-- <td>
+      <% if template.pdf_in_progress %>
+         <%= image_tag 'load.gif', alt: "In progress", width: 18 %>
+      <% elsif !template.pdf_completed_at.nil? %>
+        <%= link_to '', report_query_template_pdf_path(id: template.uuid), class: "button fimport" %>
+      <% end %>
+    </td>
+    <td>
+      <%=link_to 'Generate report', report_query_template_pdfs_path(id: template.uuid), method: :post, class: 'button ffolder' %>
+
+    </td> -->
     <td>
       <%=link_to '', edit_collection_report_query_template_path(collection, template), class: 'button fedit' %>
       <%=link_to '', collection_report_query_template_path(collection, template),
                           method: :delete, confirm: 'Are you sure you want to delete?', class: 'button fdelete' %>
-      <%=link_to 'Report', collection_report_query_template_path(collection, template.uuid) %>
+      <%=link_to '', collection_report_query_template_path(collection, template.uuid), class: 'button fpreview' %>
+
     </td>
   </tr>
 <%end%>

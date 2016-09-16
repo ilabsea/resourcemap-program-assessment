@@ -1,10 +1,11 @@
 <!-- calculate result only need if and only if there is a result parttern in the template -->
 <% if template.has_report_place_holder?  %>
   <table class="GralTable tableview">
-    <% template.report_result.each do |row| %>
+    <% template.report_result.each_with_index do |row, index| %>
+      <% klass = index == 0 ? "table-head" : "" %>
         <tr>
           <% row.each do |col| %>
-            <td><%= col %></td>
+            <td class="<%=klass%>"><%= col %></td>
           <% end %>
         </tr>
     <% end %>

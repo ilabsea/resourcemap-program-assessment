@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160914083855) do
+ActiveRecord::Schema.define(:version => 20160915041151) do
 
   create_table "activities", :force => true do |t|
     t.integer  "user_id"
@@ -295,9 +295,13 @@ ActiveRecord::Schema.define(:version => 20160914083855) do
     t.text     "template"
     t.integer  "collection_id"
     t.integer  "report_query_id"
-    t.datetime "created_at",      :null => false
-    t.datetime "updated_at",      :null => false
+    t.datetime "created_at",                          :null => false
+    t.datetime "updated_at",                          :null => false
     t.string   "uuid"
+    t.boolean  "is_published",     :default => true
+    t.boolean  "pdf_in_progress",  :default => false
+    t.datetime "pdf_requested_at"
+    t.datetime "pdf_completed_at"
   end
 
   add_index "report_query_templates", ["collection_id"], :name => "index_report_query_templates_on_collection_id"
