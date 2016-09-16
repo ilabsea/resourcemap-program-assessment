@@ -2,18 +2,22 @@
 #
 # Table name: report_query_templates
 #
-#  id              :integer          not null, primary key
-#  name            :string(255)
-#  template        :text
-#  collection_id   :integer
-#  report_query_id :integer
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  uuid            :string(255)
+#  id               :integer          not null, primary key
+#  name             :string(255)
+#  template         :text
+#  collection_id    :integer
+#  report_query_id  :integer
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  uuid             :string(255)
+#  is_published     :boolean          default(TRUE)
+#  pdf_in_progress  :boolean          default(FALSE)
+#  pdf_requested_at :datetime
+#  pdf_completed_at :datetime
 #
 
 class ReportQueryTemplatesController < ApplicationController
-  before_filter :authenticate_user!
+  before_filter :authenticate_user!, except: [:share]
 
   def index
     show_collection_breadcrumb
@@ -61,7 +65,12 @@ class ReportQueryTemplatesController < ApplicationController
   # GET /:id/report
   def show
     @template = collection.report_query_templates.find_by_uuid(params[:id])
-    render layout: "print_template"
+    # render layout: "print_template"
+  end
+
+  def share
+    @template = collection.report_query_templates.find_by_uuid(params[:id])
+    render :show, layout: "print_template"
   end
 
 end

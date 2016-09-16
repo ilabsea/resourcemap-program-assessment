@@ -1,6 +1,17 @@
-<div class="container">
-  <% render_result = render('result', template: @template ) %>
-  <div id='report-query-template'>
-    <%= @template.translate_template(render_result).html_safe %>
+<%= render '/tabs' %>
+<%= form_tag report_query_template_pdfs_path, method: 'post' do |f| %>
+  <input type="hidden" name="id" value="<%= @template.uuid %>" />
+
+  <textarea name="text" class= "custom-tinymce" rows=40>
+    <div class="container">
+      <% render_result = render('result', template: @template ) %>
+      <div id='report-query-template'>
+        <%= @template.translate_template(render_result).html_safe %>
+      </div>
+    </div>
+  </textarea>
+  <br/>
+  <div style='text-align: right' >
+    <button> Download PDF </button>
   </div>
-</div>
+<% end %>
