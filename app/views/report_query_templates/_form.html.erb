@@ -6,7 +6,7 @@
 
   <div class="field w60">
     <%= f.label 'Insert Report Query' %>
-    <%= f.select :report_query_id, options_for_select(collection.report_queries.map{|r| [r.name, r.id]}) %>
+    <%= f.select :report_query_id, options_for_select(collection.report_queries.map{|r| [r.name, r.id]}), prompt: 'Select a query' %>
   </div>
 
   <div class="row">
@@ -17,3 +17,18 @@
     <%= link_to 'Cancel', collection_report_query_templates_path(collection), :class=> 'grey'%>
   </div>
 <% end %>
+
+<script type="text/javascript">
+  $(function(){
+    var token = "{report}"
+    $("#report_query_template_report_query_id").on('change', function() {
+      var $this = $(this);
+      if($this.val()){
+        var editorContent = tinyMCE.activeEditor.getContent();
+        if(editorContent.indexOf(token) == -1) {
+          insertIntoEditor(token)
+        }
+      }
+    })
+  })
+</script>

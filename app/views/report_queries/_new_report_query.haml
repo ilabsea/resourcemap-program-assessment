@@ -56,7 +56,7 @@
         %optgroup{"data-bind" => "attr: {label: name}, foreach: fields", style: ''}
           %option{"data-bind" => "text: name, option: name, value: $data"}
     %div{style: 'margin-top:-4px'}
-      %button.padd{ ko(click: :addGroupByField, enable: :groupByFieldError)}
+      %button.padd{ ko(click: :addGroupByField, enable: :groupByFieldValid)}
 
 .control.clearfix
   %label
@@ -72,7 +72,7 @@
     //ko
 
 .control.clearfix
-  %label{ko(css: {error: 'aggregateFieldError'})}
+  %label{ko(css: {error: 'aggregateFieldsError'})}
     = t('views.report_queries.aggregate_fields')
   %div.select
     /ko with: $root.newAggregate()

@@ -13,22 +13,9 @@ class ReportQueryTemplatePdf
                                                                                                id: @options[:uuid], pdf: 1)
     pdf_store_file = ReportQueryTemplatePdf.pdf_store_file(@options)
 
-    html = <<-EOD
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="utf-8">
-        <title>dddd</title>
-      </head>
-      <body>
-        #{@options[:text]}
-      </body>
-    </html>
-    EOD
-
     temp_store_file = pdf_store_file + ".html"
     File.open(temp_store_file, 'w') do |f|
-      f.write(html)
+      f.write(@options[:text])
     end
 
     command = "wkhtmltopdf #{temp_store_file} #{pdf_store_file}"
