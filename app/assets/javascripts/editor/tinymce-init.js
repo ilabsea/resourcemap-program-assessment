@@ -37,12 +37,12 @@ $(document).ready(function() {
 									"Nastaliq=irannastaliqregular, sans-serif";
 
 	tinyMCE.init({
-		width: 980,
+		height: 500,
 		selector: 'textarea.custom-tinymce',
 		plugins: [ 'preview print media image table advlist autolink lists anchor',
 							'fullscreen', 'insertdatetime table contextmenu paste code pagebreak'],
-		toolbar: ["undo redo | alignleft aligncenter alignright bold italic underline styleselect " +
-							" fontselect fontsizeselect table code fullscreen custom-insert-newpage"],
+		toolbar: ["undo redo alignleft aligncenter alignright bold italic underline styleselect " +
+							" fullscreen custom-insert-newpage | fontselect fontsizeselect table code "],
 		font_formats:  fontLists,
 		setup: function (editor) {
 	    editor.addButton('custom-insert-newpage', {

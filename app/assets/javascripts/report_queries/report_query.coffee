@@ -24,9 +24,10 @@ onReportQueries ->
       @isEditing = ko.observable()
 
       @nameError = ko.computed => if @hasName()  then null else "the query's name is missing"
-      @groupByFieldError = ko.computed => @hasGroupByFields()
-      @aggregateFieldError = ko.computed => if @hasAggregateFields()  then null else "the query must have at least one aggregate"
-      @error = ko.computed => @nameError() || @nameExist() || @aggregateFieldError()
+      @groupByFieldValid = ko.computed => @hasGroupByFields() && @isValidToAddGroupByField()
+      @groupByFieldsError = ko.computed => if @isValidNumOfGroupBy() then null else "not more than 3"
+      @aggregateFieldsError = ko.computed => if @hasAggregateFields()  then null else "the query must have at least one aggregate"
+      @error = ko.computed => @nameError() || @nameExist() || @groupByFieldsError() || @aggregateFieldsError()
       @valid = ko.computed => !@error()
 
     nameExist: =>
@@ -39,7 +40,8 @@ onReportQueries ->
     hasConditionFields: => @conditionFields().length > 0
     hasGroupByFields: => @selectedGroupByField() != ""
     hasAggregateFields: => @aggregateFields().length > 0
-
+    isValidToAddGroupByField: => @groupByFields().length < 3
+    isValidNumOfGroupBy: => @groupByFields().length <= 3
 
     LogicalOperatorError: => if @isLogicalOperatorExpr().status then null else "the formula #{@isLogicalOperatorExpr().msg}"
 
