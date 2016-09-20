@@ -119,6 +119,7 @@ ResourceMap::Application.routes.draw do
        get 'job_status'
        get 'job_member_status'
        get 'cancel_pending_jobs'
+       get 'cancel_pending_member_jobs'
        get 'logs'
      end
   end

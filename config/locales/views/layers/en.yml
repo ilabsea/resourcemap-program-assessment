@@ -36,6 +36,7 @@ en:
         custom_aggregator: "Aggregator"
       form:
         remove_field: "Remove field"
+        duplicate_field: "Duplicate field"
         move_field_up: "Move field up"
         move_field_down: "Move field down"
         move_to_layer: "Move to layer..."

@@ -36,6 +36,7 @@ kh:
         custom_aggregator: "Custom Aggregator"
       form:
         remove_field: "លុបហ្វៀល"
+        duplicate_field: "ចម្លងហ្វៀល"
         move_field_up: "រំកិលហ្វៀលឡើង"
         move_field_down: "រំកិលហ្វៀលចុះ"
         move_to_layer: "ផ្ទេរទៅកាន់ស្រទាប់..."

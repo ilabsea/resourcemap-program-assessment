@@ -52,6 +52,7 @@
               .rightbuttons{style:'width:250px;'}
                 /ko if: deletable()
                 %button.fdelete{ko(click: "$root.deleteField"), style:'margin-top:0px;float:right;', title: t('views.layers.form.remove_field') }
+                %button.farrange{ko(click: "$root.copyField"), style:'margin-top:0px;float:right;', title: t('views.layers.form.duplicate_field') }
                 //ko
                 /ko if: !deletable()
                 %button.fdelete{ko(click: "$root.alertCannotDelete"), style:'margin-top:0px;float:right;', title: t('views.layers.form.remove_field') }
