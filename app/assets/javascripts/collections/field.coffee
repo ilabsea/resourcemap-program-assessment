@@ -28,7 +28,11 @@ onCollections ->
       @value = ko.observable()
       @value.subscribe =>
         if @skippedState() == false && @kind in ["yes_no", "select_one", "select_many", "numeric"]
-          @setFieldFocus()
+          # @setFieldFocus()
+          @disableDependentSkipLogicField()
+        # if @kind in ["numeric", "calculation"]
+        #   if window.model.newOrEditSite()
+        #     window.model.newOrEditSite().prepareCalculatedField()
 
       @keyType = if @allowsDecimals() then 'decimal' else 'integer'
 
@@ -156,19 +160,114 @@ onCollections ->
         return replaceBy
        )
 
-    bindWithCustomWidgetedField: =>
-      if @kind == 'custom_widget'
-        arr_field_wrapper = @widgetContentViewAsInput().match(/wrapper-custom-widget-[^"]+/g)
-        for field_wrapper in arr_field_wrapper
-          field_code = field_wrapper.split("wrapper-custom-widget-")[1]
-          field = window.model.findFieldByCode(field_code)
-          new CustomWidget(field).bindField()
-
     refresh_skip: =>
       if(@is_blocked_by())
         tmp = @is_blocked_by()
         @is_blocked_by(tmp)
 
+    disableDependentSkipLogicField: =>
+      if window.model.newOrEditSite()
+        if @kind == 'yes_no'
+          value = if @value() then 1 else 0
+        else if @kind == 'numeric' || @kind == 'select_one' || @kind == 'select_many'
+          value = @value()
+        else
+          return
+        noSkipField = false
+        if model.allFieldLogics().length > 0 && @skippedState() == false
+          for field_logic in model.allFieldLogics()
+            b = false
+            if field_logic.field_id?
+              if @kind == 'yes_no' || @kind == 'select_one'
+                if value == field_logic.value
+                  fieldSearch = @getFieldFromAllFields(field_logic.from_id)
+                  @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
+                  return
+                else
+                  noSkipField = true
+
+              if @kind == 'numeric' && value != ''
+                if field_logic.condition_type == '<'
+                  if parseFloat(value) < field_logic.value
+                    fieldSearch = @getFieldFromAllFields(field_logic.from_id)
+                    @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
+                    return
+                  else
+                    @enableSkippedField(@esCode)
+
+                if field_logic.condition_type == '<='
+                  if parseFloat(value) <= field_logic.value
+                    fieldSearch = @getFieldFromAllFields(field_logic.from_id)
+                    @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
+                    return
+                  else
+                    @enableSkippedField(@esCode)
+
+                if field_logic.condition_type == '='
+                  if parseFloat(value) == field_logic.value
+                    # @setFocusStyleByField(field_logic.field_id)
+                    fieldSearch = @getFieldFromAllFields(field_logic.from_id)
+                    @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
+                    return
+                  else
+                    @enableSkippedField(@esCode)
+
+                if field_logic.condition_type == '>'
+                  if parseFloat(value) > field_logic.value
+                    fieldSearch = @getFieldFromAllFields(field_logic.from_id)
+                    @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
+                    return
+                  else
+                    @enableSkippedField(@esCode)
+
+                if field_logic.condition_type == '>='
+                  if parseFloat(value) >= field_logic.value
+                    fieldSearch = @getFieldFromAllFields(field_logic.from_id)
+                    @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
+                    return
+                  else
+                    @enableSkippedField(@esCode)
+
+              if @kind == 'select_many'
+                if field_logic.condition_type == 'any'
+                  if value?
+                    for field_value in value
+                      for field_logic_value in field_logic.selected_options
+                        if field_value == parseInt(field_logic_value.value)
+                          b = true
+                          fieldSearch = @getFieldFromAllFields(field_logic.from_id)
+                          @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
+                          return
+                        else
+                          @enableSkippedField(@esCode) if @value() != null
+
+                if field_logic.condition_type == 'all'
+                  tmp = []
+                  if value?
+                    for field_value in value
+                      for field_logic_value in field_logic.selected_options
+                        if field_value == parseInt(field_logic_value.value)
+                          b = true
+                          field_id = field_logic.field_id
+                          tmp.push field_value
+                        else
+                          b = false
+                  if tmp.length == field_logic.selected_options.length
+                    fieldSearch = @getFieldFromAllFields(field_logic.from_id)
+                    @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
+                    return
+                  else
+                    @enableSkippedField(@esCode) if @value() != null
+
+          if @value() != "" && @value() != null && noSkipField
+            @enableSkippedField(@esCode)
+            return
+
+    getFieldFromAllFields: (field_id) =>
+      $.map(window.model.newOrEditSite().fields(), (f) =>
+        if f.esCode == field_id
+          return f
+      )
     setFieldFocus: =>
       if window.model.newOrEditSite()
         if @kind == 'yes_no'

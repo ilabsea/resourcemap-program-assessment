@@ -102,7 +102,13 @@ class ImportJob < ActiveRecord::Base
     self.save!
   end
 
-  [:file_uploaded, :pending, :in_progress, :finished, :failed, :canceled_by_user].each do |status_value|
+  def canceled_member_by_user
+    Rails.logger.error "Inconsistent status for job with id #{self.id}. Should be in status 'pending' before marking it as 'canceled'" unless self.status_pending?
+    self.status = :canceled_member_by_user
+    self.save!
+  end
+
+  [:file_uploaded, :pending, :in_progress, :finished, :failed, :canceled_by_user, :canceled_member_by_user].each do |status_value|
     class_eval %Q(def status_#{status_value.to_s}?; self.status == '#{status_value.to_s}'; end)
   end
 

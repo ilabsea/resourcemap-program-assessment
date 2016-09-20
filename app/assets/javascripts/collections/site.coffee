@@ -398,8 +398,7 @@ onCollections ->
         field.editing(false)
         field.originalValue = field.value()
         field.setFieldFocus() if field.kind in ["yes_no", "numeric", "select_one", "select_many"]
-        field.bindWithCustomWidgetedField()
-
+        new CustomWidget(field).bindField() if field.custom_widgeted
       window.model.newOrEditSite().scrollable(false)
       $('#name').focus()
 
@@ -497,7 +496,7 @@ onCollections ->
         for layer in @layers()
           for field in layer.fields
             fields.push(field)
-
+            new CustomWidget(field).bindField() if field.custom_widgeted
         @fields(fields)
         @getLocationFieldOption()
 
@@ -507,7 +506,7 @@ onCollections ->
         callback() if callback && typeof(callback) == 'function'
 
     copyPropertiesToFields: =>
-      if @properties()
+      if @properties()      
         for field in @fields()
           value = @properties()[field.esCode]
           field.setValueFromSite(value)
@@ -587,5 +586,3 @@ onCollections ->
     # in Firefox. It seems a problem with the bindings caused by the fat arrow
     # (=>), but I couldn't figure it out. This "solves" it for now.
     dummy: =>
-
-    findFieldByCode: (code) => (field for field in @fields() when field.code == code)[0]

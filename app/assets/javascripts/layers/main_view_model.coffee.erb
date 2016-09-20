@@ -7,6 +7,7 @@ onLayers ->
       @updateLayerDeletable()
       @currentLayer = ko.observable()
       @bufferNewLayer = ko.observable()
+      @bufferNewField = ko.observable()
       @currentField = ko.observable()
       @default_select = '(no value)'
       @newOption = ko.observable(new Option)
@@ -237,11 +238,31 @@ onLayers ->
         else if layer.query_ids.length > 0
           $.status.showError("This layer is being used with #{layer.query_ids.length} canned query(s), you are not allowed to delete", 2000)
 
+    copyField: (field)=>
+      name = "Copy " + field.name()
+      code = "copy_" + field.code()
+      ord = field.ord() + 1
+      index = model.currentLayer().fields().indexOf(field)
+      fieldJSON =  @modifyFieldLogic(field.toJSON())
+      tmpField = new Field(model.currentLayer, field.toJSON())
+
+      tmpField.name(name)
+      tmpField.code(code)
+      tmpField.id(undefined)
+      tmpField.ord(ord)
+      @moveOrd(ord, @currentLayer().fields())
+      model.currentLayer().fields.splice((index+1),0,tmpField)
+
     copyLayer: (layer)=>
-      @bufferNewLayer = ko.observable()
-      @bufferNewLayer(new Layer(layer, @))
+      layerJSON = layer.toJSON()
+      layerJSON["fields"] = layerJSON["fields_attributes"]
+      delete layerJSON["fields_attributes"]
+      $.map(layerJSON["fields"], (f) =>
+        f = @modifyFieldLogic(f)
+      )
+      @bufferNewLayer(new Layer(layerJSON, @))
+
       @bufferNewLayer().name(layer.name())
-      @bufferNewLayer().fields(layer.fields())
       @bufferNewLayer().total(layer.total())
       @bufferNewLayer(@append_copy())
       @bufferNewLayer().ord(@layers().length + 1)
@@ -249,6 +270,24 @@ onLayers ->
       @savingLayer(true)
       json = {layer: @bufferNewLayer().toJSON()}
       $.post "/collections/#{@collectionId}/layers.json", json, @saveCopyLayerCallback
+
+    modifyFieldLogic: (field) =>
+      if field.is_enable_field_logic
+        if field.config
+          fieldLogics = field.config.field_logics
+          $.map(fieldLogics, (f) =>
+            if f.field_id.length == 1
+              f.field_id = f.field_id[0].toString()
+            else
+              f.field_id = f.field_id.toString()
+          )
+      return field
+
+    moveOrd: (ord, objs) =>
+      $.map(objs, (f) =>
+        if f.ord() >= ord
+          f.ord(f.ord() + 1)
+      )
 
     saveCopyLayerCallback: (data) =>
       #if layer is new, we need to set id
@@ -279,6 +318,7 @@ onLayers ->
       layerName = @bufferNewLayer().name() + appendName
       @bufferNewLayer().name(layerName)
       $.map(@bufferNewLayer().fields(), (f) =>
+        f.name(f.name() + appendName)
         f.code(f.code() + appendName)
         f.id(undefined)
       )
@@ -287,7 +327,6 @@ onLayers ->
     generateUniqueLayerName: (name, i)=>
       append = " copy_" + i
       newName = name + append
-      console.log(newName)
       if @existedLayerName(newName)
         i = i + 1
         return @generateUniqueLayerName(name, i)

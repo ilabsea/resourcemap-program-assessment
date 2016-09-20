@@ -67,10 +67,9 @@ class ImportWizardsController < ApplicationController
   end
   
   def execute_import_members
-    debugger
     columns = params[:columns].values
     if current_user.admins? collection
-      ImportWizard.enqueue_job current_user, collection, params[:columns].values
+      ImportWizard.enqueue_member_job current_user, collection, params[:columns].values
       render json: :ok
     else
       render text: I18n.t('views.import_wizards.cant_create_new_fields'), status: :unauthorized
@@ -101,6 +100,12 @@ class ImportWizardsController < ApplicationController
     ImportWizard.cancel_pending_jobs(current_user, collection)
     flash[:notice] = I18n.t('views.import_wizards.import_canceled')
     redirect_to collection_import_wizard_path
+  end
+
+  def cancel_pending_member_jobs
+    ImportWizard.cancel_pending_member_jobs(current_user, collection)
+    flash[:notice] = I18n.t('views.import_wizards.import_canceled')
+    redirect_to collection_upload_members_path
   end
 
   def job_status

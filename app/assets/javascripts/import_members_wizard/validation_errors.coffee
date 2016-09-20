@@ -28,8 +28,8 @@ onImportMembersWizard ->
             error_description = {error_kind: errorType, columns: errorColumns}
             switch errorType
               when 'missing_email'
-                error_description.description = "Please select a column to be used as 'Name'"
-                error_description.more_info = "You need to select a column to be used as 'Email' of the member in order to continue with the upload."
+                error_description.description = "There are some email not registered in they system"
+                error_description.more_info = "Columns Email on row #{@toIndex1BasedSentence(errorColumns)} have the email not registered as user in the system. To fix this issue, please change the email to registered user."
               when 'duplicated_email'
                 error_description.description = "There is more than one column with email '#{errorId}'."
                 error_description.more_info = "Columns #{@toIndex1BasedSentence(errorColumns)} have the same email. To fix this issue, leave only one with that email and modify the rest."

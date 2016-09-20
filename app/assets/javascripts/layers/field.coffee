@@ -49,6 +49,7 @@ onLayers ->
         unless @editableCode()
           @changeCodeInCalculationField()
 
+
     changeCodeInCalculationField: =>
       $.map(model.layers(), (x, index) =>
         fields = x.fields()
@@ -87,8 +88,6 @@ onLayers ->
       return unless @selecting
 
       if window.model.currentLayer() != @layer()
-        destinationOrd = @layer().fields().length + 1
-        @ord(destinationOrd)
         $("a[id='#{@name()}']").html("Move to layer '#{@layer().name()}' upon save")
       else
         $("a[id='#{@name()}']").html('Move to layer...')
@@ -120,7 +119,7 @@ onLayers ->
         layer_id: @layer().id()
         is_mandatory: @is_mandatory
         is_display_field: @is_display_field
-        is_enable_field_logic: @is_enable_field_logic
+        is_enable_field_logic: @is_enable_field_logic()
         is_criteria: @is_criteria
         custom_widgeted: @custom_widgeted
         readonly_custom_widgeted: @readonly_custom_widgeted
@@ -132,8 +131,23 @@ onLayers ->
       @field = field
       @maximumSearchLengthError = -> null
       @error = -> null
+      @field_logics = if field.config?.field_logics?
+                        ko.observableArray(
+                          $.map(field.config.field_logics, (x) -> new FieldLogic(x))
+                        )
+                      else
+                        ko.observableArray()
 
     toJSON: (json) =>
+
+    saveFieldLogic: (field_logic) =>
+      if !field_logic.id()?
+        if @field_logics().length > 0
+          id = @field_logics()[@field_logics().length - 1].id() + 1
+        else
+          id = 0
+        field_logic.id id
+        @field_logics.push field_logic
 
   class @Field_text extends @FieldImpl
     constructor: (field) ->
