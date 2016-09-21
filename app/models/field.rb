@@ -29,6 +29,8 @@ class Field < ActiveRecord::Base
   include Field::ValidationConcern
   include Field::ShpConcern
 
+  include Field::TranslatableValue
+
   include HistoryConcern
 
   self.inheritance_column = :kind
@@ -140,14 +142,6 @@ class Field < ActiveRecord::Base
 
   def error_description_for_invalid_values(exception)
     "are not valid for the type #{kind}"
-  end
-
-  def type
-    if self.kind == "numeric"
-      return self.config && self.config["allows_decimals"] == "true" ? "float" : "int"
-    else
-      return self.kind
-    end
   end
 
   # Enables caching options and other info for a read-only usage

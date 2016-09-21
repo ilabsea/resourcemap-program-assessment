@@ -53,10 +53,15 @@ class ReportQuerySearchResult
     result = {}
     fields.each do |field|
       field_id_str = field.id.to_s
-      result[field_id_str] = {"name" => field.name, "type" => field.type }
+      result[field_id_str] = field #{"name" => field.name, "type" => field.type }
     end
     result
   end
+
+  def translate_field_value(field, value)
+    field.translate_value(value)
+  end
+
   # {"3.0_district 5 _2012.0"=>{"1019"=>7.0, "1020"=>6.0},
   #  "3.0_district 5 _2011.0"=>{"1019"=>4.0, "1020"=>3.0},
   #  "3.0_district 4 _2015.0"=>{"1019"=>2.0, "1020"=>5.0},
@@ -80,19 +85,20 @@ class ReportQuerySearchResult
           hash_mapping_result[field_id]
           head_fields << hash_mapping_result[field_id]
         end
-        row << (head_fields[position]["type"] == 'int' ?  field_value.to_i : field_value)
+
+        row << translate_field_value(head_fields[position], field_value)
         position +=1
       end
 
       agg_values.each do |field_id, field_value|
         head_fields << hash_mapping_result[field_id] if first
-        row << (head_fields[position]["type"] == 'int' ?  field_value.to_i : field_value)
+        row << translate_field_value(head_fields[position], field_value)
         position += 1
       end
       first = false
       body << row
     end
-    head = head_fields.map {|head_field| head_field['name']}
+    head = head_fields.map {|head_field| head_field.name}
     body.unshift(head)
   end
 

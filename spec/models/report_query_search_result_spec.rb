@@ -216,21 +216,29 @@ describe ReportQuerySearchResult do
     let(:report_query_result) { ReportQuerySearchResult.new(report_query, elastic_result) }
     describe '#transform' do
       it 'return an array with head as field names and body as value' do
+
         query_result = { "3.0_district 5 _2012.0"=>{"1019"=>7.0, "1020"=>6.0},
                          "3.0_district 5 _2011.0"=>{"1019"=>4.0, "1020"=>3.0},
                          "3.0_district 4 _2015.0"=>{"1019"=>2.0, "1020"=>5.0},
                          "3.0_district 4 _2014.0"=>{"1019"=>5.0, "1020"=>4.0}
                        }
-        hash_mapping_result = {"1017" => {"name" => "Province", "type" => "int"},
-                               "1018" => {"name" => "District", "type" => 'text'},
-                               "1022" => {"name" => "Year", "type" => 'int'},
-                               "1019" => {"name" => "Household", "type" => 'float'},
-                               "1020" => {"name" => "Women effected", "type" => 'int'}
+
+        privince_field = Field::NumericField.make name: 'Province'
+        district_field = Field::TextField.make name: 'District'
+        year_field = Field::NumericField.make name: 'Year'
+        house_hold_field = Field::NumericField.make(name: 'Household', config: { "allows_decimals" => true})
+        women_field = Field::NumericField.make name: 'Women affected'
+
+        hash_mapping_result = {"1017" => privince_field,
+                               "1018" => district_field,
+                               "1022" => year_field,
+                               "1019" => house_hold_field,
+                               "1020" => women_field
                              }
         report_query_result.stub(:hash_mapping) {hash_mapping_result}
         table_result = report_query_result.transform(query_result)
 
-        expected = [["Province", "District", "Year", "Household", "Women effected"],
+        expected = [["Province", "District", "Year", "Household", "Women affected"],
                     [3, "district 5 ", 2012, 7.0, 6],
                     [3, "district 5 ", 2011, 4.0, 3],
                     [3, "district 4 ", 2015, 2.0, 5],
