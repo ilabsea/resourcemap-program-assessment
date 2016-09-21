@@ -13,7 +13,7 @@
         /ko if: $index() == 0
         %option{value: ""} (no value)
         //ko
-        %optgroup{"data-bind" => "attr: {label: name}, foreach: fields", style: ''}
+        %optgroup{"data-bind" => "attr: {label: name}, foreach: whiteListConditionField", style: ''}
           %option{"data-bind" => "text: name, option: name, value: $data"}
 
 
@@ -53,7 +53,7 @@
         /ko if: $index() == 0
         %option{value: ""} (no value)
         //ko
-        %optgroup{"data-bind" => "attr: {label: name}, foreach: fields", style: ''}
+        %optgroup{"data-bind" => "attr: {label: name}, foreach: whiteListConditionField", style: ''}
           %option{"data-bind" => "text: name, option: name, value: $data"}
     %div{style: 'margin-top:-4px'}
       %button.padd{ ko(click: :addGroupByField, enable: :groupByFieldValid)}

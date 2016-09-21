@@ -11,8 +11,11 @@ onReportQueries ->
 
       @reportQueries = ko.observableArray()
       @currentReportQuery = ko.observable()
+
       @expandedRefinePropertyHierarchy = ko.observable()
-      @expandedRefinePropertyHierarchy.subscribe (item) -> item?.select()
+      @expandedRefinePropertyHierarchy.subscribe (item) =>
+        @newCondition()?.value(item.id)
+        item?.select()
 
     addReportQuery: =>
       @newReportQuery(new ReportQuery)

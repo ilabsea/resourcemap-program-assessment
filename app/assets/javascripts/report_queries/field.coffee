@@ -13,37 +13,31 @@ onReportQueries ->
       @kind_titleize = ko.computed =>
         (@kind.split(/_/).map (word) -> word[0].toUpperCase() + word[1..-1].toLowerCase()).join ' '
       @ord = data?.ord
+      @isInputField = ko.computed =>
+        inputType = ['text', 'date', 'calculation', 'email', 'phone']
+        if inputType.includes?(@kind) then true else false
+
       if @kind == 'hierarchy'
         @hierarchy = data.config?.hierarchy
 
       @buildHierarchyItems() if @hierarchy?
-      @valueUI =  ko.computed
-       read: =>  @valueUIFor(@value())
-       write: (value) =>
-         @value(@valueUIFrom(value))
+
 
     buildHierarchyItems: =>
       @fieldHierarchyItemsMap = {}
       @fieldHierarchyItems = ko.observableArray $.map(@hierarchy, (x) => new FieldHierarchyItem(@, x))
-      @fieldHierarchyItems.unshift new FieldHierarchyItem(@, {id: '', name: '(no value)'})
-    valueUIFor: (value) =>
-      if @kind == 'yes_no'
-        if value then 'yes' else 'no'
-      else if @kind == 'select_one'
-        if value then @labelFor(value) else ''
-      else if @kind == 'select_many'
-        if value then $.map(value, (x) => @labelFor(x)).join(', ') else ''
-      else if @kind == 'hierarchy'
-        if value then @fieldHierarchyItemsMap[value] else ''
-      else
-        if value then value else ''
 
-    valueUIFrom: (value) =>
-      if @kind == 'site'
-        # Return site_id or "" if the id for this name is not found (deleting the value or invalid value)
-        window.model.currentCollection()?.findSiteIdByName(value) || ""
-      else
-        value
+    labelFor: (id) =>
+      for option in @config.options
+        if option.id == parseInt(id)
+          return option.label
+      null
+
+    labelForLocation: (code) =>
+      for option in @config.locations
+        if option.code == code
+          return option.name
+      ''
 
     toJSON: =>
       @code = @code.trim()
