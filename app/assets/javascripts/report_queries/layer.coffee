@@ -12,6 +12,8 @@ onReportQueries ->
       @fieldsNumericOnly = @fields.filter (field) -> field.kind == 'numeric'
 
       @expanded = ko.observable(false)
+      @whiteListFieldType = ['text', 'numeric', 'yes_no', 'select_one', 'hierarchy', 'date', 'calculation', 'location', 'email', 'phone']
+      @whiteListConditionField = @fields.filter (field) => @whiteListFieldType.includes?(field.kind)
 
     toggleExpand: =>
       @expanded(!@expanded())

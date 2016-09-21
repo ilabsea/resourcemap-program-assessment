@@ -72,3 +72,14 @@
 label.error{
   /*padding-left: 10px;*/
 }
+
+.control .hierarchy-container{
+  border: 1px solid #c3c3c3;
+  float: right;
+  margin: 0px 15px 0px 15px;
+}
+
+.control .hierarchy{
+  clear: both;
+  float: none;
+}
