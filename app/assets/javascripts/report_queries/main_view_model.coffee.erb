@@ -11,6 +11,8 @@ onReportQueries ->
 
       @reportQueries = ko.observableArray()
       @currentReportQuery = ko.observable()
+      @expandedRefinePropertyHierarchy = ko.observable()
+      @expandedRefinePropertyHierarchy.subscribe (item) -> item?.select()
 
     addReportQuery: =>
       @newReportQuery(new ReportQuery)
@@ -84,3 +86,8 @@ onReportQueries ->
         for field in layer.fields
           if parseInt(field.id) == parseInt(id)
             return field
+
+    bindHierarchyLabel: (field, value) ->
+      for key,item of field.fieldHierarchyItemsMap
+        if key == value
+          return item

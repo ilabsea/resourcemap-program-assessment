@@ -1,14 +1,19 @@
-/ko with: $root.newCondition()
-%select{"data-bind" => 'foreach: $root.layers(), value: field, selectedOptions: selectedField'}
-  %optgroup{"data-bind" => "attr: {label: name}, foreach: fields", style: ''}
-    %option{"data-bind" => "text: name, option: name, value: $data"}
-
+/ko if: field().kind == 'text' || field().kind == 'numeric'
 %span is
-
-%select{ko(value: :operator, options: :operatorOptions, optionsText: "'label'")}
-
+%select{ko(value: :operator, options: :operatorOptions, optionsText: "'label'", optionsCaption: "'(no value)'")}
 %input{ko(value: :value), type: :text}
-
-%button.fadd{ ko(click: '$parent.addCondition'), title: 'Add condition' }
-
 //ko
+
+/ko if: field().kind == 'select_one'
+%span is
+%select{ko(value: :value, options: 'field().config.options', optionsText: "'label'", optionsCaption: "'(no value)'")}
+//ko
+
+/ko if: field().kind == 'hierarchy'
+%span is
+%div{ko(template: {name: "'refine-hierarchy-items-template'", with: 'field().config.hierarchy'})}
+-# %span{ko(text: '$root.bindHierarchyLabel(field(), value())')}
+//ko
+
+
+= render 'report_queries/refine_hierarchy_items_template'

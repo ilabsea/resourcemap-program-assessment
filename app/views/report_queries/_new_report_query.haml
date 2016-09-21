@@ -16,11 +16,11 @@
         %optgroup{"data-bind" => "attr: {label: name}, foreach: fields", style: ''}
           %option{"data-bind" => "text: name, option: name, value: $data"}
 
-      %span is
 
-      %select{ko(value: :operator, options: :operatorOptions, optionsText: "'label'", optionsCaption: "'(no value)'")}
 
-      %input{ko(value: :value), type: :text}
+      = render 'report_queries/new_condition_template'
+
+      -# %input{ko(value: :value), type: :text}
 
     %div{style: 'margin-top:-2px'}
       %button.padd{ ko(click: '$parent.addConditionField', enable: :valid), title: 'Add condition' }

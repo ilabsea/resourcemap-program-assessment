@@ -15,7 +15,7 @@ onReportQueries ->
       @field = ko.observable(@selectedField()?[0])
 
       @operatorOptions = ko.computed =>
-        return @operatorUIForTextField() if @field()?.kind == 'text'
+        return @operatorUIForTextField() if ['text', 'select_one', 'hierarchy', 'location'].includes? @field()?.kind 
         return @operatorUIForNumericField() if @field()?.kind == 'numeric'
 
       @value = ko.observable(data?.value)
