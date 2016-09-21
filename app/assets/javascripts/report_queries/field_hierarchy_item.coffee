@@ -1,4 +1,4 @@
-onQueries ->
+onReportQueries ->
 
   # Used when selecting a hierarchy field value
   class @FieldHierarchyItem

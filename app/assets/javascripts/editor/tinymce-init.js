@@ -42,8 +42,9 @@ $(document).ready(function() {
 		plugins: [ 'preview print media image table advlist autolink lists anchor',
 							'fullscreen', 'insertdatetime table contextmenu paste code pagebreak'],
 		toolbar: ["undo redo alignleft aligncenter alignright bold italic underline styleselect " +
-							" fullscreen custom-insert-newpage | fontselect fontsizeselect table code "],
+							" fullscreen custom-insert-newpage paste copy | fontselect fontsizeselect table code "],
 		font_formats:  fontLists,
+		// valid_elements: "table tr td th tbody",
 		setup: function (editor) {
 	    editor.addButton('custom-insert-newpage', {
 	      text: '',
