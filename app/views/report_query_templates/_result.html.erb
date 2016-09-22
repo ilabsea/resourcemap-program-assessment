@@ -1,13 +1,32 @@
 <!-- calculate result only need if and only if there is a result parttern in the template -->
 <% if template.has_report_place_holder?  %>
-  <table class="GralTable tableview">
-    <% template.report_result.each_with_index do |row, index| %>
-      <% klass = index == 0 ? "table-head" : "" %>
+
+  <table style="width: 100%;border-color: #999; margin-left: auto; margin-right: auto;"
+         border="1"
+         cellspacing="0"
+         cellpadding="4"
+         align="center" >
+    <thead>
+      <tr>
+        <% template.report_result.first.each do |col| %>
+          <th><%= col %></th>
+        <% end %>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% template.report_result[1..-1].sort{|a,b| a[0] <=> b[0] }.each do |row| %>
         <tr>
           <% row.each do |col| %>
-            <td class="<%=klass%>"><%= col %></td>
+            <td><%= col %></td>
           <% end %>
         </tr>
-    <% end %>
+      <% end %>
+    </tbody>
+
+
+
+
+
   </table>
 <% end %>
