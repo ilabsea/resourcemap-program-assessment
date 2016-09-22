@@ -40,9 +40,11 @@
     //ko
 
 .control.clearfix
-  %label
-    = t('views.report_queries.condition')
-  %input.w30{ko(value: :condition), type: :text}
+  %div{style: 'margin-left:170px; margin-bottom: 15px; color:grey'}
+    %i
+      = t('views.report_queries.expression')
+    %br
+    %input.w60{ko(value: :condition), type: :text, placeholder: "1 and 2"}
 
 .control.clearfix
   %label
