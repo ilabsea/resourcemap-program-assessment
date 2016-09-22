@@ -5,7 +5,7 @@ en:
       description: "Manage report_queries of this collection's sites"
       name: "Name"
       conditon_fields: "Condition Fields"
-      conditon: "Condition"
+      expression: "Expression"
       group_by_fields: "Group by fields"
       aggregate_fields: "Aggregate fields"
       edit: "Edit"
