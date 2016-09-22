@@ -15,8 +15,7 @@
 
   %div.row
     %input{type: 'hidden', value: 'print', name: 'tab'}
-    .field.w60
-      = f.text_area :print_template, class: "custom-tinymce", style: 'width: 1200px;', rows: 15, cols: 150
+    = f.text_area :print_template, class: "custom-tinymce"
   %div.row
     = f.check_box :is_published_template
     = f.label :is_published_template, "Publish"
