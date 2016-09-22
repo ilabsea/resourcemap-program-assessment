@@ -1,5 +1,5 @@
 class ReportQuerySearch
-  DEFAULT_SIZE = 100
+
   include ReportQueryBuilder
 
   attr_accessor :result, :facet
@@ -11,7 +11,7 @@ class ReportQuerySearch
   def query
     result_query = query_builder
     result_query['facets'] = ReportQueryGroupByBuilder.new(@report_query).facet unless @report_query.aggregate_fields.empty?
-    result_query['size'] = ReportQuerySearch::DEFAULT_SIZE
+    result_query['size'] = Settings.max_aggregate_result_size.to_i
 
     query_log(result_query)
 

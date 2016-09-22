@@ -1,4 +1,5 @@
 module ReportQueryBuilder
+
   def query_builder
     builder = {}
     if @report_query.condition.empty?
