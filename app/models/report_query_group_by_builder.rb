@@ -57,7 +57,8 @@ class ReportQueryGroupByBuilder
     query['facets'] = {
       field_id => {
         "terms" => {
-          "field" => field_id
+          "field" => field_id,
+          "size" => Settings.max_aggregate_result_size.to_i
         }
       }
     }
