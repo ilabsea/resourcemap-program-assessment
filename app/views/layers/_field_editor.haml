@@ -109,6 +109,15 @@
     = render :partial => "field_logic_numeric"
   //ko
 
+  /ko if: kind() == 'numeric'
+  %hr/
+  = ko_check_box_tag :is_enable_custom_validation, css: {error: :codeError}
+  %label
+    = t('views.layers.form.field.enable_custom_validation')
+  %div{ko(if: :is_enable_custom_validation)}
+    = render :partial => "field_custom_validation"
+  //ko
+
   /ko if: kind() == 'custom_widget'
   %hr/
   %div{"style" => "padding: 5px 0px;"}

@@ -91,10 +91,10 @@ onCollections ->
       window.model.newOrEditSite().startEntryDate(new Date(Date.now()))
       for field in window.model.newOrEditSite().fields()
         new CustomWidget(field).bindField() if field.custom_widgeted
-        field.setFieldFocus() if field.skippedState() == false && field.kind == 'yes_no'
+        field.disableDependentSkipLogicField() if field.skippedState() == false && field.kind == 'yes_no'
         if field.field_logics
           for f in field.field_logics
-            f["from_id"] = field["esCode"]
+            f["disable_field_id"] = field["esCode"]
             @allFieldLogics(@allFieldLogics().concat(f))
 
 

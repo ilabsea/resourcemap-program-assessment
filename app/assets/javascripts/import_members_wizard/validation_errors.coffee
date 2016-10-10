@@ -10,10 +10,6 @@ onImportMembersWizard ->
         return true unless $.isEmptyObject(errorValue)
       return false
 
-    toIndex1BasedSentence: (index_array) =>
-      index_array = $.map index_array, (index) => index + 1
-      window.toSentence(index_array)
-
     summarizedErrorList: =>
       $.map @errorsByType, (e) => {description: e.description, more_info: e.more_info}
 
@@ -24,18 +20,19 @@ onImportMembersWizard ->
       errorsByType = []
       for errorType,errors of @errors
         if !$.isEmptyObject(errors)
-          for errorId, errorColumns of errors
-            error_description = {error_kind: errorType, columns: errorColumns}
-            switch errorType
-              when 'missing_email'
-                error_description.description = "There are some email not registered in they system"
-                error_description.more_info = "Columns Email on row #{@toIndex1BasedSentence(errorColumns)} have the email not registered as user in the system. To fix this issue, please change the email to registered user."
-              when 'duplicated_email'
-                error_description.description = "There is more than one column with email '#{errorId}'."
-                error_description.more_info = "Columns #{@toIndex1BasedSentence(errorColumns)} have the same email. To fix this issue, leave only one with that email and modify the rest."
-              when 'not_existed_email'
-                error_description.description = "There is more than one column with email '#{errorId}'."
-                error_description.more_info = "Columns #{@toIndex1BasedSentence(errorColumns)} have email that not refered to registered user. To fix this issue, please only use email of registered user only."
-            errorsByType.push(error_description)
+          errorIndex = $.map(errors, (f) => f = f + 1)
+          errorColumns =  errorIndex.join(",")
+          error_description = {error_kind: errorType, columns: errorColumns}
+          switch errorType
+            when 'missing_email'
+              error_description.description = "There are some email not registered in they system"
+              error_description.more_info = "Columns Email on row #{errorColumns} have the email not registered as user in the system. To fix this issue, please change the email to registered user."
+            when 'duplicated_email'
+              error_description.description = "There is more than one column with email duplicated."
+              error_description.more_info = "Columns #{errorColumns} have the same email. To fix this issue, leave only one with that email and modify the rest."
+            when 'existed_email'
+              error_description.description = "There is more than one column with email already registered to the system."
+              error_description.more_info = "Columns #{errorColumns} have email that not refered to registered user. To fix this issue, please only use email of registered user only."
+          errorsByType.push(error_description)
       errorsByType
 
