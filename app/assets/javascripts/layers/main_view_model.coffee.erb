@@ -12,6 +12,7 @@ onLayers ->
       @default_select = '(no value)'
       @newOption = ko.observable(new Option)
       @newFieldLogic = ko.observable(new FieldLogic)
+      @newFieldValidation = ko.observable(new FieldValidation)
       @newAttribute = ko.observable(new Attribute)
       @collectionList = window.collectionList
       @optionValid = ko.computed =>
@@ -77,6 +78,7 @@ onLayers ->
         else
           []
       @isAddNew = ko.observable(false)
+      @isAddNewValidation = ko.observable(false)
       @is_editing = ko.computed =>
         if @currentField() and @currentField().kind == "select_many"
           for f in @currentField().impl().selected_field_logics()
@@ -86,6 +88,7 @@ onLayers ->
             return true
           return false
         return false
+
 
     addCustomWidgetedFieldItem: =>
       window.currentField = @currentField().impl()
@@ -177,7 +180,6 @@ onLayers ->
     saveLayer: =>
       @savingLayer(true)
       json = {layer: @currentLayer().toJSON()}
-      console.log(json)
       if @currentLayer().id()
         json._method = 'put'
         $.post "/collections/#{@collectionId}/layers/#{@currentLayer().id()}.json", json, @saveLayerCallback
@@ -370,10 +372,14 @@ onLayers ->
       @moveFieldDown @currentLayer().fields()[field.ord() - 2]
 
     newField: (kind) =>
-      @currentField(new Field(@currentLayer(), kind: kind, ord: @currentLayer().fields().length + 1))
-      @currentLayer().fields.push(@currentField())
+      ord = @currentField().ord() + 1
+      console.log(ord)
+      index = @currentLayer().fields().indexOf(@currentField())
+      @currentField(new Field(@currentLayer(), kind: kind, ord: ord))
+      @moveOrd(ord, @currentLayer().fields())
+      # @currentLayer().fields.push(@currentField())
+      @currentLayer().fields.splice((index+1),0,@currentField())
       @currentField().hasFocus(true)
-
     selectField: (field) =>
       @currentField(field)
       @currentField().hasFocus(true)
@@ -434,6 +440,11 @@ onLayers ->
       @newFieldLogic(field_logic)
       @isAddNew(true)
 
+    addFieldValidation: =>
+      field_validation = new FieldValidation
+      @newFieldValidation(field_validation)
+      @isAddNewValidation(true)
+
     createNewFieldLogic: =>
       field_logic = new FieldLogic
       @newFieldLogic(field_logic)
@@ -469,21 +480,13 @@ onLayers ->
 
     saveFieldLogic: (field_logic) =>
       field_logic.editing(false)
-      if @currentField().kind() == 'numeric'
-        @currentField().impl().saveFieldLogic(field_logic)
-        @isAddNew(false)
+      @currentField().impl().saveFieldLogic(field_logic)
+      @isAddNew(false)
 
-      if @currentField().kind() == 'select_many'
-        @currentField().impl().save_field_logic(field_logic)
-        @currentField().impl().field_logics.remove(field_logic)
-
-      if @currentField().kind() == 'select_one'
-        if @currentField().config?.field_logics?[field_logic.id()]?
-          @currentField().config.field_logics[field_logic.id()].value = field_logic.value()
-          @currentField().config.field_logics[field_logic.id()].field_id = field_logic.field_id()
-        else
-          @currentField().impl().saveFieldLogic(field_logic)
-        @isAddNew(false)
+    saveFieldValidation: (field_validation) =>
+      field_validation.editing(false)
+      @currentField().impl().saveFieldValidation(field_validation)
+      @isAddNewValidation(false)
 
     to_field_name: (field) =>
       if @currentLayer()
@@ -494,51 +497,47 @@ onLayers ->
       return ""
 
     editFieldLogic: (field) =>
-      if @currentField().kind() == 'select_one' || @currentField().kind() == 'numeric'
-        field.editing(true)
-        @newFieldLogic(new FieldLogic)
-        @newFieldLogic().id(field.id())
-        @newFieldLogic().field_id(field.field_id())
-        @newFieldLogic().value(field.value())
-        @newFieldLogic().condition_type(field.condition_type())
-      if @currentField().kind() == 'select_many'
-        for f in @currentField().impl().selected_field_logics()
-          if f.editing() == true
-            f.selected_options(@currentFieldLogic.selected_options())
-            f.field_id(@currentFieldLogic.field_id())
-            f.condition_type(@currentFieldLogic.condition_type())
-            f.editing(false)
-        @currentFieldLogic = new FieldLogic
-        for op in field.selected_options()
-          @currentFieldLogic.selected_options.push(op)
-        @currentFieldLogic.field_id(field.field_id())
-        @currentFieldLogic.condition_type(field.condition_type())
-        field.editing(true)
-        @currentField().impl().field_logics([])
-        @newFieldLogic(field)
-        if field.condition_type() == "all"
-          $("#all")[0].checked = true
-        else
-          $("#any")[0].checked = true
+      field.editing(true)
+      @newFieldLogic(new FieldLogic)
+      @newFieldLogic().id(field.id())
+      @newFieldLogic().field_id(field.field_id())
+      @newFieldLogic().value(field.value())
+      @newFieldLogic().condition_type(field.condition_type())
+
+    editFieldValidation: (field) =>
+      field.editing(true)
+      @newFieldValidation(new FieldValidation)
+      @newFieldValidation().id(field.id())
+      @newFieldValidation().field_id(field.field_id())
+      @newFieldValidation().condition_type(field.condition_type())
+
+    cancelFieldValidation: (field) =>
+      field_validation = @newFieldValidation()
+      if field_validation.id()?
+        field.field_id(field_validation.field_id())
+        field.condition_type(field_validation.condition_type())
+      else
+        @isAddNewValidation(false)
+      field.editing(false)
 
     cancelFieldLogic: (field) =>
-      if @currentField().kind() == 'select_one' || @currentField().kind() == 'numeric'
-        field_logic = @newFieldLogic()
-        if field_logic.id()?
-          field.value(field_logic.value())
-          field.field_id(field_logic.field_id())
-          field.condition_type(field_logic.condition_type())
-        else
-          @isAddNew(false)
+      # if @currentField().kind() == 'select_one' || @currentField().kind() == 'numeric'
+      field_logic = @newFieldLogic()
+      if field_logic.id()?
+        field.value(field_logic.value())
+        field.field_id(field_logic.field_id())
+        field.condition_type(field_logic.condition_type())
+      else
+        @isAddNew(false)
 
-      if @currentField().kind() == 'select_many'
-        for f in @currentField().impl().selected_field_logics()
-          if f.editing() == true
-            f.selected_options(@currentFieldLogic.selected_options())
-            f.field_id(@currentFieldLogic.field_id())
-            f.condition_type(@currentFieldLogic.condition_type())
-            f.editing(false)
-        @currentFieldLogic = null
+      # if @currentField().kind() == 'select_many'
+      #   for f in @currentField().impl().selected_field_logics()
+      #     if f.editing() == true
+      #       f.selected_options(@currentFieldLogic.selected_options())
+      #       f.field_id(@currentFieldLogic.field_id())
+      #       f.condition_type(@currentFieldLogic.condition_type())
+      #       f.editing(false)
+      #   @currentFieldLogic = null
 
       field.editing(false)
     updateFieldLogic: (field) =>

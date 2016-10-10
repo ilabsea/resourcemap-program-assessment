@@ -11,6 +11,7 @@ onCollections ->
       @is_mandatory = ko.observable data?.is_mandatory ? false
       @is_display_field = ko.observable data?.is_display_field ? false
       @is_enable_field_logic = data.is_enable_field_logic
+      @is_enable_custom_validation = ko.observable data?.is_enable_custom_validation ? false
       @custom_widgeted = data.custom_widgeted
       @readonly_custom_widgeted = data.readonly_custom_widgeted
       @invisible_calculation = ko.computed =>
@@ -27,7 +28,7 @@ onCollections ->
       @originalIsMandatory = data.is_mandatory
       @value = ko.observable()
       @value.subscribe =>
-        if @skippedState() == false && @kind in ["yes_no", "select_one", "select_many", "numeric"]
+        if @skippedState() == false 
           # @setFieldFocus()
           @disableDependentSkipLogicField()
         # if @kind in ["numeric", "calculation"]
@@ -67,21 +68,16 @@ onCollections ->
        write: (value) =>
          @value(@valueUIFrom(value))
 
+      @field_logics = if data.config?.field_logics?
+                          $.map data.config.field_logics, (x) => new FieldLogic x
+                        else
+                          []
+
       if @kind == 'numeric'
         @digitsPrecision = data?.config?.digits_precision
         @range = if data.config?.range?.minimum? || data.config?.range?.maximum?
                   data.config?.range
 
-        @field_logics = if data.config?.field_logics?
-                          $.map data.config.field_logics, (x) => new FieldLogic x
-                        else
-                          []
-
-      if @kind in ['yes_no', 'select_one', 'select_many']
-        @field_logics = if data.config?.field_logics?
-                          $.map data.config.field_logics, (x) => new FieldLogic x
-                        else
-                          []
 
       if @kind in ['select_one', 'select_many']
         @options = if data.config?.options?
@@ -172,190 +168,55 @@ onCollections ->
         else if @kind == 'numeric' || @kind == 'select_one' || @kind == 'select_many'
           value = @value()
         else
-          return
+          value = @value()
         noSkipField = false
         if model.allFieldLogics().length > 0 && @skippedState() == false
           for field_logic in model.allFieldLogics()
             b = false
-            if field_logic.field_id?
-              if @kind == 'yes_no' || @kind == 'select_one'
-                if value == field_logic.value
-                  fieldSearch = @getFieldFromAllFields(field_logic.from_id)
+            if field_logic.disable_field_id? and @esCode == field_logic.field_id
+              fieldSearch = @getFieldFromAllFields(field_logic.disable_field_id)
+              if field_logic.condition_type == '<'
+                if parseFloat(value) < field_logic.value
                   @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
-                  return
                 else
-                  noSkipField = true
+                  @enableSkippedField(fieldSearch[0].esCode)
 
-              if @kind == 'numeric' && value != ''
-                if field_logic.condition_type == '<'
-                  if parseFloat(value) < field_logic.value
-                    fieldSearch = @getFieldFromAllFields(field_logic.from_id)
-                    @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
-                    return
-                  else
-                    @enableSkippedField(@esCode)
+              if field_logic.condition_type == '<='
+                if parseFloat(value) <= field_logic.value
+                  @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
+                else
+                  @enableSkippedField(fieldSearch[0].esCode)
 
-                if field_logic.condition_type == '<='
-                  if parseFloat(value) <= field_logic.value
-                    fieldSearch = @getFieldFromAllFields(field_logic.from_id)
-                    @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
-                    return
-                  else
-                    @enableSkippedField(@esCode)
+              if field_logic.condition_type == '='
+                if parseFloat(value) == field_logic.value
+                  @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
+                else
+                  @enableSkippedField(fieldSearch[0].esCode)
 
-                if field_logic.condition_type == '='
-                  if parseFloat(value) == field_logic.value
-                    # @setFocusStyleByField(field_logic.field_id)
-                    fieldSearch = @getFieldFromAllFields(field_logic.from_id)
-                    @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
-                    return
-                  else
-                    @enableSkippedField(@esCode)
+              if field_logic.condition_type == '>'
+                if parseFloat(value) > field_logic.value
+                  @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
+                else
+                  @enableSkippedField(fieldSearch[0].esCode)
 
-                if field_logic.condition_type == '>'
-                  if parseFloat(value) > field_logic.value
-                    fieldSearch = @getFieldFromAllFields(field_logic.from_id)
-                    @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
-                    return
-                  else
-                    @enableSkippedField(@esCode)
+              if field_logic.condition_type == '>='
+                if parseFloat(value) >= field_logic.value
+                  @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
+                else
+                  @enableSkippedField(fieldSearch[0].esCode)
 
-                if field_logic.condition_type == '>='
-                  if parseFloat(value) >= field_logic.value
-                    fieldSearch = @getFieldFromAllFields(field_logic.from_id)
-                    @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
-                    return
-                  else
-                    @enableSkippedField(@esCode)
+              if field_logic.condition_type == '!='
+                if parseFloat(value) != field_logic.value
+                  @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
+                else
+                  @enableSkippedField(fieldSearch[0].esCode)
 
-              if @kind == 'select_many'
-                if field_logic.condition_type == 'any'
-                  if value?
-                    for field_value in value
-                      for field_logic_value in field_logic.selected_options
-                        if field_value == parseInt(field_logic_value.value)
-                          b = true
-                          fieldSearch = @getFieldFromAllFields(field_logic.from_id)
-                          @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
-                          return
-                        else
-                          @enableSkippedField(@esCode) if @value() != null
-
-                if field_logic.condition_type == 'all'
-                  tmp = []
-                  if value?
-                    for field_value in value
-                      for field_logic_value in field_logic.selected_options
-                        if field_value == parseInt(field_logic_value.value)
-                          b = true
-                          field_id = field_logic.field_id
-                          tmp.push field_value
-                        else
-                          b = false
-                  if tmp.length == field_logic.selected_options.length
-                    fieldSearch = @getFieldFromAllFields(field_logic.from_id)
-                    @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
-                    return
-                  else
-                    @enableSkippedField(@esCode) if @value() != null
-
-          if @value() != "" && @value() != null && noSkipField
-            @enableSkippedField(@esCode)
-            return
 
     getFieldFromAllFields: (field_id) =>
       $.map(window.model.newOrEditSite().fields(), (f) =>
         if f.esCode == field_id
           return f
       )
-    setFieldFocus: =>
-      if window.model.newOrEditSite()
-        if @kind == 'yes_no'
-          value = if @value() then 1 else 0
-        else if @kind == 'numeric' || @kind == 'select_one' || @kind == 'select_many'
-          value = @value()
-        else
-          return
-        noSkipField = false
-        if @field_logics.length > 0 && @skippedState() == false
-          for field_logic in @field_logics
-            b = false
-            if field_logic.field_id?
-              if @kind == 'yes_no' || @kind == 'select_one'
-                if value == field_logic.value
-                  @setFocusStyleByField(field_logic.field_id)
-                  return
-                else
-                  noSkipField = true
-
-              if @kind == 'numeric' && value != ''
-                if field_logic.condition_type == '<'
-                  if parseFloat(value) < field_logic.value
-                    @setFocusStyleByField(field_logic.field_id)
-                    return
-                  else
-                    @enableSkippedField(@esCode)
-
-                if field_logic.condition_type == '<='
-                  if parseFloat(value) <= field_logic.value
-                    @setFocusStyleByField(field_logic.field_id)
-                    return
-                  else
-                    @enableSkippedField(@esCode)
-
-                if field_logic.condition_type == '='
-                  if parseFloat(value) == field_logic.value
-                    @setFocusStyleByField(field_logic.field_id)
-                    return
-                  else
-                    @enableSkippedField(@esCode)
-
-                if field_logic.condition_type == '>'
-                  if parseFloat(value) > field_logic.value
-                    @setFocusStyleByField(field_logic.field_id)
-                    return
-                  else
-                    @enableSkippedField(@esCode)
-
-                if field_logic.condition_type == '>='
-                  if parseFloat(value) >= field_logic.value
-                    @setFocusStyleByField(field_logic.field_id)
-                    return
-                  else
-                    @enableSkippedField(@esCode)
-
-              if @kind == 'select_many'
-                if field_logic.condition_type == 'any'
-                  if value?
-                    for field_value in value
-                      for field_logic_value in field_logic.selected_options
-                        if field_value == parseInt(field_logic_value.value)
-                          b = true
-                          @setFocusStyleByField(field_logic.field_id)
-                          return
-                        else
-                          @enableSkippedField(@esCode) if @value() != null
-
-                if field_logic.condition_type == 'all'
-                  tmp = []
-                  if value?
-                    for field_value in value
-                      for field_logic_value in field_logic.selected_options
-                        if field_value == parseInt(field_logic_value.value)
-                          b = true
-                          field_id = field_logic.field_id
-                          tmp.push field_value
-                        else
-                          b = false
-                  if tmp.length == field_logic.selected_options.length
-                    @setFocusStyleByField(field_id)
-                    return
-                  else
-                    @enableSkippedField(@esCode) if @value() != null
-
-          if @value() != "" && @value() != null && noSkipField
-            @enableSkippedField(@esCode)
-            return
 
     setFocusStyleByField: (field_id) =>
       field = window.model.newOrEditSite().findFieldByEsCode(field_id)
@@ -384,14 +245,13 @@ onCollections ->
         @enableSkippedField(@esCode, field_id)
 
     enableSkippedField: (field_id) =>
-      layers = window.model.currentCollection().layers()
       flag = false
       $.map(window.model.editingSite().fields(), (f) =>
         if f.esCode == field_id
           flag = true
-          return
         if flag
           @enableField f
+          return
       )
 
     disableSkippedField: (from_field_id, to_field_id) =>
@@ -459,25 +319,7 @@ onCollections ->
     enableField: (field) =>
       field.is_mandatory(field.originalIsMandatory)
       field.skippedState(false)
-      switch field.kind
-        when 'select_many'
-          if field.expanded()
-           field_id = "select-many-input-" + field.code
-          else
-           field_id = "select-many-" + field.code
-          field_object = $("#" + field_id).parent()
-        when 'hierarchy'
-          field_id = field.esCode
-          field_object = $("#" + field_id).parent()
-        when 'date'
-          field_id = "date-input-" + field.esCode
-          field_object = $("#" + field_id).parent()
-        when 'photo'
-          field_id = field.code
-          field_object = $("#" + field_id).parent()
-        else
-          field_id = field.kind + "-input-" + field.code
-          field_object = $("#" + field_id).parent()
+      field_object = @get_dom_object(field)
       field.is_blocked_by([])
 
     setValueFromSite: (value) =>
@@ -575,6 +417,10 @@ onCollections ->
         window.model.initAutocomplete()
         window.model.initControlKey()
 
+    validateRangeAndCustomeValidation: =>
+      @validateRange()
+      @validateCustomValidation()
+
     validateRangeAndDigitsPrecision: =>
       @validateRange()
       @validateDigitsPrecision()
@@ -584,6 +430,7 @@ onCollections ->
         @value(parseInt(@value() * Math.pow(10, parseInt(@digitsPrecision))) / Math.pow(10, parseInt(@digitsPrecision)))
 
     validateRange: =>
+      console.log(@)
       if @range
         if @range.minimum && @range.maximum
           if parseFloat(@value()) >= parseFloat(@range.minimum) && parseFloat(@value()) <= parseFloat(@range.maximum)
@@ -605,6 +452,15 @@ onCollections ->
               @errorMessage('Invalid value, value must be greater than or equal '+@range.minimum)
             return
 
+    validateCustomValidation: =>
+      if @is_enable_custom_validation()
+        $.map(@, (f) =>
+          if f.esCode == field_id
+            flag = true
+          if flag
+            @enableField f
+            return
+        )
     validate_integer_only: (keyCode) =>
       value = $('#'+@kind+'-input-'+@code).val()
       if value == null || value == ""

@@ -32,12 +32,6 @@
     .info-box.drop_shadow
       .i18g-information.left
       .info-items.left
-        /ko if: !hasId()
-        - if collection.sites.exists?
-          %span
-            = raw t('views.import_wizards.adjustments.instruction', link: link_to("previous page", :back, :class => 'black', :style => 'text-decoration:underline'))
-          %br
-        //ko
         %span= t('views.import_wizards.adjustments.if_you_notice_issues_with_characters')
       .clear
     %br

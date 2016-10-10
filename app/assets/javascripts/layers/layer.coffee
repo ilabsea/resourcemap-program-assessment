@@ -10,6 +10,7 @@ onLayers ->
       @total = ko.observable data?.total ? 0
       if data?.fields
         @fields = ko.observableArray($.map(data.fields, (x) => new Field(@, x)))
+        @numeric_fields = ko.observableArray($.map(@fields(), (f) => f if f.kind() == 'numeric'))
       else
         @fields = ko.observableArray([])
       @deletable = ko.observable(true)

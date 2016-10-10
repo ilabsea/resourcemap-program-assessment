@@ -87,6 +87,7 @@ kh:
           when_any_following: "នៅពេលជំរើសខាងក្រោមមួយណាត្រូវបានយក :"
           is_select_then_skip_form_to: "ត្រូវបានជ្រើសរើស រំលងទៅកាន់"
           add_skip_logic: "បន្ថែមរបៀបកំណត់ការរំលង"
+          add_custom_validation: "បន្ថែម ការផ្ទៀងផ្ទាត់"
           enable_skip_logic_for_this_field: "បើកអោយដំណើរការសំរាប់រំលងហ្វៀល"
           number_of_digits_precision: "ចំនួនខ្ទង់ទសភាគ"
           dependent_field: "ហ្វៀល ដែលអាស្រ័យ"
@@ -96,3 +97,4 @@ kh:
           custom_aggregator: "custom aggregator (kh)"
           do_not_display_in_form_as_being_used_in_custom_widget: "Do not display in form as being used in custom widget(kh)"
           select_fields: "Select fields(kh)"
+          enable_custom_validation: "ការផ្ទៀងផ្ទាត់បន្ថែម"

@@ -66,6 +66,9 @@ class Field::NumericField < Field
     if config and config['range']
       validate_range(value)
     end
+    if config and config['field_validations']
+      validate_custom_validation(value, site)
+    end
     true
   end
 
@@ -83,6 +86,14 @@ class Field::NumericField < Field
     if config['range']['maximum']
       raise "Invalid value, value must be less than or equal #{config['range']['maximum']}" unless value.to_f <= config['range']['maximum']
     end   
+  end
+
+  def validate_custom_validation(value, site)
+    config['field_validations'].each do |key, cond|
+      compare_value = site.properties[cond["field_id"][0]]
+      compare_field_name = Field.where("id=?", cond["field_id"][0])[0].name
+      raise "Invalid value, value must be #{cond["condition_type"]} field #{compare_field_name}" unless value.to_i.send(cond["condition_type"], compare_value.to_i)
+    end
   end
 
   def to_dbf_field
