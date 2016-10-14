@@ -16,7 +16,7 @@
 
 class ReportQueriesController < ApplicationController
   before_filter :authenticate_user!, :except => [:index]
-  before_filter :authenticate_collection_admin!, :only => [:create]
+  before_filter :authenticate_collection_admin!, :except => [:index]
 
   def index
     respond_to do |format|

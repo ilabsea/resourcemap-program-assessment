@@ -26,8 +26,6 @@
         .rightbuttons
           %button.fdelete{ ko(click: '$root.removeReportQuery'), title: 'Remove query' }
         .toptitle
-          %span{ko(text: :id)}
-          %span -
           %span{ko(text: :name)}
         %button.farrow{ ko(click: '$root.editReportQuery'), title: 'Edit query' }
           = t('views.report_queries.edit')

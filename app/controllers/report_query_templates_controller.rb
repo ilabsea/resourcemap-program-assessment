@@ -18,6 +18,7 @@
 
 class ReportQueryTemplatesController < ApplicationController
   before_filter :authenticate_user!, except: [:share]
+  before_filter :authenticate_collection_admin!, :except => [:index, :show]
 
   def index
     show_collection_breadcrumb
