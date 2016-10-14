@@ -154,12 +154,30 @@ class ApplicationController < ActionController::Base
 
   def http_basic_authentication
     authenticate_or_request_with_http_basic do |user, password|
-      user == USER && password == PASSWORD
+      resource = User.find_by_email(user)
+      if resource && resource.valid_password?(password)
+        sign_in resource
+        true
+      else
+        head :forbidden
+      end
     end
+    # authenticate_or_request_with_http_basic do |user, password|
+    #   user == USER && password == PASSWORD
+    # end
   end
 
   def set_request_header
     headers['Access-Control-Allow-Origin'] = '*' 
+  end
+
+  def render_json(object, options = {})
+    options = options.merge(text: object.to_json_oj, content_type: 'application/json')
+    render options
+  end
+
+  def ignore_public_attribute
+    params[:layer].delete(:public) if params[:layer] && params[:layer][:public]
   end
 
 end

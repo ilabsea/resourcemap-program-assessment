@@ -117,6 +117,11 @@ class User < ActiveRecord::Base
     return membership.admin if membership.admin?
   end
 
+  def ability(format = nil)
+    @ability ||= Ability.new(self, format)
+  end
+  delegate :can?, :cannot?, :authorize!, :to => :ability
+
   def validate_layer_write_permission(site, properties)
     properties.each do |prop|
       field = Field.where("code=? && collection_id=?", prop.values[0].to_s, site.collection_id).first
