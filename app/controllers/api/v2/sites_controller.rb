@@ -89,6 +89,14 @@ module Api::V2
       render_update_response(site)
     end
 
+
+    def index
+      builder = Collection.filter_sites(params)
+      sites_size = builder.size
+      sites_by_page  = Collection.filter_page(params[:limit], params[:offset], builder)
+      render :json => {:sites => sites_by_page, :total => sites_size}
+    end
+
     private
 
     def render_update_response(site)

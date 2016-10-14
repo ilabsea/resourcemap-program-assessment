@@ -124,6 +124,10 @@ class Field < ActiveRecord::Base
     super
   end
 
+  def default_value_for_update
+    nil
+  end
+
   def history_concern_foreign_key
     'field_id'
   end

@@ -1,9 +1,9 @@
 class ApiController < ApplicationController
 
   skip_before_filter :set_locale
-
   skip_before_filter :verify_authenticity_token
-  before_filter :authenticate_api_user!
+  before_filter :authenticate_api_user!, :except => [:show]
+
   around_filter :rescue_with_check_api_docs
 
   def rescue_with_check_api_docs
@@ -45,4 +45,8 @@ class ApiController < ApplicationController
     check_api_text = 'Check the API documentation: https://github.com/instedd/resourcemap/wiki/REST_API'
     "#{message} - #{check_api_text}"
   end
+<<<<<<< HEAD
 end
+=======
+end
+>>>>>>> fix api for intergating with hub

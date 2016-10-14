@@ -335,4 +335,16 @@ class Collection < ActiveRecord::Base
     Collection.find(collection_id).recreate_index
   end
 
+  def layers_to_json(at_present, user)
+    if at_present
+      layers.includes(:fields).select{|l| user.can?(:read, l)}.as_json(include: :fields)
+    else
+      current_user_snapshot = UserSnapshot.for(user, self)
+      layer_histories.at_date(current_user_snapshot.snapshot.date)
+        .includes(:field_histories)
+        .select{|l| user.can?(:read, l)}
+        .as_json(include: :field_histories)
+    end
+  end
+
 end

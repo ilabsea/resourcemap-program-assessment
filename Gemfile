@@ -35,6 +35,8 @@ gem 'tinymce-rails'
 gem 'rails_serve_static_assets'
 
 gem 'wkhtmltopdf-binary-edge', '~> 0.12.2.1'
+gem 'oj'
+gem 'includes-count'
 
 group :test do
   gem 'shoulda-matchers'
