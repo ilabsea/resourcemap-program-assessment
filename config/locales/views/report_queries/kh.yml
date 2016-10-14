@@ -1,0 +1,13 @@
+kh:
+  views:
+    report_queries:
+      title: "Report Queries"
+      description: "Manage report_queries of this collection's sites"
+      name: "Name"
+      conditon_fields: "Condition Fields"
+      expression: "Expression"
+      group_by_fields: "Group by fields"
+      aggregate_fields: "Aggregate fields"
+      edit: 'Edit'
+      save: "Save"
+      cancel: "Cancel"

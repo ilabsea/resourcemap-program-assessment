@@ -22,7 +22,7 @@ class Api::CollectionsController < ApplicationController
     if params[:format] == 'csv' || params[:page] == 'all'
       options << :all
       params.delete(:page)
-    elsif params[:format] == 'kml' || 'shp'
+    elsif params[:format] == 'kml' || params[:format]  == 'shp'
       options << :require_location
       options << :page
     else
@@ -127,7 +127,7 @@ class Api::CollectionsController < ApplicationController
             end
           end
         end
-      end  
+      end
     else
       sites = Collection.find(params[:id]).sites
     end
@@ -140,7 +140,7 @@ class Api::CollectionsController < ApplicationController
     render :json => sites
   end
 
-  def parse_date_format date 
+  def parse_date_format date
     array_date = date.split("-")
     return Date.new(array_date[2].to_i, array_date[0].to_i, array_date[1].to_i)
   end

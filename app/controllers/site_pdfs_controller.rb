@@ -1,6 +1,6 @@
 class SitePdfsController < ApplicationController
   def create
-    site = Site.find_by_uuid(params[:id])
+    site = Site.find_by_uuid(params["id"])
     options = {collection_id: site.collection_id, name: site.name, uuid: site.uuid, email: current_user.email}
     Resque.enqueue SitePdfTask, options
     head :ok

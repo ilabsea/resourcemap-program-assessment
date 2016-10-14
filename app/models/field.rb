@@ -29,6 +29,8 @@ class Field < ActiveRecord::Base
   include Field::ValidationConcern
   include Field::ShpConcern
 
+  include Field::TranslatableValue
+
   include HistoryConcern
 
   self.inheritance_column = :kind

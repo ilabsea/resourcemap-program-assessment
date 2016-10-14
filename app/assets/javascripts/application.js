@@ -32,6 +32,7 @@
 //= require tinymce-jquery
 //= require editor/tinymce-init
 //= require editor/tinymce-ko
+//= require shared/tiny-mce.js
 
 //= require i18n
 //= require_tree .

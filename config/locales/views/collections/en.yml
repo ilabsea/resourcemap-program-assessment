@@ -18,6 +18,7 @@ en:
         report_user_submited_data: "Report of User Submited Data"
         channels: "Channels"
         can_queries: "Canned queries"
+        report_queries: "Report queries"
       index:
         'yes': "Yes"
         'no': "No"

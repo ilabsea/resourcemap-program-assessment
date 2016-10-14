@@ -51,6 +51,8 @@ class Collection < ActiveRecord::Base
   has_many :field_histories, dependent: :destroy
   has_many :messages, dependent: :destroy
   has_many :canned_queries, dependent: :destroy
+  has_many :report_queries, dependent: :destroy
+  has_many :report_query_templates, dependent: :destroy
 
   OPERATOR = {">" => "gt", "<" => "lt", ">=" => "gte", "<=" => "lte", "=>" => "gte", "=<" => "lte", "=" => "eq"}
 

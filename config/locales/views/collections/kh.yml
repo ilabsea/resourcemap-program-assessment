@@ -18,6 +18,7 @@ kh:
         report_user_submited_data: "របាយការណ៏អំពីអ្នកបញ្ជូនទិន្នន័យ"
         channels: "ឆាន់ណែល"
         can_queries: "សំណួរ"
+        report_queries: "សំណួរ"
       index:
         'yes': "បាទ"
         'no': "ទេ"

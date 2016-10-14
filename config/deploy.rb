@@ -15,7 +15,7 @@ set :group, 'ilab'
 set :deploy_via, :remote_cache
 set :branch, 'wfp_emis'
 
-server '54.179.168.26', :app, :web, :db, primary: true
+server '54.169.55.167', :app, :web, :db, primary: true
 
 default_run_options[:pty] = true
 default_environment['TERM'] = ENV['TERM']

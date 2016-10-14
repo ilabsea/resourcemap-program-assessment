@@ -21,6 +21,7 @@ ResourceMap::Application.routes.draw do
   get 'collections/:collection_id/my_membership' => 'collections#my_membership'
 
   resources :site_pdfs, only: [ :create, :show]
+  resources :report_query_template_pdfs
   resources :repeats
   resources :collections do
     post  :send_new_member_sms
@@ -28,10 +29,18 @@ ResourceMap::Application.routes.draw do
     get  :message_quota
     get :sites_by_term
 
+    resources :report_query_templates do
+      member do
+        get 'report'
+        get 'share'
+      end
+    end
+
     member do
       get 'print_template'
     end
 
+    resources :report_queries
     resources :queries
     resources :basic_fields, only: ['index']
     resources :sites do
