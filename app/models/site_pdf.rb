@@ -1,6 +1,6 @@
 class SitePdf
   def initialize(options)
-    @options = options
+    @options = options.with_indifferent_access
   end
 
   def create
