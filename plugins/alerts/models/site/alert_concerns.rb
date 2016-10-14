@@ -11,7 +11,7 @@ module Site::AlertConcerns
       extended_properties[:alert] = true
       extended_properties[:color] = alert.color
       extended_properties[:ord] = alert.ord
-      if alert.is_notify && Settings.notify_alert == 'on'
+      if alert.is_notify && Settings.notify_alert == true
         phone_numbers = notification_numbers alert
         emails = notification_emails alert
         message_notification = alert.message_notification.render_template_string(get_template_value_hash)
