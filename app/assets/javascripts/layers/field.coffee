@@ -172,6 +172,7 @@ onLayers ->
 
     toJSON: (json) =>
       json.metadata = $.map(@attributes(), (x) -> x.toJSON())
+      json.config = { field_logics: $.map(@field_logics(), (x) ->  x.toJSON())}
 
   class @Field_numeric extends @FieldImpl
     constructor: (field) ->

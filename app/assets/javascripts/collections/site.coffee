@@ -53,6 +53,8 @@ onCollections ->
           return true
         return false
 
+      @allFieldLogics = ko.observableArray()
+
     hasLocation: => @position() != null
 
     hasName: => $.trim(@name()).length > 0
@@ -397,8 +399,13 @@ onCollections ->
       for field in @fields()
         field.editing(false)
         field.originalValue = field.value()
-        field.setFieldFocus() if field.kind in ["yes_no", "numeric", "select_one", "select_many"]
+        # field.setFieldFocus() if field.kind in ["yes_no", "numeric", "select_one", "select_many"]
         new CustomWidget(field).bindField() if field.custom_widgeted
+
+      for field in @fields()
+        # if field.value()
+        field.disableDependentSkipLogicField()
+
       window.model.newOrEditSite().scrollable(false)
       $('#name').focus()
 
