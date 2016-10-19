@@ -13,6 +13,7 @@ onLayers ->
         @numeric_fields = ko.observableArray($.map(@fields(), (f) => f if f.kind() == 'numeric'))
       else
         @fields = ko.observableArray([])
+      @support_skiplogic_fields = ko.observableArray($.map(@fields(), (f) => f if (f.kind() == 'numeric' or f.kind() == 'yes_no' or f.kind() == 'select_one' or f.kind() == 'select_many')))
       @deletable = ko.observable(true)
       @hasFocus = ko.observable(false)
       @nameError = ko.computed => if @hasName() then null else "the layer's Name is missing"

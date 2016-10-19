@@ -8,7 +8,7 @@
           /ko if: $index() == 0
           %option{value: ""} (no value)
           //ko
-          %optgroup{"data-bind" => "attr: {label: name}, foreach: fields", style: ''}        
+          %optgroup{"data-bind" => "attr: {label: name}, foreach: support_skiplogic_fields", style: ''}        
             %option{"data-bind" => "text: name, option: name, value: id"}
         %br
         %span.smalltext{style: 'padding-right:5px;padding-top:5px'} have value 
@@ -46,7 +46,7 @@
           /ko if: $index() == 0
           %option{value: ""} (no value)
           //ko
-          %optgroup{"data-bind" => "attr: {label: name}, foreach: fields", style: ''}        
+          %optgroup{"data-bind" => "attr: {label: name}, foreach: support_skiplogic_fields", style: ''}        
             %option{"data-bind" => "text: name, option: name, value: id"}
         %br
         %span.smalltext{style: 'padding-right:5px;padding-top:5px'} have value 

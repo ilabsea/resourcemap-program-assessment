@@ -106,6 +106,7 @@ onCollections ->
       site.collection.panToPosition(true) unless initialized
       site.collection.fetchSitesMembership()
       @showLoadingField()
+      @allFieldLogics([])
       site.collection.fetchFields =>
         if @processingURL
           @processURL()
@@ -127,6 +128,12 @@ onCollections ->
             @hideLoadingField()
             @loadBreadCrumb()
             @rebindCustomWidgetView()
+            for field in @editingSite().fields()
+              if field.field_logics
+                for f in field.field_logics
+                  f["disable_field_id"] = field["esCode"]
+                  @allFieldLogics(@allFieldLogics().concat(f))
+
           $('a#previewimg').fancybox()
 
     @rebindCustomWidgetView: () ->
