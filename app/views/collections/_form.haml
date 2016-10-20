@@ -32,9 +32,6 @@
         = f.label :public
         = f.check_box :public, :disabled => !creation && (cannot? :update, collection)
 
-      .field
-        = f.label :is_aggregator
-        = f.check_box :is_aggregator, :disabled => !creation && (cannot? :update, collection)
 
   .field.w60
     %label
