@@ -8,5 +8,6 @@ onCollections ->
     toggleExpand: =>
       @expanded(!@expanded())
       if @expanded()
-        $.map @fields, (f) => 
+        $.map @fields, (f) =>
           f.refresh_skip()
+          f.bindWithCustomWidgetedField()
