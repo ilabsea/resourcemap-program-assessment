@@ -136,9 +136,9 @@ onCollections ->
 
           $('a#previewimg').fancybox()
 
-    @rebindCustomWidgetView: () ->
-      for field in @editingSite().customWidgetFields()
-        new CustomWidget(field).bindField()
+    @rebindCustomWidgetView: =>
+      for field in window.model.editingSite().fields()
+        field.bindWithCustomWidgetedField()
 
     @editSiteFromId: (siteId, collectionId) ->
       site = @siteIds[siteId]

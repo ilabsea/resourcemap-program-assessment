@@ -399,8 +399,7 @@ onCollections ->
       for field in @fields()
         field.editing(false)
         field.originalValue = field.value()
-        # field.setFieldFocus() if field.kind in ["yes_no", "numeric", "select_one", "select_many"]
-        new CustomWidget(field).bindField() if field.custom_widgeted
+        field.bindWithCustomWidgetedField()
 
       for field in @fields()
         # if field.value()
@@ -513,7 +512,7 @@ onCollections ->
         callback() if callback && typeof(callback) == 'function'
 
     copyPropertiesToFields: =>
-      if @properties()      
+      if @properties()
         for field in @fields()
           value = @properties()[field.esCode]
           field.setValueFromSite(value)
