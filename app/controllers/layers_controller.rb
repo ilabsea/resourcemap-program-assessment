@@ -13,7 +13,7 @@
 
 class LayersController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :authenticate_collection_admin!, :except => [:index, :list_layers]
+  before_filter :authenticate_collection_admin!, :except => [:index]
   before_filter :fix_field_config, only: [:create, :update]
 
   def index
@@ -60,7 +60,7 @@ class LayersController < ApplicationController
   def list_layers
     if current_user_snapshot.at_present?
       json = apply_limit_field(layers, 50)
-      render json:  json
+      render json:  json, root: false
     else
       render json: layers
         .includes(:field_histories)
@@ -134,12 +134,11 @@ class LayersController < ApplicationController
           if field[:is_enable_field_logic] == "false"
             params[:layer][:fields_attributes][field_idx][:config] = params[:layer][:fields_attributes][field_idx][:config].except(:field_logics)
           end
-
           if field[:config][:field_logics]
             field[:config][:field_logics] = field[:config][:field_logics].values
             field[:config][:field_logics].each { |field_logic|
               field_logic['id'] = field_logic['id'].to_i
-              field_logic['value'] = field_logic['value'].to_f
+              field_logic['value'] = field_logic['value']
               if field_logic['field_id']
                 field_logic['field_id'].each { |field_id|
                   if field_id == ""
@@ -150,10 +149,16 @@ class LayersController < ApplicationController
                 }
               end
             }
+          else
+            field[:config][:field_logics] = []
           end
 
-          field[:config][:range] = fix_field_config_range(field_idx,field) if field[:is_enable_range]
 
+          field[:config][:range] = fix_field_config_range(field_idx,field) if field[:is_enable_range]
+        else
+          field[:config] = {}
+          field[:config][:field_logics] = []
+          field[:config][:field_validations] = []
         end
       end
     end
@@ -265,6 +270,6 @@ class LayersController < ApplicationController
   end
 
   def set_limit_field(layer, limit)
-
+    
   end
 end

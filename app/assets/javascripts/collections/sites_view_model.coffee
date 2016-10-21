@@ -10,6 +10,7 @@ onCollections ->
       @loadingSitePermission = ko.observable(false)
       @newOrEditSite = ko.computed => if @editingSite() && (!@editingSite().id() || @editingSite().inEditMode()) then @editingSite() else null
       @showSite = ko.computed => if @editingSite()?.id() && !@editingSite().inEditMode() then @editingSite() else null
+      @allFieldLogics = ko.observableArray()
       window.markers = @markers = {}
 
     @loadBreadCrumb: ->
@@ -72,7 +73,6 @@ onCollections ->
           @prepareNewSite(site, pos)
 
     @prepareNewSite: (site, pos) ->
-
       site.copyPropertiesToCollection(@currentCollection())
       if window.model.newSiteProperties
         for esCode, value of window.model.newSiteProperties
@@ -90,7 +90,13 @@ onCollections ->
       window.model.newOrEditSite().scrollable(false)
       window.model.newOrEditSite().startEntryDate(new Date(Date.now()))
       for field in window.model.newOrEditSite().fields()
-        field.setFieldFocus() if field.skippedState() == false && field.kind == 'yes_no'
+        new CustomWidget(field).bindField() if field.custom_widgeted
+        field.disableDependentSkipLogicField() if field.skippedState() == false && field.kind == 'yes_no'
+        if field.field_logics
+          for f in field.field_logics
+            f["disable_field_id"] = field["esCode"]
+            @allFieldLogics(@allFieldLogics().concat(f))
+
 
       $('#name').focus()
       @hideLoadingField()
@@ -100,6 +106,7 @@ onCollections ->
       site.collection.panToPosition(true) unless initialized
       site.collection.fetchSitesMembership()
       @showLoadingField()
+      @allFieldLogics([])
       site.collection.fetchFields =>
         if @processingURL
           @processURL()
@@ -120,11 +127,18 @@ onCollections ->
             @currentCollection(site.collection)
             @hideLoadingField()
             @loadBreadCrumb()
+            @rebindCustomWidgetView()
+            for field in @editingSite().fields()
+              if field.field_logics
+                for f in field.field_logics
+                  f["disable_field_id"] = field["esCode"]
+                  @allFieldLogics(@allFieldLogics().concat(f))
+
           $('a#previewimg').fancybox()
 
-    @rebindCustomWidgetView: =>
-      for field in window.model.editingSite().fields()
-        field.bindWithCustomWidgetedField()
+    @rebindCustomWidgetView: () ->
+      for field in @editingSite().customWidgetFields()
+        new CustomWidget(field).bindField()
 
     @editSiteFromId: (siteId, collectionId) ->
       site = @siteIds[siteId]
@@ -221,7 +235,7 @@ onCollections ->
         $('a#previewimg').fancybox()
         window.model.updateSitesInfo()
         @reloadMapSites()
-        @rebindCustomWidgetView()
+        # @rebindCustomWidgetView()
 
       callbackError = () =>
         @hideProgress()

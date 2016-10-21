@@ -1,0 +1,105 @@
+:css
+  .ignored, .ignored input, .ignored select { color: grey; }
+
+:javascript
+  window.kinds = #{Field::kinds}
+
+= render '/tabs'
+
+.tabsline
+  %h2= t('views.import_wizards.title')
+  %p= t('views.import_wizards.adjustments.description')
+  %br/
+
+  - if current_user_snapshot.at_present?
+    = render 'steps', :step => 2
+  - else
+    = render '/current_snapshot_message'
+    %br
+
+  %h2.loading= t('views.import_wizards.adjustments.curate_data')
+  %p= t('views.import_wizards.adjustments.specify_column_mapping')
+
+  #generating_preview.grey
+    = t('views.import_wizards.adjustments.we_are_generating_preview')
+    %br
+    = t('views.import_wizards.adjustments.then_you_can_define_column')
+    %br
+    = t('views.import_wizards.adjustments.this_may_take_a_while')
+
+  #import-members-wizard-main.hidden-until-loaded
+    
+    .info-box.drop_shadow
+      .i18g-information.left
+      .info-items.left
+        %span= t('views.import_wizards.adjustments.if_you_notice_issues_with_characters')
+      .clear
+    %br
+
+    /ko if: (validationErrors() && validationErrors().hasErrors())
+    .box.error_description
+      %h2= t('views.import_wizards.adjustments.resolve_these_conflicts')
+      %ul
+        / ko foreach: validationErrors().summarizedErrorList()
+        %li
+          %span{ko(text: 'description')}
+          .moreInfo{ko(text: 'more_info')}
+        //ko
+    %br
+    //ko
+
+    %br
+
+    .box.nopadd#preview
+      .tablescroll{style: 'margin-top: 0'}
+        %table.GralTable.fht-table.fht-table-init{style: 'table-layout: fixed;'}
+          %colgroup
+            %col{width: '150px'}
+            %col{width: '150px'}
+            %col{width: '150px'}
+            %col{width: '150px'}
+            %col{width: '150px'}
+            %col{width: '280px'}
+            %col{width: '250px'}
+          %thead
+            %tr
+              / ko foreach: visibleColumns()
+              %th
+                %a.fancybox.column_header.icon_button{ko(css: {error_column: 'errors().length > 0'}, text: :header)}
+              //ko
+          %tbody
+            / ko foreach: visibleMembers()
+            %tr
+              %td{ko(text: 'email' ) }
+              %td{ko(text: 'none' ) }
+              %td{ko(text: 'read' ) }
+              %td{ko(text: 'write' ) }
+              %td{ko(text: 'admin' ) }
+              %td{ko(text: 'read_other' ) }
+              %td{ko(text: 'edit_other' ) }
+
+              //ko
+            //ko
+
+    = render 'import_wizards/adjusments/column_usage_template'
+
+
+    %br/
+    / ko if: membersCount() > 10
+    = t('views.import_wizards.adjustments.showing_first_10_records')
+    / /ko
+    %br/
+    /ko if: importing()
+    = t('views.import_wizards.adjustments.importing_please_wait')
+    //ko
+    /ko if: importError()
+    %span{style: 'color:red'}= t('views.import_wizards.adjustments.sorry_something_failed')
+    //ko
+    /ko if: !importing() && !importError()
+    /ko if: !validationErrors() || (validationErrors() && !validationErrors().hasErrors())
+    %button.grey{ko(click: :startImport)}= t('views.import_wizards.adjustments.start_importing')
+    //ko
+    /ko if: (validationErrors() && validationErrors().hasErrors())
+    %span.error= t('views.import_wizards.adjustments.fix_the_errors_to_start_importing')
+    //ko
+    //ko

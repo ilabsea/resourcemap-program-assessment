@@ -121,6 +121,17 @@ module Collection::CsvConcern
     end
   end
 
+  def sample_members_csv(user = nil)
+    fields = self.fields.all
+
+    CSV.generate do |csv|
+      header = ['email','None','Read','Update','Admin','View data submitted by other user','Edit data submitted by other user']
+      csv << header
+      row = ['sample_user@email.com',0,0,0,1,1,1]
+      csv << row
+    end
+  end
+
   def import_csv(user, string_or_io)
     Collection.transaction do
       csv = CSV.new string_or_io, return_headers: false
