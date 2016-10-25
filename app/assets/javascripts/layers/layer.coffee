@@ -16,8 +16,7 @@ onLayers ->
       @deletable = ko.observable(true)
       @hasFocus = ko.observable(false)
       @nameError = ko.computed => if @hasName() then null else "the layer's Name is missing"
-      @total = ko.computed =>
-        @fields().length
+      @total = ko.observable(@fields().length)
       @fieldsError = ko.computed =>
         return "the layer must have at least one field" if @fields().length == 0
 
