@@ -45,12 +45,13 @@ onCollections ->
       @user_id = ko.observable data?.user_id
       @editable = ko.computed =>
         member = JSON.parse(collection.memberships().responseText)
-        if member.admin
-          return true
-        if member.can_edit_other
-          return true
-        if data.user_id == member.user_id
-          return true
+        if member
+          if member.admin
+            return true
+          if member.can_edit_other
+            return true
+          if data.user_id == member.user_id
+            return true
         return false
 
       @allFieldLogics = ko.observableArray()

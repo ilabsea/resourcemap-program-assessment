@@ -216,7 +216,6 @@ ResourceMap::Application.routes.draw do
           post 'sites', to: 'sites#create'
           post 'update_sites', to: 'collections#bulk_update'
           get 'sites', to: 'sites#index'
-
         end
       end
 

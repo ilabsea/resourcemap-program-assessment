@@ -16,7 +16,7 @@ module Field::Base
    { name: 'location', css_class: 'llocation', small_css_class: 'slocation'},
    { name: 'custom_widget', css_class: 'lcustom_widget', small_css_class: 'scustom_widget'},
   #  { name: 'custom_aggregator', css_class: 'lcustom_aggregator', small_css_class: 'scustom_aggregator'},
-  ]
+ ]
 
   BaseKinds.each do |base_kind|
     class_eval %Q(def #{base_kind[:name]}?; kind == '#{base_kind[:name]}'; end)
