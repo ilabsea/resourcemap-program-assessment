@@ -54,7 +54,7 @@ ResourceMap::Application.routes.draw do
       member do
         put :set_order
       end
-      collection do 
+      collection do
         get 'list_layers'
       end
     end
@@ -215,10 +215,8 @@ ResourceMap::Application.routes.draw do
           get 'geo', as: :geojson, to: "collections#geo_json"
           post 'sites', to: 'sites#create'
           post 'update_sites', to: 'collections#bulk_update'
-<<<<<<< HEAD
-=======
           get 'sites', to: 'sites#index'
->>>>>>> fix api for intergating with hub
+
         end
       end
 

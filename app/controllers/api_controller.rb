@@ -46,7 +46,12 @@ class ApiController < ApplicationController
     "#{message} - #{check_api_text}"
   end
 <<<<<<< HEAD
+<<<<<<< HEAD
 end
 =======
 end
 >>>>>>> fix api for intergating with hub
+=======
+
+end
+>>>>>>> 34ad2d5930a8bcae362a03976f424128ff7de202

@@ -485,4 +485,8 @@ onLayers ->
 
   class @Field_email extends @Field_text
 
+<<<<<<< HEAD
   class @Field_phone extends @Field_text
+=======
+  class @Field_phone extends @Field_text
+>>>>>>> 34ad2d5930a8bcae362a03976f424128ff7de202
