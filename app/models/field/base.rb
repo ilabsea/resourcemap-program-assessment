@@ -17,7 +17,6 @@ module Field::Base
    { name: 'custom_widget', css_class: 'lcustom_widget', small_css_class: 'scustom_widget'},
   #  { name: 'custom_aggregator', css_class: 'lcustom_aggregator', small_css_class: 'scustom_aggregator'},
  ]
->>>>>>> report as the pdf
 
   BaseKinds.each do |base_kind|
     class_eval %Q(def #{base_kind[:name]}?; kind == '#{base_kind[:name]}'; end)

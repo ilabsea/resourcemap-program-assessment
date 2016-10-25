@@ -45,8 +45,4 @@ class ApiController < ApplicationController
     check_api_text = 'Check the API documentation: https://github.com/instedd/resourcemap/wiki/REST_API'
     "#{message} - #{check_api_text}"
   end
-<<<<<<< HEAD
 end
-=======
-end
->>>>>>> fix api for intergating with hub
