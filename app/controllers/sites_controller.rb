@@ -33,10 +33,9 @@ class SitesController < ApplicationController
 
   def index
     search = new_search
-
     search.name_start_with params[:name] if params[:name].present?
     search.alerted_search params[:_alert] if params[:_alert] == "true"
-    search.my_site_search current_user.id unless current_user.can_view_other? params[:collection_id]
+    search.my_site_search current_user.id if !current_user.is_guest && !current_user.can_view_other?(params[:collection_id])
     search.offset params[:offset]
     search.limit params[:limit]
 
@@ -110,32 +109,6 @@ class SitesController < ApplicationController
     end
   end
 
-  # def search
-  #   zoom = params[:z].to_i
-  #   search = MapSearch.new params[:collection_ids], user: current_user
-
-  #   formula = params[:formula].downcase if params[:formula].present?
-
-  #   search.set_formula formula if formula.present?
-  #   search.zoom = zoom
-  #   search.bounds = params if zoom >= 2
-  #   search.exclude_id params[:exclude_id].to_i if params[:exclude_id].present?
-  #   search.after params[:updated_since] if params[:updated_since]
-  #   search.full_text_search params[:search] if params[:search].present?
-  #   search.alerted_search params[:_alert] if params[:_alert].present?
-  #   search.my_site_search current_user.id unless current_user.can_view_other? params[:collection_ids][0]
-  #   if params[:selected_hierarchies].present?
-  #     search.selected_hierarchy params[:hierarchy_code], params[:selected_hierarchies]
-  #   end
-
-  #   search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :search, :hierarchy_code, :selected_hierarchies, :_alert, :formula)
-
-  #   search.prepare_filter
-  #   # search.apply_queries
-
-  #   render json: search.results
-  # end
-
   def search
     if params[:collection_ids]
       data = {:sites => [], :clusters => []}
@@ -163,7 +136,7 @@ class SitesController < ApplicationController
     search.after params[:updated_since] if params[:updated_since]
     search.full_text_search params[:search] if params[:search].present?
     search.alerted_search params[:_alert] if params[:_alert].present?
-    search.my_site_search current_user.id unless current_user.can_view_other? collection_id
+    search.my_site_search current_user.id if current_user && !current_user.can_view_other?(collection_id)
     if params[:selected_hierarchies].present?
       search.selected_hierarchy params[:hierarchy_code], params[:selected_hierarchies]
     end
@@ -175,30 +148,6 @@ class SitesController < ApplicationController
 
     return search.results
   end
-
-  # def search_alert_site
-  #   zoom = params[:z].to_i
-
-  #   search = MapSearch.new params[:collection_ids], user: current_user
-
-  #   formula = params[:formula].downcase if params[:formula].present?
-
-  #   search.set_formula formula if formula.present?
-  #   search.zoom = zoom
-  #   search.bounds = params if zoom >= 2
-  #   search.exclude_id params[:exclude_id].to_i if params[:exclude_id].present?
-  #   search.full_text_search params[:search] if params[:search].present?
-  #   search.alerted_search params[:_alert] if params[:_alert].present?
-  #   search.my_site_search current_user.id unless current_user.can_view_other? params[:collection_ids][0]
-  #   if params[:selected_hierarchies].present?
-  #     search.selected_hierarchy params[:hierarchy_code], params[:selected_hierarchies]
-  #   end
-  #   search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :search, :hierarchy_code, :selected_hierarchies, :_alert, :formula)
-
-  #   # search.apply_queries
-  #   search.prepare_filter
-  #   render json: search.sites_json
-  # end
 
   def search_alert_site
     if params[:collection_ids]
@@ -226,7 +175,7 @@ class SitesController < ApplicationController
     search.exclude_id params[:exclude_id].to_i if params[:exclude_id].present?
     search.full_text_search params[:search] if params[:search].present?
     search.alerted_search params[:_alert] if params[:_alert].present?
-    search.my_site_search current_user.id unless current_user.can_view_other? collection_id
+    search.my_site_search current_user.id if current_user && !current_user.can_view_other?(collection_id)
     if params[:selected_hierarchies].present?
       search.selected_hierarchy params[:hierarchy_code], params[:selected_hierarchies]
     end
