@@ -148,7 +148,7 @@ onLayers ->
         else
           id = 0
         field_logic.id id
-        @field_logics.push field_logic                    
+        @field_logics.push field_logic
 
     toJSON: (json) =>
       unless json.config
@@ -485,8 +485,4 @@ onLayers ->
 
   class @Field_email extends @Field_text
 
-<<<<<<< HEAD
   class @Field_phone extends @Field_text
-=======
-  class @Field_phone extends @Field_text
->>>>>>> 34ad2d5930a8bcae362a03976f424128ff7de202

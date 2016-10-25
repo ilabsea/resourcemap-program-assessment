@@ -169,11 +169,7 @@ onCollections ->
       if window.model.newOrEditSite()
         if @kind == 'yes_no'
           value = if @value() then 1 else 0
-<<<<<<< HEAD
         else if @kind == 'numeric'
-=======
-        else if @kind == 'numeric'
->>>>>>> 34ad2d5930a8bcae362a03976f424128ff7de202
           if @value() != null or @value != undefined
             value = @value()
           else
@@ -214,11 +210,7 @@ onCollections ->
               if field_logic.condition_type == '='
                 #Equal we need to do more becase it can be with different type of field
                 match = false
-<<<<<<< HEAD
                 if @kind == 'yes_no' or @kind == 'numeric'
-=======
-                if @kind == 'yes_no' or @kind == 'numeric'
->>>>>>> 34ad2d5930a8bcae362a03976f424128ff7de202
                   match = (fieldValue == fieldLogicValue)
                 else if @kind == 'select_one'
                   match = (value == field_logic.value)
@@ -252,11 +244,7 @@ onCollections ->
     compareTwoArray: (arr1, arr2) =>
       status = true
       if arr1.length == arr2.length
-<<<<<<< HEAD
         $.map(arr1, (el1) =>
-=======
-        $.map(arr1, (el1) =>
->>>>>>> 34ad2d5930a8bcae362a03976f424128ff7de202
           unless arr2.includes(el1)
             status = false
         )
