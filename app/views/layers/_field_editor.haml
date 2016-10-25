@@ -36,10 +36,6 @@
     =t('views.layers.form.field.mandatory')
   %p.smalltext= t('views.layers.form.field.this_field_must_be_report_on_every_report')
 
-  = ko_check_box_tag :is_criteria, css: {error: :codeError}
-  %span Is Criteria
-  %p.smalltext
-    This field will be use to find related site
   //ko
 
   /ko if: kind() == 'custom_widget'
@@ -49,7 +45,7 @@
     The field will be uneditable
   //ko
 
-  /ko if: kind() == 'numeric' || kind() == 'custom_aggregator' || kind() == 'select_one' || kind() == 'text'
+  /ko if: kind() == 'numeric' || kind() == 'custom_aggregator' || kind() == 'select_one'
   = ko_check_box_tag :custom_widgeted, css: {error: :codeError}
   %span
     = t('views.layers.form.field.custom_widgeted')
