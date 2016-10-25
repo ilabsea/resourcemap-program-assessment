@@ -7,6 +7,7 @@ onCollections ->
 
     toggleExpand: =>
       @expanded(!@expanded())
+      window.model.initDatePicker()
       if @expanded()
         $.map @fields, (f) =>
           f.refresh_skip()
