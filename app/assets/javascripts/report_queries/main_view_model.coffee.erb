@@ -94,3 +94,15 @@ onReportQueries ->
       for key,item of field.fieldHierarchyItemsMap
         if key == value
           return item
+
+    initInsteddPlatform:  ->
+      $.instedd.init_components() if $.instedd
+
+    initDatePicker: (options = {}) =>
+      @initInsteddPlatform()
+      $(".ux-datepicker").removeClass('hasDatepicker').datepicker(
+                                                                    yearRange: "-100:+5",
+                                                                    changeMonth: true,
+                                                                    changeYear: true,
+                                                                    dateFormat: 'yy-mm-dd'
+                                                                  )

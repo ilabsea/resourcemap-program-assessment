@@ -29,6 +29,7 @@ onReportQueries ->
 
       @selectedField.subscribe =>
         @value('')
+        @initDatePicker()
 
       @valueError = ko.computed => if @hasValue()  then null else "the condition field's value is missing"
       @fieldError = ko.computed => if @hasField() then null else "the condition field must selected"
@@ -53,6 +54,8 @@ onReportQueries ->
         if value then @field()?.fieldHierarchyItemsMap[value] else ''
       else if @field()?.kind == 'location'
         if value then @field()?.labelForLocation(value) else ''
+      else if @field()?.kind == 'date'
+        if value then @parseDate(new Date(value)) else ''
       else
         if value then value else ''
 
@@ -81,3 +84,10 @@ onReportQueries ->
       field_id: "#{@field().id}"
       operator: @operator().value
       value: @value()
+
+    parseDate: (date)->
+      (date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear()
+
+    initDatePicker: =>
+      if @field().kind == 'date'
+        window.model.initDatePicker()
