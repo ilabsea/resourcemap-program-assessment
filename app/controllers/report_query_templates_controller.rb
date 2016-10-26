@@ -66,7 +66,6 @@ class ReportQueryTemplatesController < ApplicationController
   # GET /:id/report
   def show
     @template = collection.report_query_templates.find_by_uuid(params[:id])
-    # render layout: "print_template"
   end
 
   def share

@@ -48,6 +48,12 @@ class ApplicationController < ActionController::Base
   before_filter :store_location
   before_filter :set_request_header
 
+  rescue_from ActiveRecord::DeleteRestrictionError, with: :delete_restiction
+
+  def delete_restiction(ex)
+    render json: { message: "The data cannot be delete"}, status: 400
+  end
+
   def store_location
     return unless request.get?
     if (request.path != "/users/sign_in" &&
@@ -167,9 +173,6 @@ class ApplicationController < ActionController::Base
         head :forbidden
       end
     end
-    # authenticate_or_request_with_http_basic do |user, password|
-    #   user == USER && password == PASSWORD
-    # end
   end
 
   def set_request_header
