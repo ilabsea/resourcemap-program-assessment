@@ -24,7 +24,7 @@ class ReportQueryTemplatesController < ApplicationController
     show_collection_breadcrumb
     add_breadcrumb I18n.t('views.collections.index.properties'), collection_path(collection)
     add_breadcrumb 'Report Query Template', collection_report_query_templates_path(collection)
-    @report_query_templates = collection.report_query_templates.order('id DESC')
+    @report_query_templates = collection.report_query_templates
   end
 
   def new
