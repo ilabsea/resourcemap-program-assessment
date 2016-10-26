@@ -15,9 +15,10 @@ onReportQueries ->
       @field = ko.observable(@selectedField()?[0])
 
       @operatorOptions = ko.computed =>
-        singleFieldType = ['text', 'yes_no', 'select_one', 'hierarchy', 'location', 'date', 'caculation', 'email', 'phone']
+        singleFieldType = ['text', 'yes_no', 'select_one', 'hierarchy', 'location', 'date', 'email', 'phone']
+        numeicFieldType = ['numeric', 'calculation']
         return @operatorUIForTextField() if singleFieldType.includes? @field()?.kind
-        return @operatorUIForNumericField() if @field()?.kind == 'numeric'
+        return @operatorUIForNumericField() if numeicFieldType.includes? @field()?.kind
 
       @value = ko.observable(data?.value)
 
@@ -57,16 +58,22 @@ onReportQueries ->
 
     valueUIFrom: (value) =>
       value
-    # setField:
+
     operatorUIForTextField: =>
       [{label: "equal", value: "="}]
     operatorUIForNumericField: =>
       [{label: "equal", value: "="},
        {label: "greater than", value: ">"},
-       {label: "less than", value: "<"}]
+       {label: "greater than or equal", value: ">="},
+       {label: "less than", value: "<"},
+       {label: "less than or equal", value: "<="}]
 
     findOperatorByValue: (value)=>
-      allOperators = [{label: "equal", value: "="},{label: "greater than", value: ">"},{label: "less than", value: "<"}]
+      allOperators = [{label: "equal", value: "="},
+             {label: "greater than", value: ">"},
+             {label: "greater than or equal", value: ">="},
+             {label: "less than", value: "<"},
+             {label: "less than or equal", value: "<="}]
       allOperators.filter((x) -> x.value == value)[0]
 
     toJSON: =>
