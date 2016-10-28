@@ -1,23 +1,25 @@
 <%= render '/tabs' %>
 
-<textarea class= "custom-tinymce">
-  <div class="container">
-    <% render_result = render('result', template: @template ) %>
-    <div id='report-query-template'>
-      <%= @template.translate_template(render_result).html_safe %>
+<div class="tabsline settings-form" >
+  <h2>Preview Report</h2>
+  <textarea class= "custom-tinymce">
+    <div class="container">
+      <% render_result = render('result', template: @template ) %>
+      <div id='report-query-template'>
+        <%= @template.translate_template(render_result).html_safe %>
+      </div>
     </div>
-  </div>
-</textarea>
+  </textarea>
 
-<%= form_tag report_query_template_pdfs_path, method: 'post', id: 'form-create-pdf' do |f| %>
-  <input type="hidden" name="id" value="<%= @template.uuid %>"  id='create-pdf-id' />
-  <input type="hidden" name="text" value="" id='create-pdf-text' />
-  <br/>
-  <div style='text-align: right' >
-    <button type="button" id='btn-create-pdf'> Download PDF </button>
-  </div>
-<% end %>
-
+  <%= form_tag report_query_template_pdfs_path, method: 'post', id: 'form-create-pdf' do |f| %>
+    <input type="hidden" name="id" value="<%= @template.uuid %>"  id='create-pdf-id' />
+    <input type="hidden" name="text" value="" id='create-pdf-text' />
+    <br/>
+    <div style='text-align: right' >
+      <button type="button" id='btn-create-pdf'> Download PDF </button>
+    </div>
+  <% end %>
+</div>
 
 <script type="text/javascript">
   $(function(){
@@ -34,5 +36,7 @@
 
       $("#form-create-pdf").submit();
     });
+
+    $('ul.tabs li:nth-last-child(1)').addClass('active');
   });
 </script>

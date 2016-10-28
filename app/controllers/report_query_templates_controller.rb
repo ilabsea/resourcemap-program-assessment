@@ -19,11 +19,15 @@
 class ReportQueryTemplatesController < ApplicationController
   before_filter :authenticate_user!, except: [:share]
   before_filter :authenticate_collection_admin!, :except => [:index, :show]
+  before_filter :render_breadcrumb, :only => [:index, :new, :edit, :show]
 
-  def index
+  def render_breadcrumb
     show_collection_breadcrumb
     add_breadcrumb I18n.t('views.collections.index.properties'), collection_path(collection)
-    add_breadcrumb 'Report Query Template', collection_report_query_templates_path(collection)
+    add_breadcrumb 'Report Template', collection_report_query_templates_path(collection)
+  end
+
+  def index
     @report_query_templates = collection.report_query_templates
   end
 
