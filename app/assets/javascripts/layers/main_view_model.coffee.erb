@@ -22,7 +22,6 @@ onLayers ->
         ($.trim(@newFieldLogic().value()).length > 0 || $.trim(@newFieldLogic().condition_type()).length > 0) && $.trim(@newFieldLogic().field_id()).length > 0
 
       @fieldSelectManyLogicValid = ko.computed =>
-        # $.trim(@newFieldLogic().value()).length > 0
         true
 
       @attributeValid = ko.computed =>
@@ -42,25 +41,24 @@ onLayers ->
       @tmpSelectedField = ko.observable()
 
       @fieldList = ko.computed =>
-        return @fields() if @fields().length > 0
         fields = []
         for layer in @layers()
           fields = fields.concat(layer.fields())
-        fields.sort (first, second)->
-          firstItem = first.name().toLowerCase()
-          secondItem = second.name().toLowerCase()
-          if firstItem < secondItem
-            return -1
-          else if firstItem == secondItem
-            return 0
-          else
-            return 1
-        @fields(fields)
-        return @fields()
+
+        if fields.length > 0
+          fields.sort (first, second)->
+            firstItem = first.name().toLowerCase()
+            secondItem = second.name().toLowerCase()
+            if firstItem < secondItem
+              return -1
+            else if firstItem == secondItem
+              return 0
+            else
+              return 1
+        return fields
 
       @customWidgetedFields = ko.computed =>
         @fieldList().filter (f) => f.custom_widgeted
-
 
       @selectedCustomWidgetField = ko.observable()
       @selectedCollectionCustomAggregator = ko.observable()
@@ -569,7 +567,7 @@ onLayers ->
 
     removeFieldValidation: (field_validation) =>
       @currentField().impl().field_validations.remove(field_validation)
-      
+
     removeSelectedFieldLogic: (field_logic) =>
       @currentField().impl().selected_field_logics.remove(field_logic)
 
