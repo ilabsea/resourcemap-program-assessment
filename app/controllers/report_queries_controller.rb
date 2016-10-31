@@ -18,6 +18,8 @@ class ReportQueriesController < ApplicationController
   before_filter :authenticate_user!, :except => [:index]
   before_filter :authenticate_collection_admin!, :except => [:index]
 
+
+
   def index
     respond_to do |format|
       format.html do
@@ -25,7 +27,7 @@ class ReportQueriesController < ApplicationController
         add_breadcrumb I18n.t('views.collections.index.properties'), collection_path(collection)
         add_breadcrumb I18n.t('views.report_queries.title'), collection_report_queries_path(collection)
       end
-      format.json { render json: report_queries.order('id DESC') }
+      format.json { render json: report_queries }
     end
   end
 

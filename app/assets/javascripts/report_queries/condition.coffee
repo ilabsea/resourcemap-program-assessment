@@ -15,9 +15,10 @@ onReportQueries ->
       @field = ko.observable(@selectedField()?[0])
 
       @operatorOptions = ko.computed =>
-        singleFieldType = ['text', 'yes_no', 'select_one', 'hierarchy', 'location', 'date', 'caculation', 'email', 'phone']
+        singleFieldType = ['text', 'yes_no', 'select_one', 'hierarchy', 'location', 'date', 'email', 'phone']
+        numeicFieldType = ['numeric', 'calculation']
         return @operatorUIForTextField() if singleFieldType.includes? @field()?.kind
-        return @operatorUIForNumericField() if @field()?.kind == 'numeric'
+        return @operatorUIForNumericField() if numeicFieldType.includes? @field()?.kind
 
       @value = ko.observable(data?.value)
 
@@ -28,6 +29,7 @@ onReportQueries ->
 
       @selectedField.subscribe =>
         @value('')
+        @initDatePicker()
 
       @valueError = ko.computed => if @hasValue()  then null else "the condition field's value is missing"
       @fieldError = ko.computed => if @hasField() then null else "the condition field must selected"
@@ -52,21 +54,29 @@ onReportQueries ->
         if value then @field()?.fieldHierarchyItemsMap[value] else ''
       else if @field()?.kind == 'location'
         if value then @field()?.labelForLocation(value) else ''
+      else if @field()?.kind == 'date'
+        if value then @parseDate(new Date(value)) else ''
       else
         if value then value else ''
 
     valueUIFrom: (value) =>
       value
-    # setField:
+
     operatorUIForTextField: =>
       [{label: "equal", value: "="}]
     operatorUIForNumericField: =>
       [{label: "equal", value: "="},
        {label: "greater than", value: ">"},
-       {label: "less than", value: "<"}]
+       {label: "greater than or equal", value: ">="},
+       {label: "less than", value: "<"},
+       {label: "less than or equal", value: "<="}]
 
     findOperatorByValue: (value)=>
-      allOperators = [{label: "equal", value: "="},{label: "greater than", value: ">"},{label: "less than", value: "<"}]
+      allOperators = [{label: "equal", value: "="},
+             {label: "greater than", value: ">"},
+             {label: "greater than or equal", value: ">="},
+             {label: "less than", value: "<"},
+             {label: "less than or equal", value: "<="}]
       allOperators.filter((x) -> x.value == value)[0]
 
     toJSON: =>
@@ -74,3 +84,10 @@ onReportQueries ->
       field_id: "#{@field().id}"
       operator: @operator().value
       value: @value()
+
+    parseDate: (date)->
+      (date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear()
+
+    initDatePicker: =>
+      if @field().kind == 'date'
+        window.model.initDatePicker()

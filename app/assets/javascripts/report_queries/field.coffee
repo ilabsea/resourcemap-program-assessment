@@ -14,7 +14,7 @@ onReportQueries ->
         (@kind.split(/_/).map (word) -> word[0].toUpperCase() + word[1..-1].toLowerCase()).join ' '
       @ord = data?.ord
       @isInputField = ko.computed =>
-        inputType = ['text', 'date', 'calculation', 'email', 'phone']
+        inputType = ['text', 'calculation', 'email', 'phone']
         if inputType.includes?(@kind) then true else false
 
       if @kind == 'hierarchy'

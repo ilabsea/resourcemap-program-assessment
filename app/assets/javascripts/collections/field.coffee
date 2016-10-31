@@ -669,3 +669,6 @@ onCollections ->
         true
       else
         false
+    init: =>
+      if @kind == 'date'
+        window.model.initDatePicker()

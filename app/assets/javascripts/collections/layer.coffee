@@ -7,8 +7,8 @@ onCollections ->
 
     toggleExpand: =>
       @expanded(!@expanded())
-      window.model.initDatePicker()
       if @expanded()
         $.map @fields, (f) =>
+          f.init()
           f.refresh_skip()
           f.bindWithCustomWidgetedField()

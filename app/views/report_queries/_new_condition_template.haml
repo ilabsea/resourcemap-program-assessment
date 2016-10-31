@@ -10,6 +10,12 @@
 %input{ko(value: :value), type: :text}
 //ko
 
+/ko if: field().kind == 'date'
+%span is
+%select{ko(value: :operator, options: :operatorOptions, optionsText: "'label'")}
+%input.ux-datepicker{ 'data-bind' => 'value: valueUI', type: :text }
+//ko
+
 /ko if: field().kind == 'yes_no'
 %span is
 %select{ko(value: :operator, options: :operatorOptions, optionsText: "'label'")}
