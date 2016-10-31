@@ -28,8 +28,12 @@ onCollections ->
       @originalIsMandatory = data.is_mandatory
       @value = ko.observable()
       @value.subscribe =>
-        if @skippedState() == false
+        if @skippedState() == false 
+          # @setFieldFocus()
           @disableDependentSkipLogicField()
+        # if @kind in ["numeric", "calculation"]
+        #   if window.model.newOrEditSite()
+        #     window.model.newOrEditSite().prepareCalculatedField()
 
       @keyType = if @allowsDecimals() then 'decimal' else 'integer'
 
@@ -157,19 +161,11 @@ onCollections ->
         tmp = @is_blocked_by()
         @is_blocked_by(tmp)
 
-    bindWithCustomWidgetedField: =>
-      if @kind == 'custom_widget'
-        arr_field_wrapper = @widgetContentViewAsInput().match(/wrapper-custom-widget-[^"]+/g)
-        for field_wrapper in arr_field_wrapper
-          field_code = field_wrapper.split("wrapper-custom-widget-")[1]
-          field = window.model.findFieldByCode(field_code)
-          new CustomWidget(field).bindField()
-
     disableDependentSkipLogicField: =>
       if window.model.newOrEditSite()
         if @kind == 'yes_no'
           value = if @value() then 1 else 0
-        else if @kind == 'numeric'
+        else if @kind == 'numeric' 
           if @value() != null or @value != undefined
             value = @value()
           else
@@ -210,7 +206,13 @@ onCollections ->
               if field_logic.condition_type == '='
                 #Equal we need to do more becase it can be with different type of field
                 match = false
-                if @kind == 'yes_no' or @kind == 'numeric'
+                if @kind == 'yes_no'
+                  if fieldLogicValue != 0 or field_logic.value.toUpperCase() == 'Y' or field_logic.value.toUpperCase() == 'YES'
+                    fieldValue = 1
+                  else
+                    fieldValue = 0
+                  match = (fieldValue == fieldLogicValue)
+                else if @kind == 'numeric' 
                   match = (fieldValue == fieldLogicValue)
                 else if @kind == 'select_one'
                   match = (value == field_logic.value)
@@ -244,7 +246,7 @@ onCollections ->
     compareTwoArray: (arr1, arr2) =>
       status = true
       if arr1.length == arr2.length
-        $.map(arr1, (el1) =>
+        $.map(arr1, (el1) => 
           unless arr2.includes(el1)
             status = false
         )
