@@ -161,6 +161,14 @@ onCollections ->
         tmp = @is_blocked_by()
         @is_blocked_by(tmp)
 
+    bindWithCustomWidgetedField: =>
+      if @kind == 'custom_widget'
+        arr_field_wrapper = @widgetContentViewAsInput().match(/wrapper-custom-widget-[^"]+/g)
+        for field_wrapper in arr_field_wrapper
+          field_code = field_wrapper.split("wrapper-custom-widget-")[1]
+          field = window.model.findFieldByCode(field_code)
+          new CustomWidget(field).bindField()
+
     disableDependentSkipLogicField: =>
       if window.model.newOrEditSite()
         if @kind == 'yes_no'
@@ -669,6 +677,3 @@ onCollections ->
         true
       else
         false
-    init: =>
-      if @kind == 'date'
-        window.model.initDatePicker()
