@@ -40,10 +40,10 @@
       = link_to t('views.import_wizards.download_csv_with_sites'), api_collection_path(collection, format: "csv"), class: "icon fimport black"
     -else
       = link_to t('views.import_wizards.download_csv_template'), api_sample_csv_path(collection, format: 'csv'), class: "icon fimport black"
-
-    %form#upload_form{action: upload_csv_collection_import_wizard_path(collection), method: :post, enctype: 'multipart/form-data'}
-      %input{type: :hidden, name: 'authenticity_token', value: form_authenticity_token}
-      .icon.fexport.black= t('views.import_wizards.upload_a_csv')
-      %input#upload{type: :file, name: :file}
+    - if collection_admin?
+      %form#upload_form{action: upload_csv_collection_import_wizard_path(collection), method: :post, enctype: 'multipart/form-data'}
+        %input{type: :hidden, name: 'authenticity_token', value: form_authenticity_token}
+        .icon.fexport.black= t('views.import_wizards.upload_a_csv')
+        %input#upload{type: :file, name: :file}
   - else
     = render '/current_snapshot_message'
