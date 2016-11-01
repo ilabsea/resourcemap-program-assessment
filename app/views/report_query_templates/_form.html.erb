@@ -6,7 +6,7 @@
 
   <div class="field w60">
     <%= f.label 'Insert Report Query' %>
-    <%= f.select :report_query_id, options_for_select(collection.report_queries.map{|r| [r.name, r.id]}), prompt: 'Select a query' %>
+    <%= f.select :report_query_id, options_for_select(collection.report_queries.map{|r| [r.name, r.id]}, @report_query_template.report_query_id), prompt: 'Select a query' %>
   </div>
 
   <div class="row">
