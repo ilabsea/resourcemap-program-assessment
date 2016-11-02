@@ -28,7 +28,7 @@ onCollections ->
       @originalIsMandatory = data.is_mandatory
       @value = ko.observable()
       @value.subscribe =>
-        if @skippedState() == false 
+        if @skippedState() == false
           # @setFieldFocus()
           @disableDependentSkipLogicField()
         # if @kind in ["numeric", "calculation"]
@@ -173,7 +173,7 @@ onCollections ->
       if window.model.newOrEditSite()
         if @kind == 'yes_no'
           value = if @value() then 1 else 0
-        else if @kind == 'numeric' 
+        else if @kind == 'numeric'
           if @value() != null or @value != undefined
             value = @value()
           else
@@ -220,7 +220,7 @@ onCollections ->
                   else
                     fieldValue = 0
                   match = (fieldValue == fieldLogicValue)
-                else if @kind == 'numeric' 
+                else if @kind == 'numeric'
                   match = (fieldValue == fieldLogicValue)
                 else if @kind == 'select_one'
                   match = (value == field_logic.value)
@@ -254,7 +254,7 @@ onCollections ->
     compareTwoArray: (arr1, arr2) =>
       status = true
       if arr1.length == arr2.length
-        $.map(arr1, (el1) => 
+        $.map(arr1, (el1) =>
           unless arr2.includes(el1)
             status = false
         )
@@ -677,3 +677,6 @@ onCollections ->
         true
       else
         false
+    init: =>
+      if @kind == 'date'
+        window.model.initDatePicker()
