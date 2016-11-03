@@ -47,11 +47,12 @@
         %span.smalltext{style: 'padding-right:5px;padding-top:5px'} have value 
         %select{'data-bind' => 'value: condition_type, enable: editing', style: 'color:black;background-color:white'}
           %option{value: "="} equal to
+          /ko if: is_numeric
           %option{value: "<"} less than  
           %option{value: "<="} less than or equal to
           %option{value: ">"} greater than
           %option{value: ">="} greater than or equal to
-          %option{value: "!="} Not equal to
+          //ko
         / %input{ko(value: :value), style: 'width:30px; height:20px'}
       %div
         /ko if: condition_type() != 'empty'
@@ -81,10 +82,12 @@
         %span.smalltext{style: 'padding-right:5px;padding-top:5px'} have value 
         %select{'data-bind' => 'value: condition_type', style: 'background-color:white'}
           %option{value: "="} equal to
+          /ko if: is_numeric
           %option{value: "<"} less than  
           %option{value: "<="} less than or equal to
           %option{value: ">"} greater than
           %option{value: ">="} greater than or equal to
+          //ko
         
       %div
         /ko if: condition_type() != 'empty'

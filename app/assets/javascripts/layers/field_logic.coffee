@@ -13,6 +13,18 @@ onLayers ->
       @editing = ko.observable(false)
       @valid = ko.observable(true)
       @error = ko.observable()
+      @is_numeric= ko.observable(false)
+      @field_id.subscribe =>
+        $.map(model.layers(), (x, index) =>
+          fields = x.support_skiplogic_fields()
+          $.map(fields, (f) =>
+            if f.id == @field_id()[0]
+              if f.kind == "numeric"
+                @is_numeric(true)
+              else
+                @is_numeric(false)
+          )
+        )
 
     toJSON: =>
       id: @id()
