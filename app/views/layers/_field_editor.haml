@@ -107,7 +107,7 @@
 
   /ko if: kind() == 'numeric'
   %hr/
-  = ko_check_box_tag :is_enable_custom_validation, css: {error: :codeError}
+  = ko_check_box_tag :is_enable_custom_validation, css: {error: :error_skiplogic}
   %label
     = t('views.layers.form.field.enable_custom_validation')
   %div{ko(if: :is_enable_custom_validation)}

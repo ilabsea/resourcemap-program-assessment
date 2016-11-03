@@ -499,9 +499,14 @@ onLayers ->
       @newFieldLogic().selected_options.remove(field)
 
     saveFieldLogic: (field_logic) =>
-      field_logic.editing(false)
-      @currentField().impl().saveFieldLogic(field_logic)
-      @isAddNew(false)
+      error = @validateFieldLogic(field_logic)
+      if error["status_failed"]
+        field_logic.valid(false)
+        field_logic.error(error["detail"])
+      else
+        field_logic.editing(false)
+        @currentField().impl().saveFieldLogic(field_logic)
+        @isAddNew(false)
 
     saveFieldValidation: (field_validation) =>
       field_validation.editing(false)
@@ -636,3 +641,51 @@ onLayers ->
 
     change: =>
       alert 'test'
+
+    validateFieldLogic: (field_logic) =>
+      error = {}
+      field_logic_id = field_logic.field_id()[0]
+      $.map(model.layers(), (x, index) =>
+        fields = x.fields()
+        $.map(fields, (f) =>
+          if f.id() == field_logic_id
+            fieldLogicValue = field_logic.value();
+            if f.kind() == "numeric"
+              if isNaN(fieldLogicValue)
+                error["status_failed"] = true
+                error["detail"] = "Field logic value is not numeric value."
+            if f.kind() == "yes_no"
+              if parseInt(fieldLogicValue) != 1 and parseInt(fieldLogicValue) != 0 and fieldLogicValue.toUpperCase() != 'Y' and fieldLogicValue.toUpperCase() != 'YES' and fieldLogicValue.toUpperCase() != 'N' and fieldLogicValue.toUpperCase() != 'NO'
+                error["status_failed"] = true
+                error["detail"] = "Field logic value for Yes_No support only 1, 0, Yes, Y ,No ,and N."           
+            if f.kind() == "select_one"
+              status = false
+              codeList = []
+              $.map(f.config.options, (option) =>
+                codeList.push(option.code)
+                if(option.code == fieldLogicValue)
+                  status = true
+              )
+              if !status
+                error["status_failed"] = true
+                error["detail"] = "Field logic value for Select one support only #{codeList.join(',')}."
+            if f.kind() == "select_many"
+              status = true
+              codeList = []
+              errors = []
+              logic_options = fieldLogicValue.split(",")
+              $.map(f.config.options, (option) =>
+                codeList.push(option.code)
+              )
+              $.map(logic_options, (val) =>
+                if(!codeList.includes(val))
+                  errors.push(val)
+                  status = false
+              )
+              if !status
+                error["status_failed"] = true
+                error["detail"] = "Field logic value for Select many support only #{codeList.join(',')}. The value #{errors.join(',')} is not support."
+
+        )
+      )
+      return error

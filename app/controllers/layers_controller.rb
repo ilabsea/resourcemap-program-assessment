@@ -53,6 +53,7 @@ class LayersController < ApplicationController
       }
       layer['threshold_ids'] = Layer.find(layer['id']).get_associated_threshold_ids
       layer['query_ids'] = Layer.find(layer['id']).get_associated_query_ids
+      # layer['report_query_id'] = 
     }
     render :json => json[0]
   end

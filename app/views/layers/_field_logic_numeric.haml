@@ -32,8 +32,6 @@
       %br
       %button.farrow{ko(click: '$root.editFieldLogic'), style:'margin-bottom:0px;margin-top:0px', title: t('views.layers.edit_layer')}= t('views.layers.edit')
   //ko
-  //ko
-  /ko foreach: impl().field_logics
   /ko if: editing
   %li{style: 'padding-bottom:20px'}
     %div.box.grey.w25{style: 'padding-bottom:10px'}
@@ -92,10 +90,13 @@
         /ko if: condition_type() != 'empty'
         %input{ko(value: :value), style: 'width:45px;text-align:center'}
         //ko
-
-
+      / ko ifnot: valid()
+      %span{ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:0px'}
+      %br
+      //ko
       %button.white{ko(click: '$root.saveFieldLogic', enable: '$root.fieldLogicValid'), type: :button, title: 'Save'}= t('views.layers.form.field.save')
       %button.white{ko(click: '$root.cancelFieldLogic'), type: :button, title: 'Save'}= t('views.layers.form.field.cancel')
+      
   //ko
   /ko ifnot: $root.isAddNew
   %div.box.grey.add{ko(click: '$root.addFieldLogic'), :style => 'width:270px;'}

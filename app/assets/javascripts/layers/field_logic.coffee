@@ -11,6 +11,8 @@ onLayers ->
       @field_id = ko.observableArray([data?.field_id])
       @condition_type = ko.observable(data?.condition_type)
       @editing = ko.observable(false)
+      @valid = ko.observable(true)
+      @error = ko.observable()
 
     toJSON: =>
       id: @id()

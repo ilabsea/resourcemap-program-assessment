@@ -215,6 +215,7 @@ onCollections ->
                 #Equal we need to do more becase it can be with different type of field
                 match = false
                 if @kind == 'yes_no'
+                  fieldLogicValue = field_logic.value
                   if fieldLogicValue != 0 or field_logic.value.toUpperCase() == 'Y' or field_logic.value.toUpperCase() == 'YES'
                     fieldValue = 1
                   else
