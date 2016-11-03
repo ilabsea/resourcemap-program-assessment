@@ -21,6 +21,9 @@ onLayers ->
       @fieldLogicValid = ko.computed =>
         ($.trim(@newFieldLogic().value()).length > 0 || $.trim(@newFieldLogic().condition_type()).length > 0) && $.trim(@newFieldLogic().field_id()).length > 0
 
+      @fieldCustomValidationValid = ko.computed =>
+        $.trim(@newFieldValidation().condition_type()).length > 0 && $.trim(@newFieldValidation().field_id()).length > 0
+
       @fieldSelectManyLogicValid = ko.computed =>
         true
 
@@ -73,6 +76,16 @@ onLayers ->
             @layers().filter (layer) => typeof layer.id() isnt 'undefined'
         else
           []
+
+      @selectNumericLayers = ko.computed =>
+        if @currentLayer()
+          if @currentLayer().id()
+            @layers()
+          else
+            @layers().filter (layer) => typeof layer.id() isnt 'undefined'
+        else
+          []
+
       @isAddNew = ko.observable(false)
       @isAddNewValidation = ko.observable(false)
       @is_editing = ko.computed =>
