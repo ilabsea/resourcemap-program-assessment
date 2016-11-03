@@ -199,6 +199,7 @@ onCollections ->
               fieldSearch = @getFieldFromAllFields(field_logic.disable_field_id)
               fieldValue = parseFloat(value)
               fieldLogicValue = parseFloat(field_logic.value)
+
               if field_logic.condition_type == '<'
                 if fieldValue < field_logic.value
                   @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
@@ -216,10 +217,10 @@ onCollections ->
                 match = false
                 if @kind == 'yes_no'
                   fieldLogicValue = field_logic.value
-                  if fieldLogicValue != 0 or field_logic.value.toUpperCase() == 'Y' or field_logic.value.toUpperCase() == 'YES'
-                    fieldValue = 1
+                  if parseInt(fieldLogicValue) == 1 or fieldLogicValue.toUpperCase() == 'Y' or fieldLogicValue.toUpperCase() == 'YES'
+                    fieldLogicValue = 1
                   else
-                    fieldValue = 0
+                    fieldLogicValue = 0
                   match = (fieldValue == fieldLogicValue)
                 else if @kind == 'numeric'
                   match = (fieldValue == fieldLogicValue)
