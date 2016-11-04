@@ -401,6 +401,7 @@ onLayers ->
         @currentLayer().fields.push(@currentField())
         @currentField().hasFocus(true)
     selectField: (field) =>
+      @isAddNew(false)
       @currentField(field)
       @currentField().hasFocus(true)
 
