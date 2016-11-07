@@ -7,6 +7,7 @@ onLayers ->
       @ord = ko.observable data?.ord
       @threshold_ids = data?.threshold_ids ? []
       @query_ids = data?.query_ids ? []
+      @report_query_ids = data?.report_query_ids ? []
       if data?.fields
         @fields = ko.observableArray($.map(data.fields, (x) => new Field(@, x)))
       else

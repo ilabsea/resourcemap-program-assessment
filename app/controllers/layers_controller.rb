@@ -28,6 +28,7 @@ class LayersController < ApplicationController
           layer[:fields].each { |field|
             field['threshold_ids'] = get_associated_field_threshold_ids(field)
             field['query_ids'] = get_associated_field_query_ids(field)
+            field['report_query_ids'] = get_associated_field_report_query_ids(field)
           }
           layer['threshold_ids'] = Layer.find(layer['id']).get_associated_threshold_ids
           layer['query_ids'] = Layer.find(layer['id']).get_associated_query_ids
@@ -50,9 +51,11 @@ class LayersController < ApplicationController
       layer[:fields].each { |field|
         field['threshold_ids'] = get_associated_field_threshold_ids(field)
         field['query_ids'] = get_associated_field_query_ids(field)
+        field['report_query_ids'] = get_associated_field_report_query_ids(field)
       }
       layer['threshold_ids'] = Layer.find(layer['id']).get_associated_threshold_ids
       layer['query_ids'] = Layer.find(layer['id']).get_associated_query_ids
+      layer['report_query_ids'] = Layer.find(layer['id']).get_associated_report_query_ids
     }
     render :json => json[0]
   end
@@ -257,14 +260,40 @@ class LayersController < ApplicationController
     associated_field_query_ids
   end
 
+  def get_associated_field_report_query_ids(field)
+    associated_field_ids = []
+    fieldID = field["id"]
+
+    self.collection.report_queries.map { |query|
+      map_condition_field_ids = query.condition_fields.select{|item| item["field_id"].to_i == fieldID}
+      map_group_by_field_ids = query.group_by_fields.include?(fieldID.to_s)
+      map_aggregate_field_ids = query.aggregate_fields.select{|item| item["field_id"].to_i == fieldID}
+
+      if(map_condition_field_ids.length > 0  || map_group_by_field_ids || map_aggregate_field_ids.length > 0)
+        associated_field_ids.push(query.id)
+      end
+    }
+
+    associated_field_ids
+  end
+
   def apply_limit_field(layers, limit)
     json = layers.includes(:fields).all.as_json(:include => {:fields => {except: [:updated_at, :created_at]}}).each { |layer|
       total_field = layer[:fields].length
+      all_fields = layer[:fields]
       if( total_field > 50)
         layer[:fields] = layer[:fields][0..9]
       end
       layer[:fields] = layer[:fields][0..9]
       layer['total'] = total_field
+      all_fields.each { |field|
+        field['threshold_ids'] = get_associated_field_threshold_ids(field)
+        field['query_ids'] = get_associated_field_query_ids(field)
+        field['report_query_ids'] = get_associated_field_report_query_ids(field)
+      }
+      layer['threshold_ids'] = Layer.find(layer['id']).get_associated_threshold_ids
+      layer['query_ids'] = Layer.find(layer['id']).get_associated_query_ids
+      layer['report_query_ids'] = Layer.find(layer['id']).get_associated_report_query_ids
     }
     return json
   end

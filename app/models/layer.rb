@@ -133,6 +133,26 @@ class Layer < ActiveRecord::Base
     associated_query_ids
   end
 
+  def get_associated_report_query_ids
+
+    layerFieldIDs = self.fields.map { |field| field.id}
+    associated_query_ids = []
+
+    self.collection.report_queries.map { |query|
+      conditionFieldIds = query.condition_fields.map { |condition| condition['field_id'].to_i}
+      groupByFieldIds = query.group_by_fields
+      aggregateFieldIds = query.aggregate_fields.map { |condition| condition['field_id'].to_i}
+
+      if( (layerFieldIDs - conditionFieldIds).length < layerFieldIDs.length  ||
+          (layerFieldIDs - groupByFieldIds).length < layerFieldIDs.length  ||
+          (layerFieldIDs - aggregateFieldIds).length < layerFieldIDs.length )
+        associated_query_ids.push(query.id)
+      end
+    }
+
+    associated_query_ids
+  end
+
   private
 
   def field_hash(field)
