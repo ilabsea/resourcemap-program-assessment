@@ -98,6 +98,11 @@ class Layer < ActiveRecord::Base
     field ? field.to_i + 1 : 1
   end
 
+  def last_field_ord
+    field = fields.pluck('max(ord) as o').first
+    field ? field.to_i : 0
+  end
+
   def get_associated_threshold_ids
 
     layerFieldIDs = self.fields.map { |field| field.id}
