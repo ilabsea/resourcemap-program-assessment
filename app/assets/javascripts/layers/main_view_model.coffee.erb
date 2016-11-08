@@ -152,7 +152,7 @@ onLayers ->
 
     editLayer: (layer) =>
       $.get "/collections/#{collectionId}/layers/#{layer.id()}.json", {}, (l) =>
-        @originalFields = $.map(layer.fields(), (x) -> new Field(layer, x.toJSON()))
+        @originalFields = $.map(l["fields"], (x) -> new Field(layer, x))
         if l["fields"]
           fields = ko.observableArray($.map(l["fields"], (x) => new Field(layer, x)))
           numeric_fields = ko.observableArray($.map(l["fields"], (f) => f if f.kind == 'numeric'))
