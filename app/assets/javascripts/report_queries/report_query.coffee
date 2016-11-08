@@ -29,6 +29,7 @@ onReportQueries ->
       @aggregateFieldsError = ko.computed => if @hasAggregateFields()  then null else "the query must have at least one aggregate"
       @error = ko.computed => @nameError() || @nameExist() || @groupByFieldsError() || @aggregateFieldsError()
       @valid = ko.computed => !@error()
+      @report_query_templates = data?.report_query_templates ? []
 
     nameExist: =>
       for reportQuery in window.model.reportQueries()
