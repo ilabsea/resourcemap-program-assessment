@@ -328,7 +328,7 @@ onCollections ->
     disableField: (field, by_field_id) =>
       field.is_mandatory(false)
       field.skippedState(true)
-      # field.is_blocked_by([])
+      field.is_blocked_by([])
       unless field.is_mandatory()
         index = field.is_blocked_by().indexOf(by_field_id)
         if(index < 0 )
