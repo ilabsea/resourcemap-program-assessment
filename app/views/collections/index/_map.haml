@@ -213,8 +213,8 @@
                 / ko if: collection.readable($data)
                 <!-- ko foreach: layers -->
                 / col = collection
-                %div.coldiv{ko(css: {coldiv: '!expanded()', expdiv: 'expanded()'}), style: 'margin-top:24px;margin-bottom:14px'}
-                  %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;color:grey;cursor:pointer'}
+                %div.coldiv{ko(attr: {id: "'layer_' + id"},css: {error: :error, coldiv: '!expanded()', expdiv: 'expanded()'}), style: 'margin-top:24px;margin-bottom:14px'}
+                  %span.layerTitle{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;color:grey;cursor:pointer'}
                 <!-- ko if: expanded() -->
                 <!-- ko foreach: fields -->
                 <!-- ko if: visible() -->

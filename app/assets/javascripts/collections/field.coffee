@@ -2,7 +2,8 @@ onCollections ->
 
   # A Layer field
   class @Field
-    constructor: (data) ->
+    constructor: (data, layerId) ->
+      @layer_id = layerId
       @esCode = "#{data.id}"
       @code = data.code
       @name = data.name
