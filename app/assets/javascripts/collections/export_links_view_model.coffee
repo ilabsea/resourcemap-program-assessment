@@ -7,7 +7,7 @@ onCollections ->
 
     @exportInJSON: -> @export 'json'
 
-    @exportInKML: -> @export 'xml'
+    @exportInKML: -> @export 'kml'
 
     @exportInCSV: -> @export 'csv'
 
