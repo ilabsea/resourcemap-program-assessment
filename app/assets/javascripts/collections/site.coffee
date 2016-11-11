@@ -80,7 +80,7 @@ onCollections ->
         field.valueUIFor(value)
 
     customWidgetFields: =>
-      @fields().filter((f) -> f. custom_widgeted == true)
+      @fields().filter((f) -> f.custom_widgeted == true)
 
     findLocationLabelByCode: (field) =>
       for location in field.locations

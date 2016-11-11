@@ -30,11 +30,7 @@ onCollections ->
       @value = ko.observable()
       @value.subscribe =>
         if @skippedState() == false
-          # @setFieldFocus()
           @disableDependentSkipLogicField()
-        # if @kind in ["numeric", "calculation"]
-        #   if window.model.newOrEditSite()
-        #     window.model.newOrEditSite().prepareCalculatedField()
 
       @keyType = if @allowsDecimals() then 'decimal' else 'integer'
 
@@ -337,12 +333,11 @@ onCollections ->
         field.value(null)
         field_object = @get_dom_object(field)
         field.is_blocked_by(tmp)
-        # field_object.block({message: ""})
 
     get_dom_object: (field) =>
       switch field.kind
         when 'select_one'
-          # field.value("")
+          field.value('')
           field_id = field.kind + "-input-" + field.code
           field_object = $("#" + field_id).parent()
         when 'select_many'
@@ -370,7 +365,7 @@ onCollections ->
       field_object
 
     enableField: (field, by_field_id) =>
-      field.is_mandatory(field.originalIsMandatory)
+      field.is_mandatory(field.originalIsMandatory) if field.skippedState() == false
       field.skippedState(false)
       field_object = @get_dom_object(field)
       field.is_blocked_by.remove(by_field_id) if field.is_blocked_by().length > 0
