@@ -130,7 +130,7 @@ onCollections ->
           else
             $.handleAjaxError(data)
         catch error
-          $.handleAjaxError(data))
+      )
 
     fillPhotos: (collection) =>
       @photo = {}
