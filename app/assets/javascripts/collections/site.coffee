@@ -80,7 +80,7 @@ onCollections ->
         field.valueUIFor(value)
 
     customWidgetFields: =>
-      @fields().filter((f) -> f. custom_widgeted == true)
+      @fields().filter((f) -> f.custom_widgeted == true)
 
     findLocationLabelByCode: (field) =>
       for location in field.locations
@@ -111,6 +111,7 @@ onCollections ->
         data: {es_code: esCode, value: value},
         success: ((data) =>
           field.errorMessage("")
+          window.model.resetLayerErrorState()
           @propagateUpdatedAt(data.updated_at)
           window.model.updateSitesInfo()
           window.model.currentCollection().reloadSites()
@@ -121,11 +122,15 @@ onCollections ->
         try
           responseMessage = JSON.parse(data.responseText)
           if data.status == 422 && responseMessage && responseMessage.error_message
-            field.errorMessage(responseMessage.error_message)
+            fieldKey = Object.keys(responseMessage.error_message)
+            fieldError = @findFieldByEsCode(fieldKey[0])
+            fieldError.errorMessage(responseMessage.error_message[fieldKey[0]])
+            layerError = window.model.findLayerById(fieldError.layer_id)
+            layerError.error(true)
           else
             $.handleAjaxError(data)
         catch error
-          $.handleAjaxError(data))
+      )
 
     fillPhotos: (collection) =>
       @photo = {}

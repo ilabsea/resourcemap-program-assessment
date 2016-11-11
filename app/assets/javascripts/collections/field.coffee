@@ -2,7 +2,8 @@ onCollections ->
 
   # A Layer field
   class @Field
-    constructor: (data) ->
+    constructor: (data, layerId) ->
+      @layer_id = layerId
       @esCode = "#{data.id}"
       @code = data.code
       @name = data.name
@@ -28,12 +29,7 @@ onCollections ->
       @originalIsMandatory = data.is_mandatory
       @value = ko.observable()
       @value.subscribe =>
-        if @skippedState() == false
-          # @setFieldFocus()
-          @disableDependentSkipLogicField()
-        # if @kind in ["numeric", "calculation"]
-        #   if window.model.newOrEditSite()
-        #     window.model.newOrEditSite().prepareCalculatedField()
+        @disableDependentSkipLogicField()
 
       @keyType = if @allowsDecimals() then 'decimal' else 'integer'
 
@@ -192,7 +188,7 @@ onCollections ->
         else
           value = @value()
         noSkipField = false
-        if model.allFieldLogics().length > 0 && @skippedState() == false
+        if model.allFieldLogics().length > 0
           for field_logic in model.allFieldLogics()
             b = false
             if field_logic.disable_field_id? and @esCode == field_logic.field_id
@@ -327,7 +323,7 @@ onCollections ->
     disableField: (field, by_field_id) =>
       field.is_mandatory(false)
       field.skippedState(true)
-      # field.is_blocked_by([])
+      field.is_blocked_by([])
       unless field.is_mandatory()
         index = field.is_blocked_by().indexOf(by_field_id)
         if(index < 0 )
@@ -336,12 +332,11 @@ onCollections ->
         field.value(null)
         field_object = @get_dom_object(field)
         field.is_blocked_by(tmp)
-        # field_object.block({message: ""})
 
     get_dom_object: (field) =>
       switch field.kind
         when 'select_one'
-          # field.value("")
+          field.value('')
           field_id = field.kind + "-input-" + field.code
           field_object = $("#" + field_id).parent()
         when 'select_many'
@@ -369,7 +364,7 @@ onCollections ->
       field_object
 
     enableField: (field, by_field_id) =>
-      field.is_mandatory(field.originalIsMandatory)
+      field.is_mandatory(field.originalIsMandatory) if field.skippedState() == false
       field.skippedState(false)
       field_object = @get_dom_object(field)
       field.is_blocked_by.remove(by_field_id) if field.is_blocked_by().length > 0

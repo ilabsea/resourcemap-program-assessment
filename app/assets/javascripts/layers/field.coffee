@@ -8,6 +8,7 @@ onLayers ->
       @kind = ko.observable data?.kind
       @threshold_ids = data?.threshold_ids ? []
       @query_ids = data?.query_ids ? []
+      @report_query_ids = data?.report_query_ids ? []
 
       @editableCode = ko.observable(true)
       @deletable = ko.observable(true)
@@ -90,6 +91,7 @@ onLayers ->
       return unless @selecting
 
       if window.model.currentLayer() != @layer()
+        window.model.moveFieldCrossLayer(@, @layer())
         $("a[id='#{@name()}']").html("Move to layer '#{@layer().name()}' upon save")
       else
         $("a[id='#{@name()}']").html('Move to layer...')

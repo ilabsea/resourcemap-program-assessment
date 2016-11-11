@@ -104,7 +104,7 @@ class SitesController < ApplicationController
     if site_aggregator.save
       render json: site_aggregator.site, :status => 200, :layout => false
     else
-      error_message = site_aggregator.site.errors[:properties][0][params[:es_code]]
+      error_message = site_aggregator.site.errors.messages[:properties][0]
       render json: {:error_message => error_message}, status: :unprocessable_entity, :layout => false
     end
   end

@@ -90,3 +90,10 @@ onCollections ->
 
     findFieldByCode: (code) =>
       (field for field in window.model.editingSite().fields() when field.code == code)[0]
+
+    findLayerById: (id) =>
+      (layer for layer in window.model.editingSite().layers() when layer.id == id)[0]
+
+    resetLayerErrorState: =>
+      for layer in window.model.editingSite().layers()
+        layer.error(false)

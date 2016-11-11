@@ -165,7 +165,7 @@ onLayers ->
 
     editLayer: (layer) =>
       $.get "/collections/#{collectionId}/layers/#{layer.id()}.json", {}, (l) =>
-        @originalFields = $.map(layer.fields(), (x) -> new Field(layer, x.toJSON()))
+        @originalFields = $.map(l["fields"], (x) -> new Field(layer, x))
         if l["fields"]
           fields = ko.observableArray($.map(l["fields"], (x) => new Field(layer, x)))
           numeric_fields = ko.observableArray($.map(l["fields"], (f) => f if f.kind == 'numeric'))
@@ -206,6 +206,7 @@ onLayers ->
       else
         $.status.showNotice(window.t('javascripts.layers.successfully_created', {name: @currentLayer().name()}), 2000)
       @currentLayer().id(data.id)
+
       layersToReloadOrder = [@currentLayer()]
 
       i = 0
@@ -219,9 +220,11 @@ onLayers ->
         else
           field.layer().fields.push(field)
           layersToReloadOrder.push(field.layer())
+          field.layer().total(field.layer().total()+1)
           @currentLayer().fields.remove(field)
           # i does not change because we just removed an element
 
+      @currentLayer().total(@currentLayer().fields().length)
       @reloadOrder(layer) for layer in layersToReloadOrder
 
       @currentLayer(null)
@@ -237,7 +240,7 @@ onLayers ->
 
     deleteLayer: (layer) =>
       # if confirm("This layer is being used with #{layer.threshold_ids.length} alerts. The alert associated with this layer will also be deleted.")
-      if layer.threshold_ids.length == 0 && layer.query_ids.length == 0
+      if layer.threshold_ids.length == 0 && layer.query_ids.length == 0 && layer.report_query_ids.length == 0
         $.post "/collections/#{@collectionId}/layers/#{layer.id()}", {threshold_ids: layer.threshold_ids, _method: 'delete'}, =>
           idx = @layers().indexOf(layer)
           for nextLayer in @layers().slice(idx + 1)
@@ -252,6 +255,9 @@ onLayers ->
           $.status.showError("This layer is being used with #{layer.threshold_ids.length} alert(s), you are not allowed to delete", 2000)
         else if layer.query_ids.length > 0
           $.status.showError("This layer is being used with #{layer.query_ids.length} canned query(s), you are not allowed to delete", 2000)
+        else if layer.report_query_ids.length > 0
+          $.status.showError("This field is being used with #{layer.report_query_ids.length} report query(s), you are not allowed to delete", 2000)
+
 
     copyField: (field)=>
       name = "Copy " + field.name()
@@ -372,21 +378,31 @@ onLayers ->
     moveLayerUp: (layer) =>
       @moveLayerDown @layers()[layer.ord() - 2]
 
-    isFirstField: (layer, field) => field.ord() == 1
-    isLastField: (layer, field) => field.ord() == layer.fields().length
+    isFirstField: (layer, field) => field.ord() == layer.fields()[0].ord()
+    isLastField: (layer, field) => field.ord() == layer.lastFieldOrd
+
+    findFieldIndexByOrd: (ord) =>
+      for f,index in @currentLayer().fields()
+        if f.ord() == ord
+          return index
+      return -1
 
     moveFieldDown: (field) =>
-      nextField = @currentLayer().fields()[field.ord()]
-      field.ord(field.ord() + 1)
-      nextField.ord(nextField.ord() - 1)
-      @currentLayer().fields.sort((x, y) -> if x.ord() < y.ord() then -1 else 1)
+      index = @findFieldIndexByOrd(field.ord())
+      if index > -1
+        nextField = @currentLayer().fields()[index+1]
+        field.ord(field.ord() + 1)
+        nextField.ord(nextField.ord() - 1)
+        @currentLayer().fields.sort((x, y) -> if x.ord() < y.ord() then -1 else 1)
 
     moveFieldUp: (field) =>
-      @moveFieldDown @currentLayer().fields()[field.ord() - 2]
+      index = @findFieldIndexByOrd(field.ord())
+      if index > -1
+        @moveFieldDown @currentLayer().fields()[index-1]
 
     moveFieldCrossLayer: (field, destinationLayer) =>
-      lastFieldInDestinationLayer = destinationLayer.fields()[destinationLayer.fields().length - 1]
-      field.ord(lastFieldInDestinationLayer.ord() + 1)
+      field.ord(destinationLayer.lastFieldOrd + 1)
+      field.layer().lastFieldOrd = field.ord
 
     newField: (kind) =>
       if @currentField()
@@ -412,7 +428,7 @@ onLayers ->
         i += 1
 
     deleteField: (field) =>
-      if field.threshold_ids.length == 0 && field.query_ids.length == 0
+      if field.threshold_ids.length == 0 && field.query_ids.length == 0 && field.report_query_ids.length == 0
         idx = @currentLayer().fields().indexOf(field)
         nextField.ord(nextField.ord() - 1) for nextField in @currentLayer().fields().slice(idx + 1)
         @currentLayer().fields.remove(field)
@@ -427,6 +443,8 @@ onLayers ->
           $.status.showError("This field is being used with #{field.threshold_ids.length} alert(s), you are not allowed to delete", 2000)
         else if field.query_ids.length > 0
           $.status.showError("This field is being used with #{field.query_ids.length} canned query(s), you are not allowed to delete", 2000)
+        else if field.report_query_ids.length > 0
+          $.status.showError("This field is being used with #{field.report_query_ids.length} report query(s), you are not allowed to delete", 2000)
 
     newOptionKeyPress: (field, event) =>
       switch event.keyCode
