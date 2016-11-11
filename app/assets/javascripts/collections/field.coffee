@@ -29,8 +29,7 @@ onCollections ->
       @originalIsMandatory = data.is_mandatory
       @value = ko.observable()
       @value.subscribe =>
-        if @skippedState() == false
-          @disableDependentSkipLogicField()
+        @disableDependentSkipLogicField()
 
       @keyType = if @allowsDecimals() then 'decimal' else 'integer'
 
@@ -189,7 +188,7 @@ onCollections ->
         else
           value = @value()
         noSkipField = false
-        if model.allFieldLogics().length > 0 && @skippedState() == false
+        if model.allFieldLogics().length > 0
           for field_logic in model.allFieldLogics()
             b = false
             if field_logic.disable_field_id? and @esCode == field_logic.field_id
