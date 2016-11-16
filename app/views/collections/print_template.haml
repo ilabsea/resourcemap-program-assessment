@@ -10,15 +10,18 @@
     .smalltext{style: 'float;left'}
       .template_text
       -["Site Name", "Creator", "Lat", "Lng"].each do |elm|
-        %a.site-token{href:'#'}
+        %a.site-token{href:'#', style: 'margin-right: 2px'}
           [#{elm}]
+      -@fieldCodes.each do |code|
+        %a.site-token{href:'#', style: 'padding-right: 2px'}
+          {#{code}}
 
   %div.row
     %input{type: 'hidden', value: 'print', name: 'tab'}
     = f.text_area :print_template, class: "custom-tinymce"
   %div.row
     = f.check_box :is_published_template
-    = f.label :is_published_template, "Publish"
+    = f.label :is_published_template, "Anyone with the report's link can view the site with this template."
   %div.row
     = f.button 'Save', :class => 'white'
     = link_to 'Cancel', collections_path, :class=> 'grey'

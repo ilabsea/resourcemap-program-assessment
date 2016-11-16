@@ -393,6 +393,6 @@ class CollectionsController < ApplicationController
   end
 
   def print_template
-
+    @fieldCodes = collection.fields.map{|f| f.code}
   end
 end
