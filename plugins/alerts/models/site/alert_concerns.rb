@@ -16,7 +16,6 @@ module Site::AlertConcerns
         phone_numbers = notification_numbers alert
         emails = notification_emails alert
         message_notification = alert.message_notification.render_template_string(get_template_value_hash)
-
         # to be refactoring
         active_gateway = collection.active_gateway
         suggested_channel = active_gateway.nil?? Channel.default_nuntium_name : active_gateway.nuntium_channel_name

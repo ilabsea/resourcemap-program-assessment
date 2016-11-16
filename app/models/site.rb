@@ -75,6 +75,21 @@ class Site < ActiveRecord::Base
     props
   end
 
+  def properties_with_code_ref
+    fields = collection.fields.index_by(&:es_code)
+
+    props = {}
+    properties.each do |key, value|
+      field = fields[key]
+      if field
+        props[field.code] = field.human_value value
+      else
+        props[key] = value
+      end
+    end
+    props
+  end
+
   def self.add_created_user_id
     Site.transaction do
       Site.find_each(batch_size: 100) do |site|
