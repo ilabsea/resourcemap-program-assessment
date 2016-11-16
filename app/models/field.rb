@@ -153,6 +153,75 @@ class Field < ActiveRecord::Base
   def cache_for_read
   end
 
+  def support_skip_logic?
+    kind == "numeric" or kind == "select_one" or kind == "select_many" or kind == "yes_no"
+  end
+
+  def migrate_skip_logic
+    if is_enable_field_logic
+      config["field_logics"] = config["field_logics"] || []
+      id_field_logic = 0;
+      config["field_logics"].each do |field_logic|
+        if field_logic["field_id"] and field_logic["field_id"] != "null" and field_logic["field_id"] != ["0", "null"]
+          from_id = [ id.to_i, field_logic["field_id"].to_i].min
+          to_id = [ id.to_i, field_logic["field_id"].to_i].max
+          collection.layers.each do |l|
+            fs = l.fields
+            start = false
+            fs.each do |f|
+              if f.id == from_id
+                start = true
+              elsif f.id.to_i == to_id
+                start = false
+                break;
+              elsif start
+                f.is_enable_field_logic = true
+                f.config = f.config || {}
+                f.config["field_logics"] = f.config["field_logics"] || []
+                f.config["field_logics_tmp"] = f.config["field_logics_tmp"] || []
+                if kind == "select_many"
+                  list_codes = []
+                  if field_logic["condition_type"] == "all"
+                    field_logic["selected_options"].each do |opt, index|
+                      config["options"].each do |c|
+                        if opt["value"] == c["id"]
+                          list_codes.push(c["code"])
+                        end
+                      end
+                    end
+
+                    f.config["field_logics_tmp"].push({"id" => id_field_logic, "field_id" => [id], "condition_type" => "=", "value" => list_codes.join(",")})
+                  elsif field_logic["condition_type"] == "any"
+                    field_logic["selected_options"].each do |opt, index|
+                      config["options"].each do |c|
+                        if opt["value"] == c["id"]
+                          f.config["field_logics_tmp"].push({"id" => id_field_logic, "field_id" => [id], "condition_type" => "=" , "value" => c["code"].to_s})
+                        end
+                      end
+                    end
+                  end
+                elsif kind == "select_one"
+                  config["options"].each do |c|
+                    if field_logic["value"] == c["id"]
+                      f.config["field_logics_tmp"].push({"id" => id_field_logic, "field_id" => [id], "condition_type" => "=", "value" => c["code"]})
+                    end
+                  end
+                elsif kind == "yes_no"
+                  f.config["field_logics_tmp"].push({"id" => id_field_logic, "field_id" => [id], "condition_type" => "=" , "value" => field_logic["value"]})
+                else
+                  f.config["field_logics_tmp"].push({"id" => id_field_logic, "field_id" => [id], "condition_type" => field_logic["condition_type"] , "value" => field_logic["value"]})
+                end   
+                f.save!
+              end
+            end
+          end
+        end
+        id_field_logic = id_field_logic + 1
+      end
+      save!
+    end
+  end
+
   private
 
   def add_option_to_options(options, option)
