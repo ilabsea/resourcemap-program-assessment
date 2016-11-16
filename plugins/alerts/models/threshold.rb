@@ -35,7 +35,7 @@ class Threshold < ActiveRecord::Base
   end
 
   def self.get_thresholds_by_user(user)
-    Threshold.where(:collection_id => Collection.joins(:memberships).where("memberships.user_id = :user_id", :user_id => user.id))   
+    Threshold.where(:collection_id => Collection.joins(:memberships).where("memberships.user_id = :user_id", :user_id => user.id))
   end
 
   def self.get_thresholds_with_public_collection
@@ -51,7 +51,32 @@ class Threshold < ActiveRecord::Base
         end
         threshold.save
       end
-    end    
+    end
+  end
+
+  def self.migrate_message_notification
+    count = Threshold.count
+    i = 0
+
+    Threshold.transaction do
+      Threshold.find_each(batch_size: 100) do |threshold|
+        i += 1
+        print "\r Threshold: #{threshold.id}... #{(i*100)/count} %"
+
+        msg = threshold.message_notification
+        if msg && msg != ""
+          result = msg.gsub(/\[[\w\s()]+\]/) do |template|
+            fieldName = template[1..template.length-2]
+            if fieldName != "Site Name"
+              field = threshold.collection.fields.find_by_name(fieldName)
+            end
+            field ? "[#{field.code}]" : template
+          end
+          threshold.message_notification = result
+          threshold.save
+        end
+      end
+    end
   end
 
 end
