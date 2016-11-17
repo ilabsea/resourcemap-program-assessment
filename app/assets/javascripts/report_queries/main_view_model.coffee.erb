@@ -59,6 +59,7 @@ onReportQueries ->
     editReportQuery: (reportQuery) =>
       @clearUnsavedReportQuery(@currentReportQuery())  if @originalReportQuery
       @originalReportQuery = new ReportQuery(reportQuery.toJSON())
+      @originalReportQuery.report_query_templates = reportQuery.report_query_templates
       @newReportQuery(null)
       @cancelEditingReportQuery()
       @currentReportQuery reportQuery
