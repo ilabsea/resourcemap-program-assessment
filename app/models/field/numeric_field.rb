@@ -47,7 +47,7 @@ class Field::NumericField < Field
   end
 
   def decode(value)
-    if allow_decimals? 
+    if allow_decimals?
       raise allows_decimals_message unless value.real?
       Float(value)
     else
@@ -78,14 +78,14 @@ class Field::NumericField < Field
         raise "Invalid value, value must be in the range of (#{config['range']['minimum']}-#{config['range']['maximum']})"
       end
     end
-    
+
     if config['range']['minimum']
       raise "Invalid value, value must be greater than or equal #{config['range']['minimum']}" unless value.to_f >= config['range']['minimum']
     end
 
     if config['range']['maximum']
       raise "Invalid value, value must be less than or equal #{config['range']['maximum']}" unless value.to_f <= config['range']['maximum']
-    end   
+    end
   end
 
   def validate_custom_validation(value, site)
@@ -94,7 +94,26 @@ class Field::NumericField < Field
       reference_field = Field.where("id=?", cond["field_id"][0])[0]
       raise "Field set custom validate that reference to missing field." unless reference_field
       compare_field_name = reference_field.name
-      raise "Invalid value, value must be #{operator_to_word(cond["condition_type"])} field #{compare_field_name}" unless value.to_i.send(cond["condition_type"], compare_value.to_i)
+      unless compare(value.to_f, compare_value.to_f, cond["condition_type"])
+        raise "Invalid value, value must be #{operator_to_word(cond["condition_type"])} field #{compare_field_name}"
+      end
+    end
+  end
+
+  def compare(value1, value2, operator)
+    case operator
+    when '='
+      value1 == value2
+    when ">"
+      value1 > value2
+    when ">="
+      value1 >= value2
+    when "<"
+      value1 < value2
+    when "<="
+      value1 <= value2
+    else
+      false
     end
   end
 
