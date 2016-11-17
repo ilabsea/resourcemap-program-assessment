@@ -14,3 +14,4 @@ onCollections ->
           f.init()
           f.refresh_skip()
           f.bindWithCustomWidgetedField()
+        window.model.newOrEditSite()?.prepareCalculatedField()
