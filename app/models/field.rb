@@ -210,7 +210,7 @@ class Field < ActiveRecord::Base
                   f.config["field_logics_tmp"].push({"id" => id_field_logic, "field_id" => [id], "condition_type" => "=" , "value" => field_logic["value"]})
                 else
                   f.config["field_logics_tmp"].push({"id" => id_field_logic, "field_id" => [id], "condition_type" => field_logic["condition_type"] , "value" => field_logic["value"]})
-                end   
+                end
                 f.save!
               end
             end

@@ -98,6 +98,8 @@ onLayers ->
           return false
         return false
 
+      @isShowingCopyForm = ko.observable(false)
+
 
     addCustomWidgetedFieldItem: =>
       window.currentField = @currentField().impl()
@@ -162,8 +164,10 @@ onLayers ->
       @layers.push(layer)
       @currentLayer(layer)
       layer.hasFocus(true)
+      @isShowingCopyForm(false)
 
     editLayer: (layer) =>
+      @isShowingCopyForm(false)
       $.get "/collections/#{collectionId}/layers/#{layer.id()}.json", {}, (l) =>
         @originalFields = $.map(l["fields"], (x) -> new Field(layer, x))
         if l["fields"]
@@ -565,7 +569,6 @@ onLayers ->
       field.editing(false)
 
     cancelFieldLogic: (field) =>
-      # if @currentField().kind() == 'select_one' || @currentField().kind() == 'numeric'
       field_logic = @newFieldLogic()
       if field_logic.id()?
         field.value(field_logic.value())
@@ -573,15 +576,6 @@ onLayers ->
         field.condition_type(field_logic.condition_type())
       else
         @isAddNew(false)
-
-      # if @currentField().kind() == 'select_many'
-      #   for f in @currentField().impl().selected_field_logics()
-      #     if f.editing() == true
-      #       f.selected_options(@currentFieldLogic.selected_options())
-      #       f.field_id(@currentFieldLogic.field_id())
-      #       f.condition_type(@currentFieldLogic.condition_type())
-      #       f.editing(false)
-      #   @currentFieldLogic = null
 
       field.editing(false)
     updateFieldLogic: (field) =>
@@ -676,7 +670,7 @@ onLayers ->
             if f.kind() == "yes_no"
               if parseInt(fieldLogicValue) != 1 and parseInt(fieldLogicValue) != 0 and fieldLogicValue.toUpperCase() != 'Y' and fieldLogicValue.toUpperCase() != 'YES' and fieldLogicValue.toUpperCase() != 'N' and fieldLogicValue.toUpperCase() != 'NO'
                 error["status_failed"] = true
-                error["detail"] = "Field logic value for Yes_No support only 1, 0, Yes, Y ,No ,and N."           
+                error["detail"] = "Field logic value for Yes_No support only 1, 0, Yes, Y ,No ,and N."
             if f.kind() == "select_one"
               status = false
               codeList = []
@@ -708,3 +702,15 @@ onLayers ->
         )
       )
       return error
+
+    showCopyLayerForm: =>
+      @isShowingCopyForm(true)
+
+    copyLayerToNewCollection: =>
+      newCollectionName= $('#newCollectionName').val()
+      collectionId = @collectionId
+      if newCollectionName != ''
+        $.get "/collections/#{collectionId}/copy", {new_collection_name: newCollectionName}, (data) ->
+          $.status.showNotice("This collection's layers are successfully copied to '#{newCollectionName}'", 2000)
+      else
+        $.status.showError("Please input the new collection's name", 2000)

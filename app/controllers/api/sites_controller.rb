@@ -26,7 +26,6 @@ class Api::SitesController < ApplicationController
     site.lat = params[:lat]
     site.lng = params[:lng]
     site.name = params[:name]
-    # properties = prepare_site_property params
     if params[:properties]
       properties = params[:properties]
       site.properties = properties
@@ -50,7 +49,6 @@ class Api::SitesController < ApplicationController
 
   def create
     site_params = {}
-    # properties = prepare_site_property params
     site_params.merge!("name" => params[:name])
     site_params.merge!("lat" => params[:lat])
     site_params.merge!("lng" => params[:lng])
@@ -67,7 +65,7 @@ class Api::SitesController < ApplicationController
     else
       render :text => "Error",:status => 500
     end
-    
+
   end
 
   def prepare_site_property params

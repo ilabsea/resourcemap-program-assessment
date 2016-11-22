@@ -395,4 +395,9 @@ class CollectionsController < ApplicationController
   def print_template
     @fieldCodes = collection.fields.map{|f| f.code}
   end
+
+  def copy
+    collection.copy(current_user.id, params["new_collection_name"])
+    head :ok
+  end
 end

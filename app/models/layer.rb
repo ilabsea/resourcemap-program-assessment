@@ -22,6 +22,7 @@ class Layer < ActiveRecord::Base
   accepts_nested_attributes_for :fields, :allow_destroy => true
 
   validates_presence_of :ord
+
   attr_accessor :user
   # I'd move this code to a concern, but it works differntly (the fields don't
   # have an id). Must probably be a bug in Active Record.

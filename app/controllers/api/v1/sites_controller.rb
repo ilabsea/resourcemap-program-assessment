@@ -23,17 +23,6 @@ module Api::V1
       search = new_search
       search.id(site.id)
       @result = search.api_opt_results[0]
-      #parse date from formate %d%m%Y to %m%d%Y for the phone_gap data old version
-      # if !params[:rm_wfp_version]
-      #   fields = collection.fields.index_by &:code
-      #
-      #   site_item_json(@result)[:properties].each_pair do |es_code, value|
-      #     if fields[es_code].kind == 'date'
-      #       date = Time.strptime(value, '%d/%m/%Y')
-      #       data[:properties][es_code] = "#{date.strftime('%0m/%d/%Y')}"
-      #     end
-      #   end
-      # end
 
       respond_to do |format|
         format.json { render json:  site_item_json(@result)}

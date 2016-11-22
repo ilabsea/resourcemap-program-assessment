@@ -23,6 +23,17 @@
     %h2= t('views.layers.title')
     %p= t('views.layers.description')
 
+    /ko if: isShowingCopyForm
+    .box.grey.w60
+      %p{style: 'color:black'} Copy layers to new collection
+      %input.w30#newCollectionName{placeholder: "input new collection's name", style: 'height:25px'}
+      %button.white{ko(click: :copyLayerToNewCollection)} Copy
+    //ko
+
+    /ko ifnot: isShowingCopyForm
+    %div.right{style:'padding-right:340px'}
+      %button{ko(click: :showCopyLayerForm)} Copy layers to new collection
+    //ko
     - if !current_user_snapshot.at_present?
       = render '/current_snapshot_message'
 

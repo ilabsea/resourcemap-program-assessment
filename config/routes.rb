@@ -38,6 +38,7 @@ ResourceMap::Application.routes.draw do
 
     member do
       get 'print_template'
+      get 'copy'
     end
 
     resources :report_queries
