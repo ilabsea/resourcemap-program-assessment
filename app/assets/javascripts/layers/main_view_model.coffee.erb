@@ -279,6 +279,16 @@ onLayers ->
       model.currentLayer().fields.splice((index+1),0,tmpField)
 
     copyLayer: (layer)=>
+      if layer.fields().length < parseInt(layer.total())
+        # get all the fields before copy
+        $.get "/collections/#{collectionId}/layers/#{layer.id()}.json", {}, (l) =>
+          f = ko.observableArray($.map(l["fields"], (x) => new Field(layer, x)))
+          layer.fields(f())
+          @copyLayerCallback(layer)
+      else
+        @copyLayerCallback(layer)
+
+    copyLayerCallback: (layer)=>
       layerJSON = layer.toJSON()
       layerJSON["fields"] = layerJSON["fields_attributes"]
       delete layerJSON["fields_attributes"]
