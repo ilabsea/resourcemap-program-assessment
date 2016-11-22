@@ -47,17 +47,6 @@ onLayers ->
         fields = []
         for layer in @layers()
           fields = fields.concat(layer.fields())
-
-        if fields.length > 0
-          fields.sort (first, second)->
-            firstItem = first.name()?.toLowerCase()
-            secondItem = second.name()?.toLowerCase()
-            if firstItem < secondItem
-              return -1
-            else if firstItem == secondItem
-              return 0
-            else
-              return 1
         return fields
 
       @customWidgetedFields = ko.computed =>
