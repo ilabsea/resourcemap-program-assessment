@@ -153,7 +153,7 @@ onCollections ->
        )
 
     refresh_skip: =>
-      if(@is_blocked_by())
+      if(@is_blocked_by().length > 0)
         tmp = @is_blocked_by()
         @is_blocked_by(tmp)
 

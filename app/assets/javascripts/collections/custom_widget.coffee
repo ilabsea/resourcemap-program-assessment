@@ -18,6 +18,7 @@ onCollections ->
               <span data-bind="text: value" id="custom-widget-#{@field.code}" class="custom"></span>
             """
       else if @field.kind == 'select_one'
+        @field.value(parseInt(@field.value()))
         node = """
               <span data-bind="text: valueUI" id="custom-widget-#{@field.code}" class="custom"></span>
             """
