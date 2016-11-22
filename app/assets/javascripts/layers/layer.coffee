@@ -49,7 +49,7 @@ onLayers ->
 
     expandAllField: (layer)=>
       $.get "/collections/#{collectionId}/layers/#{layer.id()}.json", {}, (l) =>
-        f = ko.observableArray($.map(l["fields"], (x) => new Field(self, x)))
+        f = ko.observableArray($.map(l["fields"], (x) => new Field(@, x)))
         layer.fields(f())
         layer.total(null)
 
