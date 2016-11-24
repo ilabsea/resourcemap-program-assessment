@@ -38,13 +38,6 @@
 
   //ko
 
-  /ko if: kind() == 'custom_widget'
-  = ko_check_box_tag :readonly_custom_widgeted, css: {error: :codeError}
-  %span Read-only widget
-  %p.smalltext
-    The field will be uneditable
-  //ko
-
   /ko if: kind() == 'numeric' || kind() == 'custom_aggregator' || kind() == 'select_one'
   = ko_check_box_tag :custom_widgeted, css: {error: :codeError}
   %span
