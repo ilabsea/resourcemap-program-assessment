@@ -33,7 +33,7 @@ class ReportQueryGroupByBuilder
         exp[facet_tag] = facet_term_stats_by_field(value_field)
       else
         facet_filter_values.each do |facet_filter_value|
-          facet_tag = facet_filter_value.values.join("_") + "_#{value_field}" # // KampongCham_2015_aggrefieldx
+          facet_tag = facet_filter_value.values.join(ReportQuerySearchResult::DELIMITER) + "#{ReportQuerySearchResult::DELIMITER}#{value_field}" # // KampongCham_2015_aggrefieldx
           exp[facet_tag] = facet_term_stats_by_field(value_field, facet_filter_value)
         end
       end
