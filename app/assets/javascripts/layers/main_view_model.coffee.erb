@@ -50,7 +50,7 @@ onLayers ->
         return fields
 
       @customWidgetedFields = ko.computed =>
-        @fieldList().filter (f) => f.custom_widgeted
+        @fieldList().filter (f) => f.custom_widgeted()
 
       @selectedCustomWidgetField = ko.observable()
       @selectedCollectionCustomAggregator = ko.observable()

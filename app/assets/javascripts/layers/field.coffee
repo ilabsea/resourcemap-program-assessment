@@ -23,7 +23,7 @@ onLayers ->
       @metadata = data?.metadata
       @is_mandatory = data?.is_mandatory
       @is_display_field = data?.is_display_field
-      @custom_widgeted = data?.custom_widgeted
+      @custom_widgeted = ko.observable data?.custom_widgeted ? false
       @readonly_custom_widgeted = data?.readonly_custom_widgeted
 
       @kind_titleize = ko.computed =>
@@ -51,7 +51,11 @@ onLayers ->
       @code.subscribe =>
         unless @editableCode()
           @changeCodeInCalculationField()
-
+      @custom_widgeted.subscribe =>
+        if @custom_widgeted() == true
+          @is_enable_field_logic(false)
+          @config.field_logics = []
+          @impl().field_logics([])
 
     changeCodeInCalculationField: =>
       $.map(model.layers(), (x, index) =>
@@ -126,7 +130,7 @@ onLayers ->
         is_enable_field_logic: @is_enable_field_logic()
         is_enable_custom_validation: @is_enable_custom_validation()
         is_criteria: @is_criteria
-        custom_widgeted: @custom_widgeted
+        custom_widgeted: @custom_widgeted()
         readonly_custom_widgeted: @readonly_custom_widgeted
       @impl().toJSON(json)
       json
@@ -403,7 +407,7 @@ onLayers ->
       @aggregatorTypeList = ['SUM']
       @selectedAggregatorType = ko.observable(field.config?.selected_aggregator_type)
       @selectedCustomWidgetFieldList = ko.computed =>
-        @selectedCollectionFieldList().filter ((field) -> field.custom_widgeted)
+        @selectedCollectionFieldList().filter ((field) -> field.custom_widgeted())
 
       @selectedCustomWidgetField = ko.observable()
       # data get stored in hash format, not in array's
