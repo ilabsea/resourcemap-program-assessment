@@ -349,7 +349,7 @@ onLayers ->
       return @bufferNewLayer()
 
     generateUniqueLayerName: (name, i)=>
-      append = " copy_" + i
+      append = "_copy_" + i
       newName = name + append
       if @existedLayerName(newName)
         i = i + 1
