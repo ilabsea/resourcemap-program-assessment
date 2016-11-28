@@ -235,9 +235,8 @@ onCollections ->
         $('a#previewimg').fancybox()
         window.model.updateSitesInfo()
         @reloadMapSites()
-        # @rebindCustomWidgetView()
 
-      callbackError = () =>
+      callbackError = (error) =>
         @hideProgress()
 
       @editingSite().copyPropertiesFromCollection(@currentCollection())

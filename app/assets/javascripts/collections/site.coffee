@@ -237,7 +237,7 @@ onCollections ->
             $.status.showNotice window.t('javascripts.collections.index.site_created', {name: @name()}), 2000
             callback(data) if callback && typeof(callback) == 'function' )
           error: ((request, status, error) =>
-            callbackError())
+            callbackError(request["responseText"]))
           global: false
         }).fail((data) =>
           try
