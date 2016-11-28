@@ -37,14 +37,22 @@
       //ko
       //ko
 
+      /ko if: $root.layers().length == 0
+      = t('views.plugins.alerts.form.please')
+      %strong= t('views.plugins.alerts.form.add_layers')
+      = t('views.plugins.alerts.form.first_before_managing_your_query')
+      //ko
+
       /ko with: newReportQuery
       .box.w90
         = render 'report_queries/new_report_query'
       //ko
 
+      /ko if: $root.layers().length > 0
       /ko ifnot: isEditing
       .box.grey.add{ ko(click: '$root.addReportQuery')}
         = t('views.report_queries.add_new_query')
         %button.cadd.right{title: 'Add new report query'}
         %br{clear: :all}
+      //ko
       //ko

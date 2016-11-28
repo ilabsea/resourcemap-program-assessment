@@ -65,6 +65,7 @@ kh:
           please: "សូម"
           add_layers: "បន្ថែមស្រទាប់"
           first_before_managing_your_thresholds: "មុនពេលគ្រប់គ្រងកម្រិតចាប់ផ្ដើមលក្ខខណ្ឌ"
+          first_before_managing_your_report_query: "មុនពេលគ្រប់គ្រងកម្រិតចាប់ផ្ដើមលក្ខខណ្ឌ"
           add_alert: "បន្ថែមការជូនដំណឹង"
           sample_phone_number: "85512345678"
           compare_to: "ប្រៀបធៀបទៅ"
