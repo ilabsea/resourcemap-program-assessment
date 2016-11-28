@@ -20,7 +20,7 @@ class ReportQuery < ActiveRecord::Base
   serialize :aggregate_fields, Array
 
   validates :name, presence: true
-  validates :name, uniqueness: true
+  validates_uniqueness_of :name, :scope => :collection_id
 
   belongs_to :collection
   has_many :report_query_templates, dependent: :restrict
