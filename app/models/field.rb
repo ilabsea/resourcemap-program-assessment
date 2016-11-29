@@ -165,9 +165,9 @@ class Field < ActiveRecord::Base
         if field_logic["field_id"] and field_logic["field_id"] != "null" and field_logic["field_id"] != ["0", "null"]
           from_id = [ id.to_i, field_logic["field_id"].to_i].min
           to_id = [ id.to_i, field_logic["field_id"].to_i].max
+          start = false
           collection.layers.each do |l|
             fs = l.fields
-            start = false
             fs.each do |f|
               if f.id == from_id
                 start = true
