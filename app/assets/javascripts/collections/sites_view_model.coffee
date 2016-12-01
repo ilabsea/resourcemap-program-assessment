@@ -128,6 +128,7 @@ onCollections ->
             @hideLoadingField()
             @loadBreadCrumb()
             @rebindCustomWidgetView()
+            @allFieldLogics([])
             for field in @editingSite().fields()
               if field.field_logics
                 for f in field.field_logics

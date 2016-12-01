@@ -153,7 +153,7 @@ onCollections ->
        )
 
     refresh_skip: =>
-      if(@is_blocked_by().length > 0)
+      if(@is_blocked_by())
         tmp = @is_blocked_by()
         @is_blocked_by(tmp)
 
@@ -191,7 +191,7 @@ onCollections ->
         if model.allFieldLogics().length > 0
           for field_logic in model.allFieldLogics()
             b = false
-            if field_logic.disable_field_id? and @esCode == field_logic.field_id
+            if field_logic.disable_field_id? and @esCode == field_logic.field_id.toString()
               fieldSearch = @getFieldFromAllFields(field_logic.disable_field_id)
               fieldValue = parseFloat(value)
               fieldLogicValue = parseFloat(field_logic.value)
@@ -200,19 +200,19 @@ onCollections ->
                 if fieldValue < field_logic.value
                   @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
                 else
-                  @enableSkippedField(fieldSearch[0].esCode, field_logic.field_id)
+                  @enableField(fieldSearch[0], field_logic.field_id)
 
               if field_logic.condition_type == '<='
                 if fieldValue <= field_logic.value
                   @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
                 else
-                  @enableSkippedField(fieldSearch[0].esCode, field_logic.field_id)
+                  @enableField(fieldSearch[0], field_logic.field_id)
 
               if field_logic.condition_type == '='
-                #Equal we need to do more becase it can be with different type of field
+                #Equal we need to do more because it can be with different type of field
                 match = false
                 if @kind == 'yes_no'
-                  fieldLogicValue = field_logic.value
+                  fieldLogicValue = field_logic.value.toString()
                   if parseInt(fieldLogicValue) == 1 or fieldLogicValue.toUpperCase() == 'Y' or fieldLogicValue.toUpperCase() == 'YES'
                     fieldLogicValue = 1
                   else
@@ -221,33 +221,32 @@ onCollections ->
                 else if @kind == 'numeric'
                   match = (fieldValue == fieldLogicValue)
                 else if @kind == 'select_one'
-                  match = (value == field_logic.value)
+                  match = (value.toString() == field_logic.value.toString())
                 else if @kind == 'select_many'
                   array_logic_value = field_logic.value.split(",")
                   match = @compareTwoArray(value, array_logic_value)
-
                 if match
                   @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
                 else
-                  @enableSkippedField(fieldSearch[0].esCode, field_logic.field_id)
+                  @enableField(fieldSearch[0], field_logic.field_id)
 
               if field_logic.condition_type == '>'
                 if fieldValue > field_logic.value
                   @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
                 else
-                  @enableSkippedField(fieldSearch[0].esCode, field_logic.field_id)
+                  @enableField(fieldSearch[0], field_logic.field_id)
 
               if field_logic.condition_type == '>='
                 if fieldValue >= field_logic.value
                   @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
                 else
-                  @enableSkippedField(fieldSearch[0].esCode, field_logic.field_id)
+                  @enableField(fieldSearch[0], field_logic.field_id)
 
               if field_logic.condition_type == '!='
                 if fieldValue != field_logic.value
                   @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
                 else
-                  @enableSkippedField(fieldSearch[0].esCode, field_logic.field_id)
+                  @enableField(fieldSearch[0], field_logic.field_id)
 
     compareTwoArray: (arr1, arr2) =>
       status = true
@@ -323,14 +322,16 @@ onCollections ->
     disableField: (field, by_field_id) =>
       field.is_mandatory(false)
       field.skippedState(true)
-      field.is_blocked_by([])
+      #field.is_blocked_by([])
       unless field.is_mandatory()
+        if field.is_blocked_by() == undefined
+          field.is_blocked_by([])
         index = field.is_blocked_by().indexOf(by_field_id)
         if(index < 0 )
           tmp = field.is_blocked_by()
           tmp.push(by_field_id) if by_field_id != undefined
         field.value(null)
-        field_object = @get_dom_object(field)
+        #field_object = @get_dom_object(field)
         field.is_blocked_by(tmp)
 
     get_dom_object: (field) =>
@@ -366,8 +367,7 @@ onCollections ->
     enableField: (field, by_field_id) =>
       field.is_mandatory(field.originalIsMandatory) if field.skippedState() == false
       field.skippedState(false)
-      field_object = @get_dom_object(field)
-      field.is_blocked_by.remove(by_field_id) if field.is_blocked_by().length > 0
+      field.is_blocked_by.remove(by_field_id) if (field.is_blocked_by() != undefined and field.is_blocked_by().length > 0)
 
     setValueFromSite: (value) =>
       if @kind == 'date' && $.trim(value).length > 0
