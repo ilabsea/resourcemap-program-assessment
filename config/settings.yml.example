@@ -1,5 +1,6 @@
 mobile_id: on
 host: localhost:3000
+local_host: http://localhost:3000
 full_host: http://localhost:3000
 number_of_attempt_failed: 5
 default_mail_sender: "test@example.com"
