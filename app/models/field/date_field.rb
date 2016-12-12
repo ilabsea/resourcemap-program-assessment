@@ -41,7 +41,7 @@ class Field::DateField < Field
     validated_value[:date_to] = iso_date_to if valid_value?(iso_date_to)
     validated_value
 	end
-  
+
   def decode(m_d_y_value)
     begin
       m_d_y_value.present? ? convert_to_iso8601_string(m_d_y_value) : nil
@@ -69,7 +69,7 @@ class Field::DateField < Field
       time = Time.iso8601(value)
       iso_value = format_date_iso_string(time)
       raise "invalid" unless iso_value == value
-    rescue 
+    rescue
       raise invalid_field_message()
     end
     true
@@ -77,6 +77,19 @@ class Field::DateField < Field
 
   def parse_date(d_m_y_value)
     Time.strptime d_m_y_value, '%d/%m/%Y'
+  end
+
+  #convert date from ‘yy/mm/dd’, ‘mm/dd/yy’ => ‘dd/mm/yy’ 
+  def parse date_value 
+    begin
+      #date_value == 2016/12/31
+      date_value = date_value.to_date.strftime('%d/%m/%Y') 
+    rescue 
+      #date_value == 12/31/2016
+      date = Date.strptime(date_value, '%m/%d/%Y') 
+      date_value = date.strftime('%d/%m/%Y')
+    end
+    return date_value
   end
 
 	private

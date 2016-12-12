@@ -129,6 +129,53 @@ ActiveRecord::Schema.define(:version => 20161031100243) do
     t.text     "kinds"
   end
 
+  create_table "instedd_telemetry_counters", :force => true do |t|
+    t.integer "period_id"
+    t.string  "bucket"
+    t.text    "key_attributes"
+    t.integer "count",               :default => 0
+    t.string  "key_attributes_hash"
+  end
+
+  add_index "instedd_telemetry_counters", ["bucket", "key_attributes_hash", "period_id"], :name => "instedd_telemetry_counters_unique_fields", :unique => true
+
+  create_table "instedd_telemetry_periods", :force => true do |t|
+    t.datetime "beginning"
+    t.datetime "end"
+    t.datetime "stats_sent_at"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+    t.string   "lock_owner"
+    t.datetime "lock_expiration"
+  end
+
+  create_table "instedd_telemetry_set_occurrences", :force => true do |t|
+    t.integer "period_id"
+    t.string  "bucket"
+    t.text    "key_attributes"
+    t.string  "element"
+    t.string  "key_attributes_hash"
+  end
+
+  add_index "instedd_telemetry_set_occurrences", ["bucket", "key_attributes_hash", "element", "period_id"], :name => "instedd_telemetry_set_occurrences_unique_fields", :unique => true
+
+  create_table "instedd_telemetry_settings", :force => true do |t|
+    t.string "key"
+    t.string "value"
+  end
+
+  add_index "instedd_telemetry_settings", ["key"], :name => "index_instedd_telemetry_settings_on_key", :unique => true
+
+  create_table "instedd_telemetry_timespans", :force => true do |t|
+    t.string   "bucket"
+    t.text     "key_attributes"
+    t.datetime "since"
+    t.datetime "until"
+    t.string   "key_attributes_hash"
+  end
+
+  add_index "instedd_telemetry_timespans", ["bucket", "key_attributes_hash"], :name => "instedd_telemetry_timespans_unique_fields", :unique => true
+
   create_table "languages", :force => true do |t|
     t.string   "name"
     t.string   "code"
@@ -290,8 +337,8 @@ ActiveRecord::Schema.define(:version => 20161031100243) do
     t.integer  "site_id"
     t.string   "uuid"
     t.integer  "user_id"
-    t.datetime "start_entry_date",                                              :default => '2016-05-24 02:28:03'
-    t.datetime "end_entry_date",                                                :default => '2016-05-24 02:28:03'
+    t.datetime "start_entry_date",                                              :default => '2016-06-27 04:16:24'
+    t.datetime "end_entry_date",                                                :default => '2016-06-27 04:16:24'
   end
 
   add_index "site_histories", ["site_id"], :name => "index_site_histories_on_site_id"
@@ -321,8 +368,8 @@ ActiveRecord::Schema.define(:version => 20161031100243) do
     t.string   "uuid"
     t.string   "device_id"
     t.string   "external_id"
-    t.datetime "start_entry_date",                                              :default => '2016-05-24 02:28:03'
-    t.datetime "end_entry_date",                                                :default => '2016-05-24 02:28:03'
+    t.datetime "start_entry_date",                                              :default => '2016-06-27 04:16:23'
+    t.datetime "end_entry_date",                                                :default => '2016-06-27 04:16:23'
     t.integer  "user_id"
   end
 

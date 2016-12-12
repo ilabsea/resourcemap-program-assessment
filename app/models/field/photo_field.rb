@@ -22,6 +22,7 @@
 #  is_criteria              :boolean          default(FALSE)
 #  readonly_custom_widgeted :boolean          default(FALSE)
 #
+require 'open-uri'
 
 class Field::PhotoField < Field
   def value_type_description
@@ -30,6 +31,13 @@ class Field::PhotoField < Field
 
   def value_hint
     "Path to photo."
+  end
+
+  def parse value
+    photo_ext = value.split('.').pop()
+    file_name = "#{DateTime.now.to_i}_#{self.id}." + photo_ext
+    file_content = Base64.encode64(open(value) { |io| io.read })
+    return [ file_name, file_content ] 
   end
 
   # params: value is 2-element array

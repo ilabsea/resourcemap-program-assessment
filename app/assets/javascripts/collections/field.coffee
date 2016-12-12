@@ -639,11 +639,12 @@ onCollections ->
 
     fileSelected: (data, event) =>
       fileUploads = $("#" + data.code)[0].files
-      if fileUploads.length >0
+      if fileUploads.length > 0
 
         photoExt = fileUploads[0].name.split('.').pop()
-
+        
         value = (new Date()).getTime() + "." + photoExt
+
         @value(value)
 
         reader = new FileReader()

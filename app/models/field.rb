@@ -153,6 +153,10 @@ class Field < ActiveRecord::Base
   def cache_for_read
   end
 
+  def parse value
+    value
+  end
+
   def support_skip_logic?
     kind == "numeric" or kind == "select_one" or kind == "select_many" or kind == "yes_no"
   end

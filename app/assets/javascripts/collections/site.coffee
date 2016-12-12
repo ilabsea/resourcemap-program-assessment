@@ -223,6 +223,7 @@ onCollections ->
       data = {site: JSON.stringify json}
       if JSON.stringify(@photos) != "{}"
         data["fileUpload"] = @photos
+
       $.ajax({
           type: "POST",
           url: "/collections/#{@collection.id}/sites",

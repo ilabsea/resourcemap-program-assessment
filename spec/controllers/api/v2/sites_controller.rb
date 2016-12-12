@@ -78,17 +78,27 @@ describe Api::V2::SitesController do
         config: {'options' => [{'id' => 1, 'code' => 'one', 'label' => 'One'}, {'id' => 2,'code' => 'two', 'label' => 'Two'}]} )}
 
       context "valid value" do
-        [1, '1', 2, '2'].each do |value|
+        [1, '1', 'one'].each do |value|
           it {
             post_create_site({"#{select_one.id}" => value})
             expect(response.status).to eq(200)
             json = JSON.parse response.body
-            expect(json["properties"]["#{select_one.id}"]).to eq(value.to_i)
+            expect(json["properties"]["#{select_one.id}"]).to eq(1)
           }
         end
+
+        [2, '2', 'two'].each do |value|
+          it {
+            post_create_site({"#{select_one.id}" => value})
+            expect(response.status).to eq(200)
+            json = JSON.parse response.body
+            expect(json["properties"]["#{select_one.id}"]).to eq(2)
+          }
+        end
+
       end
       context "invalid value" do
-        ['One', 'one'].each do |value|
+        ['One', 'Two', 'unknown'].each do |value|
           it {
             post_create_site({"#{select_one.id}" => value})
             expect(response.status).to eq(422)
@@ -102,26 +112,42 @@ describe Api::V2::SitesController do
         config: {'options' => [{'id' => 1, 'code' => 'one', 'label' => 'One'},
                                 {'id' => 2, 'code' => 'two', 'label' => 'Two'}]} )}
       context "valid value" do
+
+        [[1,2], ['1', '2'], ['1',2], [1, '1'], ['one', 'two']].each do |value|
+          it{
+            post_create_site({"#{select_many.id}" => value})
+            expect(response.status).to eq(200)
+          }
+        end
+
         [[1,2], ['1', '2'], ['1',2]].each do |value|
           it {
             post_create_site({"#{select_many.id}" => value})
-            expect(response.status).to eq(200)
             json = JSON.parse response.body
             expect(json["properties"]["#{select_many.id}"]).to eq([1, 2])
           }
         end
-        [1, '1'].each do |value|
+
+        [['one', 'two']].each do |value|
           it {
             post_create_site({"#{select_many.id}" => value})
-            expect(response.status).to eq(200)
+            json = JSON.parse response.body
+            expect(json["properties"]["#{select_many.id}"]).to eq([1, 2])
+          }
+        end
+
+        [['one', 'invalid2']].each do |value|
+          it {
+            post_create_site({"#{select_many.id}" => value})
             json = JSON.parse response.body
             expect(json["properties"]["#{select_many.id}"]).to eq([1])
           }
         end
+
       end
 
       context "invalid value" do
-        [['one', 'two'], [1, 'one']].each do |value|
+        [['invalid1', 'invalid2'], ['invalid']].each do |value|
           it {
             post_create_site({"#{select_many.id}" => value})
             expect(response.status).to eq(422)
@@ -156,19 +182,12 @@ describe Api::V2::SitesController do
     context "with date field" do
       let(:date) { layer.date_fields.make code: 'date' }
       context "valid value" do
-        it {
-          post_create_site({"#{date.id}" => '27/10/2016'})
-          expect(response.status).to eq(200)
-          json = JSON.parse response.body
-          expect(json["properties"]["#{date.id}"]).to eq("2016-10-27T00:00:00Z")
-        }
-      end
-
-      context "invalid value" do
-        ['10/27/2016', '27-10-2016'].each do |value|
+        ['10/27/2016', '27/10/2016', '2016/10/27', '27-10-2016'].each do |value|
           it {
             post_create_site({"#{date.id}" => value})
-            expect(response.status).to eq(422)
+            expect(response.status).to eq(200)
+            json = JSON.parse response.body
+            expect(json["properties"]["#{date.id}"]).to eq("2016-10-27T00:00:00Z")
           }
         end
       end
@@ -177,7 +196,7 @@ describe Api::V2::SitesController do
     context "with site field" do
       let(:site_ref) { layer.site_fields.make code: 'site' }
       it {
-        post_create_site({"#{site_ref.id}" => site1.id})
+        post_create_site({"#{site_ref.id}" => site1.id_with_prefix})
         expect(response.status).to eq(200)
         json = JSON.parse response.body
         expect(json["properties"]["#{site_ref.id}"]).to eq(site1.id)
@@ -211,6 +230,18 @@ describe Api::V2::SitesController do
         expect(response.status).to eq(200)
         json = JSON.parse response.body
         expect(json["properties"]["#{near_by.id}"]).to eq(200)
+      }
+    end
+
+    context "with photo field" do
+      let!(:photo) { layer.photo_fields.make :code => 'photo' }
+      it {
+
+        post_create_site({"#{photo.id}" => 'http://www.mind-coder.com/example.jpg'})
+        p Site.last
+        expect(response.status).to eq(200)
+        json = JSON.parse response.body
+        expect(json["properties"]["#{photo.id}"]).to include("_#{photo.id}.jpg")
       }
     end
 

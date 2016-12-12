@@ -179,7 +179,8 @@ class Site < ActiveRecord::Base
         next if value == self.properties[field.es_code]
 
         user.authorize! :update_site_property, field, message: "Not authorized to update site property with code #{es_code_or_code}"
-        self.properties[field.es_code] = field.decode_from_ui(value)
+      
+        self.properties[field.es_code] = field.decode_from_ui(value)  
       end
     end
 
@@ -276,6 +277,17 @@ class Site < ActiveRecord::Base
     end
 
     return valid
+  end
+
+  def self.migrate_photo_field_to_full_url
+    Site.all.each do |s|
+      s.collection.fields.where(:kind => 'photo').each do |f|
+        if s.properties["#{f.id}"]
+          s.properties["#{f.id}"] = Settings.full_host + "/photo_field/" + s.properties["#{f.id}"]
+        end
+      end
+      p s.save!
+    end
   end
 
 end
