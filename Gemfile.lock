@@ -1,4 +1,12 @@
 GIT
+  remote: git://github.com/PerfectlyNormal/tinymce-rails-imageupload.git
+  revision: d0b9a69bd25ac8ae4508cb291c5dd7df7efc5f50
+  specs:
+    tinymce-rails-imageupload (4.0.17.beta)
+      railties (>= 3.2, < 6)
+      tinymce-rails (~> 4.0)
+
+GIT
   remote: https://github.com/manastech/dist.git
   revision: 44e5deadb0d9f63919fd68de5fce4ffdae2728a7
   specs:
@@ -409,6 +417,7 @@ DEPENDENCIES
   shoulda-matchers
   therubyracer
   tinymce-rails
+  tinymce-rails-imageupload!
   tire
   uglifier (>= 1.0.3)
   uuidtools
