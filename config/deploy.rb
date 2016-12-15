@@ -47,6 +47,10 @@ namespace :deploy do
     run "ln -nfs #{shared_path}/print #{release_path}/public/print"
   end
 
+  task :symlink_tinymce_photo, :roles => :app do
+    run "ln -nfs #{shared_path}/tinymce_photo #{release_path}/public/tinymce_photo"
+  end
+
   task :generate_revision_and_version do
     run "cd #{current_path} && rake deploy:generate_revision_and_version RAILS_ENV=production"
   end
