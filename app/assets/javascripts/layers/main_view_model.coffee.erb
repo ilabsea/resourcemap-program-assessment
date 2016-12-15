@@ -288,9 +288,11 @@ onLayers ->
 
       @bufferNewLayer().name(layer.name())
       @bufferNewLayer().total(layer.total())
-      @bufferNewLayer(@append_copy())
+      data = @append_copy()
+      @bufferNewLayer(data["layer"])
       @bufferNewLayer().ord(@layers().length + 1)
       @bufferNewLayer().id(undefined)
+      @bufferNewLayer().modifyDependentFieldCustomWidget(data["changed_fields"])
       @savingLayer(true)
       json = {layer: @bufferNewLayer().toJSON()}
       $.post "/collections/#{@collectionId}/layers.json", json, @saveCopyLayerCallback
@@ -338,15 +340,19 @@ onLayers ->
       @layers.push(@bufferNewLayer())
 
     append_copy: () =>
+      track_field = ko.observableArray()
       appendName = @generateUniqueLayerName(@bufferNewLayer().name(), 0)
       layerName = @bufferNewLayer().name() + appendName
       @bufferNewLayer().name(layerName)
       $.map(@bufferNewLayer().fields(), (f) =>
+        old_code = f.code()
         f.name(f.name() + appendName)
         f.code(f.code() + appendName)
         f.id(undefined)
+        if(f.kind() == "numeric" or f.kind() == "select_one")
+          track_field.push({"old_field" : old_code, "new_field" : f.code()})
       )
-      return @bufferNewLayer()
+      return {"layer": @bufferNewLayer(), "changed_fields" : track_field()}
 
     generateUniqueLayerName: (name, i)=>
       append = "_copy_" + i

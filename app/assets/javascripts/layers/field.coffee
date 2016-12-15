@@ -54,7 +54,8 @@ onLayers ->
       @custom_widgeted.subscribe =>
         if @custom_widgeted() == true
           @is_enable_field_logic(false)
-          @config.field_logics = []
+          if(@config and @config.field_logics)
+            @config.field_logics = []
           @impl().field_logics([])
 
     changeCodeInCalculationField: =>
@@ -390,7 +391,7 @@ onLayers ->
       super(field)
       @widgetContent = ko.observable field?.config?.widget_content
     toJSON: (json) =>
-      json.config = { widget_content: @widgetContent()}
+      json.config = { widget_content: @widgetContent(),field_logics: $.map(@field_logics(), (x) ->  x.toJSON())}
 
   class @Field_custom_aggregator extends @FieldImpl
     constructor: (field) ->
