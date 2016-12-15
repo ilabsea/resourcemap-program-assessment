@@ -9,7 +9,7 @@ class SitePdf
   end
 
   def generate_pdf
-    url = Settings.full_host + Rails.application.routes_url_helpers.share_collection_site_path(collection_id: @options['collection_id'],
+    url = Settings.local_host + Rails.application.routes_url_helpers.share_collection_site_path(collection_id: @options['collection_id'],
                                                                                                id: @options["uuid"])
     pdf_store_file = SitePdf.pdf_store_file(@options)
     command = "wkhtmltopdf #{url} #{pdf_store_file}"

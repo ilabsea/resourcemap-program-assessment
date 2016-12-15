@@ -31,6 +31,7 @@ gem "password_strength"
 gem "ruby-recaptcha"
 gem 'i18n-coffee'
 gem 'tinymce-rails'
+gem 'tinymce-rails-imageupload', github: 'PerfectlyNormal/tinymce-rails-imageupload'
 
 gem 'rails_serve_static_assets'
 

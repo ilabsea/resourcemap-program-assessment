@@ -20,6 +20,8 @@ ResourceMap::Application.routes.draw do
   get 'view_photo' => 'sites#view_photo'
   get 'collections/:collection_id/my_membership' => 'collections#my_membership'
 
+  post '/tinymce_assets' => 'tinymce_assets#create'
+
   resources :site_pdfs, only: [ :create, :show]
   resources :report_query_template_pdfs
   resources :repeats

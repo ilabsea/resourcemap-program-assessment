@@ -157,6 +157,36 @@ class Field < ActiveRecord::Base
     kind == "numeric" or kind == "select_one" or kind == "select_many" or kind == "yes_no"
   end
 
+  def reinitial_config_from_original_collection collection
+    if self.config["field_logics"] && self.config["field_logics"].length > 0
+      self.config["field_logics"] = reinitial_skip_logic_from_original_collection(collection)
+    end
+
+    if self.config["field_validations"] && self.config["field_validations"].length > 0
+      self.config["field_validations"] = reinitial_custom_validation_from_original_collection(collection)
+    end
+
+    return self
+  end
+
+  def reinitial_skip_logic_from_original_collection collection
+    self.config["field_logics"].each do |field_logic|
+      original_ref_field = collection.fields.find(field_logic["field_id"])
+      target_ref_field = self.collection.fields.find_by_code(original_ref_field.code) if original_ref_field
+      field_logic["field_id"] = "#{target_ref_field.id}" if target_ref_field
+    end
+    return self.config["field_logics"]
+  end
+
+  def reinitial_custom_validation_from_original_collection collection
+    self.config["field_validations"].each do |key, item|
+      original_ref_field = collection.fields.find(item["field_id"][0]) if item["field_id"].length > 0
+      target_ref_field = self.collection.fields.find_by_code(original_ref_field.code) if original_ref_field
+      item["field_id"] = ["#{target_ref_field.id}"] if target_ref_field
+    end
+    return self.config["field_validations"]
+  end
+
   def migrate_skip_logic
     if is_enable_field_logic
       config["field_logics"] = config["field_logics"] || []

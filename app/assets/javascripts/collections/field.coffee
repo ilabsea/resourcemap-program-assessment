@@ -153,7 +153,7 @@ onCollections ->
        )
 
     refresh_skip: =>
-      if(@is_blocked_by())
+      if(@is_blocked_by().length > 0)
         tmp = @is_blocked_by()
         @is_blocked_by(tmp)
 
@@ -322,7 +322,7 @@ onCollections ->
     disableField: (field, by_field_id) =>
       field.is_mandatory(false)
       field.skippedState(true)
-      #field.is_blocked_by([])
+      field.is_blocked_by([])
       unless field.is_mandatory()
         if field.is_blocked_by() == undefined
           field.is_blocked_by([])

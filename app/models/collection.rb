@@ -368,7 +368,7 @@ class Collection < ActiveRecord::Base
         new_field = field.dup
         new_field.layer = new_layer
         new_field.collection_id = new_collection_id
-
+        new_field.reinitial_config_from_original_collection self
         new_field.save
       end
 
