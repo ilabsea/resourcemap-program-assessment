@@ -10,26 +10,35 @@
   <% end %>
 </div>
 
-<table class="GralTable tableview">
-  <tr>
-    <th>Name</th>
-    <th>Report Query</th>
-    <th width="100">Action</th>
-  </tr>
-<% @report_query_templates.each do |template| %>
-  <tr>
-    <td><%= template.name %></td>
-    <td><%= template.report_query.name %></td>
-    <td>
-      <% if current_user_snapshot.at_present? && collection_admin? %>
-      <%=link_to '', edit_collection_report_query_template_path(collection, template), class: 'button fedit' %>
-      <%=link_to '', collection_report_query_template_path(collection, template),
-                          method: :delete, confirm: 'Are you sure you want to delete?', class: 'button fdelete' %>
-      <% end %>
-      <%=link_to '', collection_report_query_template_path(collection, template.uuid), class: 'button fpreview' %>
 
-    </td>
-  </tr>
-<%end%>
-
-</table>
+<%= form_tag report_report_query_template_pdfs_path, method: 'post', id: 'form-create-report' do |f| %>
+  <table class="GralTable tableview">
+    <tr>
+      <th width="10"></th>
+      <th>Name</th>
+      <th>Report Query</th>
+      <th width="100">Action</th>
+    </tr>
+    <% @report_query_templates.each do |template| %>
+      <tr>
+        <td>
+          <%= check_box_tag 'template_uuids[]', template.uuid %>
+        </td>
+        <td><%= template.name %></td>
+        <td><%= template.report_query.name %></td>
+        <td>
+          <% if current_user_snapshot.at_present? && collection_admin? %>
+          <%=link_to '', edit_collection_report_query_template_path(collection, template), class: 'button fedit' %>
+          <%=link_to '', collection_report_query_template_path(collection, template),
+                              method: :delete, confirm: 'Are you sure you want to delete?', class: 'button fdelete' %>
+          <% end %>
+          <%=link_to '', collection_report_query_template_path(collection, template.uuid), class: 'button fpreview' %>
+        </td>
+      </tr>
+    <%end%>
+  </table>
+  <%= hidden_field_tag 'collection_id', collection.id %>
+  <div style='text-align: right' >
+    <button type="submit" id='btn-generate-pdf'> Generate Report </button>
+  </div>
+<% end %>

@@ -11,6 +11,12 @@ class ReportQueryTemplatePdfsController < ApplicationController
     end
   end
 
+  def report
+    options = {collection_id: params[:collection_id], template_uuids: params[:template_uuids]}
+    ReportQueryTemplatePdf.new(params).generate_pdf_from_multiple_templates
+    download_report(options)
+  end
+
   def show
     download_pdf
   end
@@ -27,6 +33,13 @@ class ReportQueryTemplatePdfsController < ApplicationController
     else
       raise CanCan::AccessDenied
     end
+  end
+
+  def download_report(options)
+    pdf_report_file = ReportQueryTemplatePdf.pdf_report_path(options)
+    send_file pdf_report_file, type: 'application/pdf',
+                              disposition: 'attachment',
+                              filename: pdf_report_file
   end
 
   def report_query_template

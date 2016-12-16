@@ -1,0 +1,2 @@
+<% render_result = render('result', template: @template ) %>
+<%= @template.translate_template(render_result).html_safe %>

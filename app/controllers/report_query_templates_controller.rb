@@ -18,7 +18,7 @@
 
 class ReportQueryTemplatesController < ApplicationController
   before_filter :authenticate_user!, except: [:share]
-  before_filter :authenticate_collection_admin!, :except => [:index, :show]
+  before_filter :authenticate_collection_admin!, :except => [:index, :show, :share]
   before_filter :render_breadcrumb, :only => [:index, :new, :edit, :show]
 
   def render_breadcrumb
@@ -74,7 +74,7 @@ class ReportQueryTemplatesController < ApplicationController
 
   def share
     @template = collection.report_query_templates.find_by_uuid(params[:id])
-    render :show, layout: "print_template"
+    render layout: "print_template"
   end
 
 end

@@ -23,7 +23,11 @@ ResourceMap::Application.routes.draw do
   post '/tinymce_assets' => 'tinymce_assets#create'
 
   resources :site_pdfs, only: [ :create, :show]
-  resources :report_query_template_pdfs
+  resources :report_query_template_pdfs do
+    collection do
+      post 'report'
+    end
+  end
   resources :repeats
   resources :collections do
     post  :send_new_member_sms

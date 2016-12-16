@@ -23,6 +23,20 @@ class ReportQueryTemplatePdf
     system command
   end
 
+  def generate_pdf_from_multiple_templates
+    source_files = ""
+    @options[:template_uuids].each do |uuid|
+      url = Settings.full_host + Rails.application.routes_url_helpers.share_collection_report_query_template_path(collection_id: @options[:collection_id],
+                                                                                                 id: uuid, pdf: 1)
+
+      source_files = source_files + " " + url
+    end
+    destination_file = ReportQueryTemplatePdf.pdf_report_path(@options)
+    command = "wkhtmltopdf #{source_files} #{destination_file}"
+    Rails.logger.debug {command}
+    system command
+  end
+
   def generate_pdf
     url = Settings.full_host + Rails.application.routes_url_helpers.share_collection_report_query_template_path(collection_id: @options[:collection_id],
                                                                                                id: @options[:uuid], pdf: 1)
@@ -42,6 +56,11 @@ class ReportQueryTemplatePdf
 
   def self.pdf_store_file(options)
     filename = "#{options[:name].parameterize}-#{options[:uuid]}.pdf"
+    File.join(Rails.root, "public", "print", filename)
+  end
+
+  def self.pdf_report_path(options)
+    filename = "collection_#{options[:collection_id]}_report.pdf"
     File.join(Rails.root, "public", "print", filename)
   end
 end
