@@ -158,11 +158,11 @@ class Field < ActiveRecord::Base
   end
 
   def reinitial_config_from_original_collection collection
-    if self.config["field_logics"] && self.config["field_logics"].length > 0
+    if self.config && self.config["field_logics"] && self.config["field_logics"].length > 0
       self.config["field_logics"] = reinitial_skip_logic_from_original_collection(collection)
     end
 
-    if self.config["field_validations"] && self.config["field_validations"].length > 0
+    if self.config && self.config["field_validations"] && self.config["field_validations"].length > 0
       self.config["field_validations"] = reinitial_custom_validation_from_original_collection(collection)
     end
 
