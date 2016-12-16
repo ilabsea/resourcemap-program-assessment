@@ -41,7 +41,8 @@ module Api::V2
       start = site.id
       stop = Site.last.id
       sites = Site.where(:id => start..stop)
-      render :json => {:sites => sites}
+      sites.delete_at(0)
+      render :json => {:sites => sites} 
     end
 
     def histories
