@@ -53,6 +53,22 @@ onLayers ->
         layer.fields(f())
         layer.total(null)
 
+    modifyDependentFieldCustomWidget: (replace_fields) =>
+      $.map(@fields(), (field) =>
+        if field.kind() == "custom_widget"
+          $.map(replace_fields, (item) =>
+            field.config.widget_content = @replaceAll(field.config.widget_content, "{" + item["old_field"] + "}", "{" + item["new_field"] + "}")
+            field.impl().widgetContent(field.config.widget_content)
+
+          )
+      )
+
+    replaceAll: (string, find, replace) =>
+      return string.replace(new RegExp(@escapeRegExp(find), 'g'), replace);
+
+    escapeRegExp: (string) =>
+      return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+
     toJSON: =>
       id: @id()
       name: @name()
