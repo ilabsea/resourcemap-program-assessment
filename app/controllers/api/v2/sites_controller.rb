@@ -37,6 +37,12 @@ module Api::V2
       end
     end
 
+    def feed
+      start = site.id
+      stop = Site.last.id
+      sites = Site.where(:id => start..stop)
+      render :json => {:sites => sites}
+    end
 
     def histories
       histories = site.histories.includes(:user).select('site_histories.*, users.email').references(:user)

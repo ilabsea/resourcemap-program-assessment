@@ -221,6 +221,9 @@ ResourceMap::Application.routes.draw do
       end
 
       resources :sites, only: [:show, :destroy, :update] do
+        collection do
+          get 'feed'
+        end
         member do
           post :update_property
           post :partial_update
