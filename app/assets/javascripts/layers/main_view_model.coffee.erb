@@ -712,10 +712,23 @@ onLayers ->
       @isShowingCopyForm(true)
 
     copyLayerToNewCollection: =>
-      newCollectionName= $('#newCollectionName').val()
+      newCollectionName= $('#newCollectionName').val().trim()
       collectionId = @collectionId
       if newCollectionName != ''
-        $.get "/collections/#{collectionId}/copy", {new_collection_name: newCollectionName}, (data) ->
-          $.status.showNotice("This collection's layers are successfully copied to '#{newCollectionName}'", 2000)
+        @progressCopyCollection()
+        $.get "/collections/#{collectionId}/copy", {new_collection_name: newCollectionName}, (data) =>
+          @successCopyCollection(data)
       else
-        $.status.showError("Please input the new collection's name", 2000)
+        $('#copy_error_message').text("Please input the new collection's name")
+
+    progressCopyCollection: ->
+      $('#copy_progress').show()
+      $('#form_copy').hide()
+      $('#browse_copy_collection').hide()
+
+    successCopyCollection: (data) =>
+      $('#copy_progress').hide()
+      $('#form_copy').hide()
+      $('#success_copy_notice_message').text("This collection's layers are successfully copied to collection '#{data["name"]}'")
+      $("#btn_browse_collection").prop("href", "/collections?collection_id=#{data["id"]}")
+      $('#browse_copy_collection').show()

@@ -397,7 +397,7 @@ class CollectionsController < ApplicationController
   end
 
   def copy
-    collection.copy(current_user.id, params["new_collection_name"])
-    head :ok
+    new_collection = collection.copy(current_user.id, params["new_collection_name"])
+    render json: new_collection
   end
 end

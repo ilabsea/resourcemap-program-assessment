@@ -25,9 +25,21 @@
 
     /ko if: isShowingCopyForm
     .box.grey.w60
-      %p{style: 'color:black'} Copy layers to new collection
-      %input.w30#newCollectionName{placeholder: "input new collection's name", style: 'height:25px'}
-      %button.white{ko(click: :copyLayerToNewCollection)} Copy
+      %span Copy layers to new collection
+
+      %div#copy_progress{style: 'padding-top: 30px; display:none'}
+        %img{src: '/images/progress_bar.gif', style: 'position: absolute; top: 0; bottom: 0;margin: auto 0px; width: 20px'}
+        %span#copy_notice_message{style: 'color: #3b89bc'} Coping ...
+
+      %div#form_copy{style: 'padding-top: 5px;'}
+        %p#copy_error_message{style: 'color: red;'}
+        %input.w30#newCollectionName{placeholder: "input new collection's name"}
+        %button{ko(click: :copyLayerToNewCollection)} Copy
+      %div#browse_copy_collection{style: 'padding-top: 10px; display:none'}
+        %span#success_copy_notice_message{style: 'color: #3b89bc'}
+        %br
+        %br
+        = link_to 'Browse copied collection', collections_path, id: 'btn_browse_collection', :class => "button grey" , :style => "margin: auto;"
     //ko
 
     /ko ifnot: isShowingCopyForm
