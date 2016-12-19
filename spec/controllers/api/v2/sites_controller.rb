@@ -6,8 +6,25 @@ describe Api::V2::SitesController do
   let!(:collection) { user.create_collection(Collection.make_unsaved) }
   let!(:layer) { collection.layers.make }
   let!(:site1) { collection.sites.make }
+  let!(:site2) { collection.sites.make }
+  let!(:site3) { collection.sites.make }
 
   before(:each) { sign_in user }
+
+  describe "GET sites" do
+    before(:each) do
+      user = 'iLab'
+      pw = '1c4989610bce6c4879c01bb65a45ad43'
+      request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(user,pw)
+    end
+
+    it "should return sites bigger than offset site id " do
+      get :feed, format: 'json', offset_id: site2.id
+      response.should be_success
+      json = JSON.parse response.body
+      json["sites"].length.should eq(1)
+    end
+  end
 
   describe "Create sites" do
     before(:each) do
@@ -238,7 +255,6 @@ describe Api::V2::SitesController do
       it {
 
         post_create_site({"#{photo.id}" => 'http://www.mind-coder.com/example.jpg'})
-        p Site.last
         expect(response.status).to eq(200)
         json = JSON.parse response.body
         expect(json["properties"]["#{photo.id}"]).to include("_#{photo.id}.jpg")

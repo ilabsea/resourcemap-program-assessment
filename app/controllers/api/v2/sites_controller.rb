@@ -4,9 +4,9 @@ module Api::V2
     include Api::FieldHelper
 
     before_filter :authenticate_api_user!
-    before_filter :authenticate_site_user!, except: [:create]
+    before_filter :authenticate_site_user!, except: [:create, :feed]
 
-    expose(:site) { Site.find(params[:id]) }
+    expose(:site) { Site.find(params[:id])}
     expose(:collection) { site.collection if site.present? }
 
     def create
@@ -38,10 +38,8 @@ module Api::V2
     end
 
     def feed
-      start = site.id
-      stop = Site.last.id
-      sites = Site.where(:id => start..stop)
-      sites.delete_at(0)
+      sites = Site.where("id > ?", params[:offset_id].to_i)
+      
       render :json => {:sites => sites} 
     end
 
