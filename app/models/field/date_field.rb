@@ -79,17 +79,20 @@ class Field::DateField < Field
     Time.strptime d_m_y_value, '%d/%m/%Y'
   end
 
-  #convert date from ‘yy/mm/dd’, ‘mm/dd/yy’ => ‘dd/mm/yy’ 
+  #convert date from 'yyyy/mm/dd’, ‘mm/dd/yyyy’, 'yyyy-mm-dd', 'mm-dd-yyyy' => ‘dd/mm/yyyy’ 
   def parse date_value 
-    begin
-      #date_value == 2016/12/31
-      date_value = date_value.to_date.strftime('%d/%m/%Y') 
-    rescue 
-      #date_value == 12/31/2016
-      date = Date.strptime(date_value, '%m/%d/%Y') 
-      date_value = date.strftime('%d/%m/%Y')
+    accepted_format = ['%Y/%m/%d', '%m/%d/%Y', '%d/%m/%Y', '%Y-%m-%d', '%m-%d-%Y']
+
+    date = nil
+    accepted_format.each do |format|
+      begin
+        date = Date.strptime(date_value, format)
+      rescue
+        next
+      end
     end
-    return date_value
+
+    date.strftime('%d/%m/%Y') if date
   end
 
 	private
