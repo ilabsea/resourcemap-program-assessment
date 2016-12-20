@@ -22,7 +22,7 @@ describe Api::V2::SitesController do
       get :feed, format: 'json', offset_id: site2.id, id: collection.id
       response.should be_success
       json = JSON.parse response.body
-      json["sites"].length.should eq(1)
+      json["sites"].length.should eq(2)
     end
   end
 

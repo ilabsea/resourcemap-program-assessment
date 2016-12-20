@@ -39,9 +39,9 @@ module Api::V2
 
     def feed
       collection = Collection.find(params[:id])
-      sites = collection.sites.where("id > ?", params[:offset_id].to_i)
+      sites = collection.sites.where("id >= ?", params[:offset_id].to_i)
       
-      render :json => {:sites => sites} 
+      render :json => {:sites => sites}
     end
 
     def histories
