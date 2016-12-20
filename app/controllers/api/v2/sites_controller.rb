@@ -38,7 +38,8 @@ module Api::V2
     end
 
     def feed
-      sites = Site.where("id > ?", params[:offset_id].to_i)
+      collection = Collection.find(params[:id])
+      sites = collection.sites.where("id > ?", params[:offset_id].to_i)
       
       render :json => {:sites => sites} 
     end

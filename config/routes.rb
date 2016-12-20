@@ -217,13 +217,11 @@ ResourceMap::Application.routes.draw do
           post 'sites', to: 'sites#create'
           post 'update_sites', to: 'collections#bulk_update'
           get 'sites', to: 'sites#index'
+          get 'sites/feed', to: 'sites#feed'
         end
       end
 
       resources :sites, only: [:show, :destroy, :update] do
-        collection do
-          get 'feed'
-        end
         member do
           post :update_property
           post :partial_update
