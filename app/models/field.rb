@@ -171,6 +171,7 @@ class Field < ActiveRecord::Base
 
   def reinitial_skip_logic_from_original_collection collection
     self.config["field_logics"].each do |field_logic|
+      next if !field_logic["field_id"] && field_logic["field_id"] == ""
       original_ref_field = collection.fields.find(field_logic["field_id"])
       target_ref_field = self.collection.fields.find_by_code(original_ref_field.code) if original_ref_field
       field_logic["field_id"] = "#{target_ref_field.id}" if target_ref_field
@@ -180,6 +181,7 @@ class Field < ActiveRecord::Base
 
   def reinitial_custom_validation_from_original_collection collection
     self.config["field_validations"].each do |key, item|
+      next if !item["field_id"][0] && item["field_id"][0] == ""
       original_ref_field = collection.fields.find(item["field_id"][0]) if item["field_id"].length > 0
       target_ref_field = self.collection.fields.find_by_code(original_ref_field.code) if original_ref_field
       item["field_id"] = ["#{target_ref_field.id}"] if target_ref_field
