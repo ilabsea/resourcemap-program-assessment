@@ -22,7 +22,7 @@
     <% @report_query_templates.each do |template| %>
       <tr>
         <td>
-          <%= check_box_tag 'template_uuids[]', template.uuid %>
+          <%= check_box_tag 'template_uuids[]', template.uuid, false, class: 'templateList' %>
         </td>
         <td><%= template.name %></td>
         <td><%= template.report_query.name %></td>
@@ -39,6 +39,6 @@
   </table>
   <%= hidden_field_tag 'collection_id', collection.id %>
   <div style='text-align: right' >
-    <button type="submit" id='btn-generate-pdf'> Generate Report </button>
+    <button type="button" id='btn-generate-report'> Generate Report </button>
   </div>
 <% end %>

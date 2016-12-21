@@ -12,6 +12,7 @@ class ReportQueryTemplatePdfsController < ApplicationController
   end
 
   def report
+    return if !params[:template_uuids] || params[:template_uuids].length == 0
     options = {collection_id: params[:collection_id], template_uuids: params[:template_uuids]}
     ReportQueryTemplatePdf.new(params).generate_pdf_from_multiple_templates
     download_report(options)
