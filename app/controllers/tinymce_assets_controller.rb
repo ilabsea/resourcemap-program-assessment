@@ -8,7 +8,7 @@ class TinymceAssetsController < ApplicationController
 
     render json: {
       image: {
-        url: "#{Settings.local_host}/tinymce_photo/#{file_name}"
+        url: "#{Settings.full_host}/tinymce_photo/#{file_name}"
       }
     }, content_type: "text/html"
 
