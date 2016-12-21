@@ -221,7 +221,7 @@ onCollections ->
                 else if @kind == 'numeric'
                   match = (fieldValue == fieldLogicValue)
                 else if @kind == 'select_one'
-                  match = (value.toString() == field_logic.value.toString())
+                  match = (value?.toString() == field_logic.value?.toString())
                 else if @kind == 'select_many'
                   array_logic_value = field_logic.value.split(",")
                   match = @compareTwoArray(value, array_logic_value)
