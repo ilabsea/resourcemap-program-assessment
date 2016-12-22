@@ -34,10 +34,13 @@ class Field::PhotoField < Field
   end
 
   def parse value
-    photo_ext = value.split('.').pop()
-    file_name = "#{DateTime.now.to_i}_#{self.id}." + photo_ext
-    file_content = Base64.encode64(open(value) { |io| io.read })
-    return [ file_name, file_content ] 
+    if value
+      photo_ext = value.split('.').pop()
+      file_name = "#{DateTime.now.to_i}_#{self.id}." + photo_ext
+      file_content = Base64.encode64(open(value) { |io| io.read })
+      return [ file_name, file_content ]
+    end
+    return value
   end
 
   # params: value is 2-element array
