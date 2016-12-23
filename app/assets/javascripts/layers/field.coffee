@@ -42,6 +42,7 @@ onLayers ->
       @widgetMappingerror = ko.observable()
       @nameError = ko.computed => if @hasName() then null else "the field #{@fieldErrorDescription()} is missing a Name"
       @codeError = ko.computed =>
+        if !@validCode() then return "the field #{@fieldErrorDescription()} has invalid code"
         if !@hasCode() then return "the field #{@fieldErrorDescription()} is missing a Code"
         if (@code() in ['lat', 'long', 'name', 'resmap-id', 'last updated']) then return "the field #{@fieldErrorDescription()} code is reserved"
         null
@@ -88,6 +89,9 @@ onLayers ->
     hasName: => $.trim(@name()).length > 0
 
     hasCode: => $.trim(@code()).length > 0
+
+    validCode: =>
+      if @code()?.match(/[^A-Za-z1-9_]/) then return false else return true
 
     selectingLayerClick: =>
       @switchMoveToLayerElements true
