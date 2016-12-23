@@ -125,7 +125,8 @@
                          title: 'Add another option'}
 
     %textarea{"data-bind" => "tinymce: impl().widgetContent", class: 'tinymce'}
-
+    %br
+    %span.error{ko(text: :widgetMappingerror)}
 
   //ko
 

@@ -39,6 +39,7 @@ onLayers ->
       @impl = ko.observable eval("new Field_#{@kind()}(this)")
       @kind.subscribe => @impl eval("new Field_#{@kind()}(this)")
 
+      @widgetMappingerror = ko.observable()
       @nameError = ko.computed => if @hasName() then null else "the field #{@fieldErrorDescription()} is missing a Name"
       @codeError = ko.computed =>
         if !@hasCode() then return "the field #{@fieldErrorDescription()} is missing a Code"
@@ -421,9 +422,10 @@ onLayers ->
         return "the field must have the aggregator field list" if @aggregatedFieldList().length == 0
 
     findFieldByCollectionId: (collectionId) =>
-      return @selectedCollectionFieldList([]) if !collectionId
+      return @selectedCollectionFieldList([]) if !collectionId || @layer().id() == undefined
 
-      $.get "/collections/#{collectionId}/basic_fields.json", {}, (fields) =>
+      layer_id = @layer().id()
+      $.get "/collections/#{collectionId}/basic_fields.json?layer_id=#{layer_id}", {}, (fields) =>
         fields.sort((x, y) -> if x.name.toLowerCase().trim() < y.name.toLowerCase().trim() then -1 else 1)
         @selectedCollectionFieldList(fields)
         #Initially selectedCollectionFieldList is empty then conditionFieldId will be forced to undefined

@@ -75,3 +75,6 @@ onLayers ->
       ord: @ord()
       public: @public()
       fields_attributes: $.map(@fields(), (x) -> x.toJSON())
+
+    widgetFields: =>
+      @fields().filter ((field) -> field.kind() == "custom_widget")
