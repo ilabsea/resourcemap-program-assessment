@@ -536,77 +536,39 @@ onCollections ->
               $dependentField.addClass('calculation')
 
               calculationIds = $dependentField.attr('data-calculation-ids') || ""
-              console.log 'calculationIds : ', calculationIds
               if(calculationIds)
-                calculationIds = calculationIds.split(',') 
+                calculationIds = calculationIds.split(',')
               else
                 calculationIds = []
 
               calculationIds.push(field["esCode"])
               $dependentField.attr('data-calculation-ids', calculationIds.join(","))
             )
-
-      $(".calculation").on("change keyup click", ->
-
-        calculationIds = $(this).attr('data-calculation-ids');
-        console.log calculationIds
+      $('.calculation').on('change keyup' , ->
+        calculationIds = $(this).attr('data-calculation-ids').split(",")
         for calculationId in calculationIds
-          if(calculationId)
+          if(calculationIds)
             window.model.newOrEditSite().updateField(calculationId)
       )
-
     updateField: (fieldId) =>
-      console.log 'fieldId : ', fieldId
-      field = @findFieldByEsCode(fieldId)
-
+      field = window.model.newOrEditSite().findFieldByEsCode("#{fieldId}")
       if(!field ||  field.kind != 'calculation')
         return
-
-      jsCode = @generateSyntax(field);
-      console.log("Calculation code: ", jsCode );
-      value = eval(jsCode);
-
-      if (field.allowsDecimals() && !isNaN(value))
-        digitsPrecision = field.digitsPrecision;
-        if (digitsPrecision)
-          value = parseFloat(value);
-          value = Number(value.toFixed(parseInt(digitsPrecision)));
-        
-    
-      if ((typeof (value) == "string" && value.indexOf("NaN") > -1))
-        value = value.replace("NaN", "");
-      else if (typeof (value) == "number" && isNaN(value))
-        value = "";
-      $fieldUI = $("#" + fieldId);
-      $fieldUI.val(value);
+      jsCode = @generateSyntax(field)
+      value = eval(jsCode)
+      new FieldView(field).setValue(value)
 
 
     generateSyntax: (field) =>
-      syntaxCal = field.code_calculation
+      syntaxCal = field.codeCalculation
       if syntaxCal
-        $.each field.dependent_fields, (_, dependField) ->
-          $fieldUI = $('#' + dependField.id)
-          fieldValue = undefined
-          switch dependField.kind
-            when 'text', 'email', 'phone', 'date'
-              fieldValue = $fieldUI.val()
-            when 'calculation'
-              fieldValue = $fieldUI.val()
-              if !isNaN(parseFloat(fieldValue))
-                parseFloat fieldValue
-            when 'numeric'
-              fieldValue = parseFloat($fieldUI.val())
-              if(!fieldValue)
-                fieldValue = 0
-            when 'select_one'
-              fieldValue = $fieldUI.find('option:selected').text()
-            when 'yes_no'
-              fieldValue = $fieldUI[0].checked
+        $.each field.dependentFields, (_, dependField) ->
+          dependFieldObj = window.model.newOrEditSite().findFieldByEsCode(dependField.id)
+          fieldValue = new FieldView(dependFieldObj).getValue()
           pattern = '${' + dependField.code + '}'
           escape = pattern.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
           regex = new RegExp(escape, 'g')
           syntaxCal = syntaxCal.replace(regex, fieldValue)
-
         return syntaxCal
     # Ary: I have no idea why, but without this here toJSON() doesn't work
     # in Firefox. It seems a problem with the bindings caused by the fat arrow

@@ -94,12 +94,24 @@ onLayers ->
       window.currentField = @currentField().impl()
       if @selectedCustomWidgetField()
         fieldCode = @selectedCustomWidgetField().code()
-        @addTextToCustomWidgetedEditor(fieldCode)
+        pattern = @addPatternToText(fieldCode)
+
+        if @isExistInWidget(pattern)
+          @currentField().widgetMappingerror("This widget field is already used.")
+        else
+          @currentField().widgetMappingerror("")
+          @addTextToCustomWidgetedEditor(pattern)
       else
         alert("Please select a field")
 
-    addTextToCustomWidgetedEditor: (text) ->
-      window.activeEditor.execCommand('mceInsertContent', false, @addPatternToText(text))
+    isExistInWidget: (pattern) ->
+      for field in @currentLayer().widgetFields()
+        result = field.config["widget_content"].split(pattern)
+        return true if result.length > 1
+      return false
+
+    addTextToCustomWidgetedEditor: (pattern) ->
+      window.activeEditor.execCommand('mceInsertContent', false, pattern)
 
     addPatternToText: (text) ->
       "{#{text}}"
