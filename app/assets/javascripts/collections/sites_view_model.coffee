@@ -211,7 +211,6 @@ onCollections ->
     @enableCreateSite: ->
       if window.model.loadingFields() == false && window.model.loadingSitePermission() == false
         $('#createSite').removeClass('disabled')
-        # window.model.createSite()
 
     @saveSite: ->
       return unless @editingSite().valid()

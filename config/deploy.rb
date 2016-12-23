@@ -13,9 +13,9 @@ set :user, 'ilab'
 set :use_sudo, false
 set :group, 'ilab'
 set :deploy_via, :remote_cache
-set :branch, 'wfp_emis'
+set :branch, 'field_intergrate_with_hub'
 
-server '54.169.55.167', :app, :web, :db, primary: true
+server '192.168.1.146', :app, :web, :db, primary: true
 
 default_run_options[:pty] = true
 default_environment['TERM'] = ENV['TERM']

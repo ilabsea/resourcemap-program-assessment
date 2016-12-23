@@ -36,6 +36,10 @@ class Field::SiteField < Field
     check_site_exists(site_id)
   end
 
+  def parse id_with_prefix
+    site = self.collection.sites.find_by_id_with_prefix(id_with_prefix)
+    return site ? site.id : id_with_prefix
+  end
 
 	private
 

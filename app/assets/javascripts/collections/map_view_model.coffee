@@ -157,7 +157,6 @@ onCollections ->
           @updateMapSitesCount()
           @getAlertedSites(queryAlertedSites)
           @notifySitesChanged()
-          
         callback() if callback && typeof(callback) == 'function'
 
       if query.collection_ids.length == 0

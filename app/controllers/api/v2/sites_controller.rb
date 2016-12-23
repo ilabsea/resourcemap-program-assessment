@@ -1,16 +1,18 @@
 module Api::V2
   class SitesController < ApiController
     include Api::JsonHelper
+    include Api::FieldHelper
 
     before_filter :authenticate_api_user!
-    before_filter :authenticate_site_user!, except: [:create]
+    before_filter :authenticate_site_user!, except: [:create, :feed]
 
-    expose(:site) { Site.find(params[:id]) }
+    expose(:site) { Site.find(params[:id])}
     expose(:collection) { site.collection if site.present? }
 
     def create
-      site_params = JSON.parse params[:site]
       collection = Collection.find(params[:id])
+      site_params = field_parse(collection, JSON.parse(params[:site]))
+
       site = collection.sites.new(user: current_user)
       site.validate_and_process_parameters(site_params, current_user)
       site.assign_default_values_for_create
@@ -35,6 +37,12 @@ module Api::V2
       end
     end
 
+    def feed
+      collection = Collection.find(params[:id])
+      sites = collection.sites.where("id >= ?", params[:offset_id].to_i)
+      
+      render :json => {:sites => sites}
+    end
 
     def histories
       histories = site.histories.includes(:user).select('site_histories.*, users.email').references(:user)

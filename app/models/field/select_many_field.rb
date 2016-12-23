@@ -71,6 +71,16 @@ class Field::SelectManyField < Field
     end
   end
 
+  def parse value_codes
+    value = []
+    value_codes.each do |value_code|
+      self.config["options"].each do |option|
+        value << option["id"] if option["code"] == value_code
+      end
+    end
+    return value.any? ? value : value_codes
+  end
+
 	private
 
   # TODO: Integrate with decode used in update

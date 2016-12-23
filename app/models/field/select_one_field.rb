@@ -46,7 +46,7 @@ class Field::SelectOneField < Field
   end
 
   def valid_value?(option_code, site=nil)
-    if @cache_for_read 
+    if @cache_for_read
       raise invalid_field_message unless @options_by_id_in_cache.values.include?(option_code)
     else
       check_option_exists(option_code)
@@ -57,8 +57,15 @@ class Field::SelectOneField < Field
     @cache_for_read = true
   end
 
+  def parse value_code
+    self.config["options"].each do |option|
+      return option["id"] if option["code"] == value_code
+    end
+    return value_code
+  end
+
   private
-  
+
   # TODO: Integrate with decode used in update
   def query_value(value, use_codes_instead_of_es_codes)
     if @cache_for_read && !@options_by_code_or_label_in_cache
