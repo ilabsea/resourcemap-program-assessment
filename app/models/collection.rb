@@ -353,26 +353,33 @@ class Collection < ActiveRecord::Base
     new_collection = self.dup
     new_collection.name = new_collection_name #rename collection to new collection's name
     new_collection = user.create_collection new_collection
+    
+    self.copy_layers(user, new_collection) 
 
-    self.copy_layers(user, new_collection.id)
     return new_collection
   end
 
-  def copy_layers(user, new_collection_id)
-    self.layers.each do |layer|
+  def copy_layers(user, new_collection)
+    original_collection = self
+    original_collection.layers.each do |layer|
       new_layer = layer.dup
       new_layer.user = user
-      new_layer.collection_id = new_collection_id
+      new_layer.collection_id = new_collection.id
 
       layer.fields.each do |field|
         new_field = field.dup
         new_field.layer = new_layer
-        new_field.collection_id = new_collection_id
-        new_field.reinitial_config_from_original_collection self
+        new_field.collection_id = new_collection.id
         new_field.save
       end
 
       new_layer.save
+    end
+
+    new_collection.layers.each do |layer|
+      layer.fields.each do |field|
+        field.reinitial_config_from_original_collection original_collection
+      end
     end
   end
 

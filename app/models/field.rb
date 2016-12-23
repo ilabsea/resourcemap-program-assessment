@@ -164,10 +164,12 @@ class Field < ActiveRecord::Base
   def reinitial_config_from_original_collection collection
     if self.config && self.config["field_logics"] && self.config["field_logics"].length > 0
       self.config["field_logics"] = reinitial_skip_logic_from_original_collection(collection)
+      self.save
     end
 
     if self.config && self.config["field_validations"] && self.config["field_validations"].length > 0
       self.config["field_validations"] = reinitial_custom_validation_from_original_collection(collection)
+      self.save
     end
 
     return self
@@ -175,9 +177,16 @@ class Field < ActiveRecord::Base
 
   def reinitial_skip_logic_from_original_collection collection
     self.config["field_logics"].each do |field_logic|
+
+      p field_logic["field_id"]
+      p '!field_logic["field_id"] && field_logic["field_id"] == "" : ', !field_logic["field_id"] && field_logic["field_id"] == ""
       next if !field_logic["field_id"] && field_logic["field_id"] == ""
+      p 'skiplogic'
       original_ref_field = collection.fields.find(field_logic["field_id"])
+      p 'collection old : ', collection
       target_ref_field = self.collection.fields.find_by_code(original_ref_field.code) if original_ref_field
+      p 'collection new : ', self.collection
+      p 'target_ref_field new : ', target_ref_field
       field_logic["field_id"] = "#{target_ref_field.id}" if target_ref_field
     end
     return self.config["field_logics"]
