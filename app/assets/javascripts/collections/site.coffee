@@ -586,6 +586,8 @@ onCollections ->
                               result = Number((eval(execute_code)).toFixed(parseInt(fi.digitsPrecision)))
                             else
                               result = eval(execute_code)
+                            if(isNaN result)
+                              result = ''
                             fi.value(result)
                           else
                             fi.value('')
