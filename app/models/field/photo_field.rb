@@ -34,7 +34,7 @@ class Field::PhotoField < Field
   end
 
   def parse value
-    if value
+    if value.present?
       photo_ext = value.split('.').pop()
       file_name = "#{DateTime.now.to_i}_#{self.id}." + photo_ext
       file_content = Base64.encode64(open(value) { |io| io.read })

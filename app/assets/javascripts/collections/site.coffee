@@ -527,74 +527,87 @@ onCollections ->
     clearFieldValues: =>
       field.value(null) for field in @fields()
 
-    prepareCalculatedField: ->
+    prepareCalculatedField: =>
       for layer in window.model.currentCollection().layers()
         for field in layer.fields
           if field["kind"] == "calculation"
-            # Replace $field code to actual jQuery object
-            if(field["dependentFields"])
-              length = 0
-              $.map(field["dependentFields"], (f) ->
-                length = length + 1
-              )
-              tmp = ""
-              i = 0
-              while i < (length - 1)
-                j = i + 1
-                while j < (length)
-                  if field["dependentFields"][i]["code"].length < field["dependentFields"][j]["code"].length
-                    tmp = field["dependentFields"][i]
-                    field["dependentFields"][i] = field["dependentFields"][j]
-                    field["dependentFields"][j] = tmp
-                  j++
-                i++
-              $.map(field["dependentFields"], (f) ->
-                fieldName = "${" + f["code"]+"}"
-                fieldValue = "${" + f["code"]+"}"
-                switch f["kind"]
-                  when "text", "email", "phone"
-                    fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + "').val()"
-                  when "date"
-                    fieldValue = "$('#" + f["kind"] + "-input-" + f["id"] + "').val()"
-                    $("#" + f["kind"] + "-input-" + f["id"]).addClass('calculation')
-                  when "numeric"
-                    fieldValue = "parseFloat($('#" + f["kind"] + "-input-" + f["code"] + "').val())"
-                  when "select_one"
-                    fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + " option:selected').text()"
-                  when "yes_no"
-                    fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + "')[0].checked"
-                  when "calculation"
-                    fieldValue = "parseFloat($('#" + f["kind"] + "-input-" + f["code"] + "').val())"
+            $.map(field["dependentFields"], (dependentField) ->
+              $dependentField = $("#" + dependentField["kind"] + "-input-" + dependentField["code"])
+              $dependentField.addClass('calculation')
 
-                field["codeCalculation"] = field["codeCalculation"].replace(new RegExp(fieldName.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'g'), fieldValue);
-              )
-              # Add change value to dependent field
+              calculationIds = $dependentField.attr('data-calculation-ids') || ""
+              console.log 'calculationIds : ', calculationIds
+              if(calculationIds)
+                calculationIds = calculationIds.split(',') 
+              else
+                calculationIds = []
 
-              $.map(field["dependentFields"], (f) ->
-                $("#" + f["kind"] + "-input-" + f["code"]).addClass('calculation')
-                element_id = field["code"]
-                $.map(window.model.editingSite().fields(), (fi) ->
-                  if fi.code == element_id
+              calculationIds.push(field["esCode"])
+              $dependentField.attr('data-calculation-ids', calculationIds.join(","))
+            )
 
-                    execute_code = field["codeCalculation"]
-                    $(".calculation").on("change keyup click", ->
-                      $.map(window.model.editingSite().fields(), (fi) ->
-                        value = $('#'+f['kind']+'-input-'+f['code']).val()
-                        if fi.code == element_id
-                          if value
-                            if fi.digitsPrecision
-                              result = Number((eval(execute_code)).toFixed(parseInt(fi.digitsPrecision)))
-                            else
-                              result = eval(execute_code)
-                            fi.value(result)
-                          else
-                            fi.value('')
+      $(".calculation").on("change keyup click", ->
 
-                      )
-                    )
-                )
-              )
+        calculationIds = $(this).attr('data-calculation-ids');
+        console.log calculationIds
+        for calculationId in calculationIds
+          if(calculationId)
+            window.model.newOrEditSite().updateField(calculationId)
+      )
 
+    updateField: (fieldId) =>
+      console.log 'fieldId : ', fieldId
+      field = @findFieldByEsCode(fieldId)
+
+      if(!field ||  field.kind != 'calculation')
+        return
+
+      jsCode = @generateSyntax(field);
+      console.log("Calculation code: ", jsCode );
+      value = eval(jsCode);
+
+      if (field.allowsDecimals() && !isNaN(value))
+        digitsPrecision = field.digitsPrecision;
+        if (digitsPrecision)
+          value = parseFloat(value);
+          value = Number(value.toFixed(parseInt(digitsPrecision)));
+        
+    
+      if ((typeof (value) == "string" && value.indexOf("NaN") > -1))
+        value = value.replace("NaN", "");
+      else if (typeof (value) == "number" && isNaN(value))
+        value = "";
+      $fieldUI = $("#" + fieldId);
+      $fieldUI.val(value);
+
+
+    generateSyntax: (field) =>
+      syntaxCal = field.code_calculation
+      if syntaxCal
+        $.each field.dependent_fields, (_, dependField) ->
+          $fieldUI = $('#' + dependField.id)
+          fieldValue = undefined
+          switch dependField.kind
+            when 'text', 'email', 'phone', 'date'
+              fieldValue = $fieldUI.val()
+            when 'calculation'
+              fieldValue = $fieldUI.val()
+              if !isNaN(parseFloat(fieldValue))
+                parseFloat fieldValue
+            when 'numeric'
+              fieldValue = parseFloat($fieldUI.val())
+              if(!fieldValue)
+                fieldValue = 0
+            when 'select_one'
+              fieldValue = $fieldUI.find('option:selected').text()
+            when 'yes_no'
+              fieldValue = $fieldUI[0].checked
+          pattern = '${' + dependField.code + '}'
+          escape = pattern.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+          regex = new RegExp(escape, 'g')
+          syntaxCal = syntaxCal.replace(regex, fieldValue)
+
+        return syntaxCal
     # Ary: I have no idea why, but without this here toJSON() doesn't work
     # in Firefox. It seems a problem with the bindings caused by the fat arrow
     # (=>), but I couldn't figure it out. This "solves" it for now.

@@ -73,9 +73,11 @@ class Field::SelectManyField < Field
 
   def parse value_codes
     value = []
-    value_codes.each do |value_code|
-      self.config["options"].each do |option|
-        value << option["id"] if option["code"] == value_code
+    if value_codes.present?
+      value_codes.each do |value_code|
+        self.config["options"].each do |option|
+          value << option["id"] if option["code"] == value_code
+        end
       end
     end
     return value.any? ? value : value_codes
