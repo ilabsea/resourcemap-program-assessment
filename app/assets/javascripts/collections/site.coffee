@@ -531,19 +531,20 @@ onCollections ->
       for layer in window.model.currentCollection().layers()
         for field in layer.fields
           if field["kind"] == "calculation"
-            $.map(field["dependentFields"], (dependentField) ->
-              $dependentField = $("#" + dependentField["kind"] + "-input-" + dependentField["code"])
-              $dependentField.addClass('calculation')
+            if field["dependentFields"]
+              $.map(field["dependentFields"], (dependentField) ->
+                $dependentField = $("#" + dependentField["kind"] + "-input-" + dependentField["code"])
+                $dependentField.addClass('calculation')
 
-              calculationIds = $dependentField.attr('data-calculation-ids') || ""
-              if(calculationIds)
-                calculationIds = calculationIds.split(',')
-              else
-                calculationIds = []
+                calculationIds = $dependentField.attr('data-calculation-ids') || ""
+                if(calculationIds)
+                  calculationIds = calculationIds.split(',')
+                else
+                  calculationIds = []
 
-              calculationIds.push(field["esCode"])
-              $dependentField.attr('data-calculation-ids', calculationIds.join(","))
-            )
+                calculationIds.push(field["esCode"])
+                $dependentField.attr('data-calculation-ids', calculationIds.join(","))
+              )
       $('.calculation').on('change keyup' , ->
         calculationIds = $(this).attr('data-calculation-ids').split(",")
         for calculationId in calculationIds
