@@ -83,3 +83,7 @@ label.error{
   clear: both;
   float: none;
 }
+
+div.select select{
+  max-width: 200px;
+}
