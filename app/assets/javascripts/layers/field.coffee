@@ -91,7 +91,7 @@ onLayers ->
     hasCode: => $.trim(@code()).length > 0
 
     validCode: =>
-      if @code()?.match(/[^A-Za-z1-9_]/) then return false else return true
+      if @code()?.match(/[^A-Za-z0-9_]/) then return false else return true
 
     selectingLayerClick: =>
       @switchMoveToLayerElements true
