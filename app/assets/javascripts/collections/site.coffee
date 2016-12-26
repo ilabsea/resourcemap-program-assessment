@@ -554,9 +554,11 @@ onCollections ->
       field = window.model.newOrEditSite().findFieldByEsCode("#{fieldId}")
       if(!field ||  field.kind != 'calculation')
         return
-      jsCode = @generateSyntax(field)
-      value = eval(jsCode)
-      new FieldView(field).setValue(value)
+      try
+        jsCode = @generateSyntax(field)
+        value = eval(jsCode)
+        new FieldView(field).setValue(value)
+      catch e then console.log e.message
 
 
     generateSyntax: (field) =>
