@@ -30,6 +30,8 @@ onCollections ->
       @value = ko.observable()
       @value.subscribe =>
         @disableDependentSkipLogicField()
+        @performCalculation()
+
 
       @keyType = if @allowsDecimals() then 'decimal' else 'integer'
 
@@ -642,7 +644,7 @@ onCollections ->
       if fileUploads.length > 0
 
         photoExt = fileUploads[0].name.split('.').pop()
-        
+
         value = (new Date()).getTime() + "." + photoExt
 
         @value(value)
@@ -678,3 +680,10 @@ onCollections ->
     init: =>
       if @kind == 'date'
         window.model.initDatePicker()
+
+    performCalculation: =>
+      $ele = new FieldView(@).domObject()
+      calculationIds = $ele.attr('data-calculation-ids')?.split(",") ? []
+      for calculationId in calculationIds
+        if(calculationIds)
+          window.model.newOrEditSite().updateField(calculationId)

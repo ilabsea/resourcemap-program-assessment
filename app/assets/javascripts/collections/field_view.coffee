@@ -8,7 +8,15 @@ onCollections ->
       return @fieldUI
 
     getValue: ->
-      return @field.value()
+      value = @field.value()
+      if value
+        return value
+      else
+        if @field.kind == 'numeric'
+          return 0
+        else
+          return ''
+
 
     setValue: (value)->
       if (@field.allowsDecimals() && !isNaN(value))

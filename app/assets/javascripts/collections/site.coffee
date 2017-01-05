@@ -545,12 +545,7 @@ onCollections ->
                 calculationIds.push(field["esCode"])
                 $dependentField.attr('data-calculation-ids', calculationIds.join(","))
               )
-      $('.calculation').on('change keyup' , ->
-        calculationIds = $(this).attr('data-calculation-ids').split(",")
-        for calculationId in calculationIds
-          if(calculationIds)
-            window.model.newOrEditSite().updateField(calculationId)
-      )
+
     updateField: (fieldId) =>
       field = window.model.newOrEditSite().findFieldByEsCode("#{fieldId}")
       if(!field ||  field.kind != 'calculation')
