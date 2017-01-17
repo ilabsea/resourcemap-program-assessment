@@ -15,6 +15,7 @@ module Api::JsonHelper
 
     obj = {}
     obj[:id] = source['id']
+    obj[:id_with_prefix] = source['id_with_prefix']
     obj[:name] = source['name']
     obj[:createdAt] = Site.parse_time(source['created_at'])
     obj[:updatedAt] = Site.parse_time(source['updated_at'])
