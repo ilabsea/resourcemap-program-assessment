@@ -169,103 +169,28 @@ onCollections ->
 
     disableDependentSkipLogicField: =>
       if window.model.newOrEditSite()
-        if @kind == 'yes_no'
-          value = if @value() then 1 else 0
-        else if @kind == 'numeric'
-          if @value() != null or @value != undefined
-            value = @value()
+        for field_logic in @relatedFieldLogics()
+          fieldSearch = @getFieldFromAllFields(field_logic.disable_field_id)
+          field = window.model.newOrEditSite().findFieldByEsCode(field_logic.field_id)
+          if field_logic.isSkip(field)
+            return @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
           else
-            value = null
-        else if @kind == 'select_one'
-          if @value()
-            converted_value = $.map @options, (x) => x.code if x.id == @value()
-            value = converted_value[0] if converted_value.length > 0
-          else
-            value = null
-        else if @kind == 'select_many'
-          if @value()
-            value = $.map @options, (x) => x.code if @value().includes(x.id)
-          else
-            value = []
-        else
-          value = @value()
-        noSkipField = false
-        if model.allFieldLogics().length > 0
-          for field_logic in model.allFieldLogics()
-            b = false
-            if field_logic.disable_field_id? and @esCode == field_logic.field_id.toString()
-              fieldSearch = @getFieldFromAllFields(field_logic.disable_field_id)
-              fieldValue = parseFloat(value)
-              fieldLogicValue = parseFloat(field_logic.value)
-
-              if field_logic.condition_type == '<'
-                if fieldValue < field_logic.value
-                  @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
-                else
-                  @enableField(fieldSearch[0], field_logic.field_id)
-
-              if field_logic.condition_type == '<='
-                if fieldValue <= field_logic.value
-                  @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
-                else
-                  @enableField(fieldSearch[0], field_logic.field_id)
-
-              if field_logic.condition_type == '='
-                #Equal we need to do more because it can be with different type of field
-                match = false
-                if @kind == 'yes_no'
-                  fieldLogicValue = field_logic.value.toString()
-                  if parseInt(fieldLogicValue) == 1 or fieldLogicValue.toUpperCase() == 'Y' or fieldLogicValue.toUpperCase() == 'YES'
-                    fieldLogicValue = 1
-                  else
-                    fieldLogicValue = 0
-                  match = (fieldValue == fieldLogicValue)
-                else if @kind == 'numeric'
-                  match = (fieldValue == fieldLogicValue)
-                else if @kind == 'select_one'
-                  match = (value?.toString() == field_logic.value?.toString())
-                else if @kind == 'select_many'
-                  array_logic_value = field_logic.value.split(",")
-                  match = @compareTwoArray(value, array_logic_value)
-                if match
-                  @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
-                else
-                  @enableField(fieldSearch[0], field_logic.field_id)
-
-              if field_logic.condition_type == '>'
-                if fieldValue > field_logic.value
-                  @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
-                else
-                  @enableField(fieldSearch[0], field_logic.field_id)
-
-              if field_logic.condition_type == '>='
-                if fieldValue >= field_logic.value
-                  @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
-                else
-                  @enableField(fieldSearch[0], field_logic.field_id)
-
-              if field_logic.condition_type == '!='
-                if fieldValue != field_logic.value
-                  @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
-                else
-                  @enableField(fieldSearch[0], field_logic.field_id)
-
-    compareTwoArray: (arr1, arr2) =>
-      status = true
-      if arr1.length == arr2.length
-        $.map(arr1, (el1) =>
-          unless arr2.includes(el1)
-            status = false
-        )
-      else
-        status = false
-      return status
+            @enableField(fieldSearch[0], field_logic.field_id)
 
     getFieldFromAllFields: (field_id) =>
       $.map(window.model.newOrEditSite().fields(), (f) =>
         if f.esCode == field_id
           return f
       )
+
+    #current field might be the dependentField of other field_logic
+    #the disableField of that field_logic might have many related field_logics
+    relatedFieldLogics: =>
+      if model.allFieldLogics().length > 0
+        fieldLogics = model.allFieldLogics().filter((x) => "#{x.field_id}" == @esCode)
+        if fieldLogics.length > 0
+          return model.allFieldLogics().filter((x) => "#{x.disable_field_id}" == "#{fieldLogics?[0].disable_field_id}")
+      return []
 
     setFocusStyleByField: (field_id) =>
       field = window.model.newOrEditSite().findFieldByEsCode(field_id)
