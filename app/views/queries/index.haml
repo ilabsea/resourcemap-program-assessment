@@ -40,12 +40,13 @@
         %br
         %br
         /ko foreach :conditions
-        .box.grey{style: 'height:15px; margin-bottom:7px; width: 10px; float: left'}
-          %span{ko(text: :id)}
-        .box.grey.w60{style: 'height:15px; margin-bottom:7px; margin-left: 40px;'}
-          = render 'queries/condition_template'
-          .rightbuttons
-            %button.fclose{ ko(click: '$parent.removeCondition'), title: 'Remove condition' }
+        %div{style: 'display:inline-block'}
+          .box.grey{style: 'height:15px; margin-bottom:7px; width: 10px; float: left'}
+            %span{ko(text: :id)}
+          .box.grey.w60{style: 'height:15px; margin-bottom:7px; margin-left: 40px;'}
+            = render 'queries/condition_template'
+            .rightbuttons
+              %button.fclose{ ko(click: '$parent.removeCondition'), title: 'Remove condition' }
         //ko
         /ko if : conditions().length > 0
         .middlebuttons
@@ -114,12 +115,13 @@
             %br
             %br
             /ko foreach :conditions
-            .box.grey{style: 'height:15px; margin-bottom:7px; width: 10px; float: left'}
-              %span{ko(text: :id)}
-            .box.grey.w60{style: 'height:15px; margin-bottom:7px; margin-left: 40px;'}
-              = render 'queries/condition_template'
-              .rightbuttons
-                %button.fclose{ko(click: '$parent.removeCondition'), title: 'Remove condition' }
+            %div{style: 'display:inline-block'}
+              .box.grey{style: 'height:15px; margin-bottom:7px; width: 10px; float: left'}
+                %span{ko(text: :id)}
+              .box.grey.w60{style: 'height:15px; margin-bottom:7px; margin-left: 40px;'}
+                = render 'queries/condition_template'
+                .rightbuttons
+                  %button.fclose{ko(click: '$parent.removeCondition'), title: 'Remove condition' }
             //ko
             /ko if : conditions().length > 0
             .middlebuttons

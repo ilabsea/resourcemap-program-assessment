@@ -1,4 +1,4 @@
-%div{style: 'padding:15px;'}              
+%div{style: 'padding:15px;'}
   #div{ko(click: 'function(data, event) { $root.toggleRefineProperty("update") }'), style: 'cursor:pointer'}
     %img{ko(attr: {src: "'#{InsteddRails.url}/theme/images/icons/misc/grey/arrow' + ($root.expandedRefineProperty() == \"update\" ? 'Down' : 'Right') + '.png'"}), style: "position:relative;top:1px", width: 11, height: 11}
     %span Updated within
@@ -33,7 +33,7 @@
     %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;color:grey;cursor:pointer'}
   /ko if: expanded()
   /ko foreach: fields
-  /ko if: kind != 'photo' && kind != 'calculation'&& kind != 'location'&& kind != 'identifier'
+  /ko if: kind != 'photo' && kind != 'calculation'&& kind != 'location'&& kind != 'identifier' && kind != 'custom_widget'
 
   #div{ko(click: 'function (data, event) { $root.toggleRefineProperty($data.id) }'), style: 'cursor:pointer;padding-top:6px; padding-left:30px;'}
     %img{ko(attr: {src: "'#{InsteddRails.url}/theme/images/icons/misc/grey/arrow' + ($root.expandedRefineProperty() == id ? 'Down' : 'Right') + '.png'"}), style: "position:relative;top:1px", width: 11, height: 11}
@@ -46,7 +46,7 @@
       %option{value: '='} starts with
       %option{value: 'empty'} has no value
 
-    /ko if: $root.expandedRefinePropertyOperator() != 'empty' 
+    /ko if: $root.expandedRefinePropertyOperator() != 'empty'
     %input{ko(value: '$root.expandedRefinePropertyValue', valueUpdate: :afterkeydown, event: {keydown: '$root.expandedRefinePropertyValueKeyPress'}, hasfocus: true)}
     //ko
 
