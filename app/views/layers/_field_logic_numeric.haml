@@ -4,18 +4,18 @@
   %li{style: 'padding-bottom:20px'}
     %div.box.grey.w25{style: 'padding-bottom:10px'}
       %div{style: 'padding-bottom:5px'}
-        %span.smalltext.left Skip this field when 
+        %span.smalltext.left Skip this field when
         %select{"data-bind" => 'foreach: $root.selectLogicLayers(), value: field_id, selectedOptions: field_id', style: 'max-width:135px;background-color:white', disabled: "disabled"}
           /ko if: $index() == 0
           %option{value: ""} (no value)
           //ko
-          %optgroup{"data-bind" => "attr: {label: name}, foreach: support_skiplogic_fields", style: ''}        
+          %optgroup{"data-bind" => "attr: {label: name}, foreach: support_skiplogic_fields", style: ''}
             %option{"data-bind" => "text: name, option: name, value: id"}
         %br
-        %span.smalltext{style: 'padding-right:5px;padding-top:5px'} have value 
+        %span.smalltext{style: 'padding-right:5px;padding-top:5px'} have value
         %select{'data-bind' => 'value: condition_type, enable: editing', style: 'color:black;background-color:white', disabled: "disabled"}
           %option{value: "="} equal to
-          %option{value: "<"} less than  
+          %option{value: "<"} less than
           %option{value: "<="} less than or equal to
           %option{value: ">"} greater than
           %option{value: ">="} greater than or equal to
@@ -25,7 +25,7 @@
         /ko if: condition_type() != 'empty'
         %input{ko(value: :value, enable: :editing), style: 'width:45px;text-align:center;color:black;'}
         //ko
-        
+
 
       .rightbuttons
         %button.fdelete{ ko(click: '$root.removeFieldLogic'), title: 'Remove logic' }
@@ -36,29 +36,26 @@
   %li{style: 'padding-bottom:20px'}
     %div.box.grey.w25{style: 'padding-bottom:10px'}
       %div{style: 'padding-bottom:5px'}
-        %span.smalltext.left Skip this field when 
+        %span.smalltext.left Skip this field when
         %select{"data-bind" => 'foreach: $root.selectLogicLayers(), value: field_id, selectedOptions: field_id', style: 'max-width:135px;background-color:white'}
           /ko if: $index() == 0
           %option{value: ""} (no value)
           //ko
-          %optgroup{"data-bind" => "attr: {label: name}, foreach: support_skiplogic_fields", style: ''}        
+          %optgroup{"data-bind" => "attr: {label: name}, foreach: support_skiplogic_fields", style: ''}
             %option{"data-bind" => "text: name, option: name, value: id"}
         %br
-        %span.smalltext{style: 'padding-right:5px;padding-top:5px'} have value 
+        %span.smalltext{style: 'padding-right:5px;padding-top:5px'} have value
         %select{'data-bind' => 'value: condition_type, enable: editing', style: 'color:black;background-color:white'}
           %option{value: "="} equal to
-          /ko if: is_numeric
-          %option{value: "<"} less than  
+          %option{value: "<"} less than
           %option{value: "<="} less than or equal to
           %option{value: ">"} greater than
           %option{value: ">="} greater than or equal to
-          //ko
-        / %input{ko(value: :value), style: 'width:30px; height:20px'}
       %div
         /ko if: condition_type() != 'empty'
         %input{ko(value: :value, enable: :editing), style: 'width:45px;text-align:center;color:black;'}
         //ko
-        
+
 
       .rightbuttons
         %button.fdelete{ ko(click: '$root.removeFieldLogic'), title: 'Remove logic' }
@@ -71,24 +68,24 @@
   %li{ko(with: '$root.newFieldLogic()')}
     %div.box.grey.w25{style: 'padding-bottom:10px'}
       %div{style: 'padding-bottom:5px'}
-        %span.smalltext.left Skip this field when 
+        %span.smalltext.left Skip this field when
         %select{"data-bind" => 'foreach: $root.selectLogicLayers(), value: field_id, selectedOptions: field_id', style: 'max-width:135px;background-color:white'}
           /ko if: $index() == 0
           %option{value: ""} (no value)
           //ko
-          %optgroup{"data-bind" => "attr: {label: name}, foreach: support_skiplogic_fields", style: ''}        
+          %optgroup{"data-bind" => "attr: {label: name}, foreach: support_skiplogic_fields", style: ''}
             %option{"data-bind" => "text: name, option: name, value: id"}
         %br
-        %span.smalltext{style: 'padding-right:5px;padding-top:5px'} have value 
+        %span.smalltext{style: 'padding-right:5px;padding-top:5px'} have value
         %select{'data-bind' => 'value: condition_type', style: 'background-color:white'}
           %option{value: "="} equal to
           /ko if: is_numeric
-          %option{value: "<"} less than  
+          %option{value: "<"} less than
           %option{value: "<="} less than or equal to
           %option{value: ">"} greater than
           %option{value: ">="} greater than or equal to
           //ko
-        
+
       %div
         /ko if: condition_type() != 'empty'
         %input{ko(value: :value), style: 'width:45px;text-align:center'}
@@ -99,7 +96,7 @@
       //ko
       %button.white{ko(click: '$root.saveFieldLogic', enable: '$root.fieldLogicValid'), type: :button, title: 'Save'}= t('views.layers.form.field.save')
       %button.white{ko(click: '$root.cancelFieldLogic'), type: :button, title: 'Save'}= t('views.layers.form.field.cancel')
-      
+
   //ko
   /ko ifnot: $root.isAddNew
   %div.box.grey.add{ko(click: '$root.addFieldLogic'), :style => 'width:270px;'}
