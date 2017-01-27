@@ -13,9 +13,9 @@ set :user, 'ilab'
 set :use_sudo, false
 set :group, 'ilab'
 set :deploy_via, :remote_cache
-set :branch, 'field_intergrate_with_hub'
+set :branch, 'branch'
 
-server '192.168.1.146', :app, :web, :db, primary: true
+server '192.168.1.220', :app, :web, :db, primary: true
 
 default_run_options[:pty] = true
 default_environment['TERM'] = ENV['TERM']
@@ -34,7 +34,7 @@ namespace :deploy do
   end
 
   task :symlink_configs, :roles => :app do
-    %W(settings.yml google_maps.key nuntium.yml aws.yml).each do |file|
+    %W(settings.yml google_maps.key nuntium.yml aws.yml recaptcha.yml database.yml).each do |file|
       run "ln -nfs #{shared_path}/#{file} #{release_path}/config/"
     end
   end
@@ -88,6 +88,8 @@ after "deploy:update_code", "deploy:symlink_configs"
 after "deploy:update_code", "deploy:symlink_photo_field"
 
 after "deploy:update_code", "deploy:symlink_print_pdf"
+
+after "deploy:update_code", "deploy:symlink_tinymce_photo"
 
 after "deploy:update", "foreman:export"    # Export foreman scripts
 
