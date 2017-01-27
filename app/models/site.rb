@@ -179,8 +179,8 @@ class Site < ActiveRecord::Base
         next if value == self.properties[field.es_code]
 
         user.authorize! :update_site_property, field, message: "Not authorized to update site property with code #{es_code_or_code}"
-      
-        self.properties[field.es_code] = field.decode_from_ui(value)  
+
+        self.properties[field.es_code] = field.decode_from_ui(value)
       end
     end
 
@@ -287,6 +287,19 @@ class Site < ActiveRecord::Base
         end
       end
       p s.save!
+    end
+  end
+
+  def self.migrate_photo_field_to_filename
+    Site.all.each do |s|
+      s.collection.fields.where(:kind => 'photo').each do |f|
+        if s.properties["#{f.id}"]
+          uri = URI.parse(s.properties["#{f.id}"])
+          filename = File.basename(uri.path)
+          s.properties["#{f.id}"] = filename
+        end
+      end
+      p s.save(validate: false)
     end
   end
 
