@@ -65,10 +65,10 @@ class Threshold < ActiveRecord::Base
 
         msg = threshold.message_notification
         if msg && msg != ""
-          result = msg.gsub(/\[[\w\s()]+\]/) do |template|
+          result = msg.gsub(/\[(.*?)\]/) do |template|
             fieldName = template[1..template.length-2]
             if fieldName != "Site Name"
-              field = threshold.collection.fields.find_by_name(fieldName)
+              field = threshold.collection.fields.find_by_name(fieldName) || threshold.collection.fields.find_by_code(fieldName)
             end
             field ? "[#{field.code}]" : template
           end

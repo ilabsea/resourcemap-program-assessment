@@ -275,7 +275,70 @@ class Field < ActiveRecord::Base
     end
   end
 
+  def self.migrate_code
+    Field.transaction do
+      Field.find_each(batch_size: 100) do |field|
+        code = field.code
+        valid_code = false
+        new_code = code
+        if(!code.ascii_only?)
+          new_code = (0...16).map { ('A'..'Z').to_a[rand(26)] }.join
+          field.migrate_related_code(new_code)
+          p "=> id:#{field.id} #{field.code} => #{new_code}"
+          field.code = new_code
+          field.save
+          valid_code = true
+        end
+        if(valid_code == false)
+          new_code = code.gsub(/[^0-9A-Za-z_]/) do |template|
+            valid_code = true
+            template = '_'
+          end
+          if(valid_code == true)
+            field.migrate_related_code(new_code)
+            p "field* id:#{field.id} #{field.code} => #{new_code}"
+            field.code = new_code
+            field.save
+          end
+        end
+      end
+    end
+  end
+
+  # calculation and alert use field code as the template
+  def migrate_related_code(new_code)
+    migrate_calculation_code(new_code)
+    migrate_theshold_message_notification(new_code)
+  end
+
   private
+
+  def migrate_calculation_code new_code
+    self.collection.fields.where(kind: 'calculation').each do |field|
+      if field.config["dependent_fields"] && field.config["dependent_fields"].length > 0
+        code_calculation = field.config['code_calculation']
+        field.config["dependent_fields"].each do |key, dependent_field|
+          ref_dependent_field = self.collection.fields.find(dependent_field['id'])
+          if ref_dependent_field
+            code_calculation = code_calculation.gsub(/\{#{dependent_field['code']}}/, "{#{ref_dependent_field.code}}")
+            field.config['dependent_fields'][key]['code'] = ref_dependent_field.code
+          end
+        end
+        field.config['code_calculation'] = code_calculation
+        field.save
+      end
+    end
+  end
+
+  def migrate_theshold_message_notification new_code
+    self.collection.thresholds.each do |threshold|
+      if threshold.message_notification
+        threshold.message_notification = threshold.message_notification.gsub(/\[#{self.code}]/, "[#{new_code}]")
+        threshold.save
+      end
+    end
+  end
+
 
   def add_option_to_options(options, option)
     if option["parent_id"] and option["level"]
