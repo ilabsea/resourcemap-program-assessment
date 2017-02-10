@@ -44,6 +44,8 @@ class @Membership extends Expandable
     @isCurrentUser = ko.computed => window.userId == @userId()
 
     @admin.subscribe (newValue) =>
+      if newValue == true
+        @can_edit_other(newValue)
       $.post "/collections/#{root.collectionId()}/memberships/#{@userId()}/#{if newValue then 'set' else 'unset'}_admin.json"
 
     @can_view_other.subscribe (newValue) =>
@@ -120,7 +122,7 @@ class @Membership extends Expandable
       else if @sitesWithCustomPermissions().length == 1
         window.t('javascripts.collections.members.custom_permissions_for_1_site')
       else
-        window.t('javascripts.collections.members.custom_permissions_for_n_sites', { n: @sitesWithCustomPermissions().length })
+        window.t("javascripts.collections.members.custom_permissions_for_#{@sitesWithCustomPermissions().length}_sites ")
 
     @customPermissionsAutocompleteId = ko.computed => "autocomplete_#{@userId()}"
 
@@ -143,7 +145,7 @@ class @Membership extends Expandable
           # Check that a site with that name exists
           _.each data, (s) ->
             if s.name == _self.customSite()
-              new_permission = new SiteCustomPermission s.id, s.name, true, true, _self
+              new_permission = new SiteCustomPermission(s.id, s.name, true, true, _self)
               _self.sitesWithCustomPermissions.push new_permission
               _self.customSite ""
               _self.saveCustomSitePermissions()
@@ -221,3 +223,8 @@ class @Membership extends Expandable
       site_permission.no_rights(false)
       site_permission.can_write(permission)
       @saveCustomSitePermissions()
+
+  disableEdit: =>
+    if @admin() || @can_view_other() || @can_edit_other()
+      return true
+    return false
