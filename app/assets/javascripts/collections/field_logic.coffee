@@ -21,10 +21,10 @@ onCollections ->
       fieldValue = @parseForSkipValue(field)
       fieldLogicValue = @value
       switch @condition_type
-        when "<" then fieldValue < fieldLogicValue
-        when "<=" then fieldValue >= fieldLogicValue
-        when ">" then fieldValue > fieldLogicValue
-        when ">=" then fieldValue >= fieldLogicValue
+        when "<" then parseFloat(fieldValue) < parseFloat(fieldLogicValue)
+        when "<=" then parseFloat(fieldValue) >= parseFloat(fieldLogicValue)
+        when ">" then parseFloat(fieldValue) > parseFloat(fieldLogicValue)
+        when ">=" then parseFloat(fieldValue) >= parseFloat(fieldLogicValue)
         when "!=" then fieldValue != fieldLogicValue
         when "="
           match = false

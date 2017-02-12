@@ -169,13 +169,31 @@ onCollections ->
 
     disableDependentSkipLogicField: =>
       if window.model.newOrEditSite()
-        for field_logic in @relatedFieldLogics()
-          fieldSearch = @getFieldFromAllFields(field_logic.disable_field_id)
-          field = window.model.newOrEditSite().findFieldByEsCode(field_logic.field_id)
-          if field_logic.isSkip(field)
-            return @disableField(fieldSearch[0], field_logic.field_id) if fieldSearch.length > 0
-          else
-            @enableField(fieldSearch[0], field_logic.field_id)
+        fieldSkipIds = @getRelatedSkipFieldIds()
+        for field_id in fieldSkipIds
+          field = window.model.newOrEditSite().findFieldByEsCode(field_id)
+          skipFlag = false
+          for field_logic in field.field_logics
+            dependentField = window.model.newOrEditSite().findFieldByEsCode(field_logic.field_id)
+            skipFlag = field_logic.isSkip(dependentField)
+            if skipFlag == true
+              @disableField(field, field_logic.field_id)
+              break
+          if(skipFlag == false)
+            @enableField(field, dependentField.esCode)
+
+    getRelatedSkipFieldIds: =>
+      fieldSkipIds = []
+      for field_logic in @relatedFieldLogics()
+        if(fieldSkipIds.indexOf(field_logic.disable_field_id) == -1)
+          fieldSkipIds.push field_logic.disable_field_id
+      return fieldSkipIds
+
+    getRelatedDisableField: (field_logic) =>
+      @relatedFieldLogics().filter((x) =>
+        "#{x.field_id}" == field_logic.field_id
+      )
+
 
     getFieldFromAllFields: (field_id) =>
       $.map(window.model.newOrEditSite().fields(), (f) =>
@@ -187,9 +205,7 @@ onCollections ->
     #the disableField of that field_logic might have many related field_logics
     relatedFieldLogics: =>
       if model.allFieldLogics().length > 0
-        fieldLogics = model.allFieldLogics().filter((x) => "#{x.field_id}" == @esCode)
-        if fieldLogics.length > 0
-          return model.allFieldLogics().filter((x) => "#{x.disable_field_id}" == "#{fieldLogics?[0].disable_field_id}")
+        return model.allFieldLogics().filter((x) => "#{x.field_id}" == @esCode)
       return []
 
     setFocusStyleByField: (field_id) =>
