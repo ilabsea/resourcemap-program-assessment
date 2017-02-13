@@ -22,7 +22,7 @@ onCollections ->
       fieldLogicValue = @value
       switch @condition_type
         when "<" then parseFloat(fieldValue) < parseFloat(fieldLogicValue)
-        when "<=" then parseFloat(fieldValue) >= parseFloat(fieldLogicValue)
+        when "<=" then parseFloat(fieldValue) <= parseFloat(fieldLogicValue)
         when ">" then parseFloat(fieldValue) > parseFloat(fieldLogicValue)
         when ">=" then parseFloat(fieldValue) >= parseFloat(fieldLogicValue)
         when "!=" then fieldValue != fieldLogicValue
