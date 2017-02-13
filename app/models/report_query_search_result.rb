@@ -1,5 +1,5 @@
 class ReportQuerySearchResult
-  DELIMITER = '__'
+  DELIMITER = '___'
 
   def initialize(report_query, facet_result)
     @report_query = report_query
