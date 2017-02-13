@@ -173,6 +173,8 @@ ResourceMap::Application.routes.draw do
       end
       resources :fields, only: [:index]
       resources :sites
+      resources :site_permissions, only: [:index]
+      resources :layer_memberships, only: [:index]
     end
     match 'collections/:collection_id/memberships' => 'memberships#create', :via => :post
     match 'collections/:collection_id/memberships' => 'memberships#update', :via => :put
