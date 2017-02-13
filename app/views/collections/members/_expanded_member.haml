@@ -29,7 +29,7 @@
     - ['None', 'Read', 'Update'].each do |permission|
       .permissionColumn
         %hr.underlineExpandedMember
-          %input{ko(disable: :disableEdit, checked: "allLayers#{permission}", :attr => { "name" => "userId" }), :value => "all", :type => 'radio'}
+          %input{ko(disable: 'disableEdit()', checked: "allLayers#{permission}", :attr => { "name" => "userId" }), :value => "all", :type => 'radio'}
 
     .permissionColumn.admin
       %hr.underlineExpandedMember
