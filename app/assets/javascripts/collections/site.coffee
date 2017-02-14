@@ -62,8 +62,9 @@ onCollections ->
 
     hasInputMendatoryProperties: =>
       for field in @fields()
-        if field.is_mandatory() and !field.value()
-          return false
+        if field.writeable == true
+          if field.is_mandatory() and !field.value()
+            return false
       return true
 
     propertyValue: (field) =>
