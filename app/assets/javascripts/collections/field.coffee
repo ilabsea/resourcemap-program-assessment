@@ -274,7 +274,6 @@ onCollections ->
           tmp = field.is_blocked_by()
           tmp.push(by_field_id) if by_field_id != undefined
         field.value(null)
-        #field_object = @get_dom_object(field)
         field.is_blocked_by(tmp)
 
     get_dom_object: (field) =>

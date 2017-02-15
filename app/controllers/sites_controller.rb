@@ -76,7 +76,6 @@ class SitesController < ApplicationController
 
   def update
     site_params = JSON.parse params[:site]
-    site.user = current_user
     site.properties_will_change!
     site.attributes = prepare_from_ui(site_params)
 
