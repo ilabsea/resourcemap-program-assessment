@@ -310,7 +310,7 @@ onCollections ->
     enableField: (field, by_field_id) =>
       field.is_mandatory(field.originalIsMandatory) if field.skippedState() == false
       field.skippedState(false)
-      field.is_blocked_by.remove(by_field_id) if (field.is_blocked_by() != undefined and field.is_blocked_by().length > 0)
+      field.is_blocked_by([]) if (field.is_blocked_by() != undefined and field.is_blocked_by().length > 0)
 
     setValueFromSite: (value) =>
       if @kind == 'date' && $.trim(value).length > 0
