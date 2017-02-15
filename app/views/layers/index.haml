@@ -43,8 +43,9 @@
     //ko
 
     /ko ifnot: isShowingCopyForm
-    %div.right{style:'padding-right:340px'}
-      %button{ko(click: :showCopyLayerForm)} Copy layers to new collection
+    - if current_user_snapshot.at_present? && collection_admin?
+      %div.right{style:'padding-right:340px'}
+        %button{ko(click: :showCopyLayerForm)} Copy layers to new collection
     //ko
     - if !current_user_snapshot.at_present?
       = render '/current_snapshot_message'
@@ -162,7 +163,7 @@
         -#%em{ko(visible: :public)} Public layer
         -#%em{ko(visible: '!public()')} Private layer
 
-      - if current_user_snapshot.at_present?
+      - if current_user_snapshot.at_present? && collection_admin?
         .rightbuttons
           / ko if: !$root.savingLayer() && !$root.currentLayer()
           .btupdn
@@ -170,9 +171,8 @@
             %button.fmovedown{ko(click: '$root.moveLayerDown', attr: {disabled: '$root.isLastLayer($data)'}, css: {disabled: '$root.isLastLayer($data)'}), title: t('views.layers.move_layer_down')}
           / /ko
           / ko if: !$root.savingLayer() && !$root.currentLayer()
-          - if current_user_snapshot.at_present? && collection_admin?
-            %button.farrange{ko(click: '$root.copyLayer'), title: t('views.layers.copy_layer') }
-            %button.fdelete{ko(click: '$root.deleteLayer'), title: t('views.layers.remove_layer') }
+          %button.farrange{ko(click: '$root.copyLayer'), title: t('views.layers.copy_layer') }
+          %button.fdelete{ko(click: '$root.deleteLayer'), title: t('views.layers.remove_layer') }
           / /ko
 
       .middlebuttons
