@@ -51,23 +51,21 @@ class @Membership extends Expandable
     @can_view_other.subscribe (newValue) =>
       if newValue == false
         @can_edit_other(false)
-        @updatdNonePermission(false)
+        @allLayersNone(true)
       else
-        @updateReadPermission(true)
-
+        # only update the layer to read when the user click on view_other_site
+        if @can_edit_other() == false
+          @allLayersRead(true)
       $.post "/collections/#{root.collectionId()}/memberships/#{@userId()}/#{if newValue then 'set' else 'unset'}_can_view_other.json"
 
     @can_edit_other.subscribe (newValue) =>
 
       if newValue == true
         @can_view_other(true)
-        @updateWritePermission(newValue)
+        @allLayersUpdate(true)
       else
-        console.log 'can_view_other '
         if @can_view_other() == true
-          @updateReadPermission(true)
-
-
+          @allLayersRead(true)
       $.post "/collections/#{root.collectionId()}/memberships/#{@userId()}/#{if newValue then 'set' else 'unset'}_can_edit_other.json"
 
     @someLayersNone = ko.computed => some nonePermission
