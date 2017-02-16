@@ -27,6 +27,7 @@ class Layer < ActiveRecord::Base
   # I'd move this code to a concern, but it works differntly (the fields don't
   # have an id). Must probably be a bug in Active Record.
   after_create :create_created_activity, :unless => :mute_activities
+  after_create :add_layer_memberships
   def create_created_activity
     fields_data = fields.map do |field|
       hash = {'id' => field.id, 'kind' => field.kind, 'code' => field.code, 'name' => field.name}
@@ -167,4 +168,16 @@ class Layer < ActiveRecord::Base
     field_hash
   end
 
+  def add_layer_memberships
+    collection.memberships.each do |membership|
+      if membership.can_edit_other || membership.can_view_other
+        collection.layer_memberships
+        .create(
+          user_id: membership.user_id,
+          layer_id: self.id,
+          read: membership.can_view_other,
+          write: membership.can_edit_other)
+      end
+    end
+  end
 end
