@@ -11,8 +11,8 @@ class @Membership extends Expandable
     else
       @userPhoneNumber = ""
     @admin = ko.observable data?.admin
-    @can_view_other = ko.observable data?.can_view_other
-    @can_edit_other = ko.observable data?.can_edit_other
+    @can_view_other = ko.observable data?.can_view_other ? false
+    @can_edit_other = ko.observable data?.can_edit_other ? false
     @collectionId = ko.observable root.collectionId()
 
     rootLayers = data?.layers ? []
