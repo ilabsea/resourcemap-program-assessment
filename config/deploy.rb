@@ -13,7 +13,7 @@ set :user, 'ilab'
 set :use_sudo, false
 set :group, 'ilab'
 set :deploy_via, :remote_cache
-set :branch, 'branch'
+set :branch, 'wfp_staging'
 
 server '192.168.1.220', :app, :web, :db, primary: true
 
@@ -49,6 +49,10 @@ namespace :deploy do
 
   task :symlink_tinymce_photo, :roles => :app do
     run "ln -nfs #{shared_path}/tinymce_photo #{release_path}/public/tinymce_photo"
+  end
+
+  task :symlink_production_env, :roles => :app do
+    run "ln -nfs #{shared_path}/environments/production.rb #{release_path}/config/environments/production.rb"
   end
 
   task :generate_revision_and_version do
@@ -90,6 +94,8 @@ after "deploy:update_code", "deploy:symlink_photo_field"
 after "deploy:update_code", "deploy:symlink_print_pdf"
 
 after "deploy:update_code", "deploy:symlink_tinymce_photo"
+
+after "deploy:update_code", "deploy:symlink_production_env"
 
 after "deploy:update", "foreman:export"    # Export foreman scripts
 
