@@ -21,7 +21,7 @@ module Collection::CsvConcern
     hierarchy_fields = {}
     CSV.generate do |csv|
       header = ['resmap-id', 'name', 'lat', 'long']
-      fields.each do |field| 
+      fields.each do |field|
         if field.kind == "select_many"
           field.config["options"].each do |option|
             header << option["label"]
@@ -30,6 +30,11 @@ module Collection::CsvConcern
           hierarchy_fields[field.id.to_s] = field.transform()
           hierarchy_fields[field.id.to_s]["depth"] = field.get_longest_depth()
           level = 0
+
+          if hierarchy_fields[field.id.to_s]["depth"] == 0
+            header << field.code + level.to_s
+          end
+
           while level < hierarchy_fields[field.id.to_s]["depth"]
             header << field.code + level.to_s
             level = level + 1
@@ -52,7 +57,6 @@ module Collection::CsvConcern
             row << (Field.yes?(source['properties'][field.code]) ? 'yes' : 'no')
           elsif field.kind == 'photo'
             if source['properties'][field.code].present?
-            # row << "#{Settings.host}/photo_field/#{source['properties'][field.code]}" if source['properties'][field.code].present?
               row << "http://#{Settings.host}/view_photo?uuid=#{source['uuid']}&file_name=#{source['properties'][field.code]}"
             else
               row << ""
@@ -70,12 +74,17 @@ module Collection::CsvConcern
             level = 0
             arr_level = []
             if source['properties'][field.code]
-              item = field.find_hierarchy_by_id source['properties'][field.code]
+               item = field.find_hierarchy_by_id source['properties'][field.code]
               while item
                 arr_level.insert(0, item[:name])
                 item = field.find_hierarchy_by_id item[:parent_id]
               end
             end
+
+            if hierarchy_fields[field.id.to_s]["depth"] == 0
+              row << arr_level[level] || ""
+            end
+
             while level < hierarchy_fields[field.id.to_s]["depth"]
               row << arr_level[level] || ""
               level = level + 1
@@ -102,7 +111,7 @@ module Collection::CsvConcern
       locations.each do |location|
         csv << [location["code"], location["name"], location["latitude"], location["longitude"]]
       end
-    end      
+    end
   end
 
   def sample_csv(user = nil)
@@ -206,9 +215,9 @@ module Collection::CsvConcern
     items.each do |item|
       locations.push item[1]
     end
-    
+
     locations
-    
+
     rescue Exception => ex
       return [{error: ex.message}]
   end
@@ -231,7 +240,7 @@ module Collection::CsvConcern
 
           #Check unique name
           name = row[1].strip
-          
+
           #Check unique id
           code = row[0].strip
           if items.any?{|item| item.second[:code] == code}
@@ -277,7 +286,7 @@ module Collection::CsvConcern
           #   item[:error_description] = "Hierarchy name should be unique"
           #   error = true
           # end
-          
+
           #Check unique id
           id = row[0].strip
           if items.any?{|item| item.second[:id] == id}
