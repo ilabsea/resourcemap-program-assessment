@@ -24,7 +24,7 @@ class ReportQueryTemplatesController < ApplicationController
   def render_breadcrumb
     show_collection_breadcrumb
     add_breadcrumb I18n.t('views.collections.index.properties'), collection_path(collection)
-    add_breadcrumb 'Report Template', collection_report_query_templates_path(collection)
+    add_breadcrumb 'Report Query Template', collection_report_query_templates_path(collection)
   end
 
   def index
@@ -48,6 +48,7 @@ class ReportQueryTemplatesController < ApplicationController
 
   def edit
     @report_query_template = collection.report_query_templates.find(params[:id])
+    add_breadcrumb @report_query_template.name
   end
 
   def update
@@ -70,6 +71,7 @@ class ReportQueryTemplatesController < ApplicationController
   # GET /:id/report
   def show
     @template = collection.report_query_templates.find_by_uuid(params[:id])
+    add_breadcrumb @template.name
   end
 
   def share
