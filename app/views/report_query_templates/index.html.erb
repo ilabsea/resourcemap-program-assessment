@@ -25,7 +25,7 @@
           <%= check_box_tag 'template_uuids[]', template.uuid, false, class: 'templateList' %>
         </td>
         <td><%= template.name %></td>
-        <td><%= template.report_query.name %></td>
+        <td><%= template.report_query.name if template.report_query %></td>
         <td>
           <% if current_user_snapshot.at_present? && collection_admin? %>
           <%=link_to '', edit_collection_report_query_template_path(collection, template), class: 'button fedit' %>

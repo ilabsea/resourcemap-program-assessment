@@ -24,6 +24,7 @@ class ReportQueryTemplate < ActiveRecord::Base
   attr_accessible :name, :template, :report_query_id
 
   validates :name, :template, presence: true
+  validates :report_query, :template, presence: true
 
   before_create :generate_uuid
 

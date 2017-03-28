@@ -19,6 +19,9 @@
 require 'spec_helper'
 
 describe ReportQueryTemplate do
+  it { should validate_presence_of :name }
+  it { should validate_presence_of :report_query }
+
   describe '#has_report_place_holder' do
     context "template contains report place holder" do
       it "return true" do
