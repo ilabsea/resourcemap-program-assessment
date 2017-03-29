@@ -69,4 +69,8 @@ class ReportQueryTemplate < ActiveRecord::Base
     self.pdf_completed_at = Time.zone.now
     self.save
   end
+
+  def has_report_query?
+    self.report_query.present?
+  end
 end

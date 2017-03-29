@@ -24,7 +24,12 @@
         <td>
           <%= check_box_tag 'template_uuids[]', template.uuid, false, class: 'templateList' %>
         </td>
-        <td><%= template.name %></td>
+        <td>
+            <% clazz = template.has_report_query? ? '' : 'error' %>
+            <span class="report-name">
+              <span class="<%= clazz %>"> <%= template.name  %> </span>
+            </span>
+        </td>
         <td><%= template.report_query.name if template.report_query %></td>
         <td>
           <% if current_user_snapshot.at_present? && collection_admin? %>
@@ -32,7 +37,9 @@
           <%=link_to '', collection_report_query_template_path(collection, template),
                               method: :delete, confirm: 'Are you sure you want to delete?', class: 'button fdelete' %>
           <% end %>
-          <%=link_to '', collection_report_query_template_path(collection, template.uuid), class: 'button fpreview' %>
+          <% if template.has_report_query? %>
+            <%=link_to '', collection_report_query_template_path(collection, template.uuid), class: 'button fpreview' %>
+          <% end %>
         </td>
       </tr>
     <%end%>

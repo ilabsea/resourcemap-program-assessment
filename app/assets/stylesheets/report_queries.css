@@ -87,3 +87,7 @@ label.error{
 div.select select{
   max-width: 200px;
 }
+
+span.report-name > span.error{
+  color: #ef8539
+}
