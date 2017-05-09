@@ -88,6 +88,7 @@ GEM
     coffee-script-source (1.6.2)
     columnize (0.3.6)
     daemons (1.1.9)
+    dalli (2.7.6)
     database_cleaner (1.0.1)
     dbf (2.0.7)
       fastercsv (~> 1.5.4)
@@ -369,6 +370,7 @@ DEPENDENCIES
   capybara
   ci_reporter
   coffee-rails (~> 3.2.1)
+  dalli
   database_cleaner
   dbf
   decent_exposure

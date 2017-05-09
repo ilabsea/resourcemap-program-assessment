@@ -41,8 +41,7 @@ class ReportQueryTemplate < ActiveRecord::Base
   end
 
   def report_result
-    @report_result ||= ReportQuerySearch.new(report_query).query
-    @report_result
+    @report_result = ReportCaching.load_or_cache(collection, report_query)
   end
 
   def generate_pdf_from_text text
