@@ -4,29 +4,32 @@ class ReportCaching < ActiveRecord::Base
   belongs_to :collection
   belongs_to :report_query
 
-  def self.load_or_cache collection, report_query
-    report_caching = get(collection.id, report_query.id).first
+  after_save :clear_cache, if: :modified?
+  after_destroy :clear_cache
 
-    raise "Can't find Reporting Caching with collection: #{collection.id}, report_query: #{report_query.id}" if report_caching.nil?
+  def self.fetch_cache collection_id, report_query_id
+    report_caching = get(collection_id, report_query_id).first
 
-    report_caching.changed! if report_caching.modified?
+    raise "Can't find Reporting Caching with collection: #{collection_id}, report_query: #{report_query_id}" if report_caching.nil?
 
     report_caching.fetch_cache
   end
 
+  def self.clear_cache_of_collection collection_id
+    get(collection_id).each do |report_caching|
+      report_caching.is_modified = true
+      report_caching.save
+    end
+  end
+
+  def self.remove collection_id, report_query_id
+    get(collection_id, report_query_id).each do |report_caching|
+      report_caching.destroy
+    end
+  end
+
   def self.get collection_id, report_query_id = nil
     by_collection(collection_id).by_report_query(report_query_id)
-  end
-
-  def changed!
-    clear_cache
-
-    self.is_modified = true
-    self.save!
-  end
-
-  def clear_cache
-    Rails.cache.delete(key)
   end
 
   def fetch_cache
@@ -43,10 +46,6 @@ class ReportCaching < ActiveRecord::Base
     is_modified
   end
 
-  def key
-    "query:collection-#{collection.id}_query-#{report_query.id}"
-  end
-
   private
 
   def self.by_collection collection_id = nil
@@ -55,6 +54,14 @@ class ReportCaching < ActiveRecord::Base
 
   def self.by_report_query report_query_id = nil
     report_query_id.present? ? where(report_query_id: report_query_id) : where("report_query_id is not ?", nil)
+  end
+
+  def clear_cache
+    Rails.cache.delete(key)
+  end
+
+  def key
+    "query:collection-#{collection.id}_query-#{report_query.id}"
   end
 
 end

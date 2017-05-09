@@ -14,6 +14,7 @@
 class Layer < ActiveRecord::Base
   include Activity::AwareConcern
   include HistoryConcern
+  include Report::CachingConcern
 
   belongs_to :collection
   has_many :fields, order: 'ord', dependent: :destroy
@@ -28,6 +29,7 @@ class Layer < ActiveRecord::Base
   # have an id). Must probably be a bug in Active Record.
   after_create :create_created_activity, :unless => :mute_activities
   after_create :add_layer_memberships
+
   def create_created_activity
     fields_data = fields.map do |field|
       hash = {'id' => field.id, 'kind' => field.kind, 'code' => field.code, 'name' => field.name}
@@ -88,6 +90,8 @@ class Layer < ActiveRecord::Base
   after_destroy :create_deleted_activity, :unless => :mute_activities, :if => :user
   def create_deleted_activity
     Activity.create! item_type: 'layer', action: 'deleted', collection_id: collection.id, layer_id: id, user_id: user.id, 'data' => {'name' => name}
+
+    clear_report_caching
   end
 
   def history_concern_foreign_key
@@ -180,4 +184,5 @@ class Layer < ActiveRecord::Base
       end
     end
   end
+
 end

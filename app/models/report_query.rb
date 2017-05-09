@@ -29,11 +29,22 @@ class ReportQuery < ActiveRecord::Base
                   :group_by_fields, :name, :parse_condition
 
   before_save :sanitize_condition
-
+  after_save :build_report_caching
+  before_destroy :remove_report_caching
 
   # (1 or 3)and2
   def sanitize_condition
     condition = ConditionParser.sanitize(condition) if !condition.nil?
+  end
+
+  def build_report_caching
+    report_caching = ReportCaching.get(collection.id, self.id).first_or_initialize
+    report_caching.is_modified = true
+    report_caching.save
+  end
+
+  def remove_report_caching
+    ReportCaching.remove(collection.id, self.id)
   end
 
 end

@@ -30,7 +30,6 @@ class Collection < ActiveRecord::Base
   include Collection::PluginsConcern
   include Collection::ImportLayersSchemaConcern
 
-
   validates_presence_of :name
 
   has_many :memberships, :dependent => :destroy
@@ -229,6 +228,8 @@ class Collection < ActiveRecord::Base
       Activity.where(collection_id: id).delete_all
       Site.where(collection_id: id).delete_all
       recreate_index
+
+      ReportCaching.clear_cache_of_collection(id)
     end
   end
 
@@ -353,8 +354,8 @@ class Collection < ActiveRecord::Base
     new_collection = self.dup
     new_collection.name = new_collection_name #rename collection to new collection's name
     new_collection = user.create_collection new_collection
-    
-    self.copy_layers(user, new_collection) 
+
+    self.copy_layers(user, new_collection)
 
     return new_collection
   end
