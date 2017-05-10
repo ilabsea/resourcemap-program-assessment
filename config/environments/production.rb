@@ -74,4 +74,6 @@ ResourceMap::Application.configure do
     :password             => Settings.mandrill_password,
     :authentication       => 'plain',
     :enable_starttls_auto => true  }
+
+  config.cache_store = :dalli_store, nil, { :namespace => Settings.app_name, :compress => true }
 end

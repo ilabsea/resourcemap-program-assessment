@@ -39,6 +39,8 @@ gem 'wkhtmltopdf-binary-edge', '~> 0.12.2.1'
 gem 'oj'
 gem 'includes-count'
 
+gem 'dalli'
+
 group :test do
   gem 'shoulda-matchers'
   gem 'ci_reporter'

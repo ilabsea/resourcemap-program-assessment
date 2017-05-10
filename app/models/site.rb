@@ -30,6 +30,7 @@ class Site < ActiveRecord::Base
   include Site::PrefixConcern
   include Site::TireConcern
   include HistoryConcern
+  include Report::CachingConcern
 
   belongs_to :collection
   validates_presence_of :name
