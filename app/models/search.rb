@@ -1,16 +1,53 @@
 class Search
   include SearchBase
 
-  class << self
-    attr_accessor :page_size
-  end
-  Search.page_size = 50
+  class Results
+    include Enumerable
 
+    attr_reader :sites
+    attr_reader :page
+    attr_reader :previous_page
+    attr_reader :next_page
+    attr_reader :total_pages
+    attr_reader :total_count
+
+    def initialize(options)
+      @sites = options[:sites]
+      @page = options[:page]
+      @previous_page = options[:previous_page]
+      @next_page = options[:next_page]
+      @total_pages = options[:total_pages]
+      @total_count = options[:total_count]
+    end
+
+    def total
+      total_count
+    end
+
+    def each(&block)
+      @sites.each(&block)
+    end
+
+    def [](index)
+      @sites[index]
+    end
+
+    def empty?
+      @sites.empty?
+    end
+
+    def length
+      @sites.length
+    end
+  end
+
+  attr_accessor :page_size
   attr_accessor :collection
 
   def initialize(collection, options)
     @collection = collection
-    @search = collection.new_tire_search(options)
+    # @search = collection.new_tire_search(options)
+    @index_names = collection.index_names_with_options(options)
     @snapshot_id = options[:snapshot_id]
     if options[:current_user]
       @current_user = options[:current_user]
@@ -22,7 +59,7 @@ class Search
   end
 
   def page(page)
-    @search.from((page - 1) * self.class.page_size)
+    @page = page
     self
   end
 
@@ -60,29 +97,45 @@ class Search
     self
   end
 
-  # Returns the results from ElasticSearch without modifications. Keys are ids
-  # and so are values (when applicable).
   def results
-    apply_queries
-    sort_list = @sort_list
-    if @sort
-      @search.sort { by sort_list }
-    else
-      @search.sort { by 'name_not_analyzed' }
+    
+    body = get_body
+
+    client = Elasticsearch::Client.new
+
+    if Rails.logger.level <= Logger::DEBUG
+      Rails.logger.debug to_curl(client, body)
     end
 
-    if @offset && @limit
-      @search.from @offset
-      @search.size @limit
-    elsif @unlimited
-      @search.size 1_000_000
-    else
-      @search.size self.class.page_size
+    results = client.search index: @index_names, type: 'site', body: body
+
+    hits = results["hits"]
+    sites = hits["hits"]
+    total_count = hits["total"]
+
+    # When selecting fields, the results are returned in an array.
+    # We only keep the first element of that array.
+    if @select_fields
+      sites.each do |site|
+        fields = site["fields"]
+        if fields
+          fields.each do |key, value|
+            fields[key] = value.first if value.is_a?(Array)
+          end
+        end
+      end
     end
 
-    Rails.logger.debug @search.to_curl if Rails.logger.level <= Logger::DEBUG
-
-    @search.perform.results
+    results = {sites: sites, total_count: total_count}
+    if @page
+      results[:page] = @page
+      results[:previous_page] = @page - 1 if @page > 1
+      results[:total_pages] = (total_count.to_f / page_size).ceil
+      if @page < results[:total_pages]
+        results[:next_page] = @page + 1
+      end
+    end
+    Results.new(results)
   end
 
   # Returns the results from ElasticSearch but with codes as keys and codes as

@@ -219,10 +219,10 @@ class CollectionsController < ApplicationController
     search.full_text_search params[:term] if params[:term]
     search.alerted_search params[:_alert] if params[:_alert]
     search.select_fields(['id', 'name', 'properties'])
-    search.apply_queries
+    # search.apply_queries
 
     results = search.results.map{ |item| item["fields"]}
-
+    debugger
     results.each do |item|
       item[:value] = item["name"]
     end
@@ -376,13 +376,22 @@ class CollectionsController < ApplicationController
   def sites_info
     options = new_search_options
 
-    total = collection.new_tire_count(options).value
-    no_location = collection.new_tire_count(options) do
-      filtered do
-        query { all }
-        filter :not, exists: {field: :location}
-      end
-    end.value
+    total = collection.elasticsearch_count
+    no_location = collection.elasticsearch_count do
+      {
+        query: {
+          filtered: {
+            filter: {
+              not: {
+                filter: {
+                  exists: {field: :location}
+                }
+              }
+            }
+          }
+        }
+      }
+    end
 
     info = {}
     info[:total] = total
