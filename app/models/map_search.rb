@@ -3,8 +3,10 @@ class MapSearch
 
   def initialize(collection_ids, options = {})
     @collection_ids = Array(collection_ids)
-    @search = Collection.new_tire_search(*@collection_ids, options)
-    @search.size 100000
+    # @search = Collection.new_tire_search(*@collection_ids, options)
+    @search = Collection.index_names_with_options(*@collection_ids, options)
+    @index_names = Collection.index_names_with_options(*@collection_ids, options)
+    # @search.size 100000
     @bounds = {s: -90, n: 90, w: -180, e: 180}
     @hierarchy = {}
   end
@@ -53,37 +55,19 @@ class MapSearch
     adapter = ElasticSearch::SitesAdapter.new listener
     adapter.return_property @hierarchy[:code] if @hierarchy[:code]
 
-    Rails.logger.debug @search.to_curl if Rails.logger.level <= Logger::DEBUG
+    # Rails.logger.debug @search.to_curl if Rails.logger.level <= Logger::DEBUG
 
-    adapter.parse @search.stream
+    # adapter.parse @search.stream
+    adapter.parse stream
 
     clusterer.clusters
   end
 
   def sites_json
     return {} if @collection_ids.empty?
-    set_bounds_filter
-    apply_queries
-    sort_list = @sort_list
-
-    if sort_list
-      @search.sort { by sort_list }
-    else
-      @search.sort { by 'name_not_analyzed' }
-    end
-
-    if @offset && @limit
-      @search.from @offset
-      @search.size @limit
-    else
-      @search.size 1_000_000
-    end
-
-    Rails.logger.debug @search.to_curl if Rails.logger.level <= Logger::DEBUG
-
-    results = @search.perform.results
     sites = []
-    results.each do |item|
+    data = JSON.parse(stream.read)
+    data["hits"]["hits"].each do |item|
       site = Hash.new
       site[:collection_id] = item['_index'].split('_')[1]
       item['_source'].each do |key, value|
@@ -103,16 +87,19 @@ class MapSearch
       adjust_bounds_to_world_limits
     end
 
-    @search.filter :exists, field: :location
-    @search.filter :geo_bounding_box, location: {
-      top_left: {
-        lat: @bounds[:n],
-        lon: @bounds[:w]
-      },
-      bottom_right: {
-        lat: @bounds[:s],
-        lon: @bounds[:e]
-      },
+
+    add_filter exists: {field: :location}
+    add_filter geo_bounding_box: {
+      location: {
+        top_left: {
+          lat: @bounds[:n],
+          lon: @bounds[:w]
+        },
+        bottom_right: {
+          lat: @bounds[:s],
+          lon: @bounds[:e]
+        }
+      }
     }
   end
 
@@ -138,5 +125,37 @@ class MapSearch
 
   def collection
     @collection ||= Collection.find @collection_ids[0]
+  end
+
+  def stream
+    client = Elasticsearch::Client.new
+    info = client.transport.hosts.first
+    protocol, host, port = info[:protocol], info[:host], info[:port]
+
+    url = "#{protocol}://#{host}:#{port}/#{@index_names}/site/_search"
+    body = get_body
+    # body[:size] = 100_000
+
+    if Rails.logger.level <= Logger::DEBUG
+      Rails.logger.debug to_curl(client, body)
+    end
+
+    uri = URI(url)
+    reader, writer = IO.pipe
+    producer = Thread.new(writer) do |io|
+      begin
+        Net::HTTP.start(uri.host, uri.port) do |http|
+          request = Net::HTTP::Get.new uri.request_uri
+          http.request request, body.to_json do |response|
+            response.read_body { |segment| io.write segment.dup.force_encoding("UTF-8") }
+          end
+        end
+      rescue Exception => ex
+        Rails.logger.error ex.message + "\n" + ex.backtrace.join("\n")
+      ensure
+        io.close
+      end
+    end
+    reader
   end
 end

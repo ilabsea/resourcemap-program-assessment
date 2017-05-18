@@ -109,19 +109,45 @@ class SitesController < ApplicationController
   end
 
   def search
-    if params[:collection_ids]
-      data = {:sites => [], :clusters => []}
-      params[:collection_ids].each do |id|
-        result = search_by_collection id, params
-        data[:sites].concat result[:sites] if result[:sites]
-        data[:clusters].concat result[:clusters] if result[:clusters]
-      end
-      render json: data
-    else
-      render json: []
+    # if params[:collection_ids]
+    #   data = {:sites => [], :clusters => []}
+    #   params[:collection_ids].each do |id|
+    #     result = search_by_collection id, params
+    #     data[:sites].concat result[:sites] if result[:sites]
+    #     data[:clusters].concat result[:clusters] if result[:clusters]
+    #   end
+    #   render json: data
+    # else
+    #   render json: []
+    # end
+    zoom = params[:z].to_i
+
+    if params[:collection_ids].is_a? String
+      collection_ids_array = params[:collection_ids].split ","
+    elsif params[:collection_ids].is_a? Array
+      collection_ids_array = params[:collection_ids]
     end
+
+    search = MapSearch.new collection_ids_array, user: current_user
+
+    formula = params[:formula].downcase if params[:formula].present?
+
+    search.set_formula formula if formula.present?
+    search.zoom = zoom
+    search.bounds = params if zoom >= 2
+    search.exclude_id params[:exclude_id].to_i if params[:exclude_id].present?
+    search.after params[:updated_since] if params[:updated_since]
+    search.full_text_search params[:search] if params[:search].present?
+    search.alerted_search params[:_alert] if params[:_alert].present?
+    # search.my_site_search current_user.id if current_user && !current_user.can_view_other?(collection_id)
+    if params[:selected_hierarchy_id].present?
+      search.selected_hierarchy params[:hierarchy_code], Field.find(params[:hierarchy_code]).descendants_of_in_hierarchy(params[:selected_hierarchy_id])
+    end
+    search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :search, :hierarchy_code, :selected_hierarchies, :_alert, :formula)
+    render_json search.results, :root => false
   end
 
+  # TODO remove this unuse function
   def search_by_collection collection_id, params
     zoom = params[:z].to_i
     search = MapSearch.new [collection_id], user: current_user
@@ -173,7 +199,7 @@ class SitesController < ApplicationController
     search.bounds = params if zoom >= 2
     search.exclude_id params[:exclude_id].to_i if params[:exclude_id].present?
     search.full_text_search params[:search] if params[:search].present?
-    search.alerted_search params[:_alert] if params[:_alert].present?
+    # search.alerted_search params[:_alert] if params[:_alert].present?
     search.my_site_search current_user.id if current_user && !current_user.can_view_other?(collection_id)
     if params[:selected_hierarchies].present?
       search.selected_hierarchy params[:hierarchy_code], params[:selected_hierarchies]
