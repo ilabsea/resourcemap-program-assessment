@@ -8,31 +8,15 @@ onLayers ->
       else
         @selected_options = ko.observableArray([])
       @label = ko.observable(data?.label)
-      @field_id = if (typeof data?.field_id == 'object') && data?.field_id?.length > 0
-                    ko.observable(data?.field_id[0])
-                  else
-                    ko.observable(data?.field_id)
-
+      @field_id = ko.observableArray([data?.field_id])
       @condition_type = ko.observable(data?.condition_type)
       @editing = ko.observable(false)
       @valid = ko.observable(true)
       @error = ko.observable()
-      @is_numeric = ko.computed => return @fieldType(@field_id()) == "numeric"
-      @autoCompleteValue =  if data?.field_id
-                              ko.observable(@fieldName(@field_id()))
-                            else
-                              ko.observable()
-
-      @fieldUI = ko.computed =>
-        field_id = @fieldId(@autoCompleteValue())
-        @field_id(field_id)
-        if !field_id then @autoCompleteValue('')
-        return field_id
-
-    selectField: (event, ui) =>
-      @autoCompleteValue(ui.item.label)
-      @field_id(ui.item.value)
-      return false
+      @is_numeric = ko.computed =>
+                      if @field_id().length > 0
+                        return @fieldType(@field_id()[0]) == "numeric"
+                      return false
 
     toJSON: =>
       id: @id()
@@ -44,18 +28,7 @@ onLayers ->
 
     fieldType: (field_id)=>
       if window.model
-        for field in window.model.fieldList()
-          if parseInt(field.id()) == parseInt(field_id)
-            return field.kind()
-
-    fieldName: (field_id)=>
-      if window.model
-        for field in window.model.fieldList()
-          if parseInt(field.id()) == parseInt(field_id)
-            return field.name()
-
-    fieldId: (field_name)=>
-      if window.model
-        for field in window.model.fieldList()
-          if field.name() == field_name
-            return field.id()
+        for layer in window.model.layers()
+          for field in layer.fields()
+            if parseInt(field.id()) == parseInt(field_id)
+              return field.kind()

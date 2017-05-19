@@ -115,10 +115,14 @@ onLayers ->
       @selecting = v
 
     buttonClass: =>
+      if @kind() == 'location'
+        return 'llocation'
       FIELD_TYPES[@kind()].css_class
 
     iconClass: =>
-      FIELD_TYPES[@kind()].small_css_class
+      if @kind() == 'location'
+        return 'slocation'
+      FIELD_TYPES[@kind()].css_class
 
     isAllowMandatoryConfig: =>
       return (@kind() not in ['custom_widget', 'calculation', 'custom_aggregator', 'yes_no'])
