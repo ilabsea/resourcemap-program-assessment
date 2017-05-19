@@ -348,8 +348,8 @@ ActiveRecord::Schema.define(:version => 20170524080304) do
     t.integer  "site_id"
     t.string   "uuid"
     t.integer  "user_id"
-    t.datetime "start_entry_date",                                                    :default => '2015-08-18 05:09:23'
-    t.datetime "end_entry_date",                                                      :default => '2015-08-18 05:09:25'
+    t.datetime "start_entry_date",                                              :default => '2016-03-01 07:17:27'
+    t.datetime "end_entry_date",                                                :default => '2016-03-01 07:17:27'
   end
 
   add_index "site_histories", ["site_id"], :name => "index_site_histories_on_site_id"
@@ -379,8 +379,8 @@ ActiveRecord::Schema.define(:version => 20170524080304) do
     t.string   "uuid"
     t.string   "device_id"
     t.string   "external_id"
-    t.datetime "start_entry_date",                                                    :default => '2015-08-17 10:17:04'
-    t.datetime "end_entry_date",                                                      :default => '2015-08-17 10:17:04'
+    t.datetime "start_entry_date",                                              :default => '2015-08-14 02:57:03'
+    t.datetime "end_entry_date",                                                :default => '2015-08-14 02:57:03'
     t.integer  "user_id"
   end
 
