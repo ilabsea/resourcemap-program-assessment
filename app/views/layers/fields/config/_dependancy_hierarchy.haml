@@ -1,0 +1,12 @@
+/ko if: $root.layers_with_hierarchy_fields().length > 0
+%hr/
+%p
+  =t('views.layers.form.field.parent')
+
+%select{"data-bind" => 'foreach: $root.layers_with_hierarchy_fields(), value: impl().parent_hiearchy_field_id'}
+  /ko if: $index() == 0
+  %option{value: ""} (no value)
+  //ko
+  %optgroup{"data-bind" => "attr: {label: name}, foreach: hierarchy_fields()", style: ''}
+    %option{"data-bind" => "text: name, option: name, value: id"}
+//ko

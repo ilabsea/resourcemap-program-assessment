@@ -8,10 +8,17 @@ onLayers ->
       @threshold_ids = data?.threshold_ids ? []
       @query_ids = data?.query_ids ? []
       @report_query_ids = data?.report_query_ids ? []
-      if data?.fields
-        @fields = ko.observableArray($.map(data.fields, (x) => new Field(@, x)))
-      else
-        @fields = ko.observableArray([])
+      @fields = if data?.fields
+                  ko.observableArray($.map(data.fields, (x) => new Field(@, x)))
+                else
+                  ko.observableArray([])
+
+      @hierarchy_fields = ko.computed =>
+                            if model?.currentField()
+                              @fields().filter (f) => f.kind() == 'hierarchy' && f != model.currentField()
+                            else
+                              @fields().filter (f) => f.kind() == 'hierarchy'
+
       @numeric_fields = ko.observableArray($.map(@fields(), (f) => f if f.kind() == 'numeric'))
       @support_skiplogic_fields = ko.observableArray($.map(@fields(), (f) => f if (f.kind() == 'numeric' or f.kind() == 'yes_no' or f.kind() == 'select_one' or f.kind() == 'select_many')))
       @deletable = ko.observable(true)
@@ -78,3 +85,21 @@ onLayers ->
 
     widgetFields: =>
       @fields().filter ((field) -> field.kind() == "custom_widget")
+
+    isRemovable: =>
+      isDependencyOfOtherLayer = (@threshold_ids.length > 0 || @query_ids.length > 0 || @report_query_ids.length > 0 || @isHavingRelationWithOther() || @isBeingParentFieldOfOtherLayerField())
+      if isDependencyOfOtherLayer then return false else return true
+
+    isHavingRelationWithOther: =>
+      for field in @fields()
+        return true if field.isHavingRelationWithOther()
+      return false
+
+    isBeingParentFieldOfOtherLayerField: =>
+      return false if model?.layers().length == 1
+      layers = model?.layers().filter((l) => l != @)
+      for field in @fields()
+        for layer in layers
+          isParentOfOther = layer.fields().filter((f) => "#{f.impl()?.parent_hiearchy_id?()}" == "#{field.id()}").length > 0
+          return true if isParentOfOther
+      return false

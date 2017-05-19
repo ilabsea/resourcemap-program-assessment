@@ -1,5 +1,5 @@
 #= require layers/on_layers
-#= require_tree ./layers/.
+#= require_tree ./layers
 
 # We do the check again so tests don't trigger this initialization
 onLayers -> if $('#layers-main').length > 0
