@@ -56,6 +56,7 @@ class SitesController < ApplicationController
     search.id params[:id]
     # If site does not exists, return empty objects
     result = search.ui_results.first['_source'] rescue {}
+    # result = search.ui_results.first['_source'] 
     render json: result
   end
 
