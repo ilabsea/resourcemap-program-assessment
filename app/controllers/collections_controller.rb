@@ -221,8 +221,7 @@ class CollectionsController < ApplicationController
     search.select_fields(['id', 'name', 'properties'])
     # search.apply_queries
 
-    results = search.results.map{ |item| item["fields"]}
-    debugger
+    results = search.results.map{ |item| item["_source"]["properties"]}
     results.each do |item|
       item[:value] = item["name"]
     end
