@@ -7,6 +7,6 @@
   /ko if: $index() == 0
   %option{value: ""} (no value)
   //ko
-  %optgroup{"data-bind" => "attr: {label: name}, foreach: hierarchy_fields()", style: ''}
+  %optgroup{"data-bind" => "attr: {label: name}, foreach: hierarchy_fields"}
     %option{"data-bind" => "text: name, option: name, value: id"}
 //ko

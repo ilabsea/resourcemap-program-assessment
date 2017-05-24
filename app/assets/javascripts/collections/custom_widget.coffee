@@ -13,7 +13,7 @@ onCollections ->
         ko.applyBindings(@field, @element.get(0) )
 
     createReadOnlyElement: ->
-      if @field.kind == 'numeric' || @field.kind == 'custom_aggregator'|| @field.kind == 'text'
+      if @field.kind == 'numeric'
         node = """
               <span data-bind="text: value" id="custom-widget-#{@field.code}" class="custom"></span>
             """
@@ -26,7 +26,7 @@ onCollections ->
 
 
     createEditableElement: ->
-      if @field.kind == 'numeric' || @field.kind == 'text'
+      if @field.kind == 'numeric'
         node = """
                  <input type="text" name="custom-widget-#{@field.code}"
                         data-bind="value: value, css: {error: error}, attr: {title: name}" id="custom-widget-#{@field.code}"

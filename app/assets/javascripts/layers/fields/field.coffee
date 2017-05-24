@@ -4,8 +4,8 @@ onLayers ->
     constructor: (layer, data) ->
       @layer = ko.observable layer
       @id = ko.observable data?.id
-      @name = ko.observable data?.name
-      @code = ko.observable data?.code
+      @name = ko.observable data?.name ? ''
+      @code = ko.observable data?.code ? ''
       @kind = ko.observable data?.kind
       @threshold_ids = data?.threshold_ids ? []
       @query_ids = data?.query_ids ? []
@@ -115,29 +115,25 @@ onLayers ->
       @selecting = v
 
     buttonClass: =>
-      if @kind() == 'location'
-        return 'llocation'
       FIELD_TYPES[@kind()].css_class
 
     iconClass: =>
-      if @kind() == 'location'
-        return 'slocation'
       FIELD_TYPES[@kind()].small_css_class
 
     isAllowMandatoryConfig: =>
       return (@kind() != 'custom_widget')
 
     isAllowDigitPrecisionConfig: =>
-      return (@kind() == 'numeric' || @kind() == 'calculation')
+      return (@kind() in ['numeric', 'calculation'])
 
     isAllowFieldLogicConfig: =>
       return model?.selectLogicLayers().length > 0
 
     isSelectable: =>
-      return (@kind() == 'select_one' || @kind() == 'select_many')
+      return (@kind() in ['select_one', 'select_many'])
 
     isWidgetable: =>
-      return  (@kind() == 'numeric' || @kind() == 'select_one')
+      return  (@kind() in ['numeric', 'select_one'])
 
     isRemovable: =>
       is_dependency_of_other = ( @isHavingRelationWithOther() || @isParentOfOther())
@@ -161,7 +157,7 @@ onLayers ->
       return false
 
     toJSON: =>
-      @code(@code().trim())
+      @code(@code()?.trim())
       json =
         id: @id()
         name: @name()
