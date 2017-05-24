@@ -89,7 +89,7 @@ onLayers ->
       @fields().filter ((field) -> field.kind() == "custom_widget")
 
     isRemovable: =>
-      isDependencyOfOtherLayer = (@threshold_ids.length > 0 || @query_ids.length > 0 || @report_query_ids.length > 0 || @isHavingRelationWithOther() || @isBeingParentFieldOfOtherLayerField())
+      isDependencyOfOtherLayer = (@threshold_ids.length > 0 || @query_ids.length > 0 || @report_query_ids.length > 0 || @isHavingRelationWithOther() || @isParentFieldOfOtherLayerField())
       if isDependencyOfOtherLayer then return false else return true
 
     isHavingRelationWithOther: =>
@@ -97,7 +97,7 @@ onLayers ->
         return true if field.isHavingRelationWithOther()
       return false
 
-    isBeingParentFieldOfOtherLayerField: =>
+    isParentFieldOfOtherLayerField: =>
       return false if model?.layers().length == 1
       layers = model?.layers().filter((l) => l != @)
       for field in @fields()

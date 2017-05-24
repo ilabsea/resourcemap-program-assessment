@@ -313,7 +313,7 @@ onLayers ->
           $.status.showError("This layer's field is being used with #{layer.query_ids.length} canned query(s), you are not allowed to delete", 2000)
         else if layer.report_query_ids.length > 0
           $.status.showError("This layer's field is being used with #{layer.report_query_ids.length} report query(s), you are not allowed to delete", 2000)
-        else if layer.isHavingParentFieldOfOtherLayerField()
+        else if layer.isParentFieldOfOtherLayerField()
           $.status.showError("This layer's field is having the dependancy with other layer's field, you are not allowed to delete", 2000)
 
 
@@ -323,7 +323,7 @@ onLayers ->
       ord = field.ord() + 1
       index = model.currentLayer().fields().indexOf(field)
       fieldJSON =  @modifyFieldLogic(field.toJSON())
-      tmpField = new Field(model.currentLayer, field.toJSON())
+      tmpField = new Field(model.currentLayer(), field.toJSON())
 
       tmpField.name(name)
       tmpField.code(code)
