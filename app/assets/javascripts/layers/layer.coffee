@@ -13,7 +13,7 @@ onLayers ->
                 else
                   ko.observableArray([])
 
-      @hierarchy_fields = ko.computed =>
+      @hierarchyFields = ko.computed =>
                             if model?.currentField()
                               @fields().filter (f) => f.kind() == 'hierarchy' && f != model.currentField()
                             else
