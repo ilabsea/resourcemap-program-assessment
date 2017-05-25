@@ -52,11 +52,10 @@ onLayers ->
       @fieldList = ko.computed =>
         return @currentLayer()?.fields() ? []
 
-      @layers_with_hierarchy_fields = ko.computed =>
+      @layersWithHierarchyFields = ko.computed =>
         hierarchyLayerFields = []
         for layer in @layers()
-          # next unless layer.id()
-          if layer.hierarchy_fields().length > 0
+          if layer.hierarchyFields().length > 0
             hierarchyLayerFields.push(layer)
         return hierarchyLayerFields
 

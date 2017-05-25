@@ -5,9 +5,15 @@ onLayers ->
       @hierarchy = ko.observable field.config?.hierarchy
       @uploadingHierarchy = ko.observable(false)
       @errorUploadingHierarchy = ko.observable(false)
-      @parent_hiearchy_field_id = ko.observable field.config?.parent_hiearchy_field_id ? ""
+      @parentHierarchyFieldId = ko.observable field.config?.parent_hierarchy_field_id ? ""
+
+      @field.is_enable_dependancy_hierarchy.subscribe =>
+        @parentHierarchyFieldId('') if @field.is_enable_dependancy_hierarchy() == false
 
       @initHierarchyItems() if @hierarchy()
+
+
+
       @error = ko.computed =>
         if @hierarchy() && @hierarchy().length > 0
           null
@@ -24,4 +30,7 @@ onLayers ->
       @hierarchyItems = ko.observableArray $.map(@hierarchy(), (x) -> new HierarchyItem(x))
 
     toJSON: (json) =>
-      json.config = {hierarchy: @hierarchy(), parent_hiearchy_field_id: @parent_hiearchy_field_id(),field_logics: $.map(@field_logics(), (x) ->  x.toJSON())}
+      json.config =
+                hierarchy: @hierarchy()
+                parent_hierarchy_field_id: @parentHierarchyFieldId()
+                field_logics: $.map(@field_logics(), (x) ->  x.toJSON())

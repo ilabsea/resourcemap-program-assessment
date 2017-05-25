@@ -9,15 +9,13 @@ onCollections ->
       @name = data.name
       @kind = data.kind
       @ord = data.ord
-      @is_mandatory = ko.observable(
-                        if @kind == 'yes_no' #to ignore validation for field yes_no
-                          false
-                        else
-                          data?.is_mandatory ? false
-                      )
+
+      @is_mandatory = ko.observable data?.is_mandatory ? false
       @is_display_field = ko.observable data?.is_display_field ? false
       @is_enable_field_logic = data.is_enable_field_logic
       @is_enable_custom_validation = ko.observable data?.is_enable_custom_validation ? false
+      @is_enable_dependancy_hierarchy = ko.observable data?.is_enable_dependancy_hierarchy ? false
+
       @custom_widgeted = data.custom_widgeted
       @readonly_custom_widgeted = data.readonly_custom_widgeted
       @invisible_calculation = ko.computed =>
@@ -111,6 +109,7 @@ onCollections ->
 
       if @kind == 'hierarchy'
         @hierarchy = data.config?.hierarchy
+        @parent_hierarchy_field_id = data.config?.parent_hierarchy_field_id
 
       @buildHierarchyItems() if @hierarchy?
 
