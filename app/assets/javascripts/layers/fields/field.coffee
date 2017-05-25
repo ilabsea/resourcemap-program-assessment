@@ -18,7 +18,7 @@ onLayers ->
       @is_enable_custom_validation = ko.observable data?.is_enable_custom_validation ? false
       @is_enable_field_custom_validation = ko.observable data?.is_enable_field_custom_validation ? false
       @is_enable_range = data?.is_enable_range
-      @is_criteria = data?.is_criteria
+      @is_enable_dependancy_hierarchy = ko.observable data?.is_enable_dependancy_hierarchy ? false
 
       @config = data?.config
       @field_logics_attributes = data?.field_logics_attributes
@@ -129,6 +129,9 @@ onLayers ->
     isAllowFieldLogicConfig: =>
       return model?.selectLogicLayers().length > 0
 
+    isAllowDependancyHierarchyFieldConfig: =>
+      return (@is_enable_dependancy_hierarchy() && model?.layersWithHierarchyFields().length > 0)
+
     isSelectable: =>
       return (@kind() in ['select_one', 'select_many'])
 
@@ -144,7 +147,7 @@ onLayers ->
     isParentOfOther: =>
       return false unless @id()
       for layer in model?.layers()
-        is_parent_of_other = layer.fields().filter((f) => "#{f.impl()?.parent_hiearchy_field_id?()}" == "#{@id()}").length > 0
+        is_parent_of_other = layer.fields().filter((f) => "#{f.impl()?.parentHierarchyFieldId?()}" == "#{@id()}").length > 0
         return true if is_parent_of_other
       return false
 
@@ -152,7 +155,7 @@ onLayers ->
       return false unless @id()
       layers = model?.layers().filter((l) => l != layer)
       for l in layers
-        is_parent_of_other = l.fields().filter((f) => "#{f.impl()?.parent_hiearchy_field_id?()}" == "#{@id()}").length > 0
+        is_parent_of_other = l.fields().filter((f) => "#{f.impl()?.parentHierarchyFieldId?()}" == "#{@id()}").length > 0
         return true if is_parent_of_other
       return false
 
@@ -169,6 +172,7 @@ onLayers ->
         is_display_field: @is_display_field
         is_enable_field_logic: @is_enable_field_logic()
         is_enable_custom_validation: @is_enable_custom_validation()
+        is_enable_dependancy_hierarchy: @is_enable_dependancy_hierarchy()
         is_criteria: @is_criteria
         custom_widgeted: @custom_widgeted()
         readonly_custom_widgeted: @readonly_custom_widgeted

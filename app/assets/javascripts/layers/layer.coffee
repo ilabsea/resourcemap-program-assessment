@@ -13,7 +13,7 @@ onLayers ->
                 else
                   ko.observableArray([])
 
-      @hierarchy_fields = ko.computed =>
+      @hierarchyFields = ko.computed =>
                             if model?.currentField()
                               @fields().filter (f) => f.kind() == 'hierarchy' && f != model.currentField()
                             else
@@ -100,6 +100,6 @@ onLayers ->
       layers = model?.layers().filter((l) => l != @)
       for field in @fields()
         for layer in layers
-          isParentOfOther = layer.fields().filter((f) => "#{f.impl()?.parent_hiearchy_id?()}" == "#{field.id()}").length > 0
+          isParentOfOther = layer.fields().filter((f) => "#{f.impl()?.parentHierarchyFieldId?()}" == "#{field.id()}").length > 0
           return true if isParentOfOther
       return false
