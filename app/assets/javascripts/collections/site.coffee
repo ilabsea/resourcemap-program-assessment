@@ -419,10 +419,6 @@ onCollections ->
         field.bindWithCustomWidgetedField()
         field.disableDependentSkipLogicField()
 
-
-      for field in @fields()
-        field.disableDependentSkipLogicField()
-
       @prepareCalculatedField()
       window.model.newOrEditSite().scrollable(false)
       $('#name').focus()
