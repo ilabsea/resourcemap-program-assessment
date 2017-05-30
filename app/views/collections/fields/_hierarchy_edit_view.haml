@@ -1,9 +1,22 @@
 - if single_editing_mode
+  <!-- ko ifnot: is_enable_dependancy_hierarchy -->
   .hierarchy-container{ko(event: {blur: :save, keydown: :keyPress}, hasfocus: true), tabIndex: -1}
     <!-- ko template: {name: 'field-hierarchy-items-template', with: fieldHierarchyItems} -->
     <!-- /ko -->
-  .clear
+  <!-- /ko -->
+
 - else
+  <!-- ko if: is_enable_dependancy_hierarchy -->
+  %select.right.w20{"data-bind" => "options: dependentHierarchyItemList,
+                                    optionsText: 'name', optionsValue: 'id',
+                                    value: value, optionsCaption: '(no value)',
+                                    attr: {id: esCode}"}
+
+  <!-- /ko -->
+
+  <!-- ko ifnot: is_enable_dependancy_hierarchy -->
   .hierarchy-container{ko(attr: {id: :esCode}), tabindex:0}
     <!-- ko template: {name: 'field-hierarchy-items-template', with: fieldHierarchyItems} -->
     <!-- /ko -->
+  <!-- /ko -->
+  .clear

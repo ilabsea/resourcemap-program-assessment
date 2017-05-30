@@ -1,0 +1,61 @@
+%form{ko(with: :newOrEditSite, submit: '$root.saveSite'), novalidate: 'novalidate', action: '#/null', method: :post, style: 'display:inline-block;width:100%'}
+  .tableheader.w30
+    %button.pback{ko(click: '$root.exitSite'), type: 'button'}
+    %span
+    <!-- ko if: inEditMode() -->
+    %span{ko(text: :name)}
+    <!-- /ko -->
+    <!-- ko if: !inEditMode() -->
+    %span= t('views.collections.index.new_site')
+    <!-- /ko -->
+  .tablescroll{ko(event: { mouseover: '$root.hideDatePicker'})}
+    %table
+      %tbody
+        %tr
+          %td
+            %div
+              = label_tag :name, t('views.collections.index.name')
+              = text_field_tag :name, '', placeholder: 'Enter new site name', class: 'w20 right', 'data-bind' => kov(value: :name, valueUpdate: :afterkeydown, hasfocus: true), :autofocus => true
+              .clear
+            %div
+              %label Location:
+              = ko_text_field_tag :locationText, event: {keydown: :newLocationKeyPress, blur: :moveLocation}, html: {class: 'ux-search right w20', placeholder: t('views.collections.index.search_or_drug_the_pin'), readonly: true}
+              .clear
+            %div
+              %input{ko(value: :startEntryDate), type: :hidden, name: :startEntryDate}
+
+            <!-- ko foreach: layers -->
+            %div
+              %img{ko(click: :toggleExpand, attr: {src: "'#{InsteddRails.url}/theme/images/icons/misc/grey/arrow' + (expanded() ? 'Down' : 'Right') + '.png'"}), style: "position:relative;top:1px;cursor:pointer", width: 11, height: 11}
+              %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;color:grey;cursor:pointer'}
+
+            <!-- ko if: expanded() -->
+            <!-- ko foreach: fields -->
+            <!-- ko if: inputable() -->
+            %div{ko(attr: {class: "invisible"})}
+              %span{ko(text: :errorMessage, validationPopover: :errorMessage), style: 'display: none;'}
+              <!-- ko if: is_mandatory -->
+              %label *
+              <!-- /ko -->
+
+              = label_tag '', '', ko(attr: {:for => :esCode}, text: "name + ':'")
+              <!-- ko if: !writeable -->
+              %span.value{ko(text: :valueUI)}
+              <!-- /ko -->
+
+              <!-- ko if: writeable -->
+              - Field::kinds.each do |kind|
+                <!-- ko if: kind == '#{kind}' -->
+                = render partial: field_edit_view(kind), locals: { single_editing_mode: false, mobile: false }
+                <!-- /ko -->
+              <!-- /ko -->
+
+            <!-- /ko -->
+            <!-- /ko -->
+            <!-- /ko -->
+            <!-- /ko -->
+
+  .tablebottom
+    .right{style: 'margin-right:3px;margin-top:-5px;'}
+      %button.grey{ko(enable: :valid), type: 'submit'}= t('views.collections.index.done')
+      %span{ko(click: '$root.exitSite'), style: 'cursor:pointer'}= t('views.collections.index.cancel')
