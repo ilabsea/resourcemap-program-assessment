@@ -66,4 +66,3 @@ onCollections ->
           marginTop: '1px'
         }
       }
-

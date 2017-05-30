@@ -13,7 +13,7 @@ onCollections ->
 
       rootCollection = @currentCollection().collection ? @currentCollection()
       @unselectSite()
-      
+
       if $.trim(@search()).length == 0 && @filters().length == 0 && !@sort()
         if @groupBy().esCode == ''
           if typeof window.model.formula != 'undefined'
@@ -26,7 +26,7 @@ onCollections ->
       else
         @currentCollection(new CollectionSearch(rootCollection, @search(), @filters(), @sort(), @sortDirection()))
         @lastSearch(@search())
-      
+
       @currentCollection().loadMoreSites() if @currentCollection().sitesPage == 1
       if @showingMap()
         @reloadMapSites()
