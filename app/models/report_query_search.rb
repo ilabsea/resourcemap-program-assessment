@@ -16,6 +16,8 @@ class ReportQuerySearch
     query_log(result_query)
 
     response = Tire.search(@index_name, result_query).results
+    debugger
+    
     @result = response.results.map { |item| item["_source"]["properties"].values.join(", ")}
     @facet = response.facets
     ReportQuerySearchResult.new(@report_query, @facet).as_table
