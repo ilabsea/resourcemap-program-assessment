@@ -54,7 +54,7 @@ class ReportQueryGroupByBuilder
 
   def distinct_value_query(field_id)
     query = query_builder
-    query['facets'] = {
+    query['aggs'] = {
       field_id => {
         "terms" => {
           "field" => field_id,
@@ -69,10 +69,13 @@ class ReportQueryGroupByBuilder
   def distinct_value(field_id)
     result = { }
     query = distinct_value_query(field_id)
-
     index_name = Collection.index_name(@report_query.collection_id)
-    response = Tire.search(index_name, query).results
-
+    client = Elasticsearch::Client.new
+    # {"query"=>{"match_all"=>{}}, "facets"=>{"20530"=>{"terms"=>{"field"=>"20530", "size"=>500}}}}
+    results = client.search index: index_name, body: query
+    response = results["hits"]["hits"].first['_source']['properties']
+    # response = Tire.search(index_name, query).results
+    debugger
     terms = response.facets[field_id]["terms"]
     result[field_id] = terms.map{ |item| item['term'] }
     result

@@ -56,6 +56,7 @@ class Search
     end
     @sort_list = {}
     @from = 0
+    @page_size = 50
   end
 
   def page(page)
@@ -95,6 +96,35 @@ class Search
   def unlimited
     @unlimited = true
     self
+  end
+
+  def get_body
+    body = super
+
+    if @sorts
+      body[:sort] = @sorts
+    else
+      body[:sort] = 'name.downcase'
+    end
+
+    if @select_fields
+      body[:fields] = @select_fields
+    end
+
+    if @page
+      body[:from] = (@page - 1) * page_size
+    end
+
+    if @offset && @limit
+      body[:from] = @offset
+      body[:size] = @limit
+    elsif @unlimited
+      body[:size] = 1_000_0
+    else
+      body[:size] = page_size
+    end
+
+    body
   end
 
   def results

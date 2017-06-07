@@ -93,6 +93,8 @@ module Site::IndexUtils
       properties: site.properties,
       created_at: site.created_at.utc.strftime(DateFormat),
       updated_at: site.updated_at.utc.strftime(DateFormat),
+      start_entry_date: site.start_entry_date.utc.strftime(DateFormat),
+      end_entry_date: site.end_entry_date.utc.strftime(DateFormat),
       icon: site.collection.icon,
       # If the migration to add the version in Sites is not runned, then calling site.version will cause some previous migration to fail
       version: (site.version rescue nil)
@@ -133,6 +135,8 @@ module Site::IndexUtils
         lng_analyzed: { type: :string },
         created_at: { type: :date, format: :basic_date_time },
         updated_at: { type: :date, format: :basic_date_time },
+        start_entry_date: { type: :date, format: :basic_date_time },
+        end_entry_date: { type: :date, format: :basic_date_time },
         properties: { properties: fields_mapping(fields) },
         version: { type: :long }
       }

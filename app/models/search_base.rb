@@ -89,8 +89,15 @@ module SearchBase
       return self
     end
 
-    value = field.descendants_of_in_hierarchy value
-    query_key = field.es_code
+    # value = field.descendants_of_in_hierarchy value
+    if field.find_hierarchy_by_id value
+      value = field.descendants_of_in_hierarchy value, false
+    elsif field.find_hierarchy_by_name value
+      value = field.descendants_of_in_hierarchy value, true
+    else
+      raise field.invalid_field_message()
+    end
+    query_key = "properties." + field.es_code
     add_filter terms: {query_key => value}
     self
   end
@@ -106,7 +113,8 @@ module SearchBase
     class_eval %Q(
       def #{op}(condition_id, field, value)
         validated_value = field.apply_format_query_validation(value, @use_codes_instead_of_es_codes)
-        add_filter range: {field.es_code => {#{op}: validated_value}}
+        field_name = "properties." + field.es_code
+        add_filter range: { field_name => {#{op}: validated_value}}
         self
       end
     )
@@ -120,7 +128,7 @@ module SearchBase
     when '>=', 'gte' then gte(condition_id, field, value)
     when '=', '==', 'eq' then eq(condition_id, field, value)
     when '!=' then not_eq(field, value)
-    when 'under' then under(condition_id, field, value)
+    when 'under' then under(field, value)
     else raise "Invalid operation: #{op}"
     end
     self
@@ -134,7 +142,6 @@ module SearchBase
         when es_code == "updated_since" then after(value, condition_id)
         else
           field = check_field_exists es_code
-
           if value.is_a? String
             case
             when value[0 .. 1] == '<=' then lte(condition_id, field, value[2 .. -1].strip)
@@ -273,7 +280,7 @@ module SearchBase
   end
 
   def require_location
-    @search.filter :exists, field: :location
+    add_filter exists: {field: :location}
     self
   end
 
