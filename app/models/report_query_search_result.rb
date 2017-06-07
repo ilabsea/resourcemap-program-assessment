@@ -6,12 +6,11 @@ class ReportQuerySearchResult
     @facet_result = facet_result
   end
 
-
   def agg_function_types
     return @field_aggregator_mapper unless @field_aggregator_mapper.nil?
     aggregator_mapping = {
       "count" => "count",
-      "sum" => "total",
+      "sum" => "sum",
       "min" => "min",
       "max" => "max",
       "avg" => "mean"
@@ -73,8 +72,14 @@ class ReportQuerySearchResult
     hash_mapping_result = hash_mapping
     body = []
     head_fields = []
+    grouped_by_field_headers = {}
     first = true # contruct table head from the first record
 
+    # query_normalized:
+    # {"60809___60809___1493251200000"=>
+    # {"13251"=>609.0,
+    #  "13252"=>341.0 }
+    #
     query_normalized.each do |key, agg_values|
       field_values = key.split(ReportQuerySearchResult::DELIMITER)
       row = []
@@ -82,23 +87,27 @@ class ReportQuerySearchResult
       field_values.each do |field_value|
         if(first)
           field_id = @report_query.group_by_fields[position]
-          hash_mapping_result[field_id]
+          # hash_mapping_result[field_id]
           head_fields << hash_mapping_result[field_id]
+          grouped_by_field_headers[field_id] = hash_mapping_result[field_id]
         end
 
         row << translate_field_value(head_fields[position], field_value)
         position +=1
       end
 
-      agg_values.each do |field_id, field_value|
-        head_fields << hash_mapping_result[field_id] if first
-        row << translate_field_value(head_fields[position], field_value)
+      hash_mapping_result = hash_mapping_result.delete_if { |field_id, _field| grouped_by_field_headers.key?(field_id)} if first
+
+      hash_mapping_result.each do |field_id, field|
+        head_fields << field if first
+        row << translate_field_value(head_fields[position], agg_values[field_id])
         position += 1
       end
+
       first = false
       body << row
     end
-    head = head_fields.map {|head_field| head_field.name}
+    head = head_fields.map { |head_field| head_field.name }
     body.unshift(head)
   end
 
@@ -111,18 +120,21 @@ class ReportQuerySearchResult
 
       agg_key_name = key_names[-1]
 
-      search_value["terms"].each do |term|
-        builtin_aggre = term['term']
-        record_key = (key_result + [builtin_aggre]).join(ReportQuerySearchResult::DELIMITER)  # [3, district5, 2012]
+      search_value.each do |k, v|
+        next if k == 'doc_count'
+        v['buckets'].each do |term|
+          builtin_aggre = term['key']
+          record_key = (key_result + [builtin_aggre]).join(ReportQuerySearchResult::DELIMITER)  # [3, district5, 2012]
 
-        results[record_key] = results[record_key] || {}
+          results[record_key] = results[record_key] || {}
 
-        agg_function_type = agg_function_types[agg_key_name]
-        agg_key_value = term[agg_function_type] # type of aggr SUM, COUNT
-        results[record_key][agg_key_name] = agg_key_value
-
+          agg_function_type = agg_function_types[agg_key_name]
+          agg_key_value = term['term'][agg_function_type] # type of aggr SUM, COUNT
+          results[record_key][agg_key_name] = agg_key_value
+        end
       end
     end
+
     results
   end
 

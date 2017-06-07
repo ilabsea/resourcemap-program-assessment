@@ -11,6 +11,8 @@ module Field::TranslatableValue
     field_type = self.type
     if field_type == "int"
       value.to_i
+    elsif field_type == "float"
+      value.to_f
     elsif field_type == "hierarchy"
       #[{:id=>"1", :name=>"PHD"}, {:id=>"2", :name=>"OD"}
       self.hierarchy_options.each do |option|
