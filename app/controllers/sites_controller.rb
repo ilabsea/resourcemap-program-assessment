@@ -208,7 +208,7 @@ class SitesController < ApplicationController
     search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :search, :hierarchy_code, :selected_hierarchies, :_alert, :formula)
 
     # search.apply_queries
-    search.prepare_filter
+    # search.prepare_filter
     return search.sites_json
   end
 

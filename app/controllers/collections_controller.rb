@@ -218,7 +218,7 @@ class CollectionsController < ApplicationController
 
     search.full_text_search params[:term] if params[:term]
     search.alerted_search params[:_alert] if params[:_alert]
-    search.select_fields(['id', 'name', 'properties'])
+    # search.select_fields(['id', 'name', 'properties'])
     # search.apply_queries
 
     results = search.results.map{ |item| item["_source"]["properties"]}
@@ -244,8 +244,7 @@ class CollectionsController < ApplicationController
     search.my_site_search current_user.id unless current_user.can_view_other? params[:collection_id]
     search.where params.except(:action, :controller, :format, :id, :collection_id, :search, :limit, :offset, :sort, :sort_direction, :hierarchy_code, :hierarchy_value, :_alert, :formula)
 
-    search.prepare_filter
-
+    # search.prepare_filter
     results = search.results.map do |result|
       source = result['_source']
 

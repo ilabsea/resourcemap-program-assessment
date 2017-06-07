@@ -53,12 +53,22 @@ module Site::ElasticsearchConcern
       end
     end
 
-    def iso_string_to_rfc822(iso_string)
-      (DateTime.strptime iso_string, DateFormat).rfc822
-    end
-
     def format_date(date)
       date.strftime DateFormat
+    end
+
+    def iso_string_to_dmy(iso_string)
+      Time.iso8601(iso_string).strftime("%d/%m/%Y")
+    end
+
+    def iso_string_to_rfc822(iso_string, time_zone = nil)
+      date = DateTime.strptime iso_string, DateFormat
+      date = date.in_time_zone time_zone if time_zone
+      date.rfc822
+    end
+
+    def iso_string_to_rfc822_with_timezone(updated_at, time_zone)
+       DateTime.parse(updated_at).in_time_zone(time_zone).strftime("%a, %d %B %Y %H:%M:%S %z")
     end
   end
 end

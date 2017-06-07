@@ -1,15 +1,3 @@
-# == Schema Information
-#
-# Table name: snapshots
-#
-#  id            :integer          not null, primary key
-#  name          :string(255)
-#  date          :datetime
-#  collection_id :integer
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#
-
 class Snapshot < ActiveRecord::Base
   belongs_to :collection
   has_many :user_snapshots, dependent: :destroy
@@ -32,7 +20,6 @@ class Snapshot < ActiveRecord::Base
       history.collection = collection
       history.to_elastic_search
     end
-
     docs.each_slice(200) do |docs_slice|
       ops = []
       docs_slice.each do |doc|
@@ -47,15 +34,11 @@ class Snapshot < ActiveRecord::Base
   after_destroy :destroy_index
 
   def destroy_index
-    index.delete
+    Elasticsearch::Client.new.indices.delete index: index_name
   end
 
   def index_name
     collection.index_name snapshot_id: id
-  end
-
-  def index
-    Tire::Index.new index_name
   end
 
   def recreate_index
