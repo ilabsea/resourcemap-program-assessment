@@ -55,7 +55,7 @@ module SearchBase
   end
 
   def query_params(field, value)
-    query_key = field.es_code
+    query_key = "properties." + field.es_code
     validated_value = field.parse_for_query(value, @use_codes_instead_of_es_codes)
 
     if field.kind == 'date'
@@ -163,13 +163,13 @@ module SearchBase
     self
   end
 
-  def date_field_range(key, valid_value, condition_id)
-    date_from = valid_value[:date_from]
-    date_to = valid_value[:date_to]
+  # def date_field_range(key, valid_value, condition_id)
+  #   date_from = valid_value[:date_from]
+  #   date_to = valid_value[:date_to]
 
-    add_filter key: key, value: {gte: date_from, lte: date_to}, type: :range, condition_id: condition_id
-    self
-  end
+  #   add_filter key: key, value: {gte: date_from, lte: date_to}, type: :range, condition_id: condition_id
+  #   self
+  # end
 
   def histogram_search(field_es_code, filters=nil)
     facets_hash = {
@@ -208,7 +208,8 @@ module SearchBase
   end
 
   def updated_since_query(time, condition_id)
-    add_filter key: :updated_at, value: {gte: Site.format_date(time)}, type: :range, condition_id: condition_id
+    # add_filter key: :updated_at, value: {gte: Site.format_date(time)}, type: :range, condition_id: condition_id
+    add_filter range: {updated_at: {gte: Site.format_date(time)}}
   end
 
   def alerted_search(v)
