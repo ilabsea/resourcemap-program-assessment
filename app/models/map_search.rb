@@ -45,6 +45,7 @@ class MapSearch
     # Rails.logger.debug @search.to_curl if Rails.logger.level <= Logger::DEBUG
 
     # adapter.parse @search.stream
+
     adapter.parse stream
 
     clusterer.clusters
@@ -121,7 +122,7 @@ class MapSearch
 
     url = "#{protocol}://#{host}:#{port}/#{@index_names}/site/_search"
     body = get_body
-    # body[:size] = 100_000
+    body[:size] = 100_00
 
     if Rails.logger.level <= Logger::DEBUG
       Rails.logger.debug to_curl(client, body)

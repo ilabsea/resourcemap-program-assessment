@@ -348,7 +348,7 @@ class CollectionsController < ApplicationController
     ids = collections.map do |c|
       s = c.new_search
       s.alerted_search true
-      s.apply_queries
+      # s.apply_queries
       c.id if s.results.length > 0
     end
     render json: ids.compact
