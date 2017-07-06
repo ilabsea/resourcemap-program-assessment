@@ -1,0 +1,111 @@
+onReportQueries ->
+  class @MainViewModel
+    constructor: (collectionId) ->
+      @collectionId = collectionId
+      @newReportQuery = ko.observable()
+      @newCondition = ko.observable(new Condition)
+      @newAggregate = ko.observable(new Aggregate)
+
+      @isEditing = ko.observable(false)
+      @layers = ko.observableArray()
+
+      @reportQueries = ko.observableArray()
+      @currentReportQuery = ko.observable()
+
+      @expandedRefinePropertyHierarchy = ko.observable()
+      @expandedRefinePropertyHierarchy.subscribe (item) =>
+        @newCondition()?.value(item.id)
+        item?.select()
+
+    addReportQuery: =>
+      @newReportQuery(new ReportQuery)
+      @currentReportQuery(@newReportQuery())
+      @isEditing(true)
+
+    saveReportQuery: =>
+      @isEditing(false)
+      json = {report_query: @currentReportQuery().toJSON()}
+
+      option = {
+                  type: "POST",
+                  contentType: "application/json; charset=utf-8",
+                  data: JSON.stringify(json),
+                  success: @saveReportQueryCallback
+                }
+      if @currentReportQuery().id
+        option["type"] = "PUT"
+        option["url"] = "/collections/#{@collectionId}/report_queries/#{@currentReportQuery().id}.json"
+      else
+        @reportQueries.push(@currentReportQuery())
+        option["url"] = "/collections/#{@collectionId}/report_queries.json"
+
+      $.ajax option
+
+    saveReportQueryCallback: (data) =>
+      @currentReportQuery().id = data?.id
+      @currentReportQuery().isEditing(false)
+      @currentReportQuery null
+      @newReportQuery null
+
+    cancelReportQuery: (data) =>
+      @isEditing(false)
+      @newReportQuery(null)
+      @currentReportQuery().isEditing(false)
+      if @currentReportQuery().id
+        @reportQueries.replace @currentReportQuery(), @originalReportQuery
+      else
+        @reportQueries.remove @currentReportQuery()
+
+    editReportQuery: (reportQuery) =>
+      @clearUnsavedReportQuery(@currentReportQuery())  if @originalReportQuery
+      @originalReportQuery = new ReportQuery(reportQuery.toJSON())
+      @originalReportQuery.report_query_templates = reportQuery.report_query_templates
+      @newReportQuery(null)
+      @cancelEditingReportQuery()
+      @currentReportQuery reportQuery
+      @isEditing(true)
+      @currentReportQuery().isEditing(true)
+
+    clearUnsavedReportQuery: (reportQuery) =>
+      @reportQueries.replace reportQuery, @originalReportQuery
+
+    cancelEditingReportQuery: =>
+      for reportQuery in @reportQueries()
+        if reportQuery.isEditing()
+          @reportQueries.replace reportQuery, @originalReportQuery
+        else
+          reportQuery.isEditing(false)
+
+    removeReportQuery: (reportQuery) =>
+      if window.confirm 'Are you sure to delete this query?'
+        @deleteReportQuery = reportQuery
+        if reportQuery.report_query_templates.length == 0
+          $.post "/collections/#{@collectionId}/report_queries/#{reportQuery.id}.json", { _method: 'delete' }, =>
+            $.status.showNotice("Report query '#{@deleteReportQuery.name()}' successfully deleted", 2000)
+            @reportQueries.remove @deleteReportQuery
+            delete @deleteReportQuery
+        else
+          $.status.showError("This field is being used with #{reportQuery.report_query_templates.length} report query template(s), you are not allowed to delete", 2000)
+
+    findFieldById: (id) =>
+      for layer in @layers()
+        for field in layer.fields
+          if parseInt(field.id) == parseInt(id)
+            return field
+
+    bindHierarchyLabel: (field, value) ->
+      for key,item of field.fieldHierarchyItemsMap
+        if key == value
+          return item
+
+    initInsteddPlatform:  ->
+      $.instedd.init_components() if $.instedd
+
+    initDatePicker: (options = {}) =>
+      @initInsteddPlatform()
+      $(".ux-datepicker").removeClass('hasDatepicker').datepicker(
+                                                                    yearRange: "-100:+5",
+                                                                    changeMonth: true,
+                                                                    changeYear: true,
+                                                                    dateFormat: 'yy-mm-dd'
+                                                                  )

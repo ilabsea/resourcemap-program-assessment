@@ -22,7 +22,7 @@ class Api::CollectionsController < ApplicationController
     if params[:format] == 'csv' || params[:page] == 'all'
       options << :all
       params.delete(:page)
-    elsif params[:format] == 'kml' || 'shp'
+    elsif params[:format] == 'kml' || params[:format]  == 'shp'
       options << :require_location
       options << :page
     else
@@ -52,9 +52,20 @@ class Api::CollectionsController < ApplicationController
     end
   end
 
+  def sample_members_csv
+    respond_to do |format|
+      format.csv { collection_sample_members_csv(collection) }
+    end
+  end
+
   def collection_sample_csv(collection)
     sample_csv = collection.sample_csv current_user
     send_data sample_csv, type: 'text/csv', filename: "#{collection.name}_sites.csv"
+  end
+
+  def collection_sample_members_csv(collection)
+    sample_csv = collection.sample_members_csv current_user
+    send_data sample_csv, type: 'text/csv', filename: "#{collection.name}_members.csv"
   end
 
   def count
@@ -127,7 +138,7 @@ class Api::CollectionsController < ApplicationController
             end
           end
         end
-      end  
+      end
     else
       sites = Collection.find(params[:id]).sites
     end
@@ -140,7 +151,7 @@ class Api::CollectionsController < ApplicationController
     render :json => sites
   end
 
-  def parse_date_format date 
+  def parse_date_format date
     array_date = date.split("-")
     return Date.new(array_date[2].to_i, array_date[0].to_i, array_date[1].to_i)
   end
@@ -148,8 +159,7 @@ class Api::CollectionsController < ApplicationController
   private
 
   def perform_search(*options)
-
-    except_params = [:action, :controller, :format, :id, :updated_since, :search, :box, :lat, :lng, :radius]
+    except_params = [:action, :controller, :format, :id, :updated_since, :search, :box, :lat, :lng, :radius, :formula]
 
     search = new_search
 

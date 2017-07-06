@@ -3,7 +3,7 @@ module Activity::AwareConcern
 
   included do
     # The user that creates/makes changes to this object
-    attr_accessor :user
+    # attr_accessor :user
 
     # Set to true to stop creating Activities for this object
     attr_accessor :mute_activities

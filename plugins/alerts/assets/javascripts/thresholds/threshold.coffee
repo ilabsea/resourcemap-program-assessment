@@ -8,7 +8,7 @@ onThresholds -
       @isNotify = ko.observable data?.is_notify.toString()
       @messageNotification = ko.observable data?.message_notification
       @showingThreshold = ko.observable(false)
-    
+
       @fieldsEmail  = ko.observableArray data?.email_notification["fields"] ? []
       @usersEmail   = ko.observableArray data?.email_notification["users"] ? []
       @membersEmail = ko.observableArray data?.email_notification["members"] ? []
@@ -77,11 +77,11 @@ onThresholds -
         users: @usersEmail()
         fields: @fieldsEmail()
         members: @membersEmail()
-      phone_notification: 
+      phone_notification:
         users: @usersPhone()
         fields: @fieldsPhone()
         members: @membersPhone()
-      
+
       message_notification: @messageNotification()
       sites: $.map(@alertSites(), (site) -> site.toJSON())
       conditions: $.map(@conditions(), (condition) -> condition.toJSON())
@@ -92,10 +92,10 @@ onThresholds -
       @messageNotification(@messageNotification() + ' [Site Name]')
 
     addFieldNameToMessageNotification:(field) =>
-      @messageNotification(@messageNotification() + ' [' + field.name() + ']')
-    
-    # will removed it as soon as possible 
-    # we changed color code but on ES not change so we need this method 
+      @messageNotification(@messageNotification() + ' [' + field.code() + ']')
+
+    # will removed it as soon as possible
+    # we changed color code but on ES not change so we need this method
     alertMarker: (color_code) ->
       switch color_code
         when '#b30b0b'
@@ -118,5 +118,3 @@ onThresholds -
           'ffc01f'
         else
           color_code.replace('#', '')
-
-

@@ -2,36 +2,54 @@ onCollections ->
 
   # A Layer field
   class @Field
-    constructor: (data) ->
+    constructor: (data, layerId) ->
+      @layer_id = layerId
       @esCode = "#{data.id}"
       @code = data.code
       @name = data.name
       @kind = data.kind
       @ord = data.ord
-      @is_mandatory = ko.observable data?.is_mandatory ? false 
+      @is_mandatory = ko.observable data?.is_mandatory ? false
       @is_display_field = ko.observable data?.is_display_field ? false
       @is_enable_field_logic = data.is_enable_field_logic
-      @invisible_calculation = ko.computed => 
+      @is_enable_custom_validation = ko.observable data?.is_enable_custom_validation ? false
+      @custom_widgeted = data.custom_widgeted
+      @readonly_custom_widgeted = data.readonly_custom_widgeted
+      @invisible_calculation = ko.computed =>
                                 if @kind == "calculation" && !@is_display_field()
                                   return "invisible-div"
 
-      @photo = '' 
+      @photo = ''
       @preKeyCode = null
       @photoPath = '/photo_field/'
       @showInGroupBy = @kind in ['select_one', 'select_many', 'hierarchy']
       @writeable = @originalWriteable = data?.writeable
-      
+
       @allowsDecimals = ko.observable data?.config?.allows_decimals == 'true'
       @originalIsMandatory = data.is_mandatory
       @value = ko.observable()
       @value.subscribe =>
-        if @skippedState() == false && @kind in ["yes_no", "select_one", "select_many", "numeric"]
-          @setFieldFocus()
-        # if @kind in ["numeric", "calculation"]
-        #   if window.model.newOrEditSite()
-        #     window.model.newOrEditSite().prepareCalculatedField()
+        @disableDependentSkipLogicField()
+        @performCalculation()
+
 
       @keyType = if @allowsDecimals() then 'decimal' else 'integer'
+
+      # is more semantic
+      @isForCustomWidget = ko.computed ->
+        data.custom_widgeted
+
+      @widgetContentViewAsInput = ko.computed =>
+        if(@kind == "custom_widget" && data.config?.widget_content != undefined)
+          @replaceCustomWidget data.config?.widget_content
+        else
+          ""
+
+      @widgetContentViewAsSpan = ko.computed =>
+        if(@kind == "custom_widget" && data.config?.widget_content != undefined)
+          @replaceCustomWidget data.config?.widget_content, true
+        else
+          ""
 
       @hasValue = ko.computed =>
         if @kind == 'yes_no'
@@ -47,22 +65,17 @@ onCollections ->
        read: =>  @valueUIFor(@value())
        write: (value) =>
          @value(@valueUIFrom(value))
-      
-      if @kind == 'numeric'
-        @digitsPrecision = data?.config?.digits_precision
-        @range = if data.config?.range?.minimum? || data.config?.range?.maximum?
-                  data.config?.range
-        
-        @field_logics = if data.config?.field_logics?
+
+      @field_logics = if data.config?.field_logics?
                           $.map data.config.field_logics, (x) => new FieldLogic x
                         else
                           []
 
-      if @kind in ['yes_no', 'select_one', 'select_many']
-        @field_logics = if data.config?.field_logics?
-                          $.map data.config.field_logics, (x) => new FieldLogic x
-                        else
-                          []
+      if @kind == 'numeric'
+        @digitsPrecision = data?.config?.digits_precision
+        @range = if data.config?.range?.minimum? || data.config?.range?.maximum?
+                  data.config?.range
+
 
       if @kind in ['select_one', 'select_many']
         @options = if data.config?.options?
@@ -121,104 +134,79 @@ onCollections ->
       @is_blocked_by = ko.observableArray([])
       @blocked = ko.computed =>
         field_object = @get_dom_object(this)
-        if @is_blocked_by() != undefined and @is_blocked_by().length > 0
+        if @is_blocked_by() != undefined and @is_blocked_by().length> 0
           field_object.block({message: ""})
         else
           field_object.unblock()
 
-    refresh_skip: =>
-      if(@is_blocked_by())
-        tmp = @is_blocked_by()
-        @is_blocked_by(tmp)  
-
-    setFieldFocus: =>
-      if window.model.newOrEditSite()
-        if @kind == 'yes_no'
-          value = if @value() then 1 else 0
-        else if @kind == 'numeric' || @kind == 'select_one' || @kind == 'select_many'
-          value = @value()
+    replaceCustomWidget: (widgetContent, readonly) =>
+      isReadonly = ''
+      isReadonly = "data-readonly='readonly'" if readonly == true
+      regExp = /(&nbsp;)|\{([^}]*)\}/g
+      widget = widgetContent.replace(regExp, (match, space, token)->
+        replace = space || token
+        if replace == "&nbsp;"
+          replaceBy = ''
         else
-          return
-        noSkipField = false
-        if @field_logics.length > 0 && @skippedState() == false
-          for field_logic in @field_logics
-            b = false
-            if field_logic.field_id?
-              if @kind == 'yes_no' || @kind == 'select_one'
-                if value == field_logic.value
-                  @setFocusStyleByField(field_logic.field_id)
-                  return
-                else
-                  noSkipField = true
+          replaceBy = """
+                      <span id="wrapper-custom-widget-#{replace}" #{isReadonly}></span>
+                      """
+        return replaceBy
+       )
 
-              if @kind == 'numeric' && value != ''
-                if field_logic.condition_type == '<'
-                  if parseFloat(value) < field_logic.value
-                    @setFocusStyleByField(field_logic.field_id)
-                    return
-                  else
-                    @enableSkippedField(@esCode)
+    refresh_skip: =>
+      if(@is_blocked_by().length > 0)
+        tmp = @is_blocked_by()
+        @is_blocked_by(tmp)
 
-                if field_logic.condition_type == '<='
-                  if parseFloat(value) <= field_logic.value
-                    @setFocusStyleByField(field_logic.field_id)  
-                    return
-                  else
-                    @enableSkippedField(@esCode)
+    bindWithCustomWidgetedField: =>
+      if @kind == 'custom_widget'
+        arr_field_wrapper = @widgetContentViewAsInput().match(/wrapper-custom-widget-[^"]+/g)
+        for field_wrapper in arr_field_wrapper
+          field_code = field_wrapper.split("wrapper-custom-widget-")[1]
+          field = window.model.findFieldByCode(field_code)
+          new CustomWidget(field).bindField()
 
-                if field_logic.condition_type == '='
-                  if parseFloat(value) == field_logic.value
-                    @setFocusStyleByField(field_logic.field_id)  
-                    return
-                  else
-                    @enableSkippedField(@esCode)
+    disableDependentSkipLogicField: =>
+      if window.model.newOrEditSite()
+        fieldSkipIds = @getRelatedSkipFieldIds()
+        for field_id in fieldSkipIds
+          field = window.model.newOrEditSite().findFieldByEsCode(field_id)
+          skipFlag = false
+          for field_logic in field.field_logics
+            dependentField = window.model.newOrEditSite().findFieldByEsCode(field_logic.field_id)
+            skipFlag = field_logic.isSkip(dependentField)
+            if skipFlag == true
+              @disableField(field, field_logic.field_id)
+              break
+          if(skipFlag == false)
+            @enableField(field, dependentField.esCode)
 
-                if field_logic.condition_type == '>'
-                  if parseFloat(value) > field_logic.value
-                    @setFocusStyleByField(field_logic.field_id)
-                    return
-                  else
-                    @enableSkippedField(@esCode)
+    getRelatedSkipFieldIds: =>
+      fieldSkipIds = []
+      for field_logic in @relatedFieldLogics()
+        if(fieldSkipIds.indexOf(field_logic.disable_field_id) == -1)
+          fieldSkipIds.push field_logic.disable_field_id
+      return fieldSkipIds
 
-                if field_logic.condition_type == '>='
-                  if parseFloat(value) >= field_logic.value
-                    @setFocusStyleByField(field_logic.field_id)
-                    return 
-                  else
-                    @enableSkippedField(@esCode)
+    getRelatedDisableField: (field_logic) =>
+      @relatedFieldLogics().filter((x) =>
+        "#{x.field_id}" == field_logic.field_id
+      )
 
-              if @kind == 'select_many'
-                if field_logic.condition_type == 'any'
-                  if value?
-                    for field_value in value
-                      for field_logic_value in field_logic.selected_options
-                        if field_value == parseInt(field_logic_value.value)
-                          b = true
-                          @setFocusStyleByField(field_logic.field_id)
-                          return
-                        else
-                          @enableSkippedField(@esCode) if @value() != null
 
-                if field_logic.condition_type == 'all'
-                  tmp = []
-                  if value?
-                    for field_value in value
-                      for field_logic_value in field_logic.selected_options
-                        if field_value == parseInt(field_logic_value.value)                        
-                          b = true
-                          field_id = field_logic.field_id
-                          tmp.push field_value
-                        else
-                          b = false
-                  if tmp.length == field_logic.selected_options.length
-                    @setFocusStyleByField(field_id)
-                    return
-                  else
-                    @enableSkippedField(@esCode) if @value() != null
-          
-          if @value() != "" && @value() != null && noSkipField
-            @enableSkippedField(@esCode)
-            return
+    getFieldFromAllFields: (field_id) =>
+      $.map(window.model.newOrEditSite().fields(), (f) =>
+        if f.esCode == field_id
+          return f
+      )
+
+    #current field might be the dependentField of other field_logic
+    #the disableField of that field_logic might have many related field_logics
+    relatedFieldLogics: =>
+      if model.allFieldLogics().length > 0
+        return model.allFieldLogics().filter((x) => "#{x.field_id}" == @esCode)
+      return []
 
     setFocusStyleByField: (field_id) =>
       field = window.model.newOrEditSite().findFieldByEsCode(field_id)
@@ -227,13 +215,13 @@ onCollections ->
         if window.model.newOrEditSite().scrollable() == true
           @removeFocusStyle()
           if field.kind == "select_one"
-            $('#select_one-input-'+field.code).focus()  
+            $('#select_one-input-'+field.code).focus()
           else if field.kind == "select_many"
             field.expanded(true)
             $('#select-many-input-'+field.code).focus()
-          else if field.kind == "hierarchy"           
+          else if field.kind == "hierarchy"
             $('#'+field.esCode)[0].scrollIntoView(true)
-            $('#'+field.esCode).focus() 
+            $('#'+field.esCode).focus()
           else if field.kind == "yes_no"
             $('#yes_no-input-'+field.code).focus()
           else if field.kind == "photo"
@@ -246,15 +234,14 @@ onCollections ->
       else
         @enableSkippedField(@esCode, field_id)
 
-    enableSkippedField: (field_id) =>
-      layers = window.model.currentCollection().layers()
+    enableSkippedField: (field_id, by_field_id) =>
       flag = false
       $.map(window.model.editingSite().fields(), (f) =>
         if f.esCode == field_id
           flag = true
-          return
         if flag
-          @enableField f
+          @enableField(f, by_field_id)
+          return
       )
 
     disableSkippedField: (from_field_id, to_field_id) =>
@@ -276,23 +263,23 @@ onCollections ->
       )
 
     disableField: (field, by_field_id) =>
-      field.is_mandatory(false) 
+      field.is_mandatory(false)
       field.skippedState(true)
       field.is_blocked_by([])
       unless field.is_mandatory()
+        if field.is_blocked_by() == undefined
+          field.is_blocked_by([])
         index = field.is_blocked_by().indexOf(by_field_id)
         if(index < 0 )
           tmp = field.is_blocked_by()
           tmp.push(by_field_id) if by_field_id != undefined
         field.value(null)
-        field_object = @get_dom_object(field)
         field.is_blocked_by(tmp)
-        # field_object.block({message: ""})
 
     get_dom_object: (field) =>
       switch field.kind
         when 'select_one'
-          # field.value("")
+          field.value('')
           field_id = field.kind + "-input-" + field.code
           field_object = $("#" + field_id).parent()
         when 'select_many'
@@ -319,29 +306,10 @@ onCollections ->
           field_object = $("#" + field_id).parent()
       field_object
 
-    enableField: (field) =>
-      field.is_mandatory(field.originalIsMandatory)
+    enableField: (field, by_field_id) =>
+      field.is_mandatory(field.originalIsMandatory) if field.skippedState() == false
       field.skippedState(false)
-      switch field.kind
-        when 'select_many'
-          if field.expanded()
-           field_id = "select-many-input-" + field.code
-          else
-           field_id = "select-many-" + field.code
-          field_object = $("#" + field_id).parent()
-        when 'hierarchy'
-          field_id = field.esCode
-          field_object = $("#" + field_id).parent()
-        when 'date'
-          field_id = "date-input-" + field.esCode
-          field_object = $("#" + field_id).parent()
-        when 'photo'
-          field_id = field.code
-          field_object = $("#" + field_id).parent()
-        else
-          field_id = field.kind + "-input-" + field.code
-          field_object = $("#" + field_id).parent()
-      field.is_blocked_by([])
+      field.is_blocked_by([]) if (field.is_blocked_by() != undefined and field.is_blocked_by().length > 0)
 
     setValueFromSite: (value) =>
       if @kind == 'date' && $.trim(value).length > 0
@@ -356,13 +324,14 @@ onCollections ->
       value = '' if (value == null && value == '')
 
       @value(value)
-    
+
     enableScrollFocusView: =>
       if @field_logics.length > 0
-        if @value() == "" 
+        if @value() == ""
           @enableSkippedField @esCode
         else
           window.model.newOrEditSite().scrollable(true)
+
     removeFocusStyle: =>
       $('div').removeClass('focus')
       $('input:not(#name)').removeClass('focus')
@@ -393,7 +362,7 @@ onCollections ->
         if value != null && value != '' && value != 'NaN' && typeof value != 'undefined'
           if @digitsPrecision
             value = parseFloat(value)
-            Number((value).toFixed(parseInt(@digitsPrecision))) 
+            Number((value).toFixed(parseInt(@digitsPrecision)))
           else
             value
         else
@@ -437,6 +406,10 @@ onCollections ->
         window.model.initAutocomplete()
         window.model.initControlKey()
 
+    validateRangeAndCustomeValidation: =>
+      @validateRange()
+      @validateCustomValidation()
+
     validateRangeAndDigitsPrecision: =>
       @validateRange()
       @validateDigitsPrecision()
@@ -459,7 +432,7 @@ onCollections ->
             else
               @errorMessage('Invalid value, value must be less than or equal '+@range.maximum)
             return
-          
+
           if @range.minimum
             if parseFloat(@value()) >= parseFloat(@range.minimum)
               @errorMessage('')
@@ -467,6 +440,15 @@ onCollections ->
               @errorMessage('Invalid value, value must be greater than or equal '+@range.minimum)
             return
 
+    validateCustomValidation: =>
+      if @is_enable_custom_validation()
+        $.map(@, (f) =>
+          if f.esCode == field_id
+            flag = true
+          if flag
+            @enableField f
+            return
+        )
     validate_integer_only: (keyCode) =>
       value = $('#'+@kind+'-input-'+@code).val()
       if value == null || value == ""
@@ -500,7 +482,7 @@ onCollections ->
             return true
           if decimalValue.length >= parseInt(@digitsPrecision)
             return false
-          
+
       return true
 
     keyPress: (field, event) =>
@@ -511,7 +493,7 @@ onCollections ->
           if field.kind == "numeric"
             if field.allowsDecimals()
               return @validate_digit(event.keyCode)
-          return true     
+          return true
 
     exit: =>
       @value(@originalValue)
@@ -599,19 +581,20 @@ onCollections ->
 
     fileSelected: (data, event) =>
       fileUploads = $("#" + data.code)[0].files
-      if fileUploads.length >0
+      if fileUploads.length > 0
 
         photoExt = fileUploads[0].name.split('.').pop()
 
         value = (new Date()).getTime() + "." + photoExt
+
         @value(value)
-        
+
         reader = new FileReader()
         reader.onload = (event) =>
           @photo = event.target.result.split(',')[1]
           $("#imgUpload-" + @code).attr('src',event.target.result)
           $("#divUpload-" + @code).show()
-          
+
         reader.readAsDataURL(fileUploads[0])
       else
         @photo = ''
@@ -623,3 +606,24 @@ onCollections ->
       $("#" + @code).attr("value",'')
       $("#divUpload-" + @code).hide()
 
+    inputable: =>
+      if (@kind == 'custom_widget' && @readonly_custom_widgeted == true) || @isForCustomWidget() || @kind == 'custom_aggregator'
+        false
+      else
+        true
+
+    visible: =>
+      if (@kind != "calculation" || (@kind == "calculation" && @is_display_field)) && !@isForCustomWidget()
+        true
+      else
+        false
+    init: =>
+      if @kind == 'date'
+        window.model.initDatePicker()
+
+    performCalculation: =>
+      $ele = new FieldView(@).domObject()
+      calculationIds = $ele.attr('data-calculation-ids')?.split(",") ? []
+      for calculationId in calculationIds
+        if(calculationIds)
+          window.model.newOrEditSite().updateField(calculationId)

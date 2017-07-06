@@ -83,7 +83,8 @@ RSpec.configure do |config|
 
   # Delete all test indexes after running each spec
   config.after(:each) do
-    Tire.delete_indices_that_match /^collection_test_\d+/
+    client = Elasticsearch::Client.new
+    client.indices.delete index: "collection_test_*"
   end
 # Mock nuntium access and gateways management
   config.before(:each) do

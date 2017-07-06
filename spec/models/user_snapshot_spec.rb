@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: user_snapshots
+#
+#  id            :integer          not null, primary key
+#  user_id       :integer
+#  snapshot_id   :integer
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  collection_id :integer
+#
+
 require 'spec_helper'
 
 describe UserSnapshot do

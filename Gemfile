@@ -7,7 +7,9 @@ gem 'haml-rails'
 gem 'decent_exposure'
 gem "instedd-rails", '0.0.17'
 gem "breadcrumbs_on_rails"
-gem "tire"
+#gem "tire"
+gem "elasticsearch"
+gem "elasticsearch-ruby"
 gem "valium"
 gem "resque", :require => "resque/server"
 gem 'resque-scheduler', :require => 'resque_scheduler'
@@ -30,6 +32,16 @@ gem 'rubyzip', :require => 'zip/zip'
 gem "password_strength"
 gem "ruby-recaptcha"
 gem 'i18n-coffee'
+gem 'tinymce-rails'
+gem 'tinymce-rails-imageupload', github: 'PerfectlyNormal/tinymce-rails-imageupload'
+
+gem 'rails_serve_static_assets'
+
+gem 'wkhtmltopdf-binary-edge', '~> 0.12.2.1'
+gem 'oj'
+gem 'includes-count'
+
+gem 'dalli'
 
 group :test do
   gem 'shoulda-matchers'
@@ -59,6 +71,8 @@ group :development do
   gem 'dist', :git => 'https://github.com/manastech/dist.git'
   gem 'ruby-prof', :git => 'https://github.com/ruby-prof/ruby-prof.git'
   gem 'mailcatcher'
+  gem 'annotate'
+  gem 'pry-rails'
 end
 
 # Gems used only for assets and not required
@@ -74,4 +88,4 @@ group :assets do
   gem 'lodash-rails'
 end
 
-gem 'rails_12factor', group: :production
+# gem 'rails_12factor', group: :production

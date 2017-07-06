@@ -1,6 +1,20 @@
+# == Schema Information
+#
+# Table name: layers
+#
+#  id            :integer          not null, primary key
+#  collection_id :integer
+#  name          :string(255)
+#  public        :boolean
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  ord           :integer
+#
+
 class Layer < ActiveRecord::Base
   include Activity::AwareConcern
   include HistoryConcern
+  include Report::CachingConcern
 
   belongs_to :collection
   has_many :fields, order: 'ord', dependent: :destroy
@@ -10,9 +24,12 @@ class Layer < ActiveRecord::Base
 
   validates_presence_of :ord
 
+  attr_accessor :user
   # I'd move this code to a concern, but it works differntly (the fields don't
   # have an id). Must probably be a bug in Active Record.
   after_create :create_created_activity, :unless => :mute_activities
+  after_create :add_layer_memberships
+
   def create_created_activity
     fields_data = fields.map do |field|
       hash = {'id' => field.id, 'kind' => field.kind, 'code' => field.code, 'name' => field.name}
@@ -73,6 +90,8 @@ class Layer < ActiveRecord::Base
   after_destroy :create_deleted_activity, :unless => :mute_activities, :if => :user
   def create_deleted_activity
     Activity.create! item_type: 'layer', action: 'deleted', collection_id: collection.id, layer_id: id, user_id: user.id, 'data' => {'name' => name}
+
+    clear_report_caching
   end
 
   def history_concern_foreign_key
@@ -85,6 +104,11 @@ class Layer < ActiveRecord::Base
     field ? field.to_i + 1 : 1
   end
 
+  def last_field_ord
+    field = fields.pluck('max(ord) as o').first
+    field ? field.to_i : 0
+  end
+
   def get_associated_threshold_ids
 
     layerFieldIDs = self.fields.map { |field| field.id}
@@ -93,7 +117,7 @@ class Layer < ActiveRecord::Base
     self.collection.thresholds.map { |threshold|
 
       thresholdFieldIDs = threshold.conditions.map { |condition| condition['field'].to_i}
-      
+
       if (layerFieldIDs - thresholdFieldIDs).length < layerFieldIDs.length
         associated_threshold_ids.push(threshold.id)
       end
@@ -110,11 +134,31 @@ class Layer < ActiveRecord::Base
 
     self.collection.canned_queries.map { |query|
       queryFieldIDs = query.conditions.map { |condition| condition['field_id'].to_i}
-      
+
       if (layerFieldIDs - queryFieldIDs).length < layerFieldIDs.length
         associated_query_ids.push(query.id)
       end
 
+    }
+
+    associated_query_ids
+  end
+
+  def get_associated_report_query_ids
+
+    layerFieldIDs = self.fields.map { |field| field.id}
+    associated_query_ids = []
+
+    self.collection.report_queries.map { |query|
+      conditionFieldIds = query.condition_fields.map { |condition| condition['field_id'].to_i}
+      groupByFieldIds = query.group_by_fields
+      aggregateFieldIds = query.aggregate_fields.map { |condition| condition['field_id'].to_i}
+
+      if( (layerFieldIDs - conditionFieldIds).length < layerFieldIDs.length  ||
+          (layerFieldIDs - groupByFieldIds).length < layerFieldIDs.length  ||
+          (layerFieldIDs - aggregateFieldIds).length < layerFieldIDs.length )
+        associated_query_ids.push(query.id)
+      end
     }
 
     associated_query_ids
@@ -126,6 +170,19 @@ class Layer < ActiveRecord::Base
     field_hash = {'id' => field.id, 'code' => field.code, 'name' => field.name, 'kind' => field.kind}
     field_hash['config'] = field.config if field.config.present?
     field_hash
+  end
+
+  def add_layer_memberships
+    collection.memberships.each do |membership|
+      if membership.can_edit_other || membership.can_view_other
+        collection.layer_memberships
+        .create(
+          user_id: membership.user_id,
+          layer_id: self.id,
+          read: membership.can_view_other,
+          write: membership.can_edit_other)
+      end
+    end
   end
 
 end

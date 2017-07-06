@@ -1,0 +1,19 @@
+mobile_id: on
+host: localhost:3000
+local_host: http://localhost:3000
+full_host: http://localhost:3000
+number_of_attempt_failed: 5
+default_mail_sender: "test@example.com"
+devise_mail_sender: "test@example.com"
+mandrill_username: "MAINDRILL_USER"
+mandrill_password: "MAINDRILL_API_KEY"
+max_aggregate_result_size: 500
+
+plugins:
+  public_collection: on
+  snapshot: on
+  channels: on
+  reminders: on
+  alerts: on
+  account_completeness: on
+  fred_api: on

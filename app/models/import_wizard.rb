@@ -10,12 +10,25 @@ class ImportWizard
       Resque.enqueue ImportTask, user.id, collection.id, columns_spec
     end
 
+    def enqueue_member_job(user, collection, columns_spec)
+      # debugger
+      mark_job_member_as_pending user, collection
+
+      # Enqueue job with user_id, collection_id, serialized column_spec
+      Resque.enqueue ImportMemberTask, user.id, collection.id, columns_spec
+    end
+
     def cancel_pending_jobs(user, collection)
       mark_job_as_canceled_by_user(user, collection)
       delete_file(user, collection)
     end
 
-     def import(user, collection, original_filename, contents)
+    def cancel_pending_member_jobs(user, collection)
+      mark_job_as_canceled_member_by_user(user, collection)
+      delete_member_file(user, collection)
+    end
+
+    def import(user, collection, original_filename, contents)
       # Store representation of import job in database to enable status tracking later
       ImportJob.uploaded original_filename, user, collection
 
@@ -26,6 +39,23 @@ class ImportWizard
       begin
         File.open(file_for(user, collection), "wb") { |file| file << contents }
         csv = read_csv_for(user, collection)
+        raise CSV::MalformedCSVError, "all rows must have the same number of columns." unless csv.all?{|e| e.count == csv[0].count}
+      rescue CSV::MalformedCSVError => ex
+        raise "The file is not a valid CSV: #{ex.message}"
+      end
+    end
+
+    def import_members(user, collection, original_filename, contents)
+      # Store representation of import job in database to enable status tracking later
+      ImportJob.uploaded_members original_filename, user, collection
+
+      FileUtils.mkdir_p TmpDir
+
+      raise "Invalid file format. Only CSV files are allowed." unless File.extname(original_filename) == '.csv'
+
+      begin
+        File.open(file_member_for(user, collection), "wb") { |file| file << contents }
+        csv = read_csv_member_for(user, collection)
         raise CSV::MalformedCSVError, "all rows must have the same number of columns." unless csv.all?{|e| e.count == csv[0].count}
       rescue CSV::MalformedCSVError => ex
         raise "The file is not a valid CSV: #{ex.message}"
@@ -46,6 +76,65 @@ class ImportWizard
       validated_data[:errors] = calculate_errors(user, collection, columns_spec, csv_columns, csv[0])
       # TODO: implement pagination
       validated_data
+    end
+
+    def validate_members_with_columns(user, collection, columns_spec)
+      columns_spec.map!{|c| c.with_indifferent_access}
+      csv = read_csv_member_for(user, collection)
+      csv_columns = csv[1.. -1].transpose
+
+      validated_data = {}
+      validated_data[:members] = get_sites(csv, user, collection, columns_spec, 1)
+      validated_data[:members_count] = csv.length - 1
+
+      csv[0].map! { |r| r.strip if r }
+
+      validated_data[:errors] = calculate_member_errors(user, collection, columns_spec, csv_columns, csv[0])
+      # TODO: implement pagination
+      validated_data
+    end
+
+    def calculate_member_errors(user, collection, columns_spec, csv_columns, header)
+      #Add index to each column spec
+      columns_spec.each_with_index do |column_spec, column_index|
+        column_spec[:index] = column_index
+      end
+
+      sites_errors = {}
+
+      # Columns validation
+
+      proc_select_new_fields = Proc.new{columns_spec.select{|spec| spec[:use_as].to_s == 'new_field'}}
+      sites_errors[:duplicated_email] = calculate_duplicated_email(csv_columns)
+      sites_errors[:existed_email] = calculate_existed_email(csv_columns, collection)
+      sites_errors[:missing_email] = calculate_missing_email(csv_columns)
+
+      sites_errors
+    end
+
+    def calculate_duplicated_email(csv)
+      csv[0].detect{ |e| csv[0].count(e) > 1 } || []
+    end
+
+    def calculate_existed_email(csv, collection)
+      errors = []
+      csv[0].each do |email|
+        user = User.where("email=?",email).first
+        if user and collection.memberships.pluck(:user_id).include? user.id
+          errors.push csv[0].index(email)
+        end
+      end
+      return errors
+    end
+
+    def calculate_missing_email(csv)
+      errors = []
+      csv[0].each do |email|
+        if User.where("email=?",email).size == 0
+          errors.push csv[0].index(email)
+        end
+      end
+      return errors
     end
 
     def calculate_errors(user, collection, columns_spec, csv_columns, header)
@@ -124,6 +213,37 @@ class ImportWizard
       processed_csv_columns
     end
 
+    def get_columns_members_spec(user, collection)
+      rows = []
+      CSV.foreach(file_member_for user, collection) do |row|
+        rows << row
+      end
+      [
+        {
+          "header" => "email","kind" => "text","code" => "email","label" => "Email","use_as" => "new_field"
+        },
+        {
+          "header" => "None","kind" => "yesno","code" => "none","label" => "None","use_as" => "new_field"
+        },
+        {
+          "header" => "Read","kind" => "yesno","code" => "read","label" => "Read","use_as" => "new_field"
+        },
+        {
+          "header" => "Update","kind" => "yesno","code" => "update","label" => "Update","use_as" => "new_field"
+        },
+        {
+          "header" => "Admin","kind" => "yesno","code" => "admin","label" => "Admin","use_as" => "new_field"
+        },
+        {
+          "header" => "View data submitted by other user","kind" => "yesno","code" => "viewdatasubmittedbyotheruser", "label" => "View Data Submitted By Other User","use_as" => "new_field"
+        },
+        {
+          "header" => "Edit data submitted by other user","kind" => "yesno","code" => "editdatasubmittedbyotheruser", "label" => "Edit Data Submitted By Other
+ User","use_as" => "new_field"
+        }
+      ]
+    end
+
     def guess_columns_spec(user, collection)
       rows = []
       CSV.foreach(file_for user, collection) do |row|
@@ -146,6 +266,23 @@ class ImportWizard
       if import_job.status == 'pending'
         mark_job_as_in_progress(user, collection)
         execute_with_entities(user, collection, columns_spec)
+      end
+    end
+
+    def execute_import_member(user, collection, columns_spec)
+      #Execute may be called with actual user and collection entities, or their ids.
+      if !(user.is_a?(User) && collection.is_a?(Collection))
+        #If the method's been called with ids instead of entities
+        user = User.find(user)
+        collection = Collection.find(collection)
+      end
+
+      import_job = ImportJob.last_member_for user, collection
+
+      # Execution should continue only if the job is in status pending (user may canceled it)
+      if import_job.status == 'pending'
+        mark_job_member_as_in_progress(user, collection)
+        execute_import_member_with_entities(user, collection, columns_spec)
       end
     end
 
@@ -225,8 +362,74 @@ class ImportWizard
       delete_file(user, collection)
     end
 
+    def execute_import_member_with_entities(user, collection, columns_spec)
+      spec_object = ImportWizard::ImportSpecs.new columns_spec, collection
+
+      # Read all the CSV to memory
+      rows = read_csv_member_for(user, collection)
+
+      # Put the index of the row in the columns spec
+      rows[0].each_with_index do |header, i|
+        next if header.blank?
+        header = header.strip
+        spec_object.annotate_index header, i
+      end
+
+      begin
+        members = []
+        layer_members = []
+        # Now process all rows
+        rows[1 .. -1].each do |row|
+          member = nil
+          can_read_other = to_boolean row[5]
+          can_edit_other = to_boolean row[6] 
+          admin = to_boolean row[4]
+          none = to_boolean row[1]
+          read = to_boolean row[2]
+          write = to_boolean row[3]
+          email = row[0].strip
+          user_member = User.where("email=?",email)
+          puts user_member.first.id
+          member ||= collection.memberships.new admin: admin , can_view_other: can_read_other, can_edit_other: can_edit_other
+
+          if user_member
+            unless admin
+              collection.layers.each do |layer|
+                if read || write
+                  lm = collection.layer_memberships.new layer_id: layer.id, read: read, write: write, user_id: user_member.first.id
+                  layer_members << lm
+                end
+              end
+            end
+            member.user_id = user_member.first.id
+            member.collection_id = collection.id
+            members << member
+          end
+        end
+        puts layer_members
+        Collection.transaction do
+
+          # This will update the existing sites
+          members.each { |member| member.save! }
+          layer_members.each { |lm| lm.save! }
+          # And this will create the new ones
+
+          mark_job_member_as_finished(user, collection)
+        end
+      rescue Exception => ex
+        raise ex
+      end
+
+      delete_member_file(user, collection)
+    end
+
+
     def delete_file(user, collection)
       File.delete(file_for(user, collection))
+    end
+
+    def delete_member_file(user, collection)
+      File.delete(file_member_for(user, collection))
     end
 
     def mark_job_as_pending(user, collection)
@@ -234,8 +437,17 @@ class ImportWizard
       (ImportJob.last_for user, collection).pending
     end
 
+    def mark_job_member_as_pending(user, collection)
+      # Move the corresponding ImportJob to status pending, since it'll be enqueued
+      (ImportJob.last_member_for user, collection).pending
+    end
+
     def mark_job_as_canceled_by_user(user, collection)
       (ImportJob.last_for user, collection).canceled_by_user
+    end
+
+    def mark_job_as_canceled_member_by_user(user, collection)
+      (ImportJob.last_member_for user, collection).canceled_member_by_user
     end
 
     def mark_job_as_in_progress(user, collection)
@@ -246,7 +458,19 @@ class ImportWizard
       (ImportJob.last_for user, collection).finish
     end
 
+    def mark_job_member_as_in_progress(user, collection)
+      (ImportJob.last_member_for user, collection).in_progress
+    end
+
+    def mark_job_member_as_finished(user, collection)
+      (ImportJob.last_member_for user, collection).finish
+    end
+
     private
+
+    def to_boolean value
+      value.to_s == "1" or value.to_s.upcase == 'YES' or value.to_s.upcase == 'Y'
+    end
 
     def calculate_non_existent_site_id(valid_site_ids, csv_column, resmap_id_column_index)
       invalid_ids = []
@@ -488,8 +712,23 @@ class ImportWizard
       csv
     end
 
+    def read_csv_member_for(user, collection)
+      csv = CSV.read(file_member_for(user, collection))
+
+      # Remove empty rows at the end
+      while (last = csv.last) && last.empty?
+        csv.pop
+      end
+
+      csv
+    end
+
     def file_for(user, collection)
       "#{TmpDir}/#{user.id}_#{collection.id}.csv"
+    end
+
+    def file_member_for(user, collection)
+      "#{TmpDir}/#{user.id}_#{collection.id}_members.csv"
     end
   end
 end

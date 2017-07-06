@@ -1,6 +1,14 @@
 mobile_id: on
-host: localhost:3000
+host: wfp.development.com:3000
+full_host: http://wfp.development.com:3000
 number_of_attempt_failed: 5
+default_mail_sender: noreply@ilabsea.org
+devise_mail_sender: resourcemap@ilabsea.org
+mandrill_username: "resourcesmap@ilabsea.org"
+mandrill_password: "YkXyniE49DI4vmmB1FbdNg"
+notify_alert: on
+max_aggregate_result_size: 500
+app_name: 'resourcemap-program-assessment'
 
 plugins:
   public_collection: on

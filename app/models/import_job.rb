@@ -1,3 +1,18 @@
+# == Schema Information
+#
+# Table name: import_jobs
+#
+#  id                :integer          not null, primary key
+#  status            :string(255)
+#  original_filename :string(255)
+#  finished_at       :datetime
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  user_id           :integer
+#  collection_id     :integer
+#  exception         :text
+#
+
 class ImportJob < ActiveRecord::Base
   # The status field captures the lifecycle of an ImportJob. Currently it is:
   #
@@ -19,6 +34,9 @@ class ImportJob < ActiveRecord::Base
 
   belongs_to :user
   belongs_to :collection
+
+  MEMBERS = 'member'
+  SITES = 'site'
 
   def pending
     Rails.logger.error "Inconsistent status for job with id #{self.id}. Should be in status 'file_uploaded' before marking it as 'pending'" unless self.status_file_uploaded?
@@ -42,14 +60,31 @@ class ImportJob < ActiveRecord::Base
     j = ImportJob.new :original_filename => original_filename, :status => :file_uploaded
     j.user = user
     j.collection = collection
+    j.kinds = SITES
     j.save!
   end
+
+  def self.uploaded_members(original_filename, user, collection)
+    j = ImportJob.new :original_filename => original_filename, :status => :file_uploaded
+    j.user = user
+    j.collection = collection
+    j.kinds = MEMBERS
+    j.save!
+  end
+
 
   def self.last_for(user, collection)
     user = user.id if user.is_a?(User)
     collection = collection.id if collection.is_a?(Collection)
 
     ImportJob.where(:collection_id => collection, :user_id => user).last
+  end
+
+  def self.last_member_for(user, collection)
+    user = user.id if user.is_a?(User)
+    collection = collection.id if collection.is_a?(Collection)
+
+    ImportJob.where(:collection_id => collection, :user_id => user, :kinds => MEMBERS).last
   end
 
   def finish
@@ -67,7 +102,13 @@ class ImportJob < ActiveRecord::Base
     self.save!
   end
 
-  [:file_uploaded, :pending, :in_progress, :finished, :failed, :canceled_by_user].each do |status_value|
+  def canceled_member_by_user
+    Rails.logger.error "Inconsistent status for job with id #{self.id}. Should be in status 'pending' before marking it as 'canceled'" unless self.status_pending?
+    self.status = :canceled_member_by_user
+    self.save!
+  end
+
+  [:file_uploaded, :pending, :in_progress, :finished, :failed, :canceled_by_user, :canceled_member_by_user].each do |status_value|
     class_eval %Q(def status_#{status_value.to_s}?; self.status == '#{status_value.to_s}'; end)
   end
 

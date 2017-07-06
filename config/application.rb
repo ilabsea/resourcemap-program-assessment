@@ -73,5 +73,7 @@ module ResourceMap
 
     config.version_name = `git describe --abbrev=0 --tags` rescue "Development"
     config.revision = File.read('REVISION').strip rescue "Development"
+
+    config.middleware.use Rack::Deflater
   end
 end

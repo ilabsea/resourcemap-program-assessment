@@ -1,0 +1,12 @@
+<%= render '/tabs' %>
+
+<div class="tabsline settings-form" >
+  <h2>Create Report Template</h2>
+  <%= render 'form' %>
+</div>
+
+<script type="text/javascript">
+  $(function(){
+    $('ul.tabs li:nth-last-child(1)').addClass('active')
+  });
+</script>

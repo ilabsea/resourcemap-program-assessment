@@ -8,17 +8,23 @@ onLayers ->
       @kind = ko.observable data?.kind
       @threshold_ids = data?.threshold_ids ? []
       @query_ids = data?.query_ids ? []
+      @report_query_ids = data?.report_query_ids ? []
 
       @editableCode = ko.observable(true)
       @deletable = ko.observable(true)
-      
+
       @is_enable_field_logic = ko.observable data?.is_enable_field_logic ? false
+      @is_enable_custom_validation = ko.observable data?.is_enable_custom_validation ? false
+      @is_enable_field_custom_validation = ko.observable data?.is_enable_field_custom_validation ? false
       @is_enable_range = data?.is_enable_range
+      @is_criteria = data?.is_criteria
       @config = data?.config
       @field_logics_attributes = data?.field_logics_attributes
       @metadata = data?.metadata
-      @is_mandatory = data?.is_mandatory 
-      @is_display_field = data?.is_display_field     
+      @is_mandatory = data?.is_mandatory
+      @is_display_field = data?.is_display_field
+      @custom_widgeted = ko.observable data?.custom_widgeted ? false
+      @readonly_custom_widgeted = data?.readonly_custom_widgeted
 
       @kind_titleize = ko.computed =>
         (@kind().split(/_/).map (word) -> word[0].toUpperCase() + word[1..-1].toLowerCase()).join ' '
@@ -33,18 +39,26 @@ onLayers ->
       @impl = ko.observable eval("new Field_#{@kind()}(this)")
       @kind.subscribe => @impl eval("new Field_#{@kind()}(this)")
 
+      @widgetMappingerror = ko.observable()
       @nameError = ko.computed => if @hasName() then null else "the field #{@fieldErrorDescription()} is missing a Name"
       @codeError = ko.computed =>
+        if !@validCode() then return "the field #{@fieldErrorDescription()} has invalid code"
         if !@hasCode() then return "the field #{@fieldErrorDescription()} is missing a Code"
         if (@code() in ['lat', 'long', 'name', 'resmap-id', 'last updated']) then return "the field #{@fieldErrorDescription()} code is reserved"
         null
-        
+
       @error = ko.computed => @nameError() || @codeError() || @impl().error()
       @valid = ko.computed => !@error()
       @oldcode = ko.observable data?.code
       @code.subscribe =>
         unless @editableCode()
           @changeCodeInCalculationField()
+      @custom_widgeted.subscribe =>
+        if @custom_widgeted() == true
+          @is_enable_field_logic(false)
+          if(@config and @config.field_logics)
+            @config.field_logics = []
+          @impl().field_logics([])
 
     changeCodeInCalculationField: =>
       $.map(model.layers(), (x, index) =>
@@ -76,6 +90,9 @@ onLayers ->
 
     hasCode: => $.trim(@code()).length > 0
 
+    validCode: =>
+      if @code()?.match(/[^A-Za-z0-9_]/) then return false else return true
+
     selectingLayerClick: =>
       @switchMoveToLayerElements true
       return
@@ -84,6 +101,7 @@ onLayers ->
       return unless @selecting
 
       if window.model.currentLayer() != @layer()
+        window.model.moveFieldCrossLayer(@, @layer())
         $("a[id='#{@name()}']").html("Move to layer '#{@layer().name()}' upon save")
       else
         $("a[id='#{@name()}']").html('Move to layer...')
@@ -115,7 +133,11 @@ onLayers ->
         layer_id: @layer().id()
         is_mandatory: @is_mandatory
         is_display_field: @is_display_field
-        is_enable_field_logic: @is_enable_field_logic
+        is_enable_field_logic: @is_enable_field_logic()
+        is_enable_custom_validation: @is_enable_custom_validation()
+        is_criteria: @is_criteria
+        custom_widgeted: @custom_widgeted()
+        readonly_custom_widgeted: @readonly_custom_widgeted
       @impl().toJSON(json)
       json
 
@@ -124,8 +146,26 @@ onLayers ->
       @field = field
       @maximumSearchLengthError = -> null
       @error = -> null
+      @field_logics = if field.config?.field_logics?
+                        ko.observableArray(
+                          $.map(field.config.field_logics, (x) -> new FieldLogic(x))
+                        )
+                      else
+                        ko.observableArray()
+
+    saveFieldLogic: (field_logic) =>
+      if !field_logic.id()?
+        if @field_logics().length > 0
+          id = @field_logics()[@field_logics().length - 1].id() + 1
+        else
+          id = 0
+        field_logic.id id
+        @field_logics.push field_logic
 
     toJSON: (json) =>
+      unless json.config
+        json.config = {}
+      json.config["field_logics"] = $.map(@field_logics(), (x) ->  x.toJSON())
 
   class @Field_text extends @FieldImpl
     constructor: (field) ->
@@ -144,6 +184,7 @@ onLayers ->
 
     toJSON: (json) =>
       json.metadata = $.map(@attributes(), (x) -> x.toJSON())
+      json.config = { field_logics: $.map(@field_logics(), (x) ->  x.toJSON())}
 
   class @Field_numeric extends @FieldImpl
     constructor: (field) ->
@@ -157,12 +198,13 @@ onLayers ->
       @error = ko.computed =>
         if (@is_enable_range() && @minimum() && @minimum())&& parseInt(@minimum()) > parseInt(@maximum())
           "Invalid range, maximum must greater than minimum"
-      @field_logics = if field.config?.field_logics?
+
+      @field_validations = if field.config?.field_validations?
                         ko.observableArray(
-                          $.map(field.config.field_logics, (x) -> new FieldLogic(x))
+                          $.map(field.config.field_validations, (x) -> new FieldValidation(x))
                         )
                       else
-                        ko.observableArray()
+                        ko.observableArray([])
 
     validate_number_only: (field,event) =>
       if event.keyCode > 31 && (event.keyCode < 48 || event.keyCode > 57)
@@ -171,17 +213,18 @@ onLayers ->
 
     toJSON: (json) =>
       json.is_enable_range = @is_enable_range()
-      json.config = {digits_precision: @digitsPrecision(), allows_decimals: @allowsDecimals(), range: {minimum: @minimum(), maximum: @maximum()}, field_logics: $.map(@field_logics(), (x) ->  x.toJSON())}    
+      json.config = { digits_precision: @digitsPrecision(), allows_decimals: @allowsDecimals(), range: {minimum: @minimum(), maximum: @maximum()}, field_logics: $.map(@field_logics(), (x) ->  x.toJSON()), field_validations: $.map(@field_validations(), (x) ->  x.toJSON())}
       return json
 
-    saveFieldLogic: (field_logic) =>
-      if !field_logic.id()?
-        if @field_logics().length > 0
-          id = @field_logics()[@field_logics().length - 1].id() + 1
+
+    saveFieldValidation: (field_validation) =>
+      if !field_validation.id()?
+        if @field_validations().length > 0
+          id = @field_validations()[@field_validations().length - 1].id() + 1
         else
           id = 0
-        field_logic.id id
-        @field_logics.push field_logic
+        field_validation.id id
+        @field_validations.push field_validation
 
   class @Field_yes_no extends @FieldImpl
     constructor: (field) ->
@@ -189,38 +232,10 @@ onLayers ->
 
       @field_logics = if field.config?.field_logics?
                         ko.observableArray(
-                          $.map(field.config.field_logics, (x) ->
-                            if field.config.field_logics.length == 1
-                              if x.label() == 'Yes'
-                                field_logic_no = new FieldLogic
-                                field_logic_no.id(0)
-                                field_logic_no.value(0)
-                                field_logic_no.label('No')
-
-                                return [field_logic_no, new FieldLogic(x)]
-                              if x.label() == 'No'
-                                field_logic_yes = new FieldLogic
-                                field_logic_yes.id(1)
-                                field_logic_yes.value(1)
-                                field_logic_yes.label('Yes')
-
-                                return [new FieldLogic(x), field_logic_yes]
-
-                            if field.config.field_logics.length == 2
-                              new FieldLogic(x)
-                          ))
-                     else
-                        field_logic_yes = new FieldLogic
-                        field_logic_yes.id(1)
-                        field_logic_yes.value(1)
-                        field_logic_yes.label("Yes")
-
-                        field_logic_no = new FieldLogic
-                        field_logic_no.id(0)
-                        field_logic_no.value(0)     
-                        field_logic_no.label("No")
-
-                        ko.observableArray([field_logic_no, field_logic_yes])
+                          $.map(field.config.field_logics, (x) -> new FieldLogic(x))
+                        )
+                      else
+                        ko.observableArray()
 
     validFieldLogic: =>
       @field_logics().filter (field_logic) -> typeof field_logic.field_id() isnt 'undefined'
@@ -253,7 +268,7 @@ onLayers ->
     addOption: (option) =>
       option.id @nextId
       @options.push option
-      @nextId += 1 
+      @nextId += 1
 
     toJSON: (json) =>
       json.config = {options: $.map(@options(), (x) -> x.toJSON()), next_id: @nextId}
@@ -261,22 +276,7 @@ onLayers ->
   class @Field_select_one extends @FieldSelect
     constructor: (field) ->
       super(field)
-      @field_logics = if field.config?.field_logics?
-                        ko.observableArray(
-                          $.map(field.config.field_logics, (x) -> new FieldLogic(x))
-                        )
-                      else
-                        ko.observableArray()
 
-    saveFieldLogic: (field_logic) =>
-      if !field_logic.id()?
-        if @field_logics().length > 0
-          id = @field_logics()[@field_logics().length - 1].id() + 1
-        else
-          id = 0
-        field_logic.id id
-        @field_logics.push field_logic
-                        
     toJSON: (json) =>
       json.config = {options: $.map(@options(), (x) -> x.toJSON()), next_id: @nextId,field_logics: $.map(@field_logics(), (x) ->  x.toJSON())}
 
@@ -289,15 +289,13 @@ onLayers ->
         )
       else
         ko.observableArray()
-      @field_logics = ko.observableArray()
+
     add_field_logic: (field_logic) =>
       @field_logics.push field_logic
 
-    save_field_logic: (field_logic) =>
-      @selected_field_logics.push(field_logic)
-
     toJSON: (json) =>
-      json.config = {options: $.map(@options(), (x) -> x.toJSON()), next_id: @nextId,field_logics: $.map(@selected_field_logics(), (x) ->  x.toJSON())}
+      json.config = {options: $.map(@options(), (x) -> x.toJSON()), next_id: @nextId,field_logics: $.map(@field_logics(), (x) ->  x.toJSON())}
+
 
   class @Field_hierarchy extends @FieldImpl
     constructor: (field) ->
@@ -322,7 +320,8 @@ onLayers ->
       @hierarchyItems = ko.observableArray $.map(@hierarchy(), (x) -> new HierarchyItem(x))
 
     toJSON: (json) =>
-      json.config = {hierarchy: @hierarchy()}
+      json.config = {hierarchy: @hierarchy(),field_logics: $.map(@field_logics(), (x) ->  x.toJSON())}
+
 
   class @Field_date extends @FieldImpl
 
@@ -343,10 +342,10 @@ onLayers ->
                    else
                     ko.observableArray()
 
-      @maximumSearchLengthError = ko.computed => 
-        if @maximumSearchLength() && @maximumSearchLength().length >0 
-          null 
-        else 
+      @maximumSearchLengthError = ko.computed =>
+        if @maximumSearchLength() && @maximumSearchLength().length >0
+          null
+        else
           "the field #{@field.fieldErrorDescription()} is missing a maximum search length"
       @missingFileLocationError = ko.computed =>
         if @locations() && @locations().length > 0
@@ -363,7 +362,7 @@ onLayers ->
       @errorUploadingLocation(false)
 
     toJSON: (json)=>
-      json.config = {locations: $.map(@locations(), (x) ->  x.toJSON()), maximumSearchLength: @maximumSearchLength()}
+      json.config = {locations: $.map(@locations(), (x) ->  x.toJSON()), maximumSearchLength: @maximumSearchLength(),field_logics: $.map(@field_logics(), (x) ->  x.toJSON())}
 
   class @Field_calculation extends @FieldImpl
     constructor: (field) ->
@@ -379,7 +378,7 @@ onLayers ->
       @field = ko.observable()
       @codeCalculation = ko.observable field.config?.code_calculation ? ""
     addDependentField: (field) =>
-      fields = @dependent_fields().filter (f) -> f.id() is field.id() 
+      fields = @dependent_fields().filter (f) -> f.id() is field.id()
       if fields.length == 0
         field.editableCode(false)
         @dependent_fields.push(new FieldDependant(field.toJSON()))
@@ -391,3 +390,112 @@ onLayers ->
       @codeCalculation(@codeCalculation() + '${' + field.code() + "}")
     toJSON: (json) =>
       json.config = {digits_precision: @digitsPrecision(), allows_decimals: @allowsDecimals(), code_calculation: @codeCalculation(), dependent_fields: $.map(@dependent_fields(), (x) ->  x.toJSON())}
+
+  class @Field_custom_widget extends @FieldImpl
+    constructor: (field) ->
+      super(field)
+      @widgetContent = ko.observable field?.config?.widget_content
+    toJSON: (json) =>
+      json.config = { widget_content: @widgetContent(),field_logics: $.map(@field_logics(), (x) ->  x.toJSON())}
+
+  class @Field_custom_aggregator extends @FieldImpl
+    constructor: (field) ->
+      super(field)
+      @_fieldList = ko.observableArray([])
+      @conditionFieldId = ko.observable(field.config?.condition_field_id)
+
+      @selectedCollectionFieldList = ko.observableArray([])
+      @selectedCollection = ko.observable(field.config?.selected_collection)
+
+      @selectedCollection.subscribe =>
+        @findFieldByCollectionId(@selectedCollection())
+
+      @aggregatorTypeList = ['SUM']
+      @selectedAggregatorType = ko.observable(field.config?.selected_aggregator_type)
+      @selectedCustomWidgetFieldList = ko.computed =>
+        @selectedCollectionFieldList().filter ((field) -> field.custom_widgeted())
+
+      @selectedCustomWidgetField = ko.observable()
+      # data get stored in hash format, not in array's
+      @aggregatedFieldList = ko.observableArray($.map(field.config?.aggregated_field_list || [] , (x) =>  {id: x.id, code: x.code, name: x.name}))
+      @conditionFieldValue = ko.observable(field.config?.condition_field_value)
+
+      @error = ko.computed =>
+        return "the field must reference to a collection " unless @selectedCollection()
+        return "the field must have the aggregator type" unless @selectedAggregatorType()
+        return "the field must have the aggregator field list" if @aggregatedFieldList().length == 0
+
+    findFieldByCollectionId: (collectionId) =>
+      return @selectedCollectionFieldList([]) if !collectionId || @layer().id() == undefined
+
+      layer_id = @layer().id()
+      $.get "/collections/#{collectionId}/basic_fields.json?layer_id=#{layer_id}", {}, (fields) =>
+        fields.sort((x, y) -> if x.name.toLowerCase().trim() < y.name.toLowerCase().trim() then -1 else 1)
+        @selectedCollectionFieldList(fields)
+        #Initially selectedCollectionFieldList is empty then conditionFieldId will be forced to undefined
+        @conditionFieldId(@field.config?.condition_field_id)
+
+    addCustomWidgetedFieldItem: =>
+      if @selectedCustomWidgetField()
+        found = false
+        for aggregatedField in @aggregatedFieldList()
+          if @selectedCustomWidgetField().code == aggregatedField.code
+            found = true
+            break
+        @aggregatedFieldList.push @selectedCustomWidgetField() if found == false
+
+    removeCustomWidgetedFieldItem: (item) =>
+      @aggregatedFieldList.remove(item)
+
+    model: =>
+      window.test = @field.layer().parent()
+
+    findFieldById: (id) =>
+      result = @fieldList().filter (field) -> field.id == parseInt(id)
+      result[0]
+
+    findCollectionById: (id) =>
+      result = @collectionList().filter (collection) ->
+        collection.id == parseInt(id)
+      result[0]
+
+
+    # cannot get it from window.model since this variable does not exist yet
+    # we are forming the new MainViewModel constructor
+    collectionList: =>
+      window.collectionList
+
+    layerList: =>
+      window.layerList
+
+    fieldList: =>
+      return @_fieldList() if @_fieldList().length > 0
+      fields = []
+      for layer in @layerList()
+        fields = fields.concat(layer.fields)
+      fields.sort (first, second)->
+        firstItem = first.name.toLowerCase()
+        secondItem = second.name.toLowerCase()
+        if firstItem < secondItem
+          return -1
+        else if firstItem == secondItem
+          return 0
+        else
+          return 1
+      @_fieldList(fields)
+      return @_fieldList()
+
+    toJSON: (json) =>
+      json.is_custom_aggregator = true
+      json.config = {
+        selected_collection: @selectedCollection(),
+        selected_aggregator_type: @selectedAggregatorType(),
+        aggregated_field_list: $.map(@aggregatedFieldList(), (x) =>  {id: x.id, code: x.code, name: x.name}),
+        condition_field_id: @conditionFieldId(),
+        condition_field_value: @conditionFieldValue()
+
+      }
+
+  class @Field_email extends @Field_text
+
+  class @Field_phone extends @Field_text

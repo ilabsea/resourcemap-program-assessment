@@ -1,3 +1,28 @@
+# == Schema Information
+#
+# Table name: fields
+#
+#  id                       :integer          not null, primary key
+#  collection_id            :integer
+#  layer_id                 :integer
+#  name                     :string(255)
+#  code                     :string(255)
+#  kind                     :string(255)
+#  created_at               :datetime         not null
+#  updated_at               :datetime         not null
+#  config                   :binary(214748364
+#  ord                      :integer
+#  metadata                 :text
+#  is_mandatory             :boolean          default(FALSE)
+#  is_enable_field_logic    :boolean          default(FALSE)
+#  is_enable_range          :boolean          default(FALSE)
+#  is_display_field         :boolean
+#  custom_widgeted          :boolean          default(FALSE)
+#  is_custom_aggregator     :boolean          default(FALSE)
+#  is_criteria              :boolean          default(FALSE)
+#  readonly_custom_widgeted :boolean          default(FALSE)
+#
+
 class Field::SelectOneField < Field
   def value_type_description
     "option values"
@@ -21,7 +46,7 @@ class Field::SelectOneField < Field
   end
 
   def valid_value?(option_code, site=nil)
-    if @cache_for_read 
+    if @cache_for_read
       raise invalid_field_message unless @options_by_id_in_cache.values.include?(option_code)
     else
       check_option_exists(option_code)
@@ -32,8 +57,15 @@ class Field::SelectOneField < Field
     @cache_for_read = true
   end
 
+  def parse value_code
+    self.config["options"].each do |option|
+      return option["id"] if option["code"] == value_code
+    end
+    return value_code
+  end
+
   private
-  
+
   # TODO: Integrate with decode used in update
   def query_value(value, use_codes_instead_of_es_codes)
     if @cache_for_read && !@options_by_code_or_label_in_cache

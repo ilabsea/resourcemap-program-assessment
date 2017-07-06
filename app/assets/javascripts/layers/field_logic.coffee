@@ -11,6 +11,12 @@ onLayers ->
       @field_id = ko.observableArray([data?.field_id])
       @condition_type = ko.observable(data?.condition_type)
       @editing = ko.observable(false)
+      @valid = ko.observable(true)
+      @error = ko.observable()
+      @is_numeric = ko.computed =>
+                      if @field_id().length > 0
+                        return @fieldType(@field_id()[0]) == "numeric"
+                      return false
 
     toJSON: =>
       id: @id()
@@ -19,3 +25,10 @@ onLayers ->
       label: @label()
       field_id: @field_id()
       condition_type: @condition_type()
+
+    fieldType: (field_id)=>
+      if window.model
+        for layer in window.model.layers()
+          for field in layer.fields()
+            if parseInt(field.id()) == parseInt(field_id)
+              return field.kind()

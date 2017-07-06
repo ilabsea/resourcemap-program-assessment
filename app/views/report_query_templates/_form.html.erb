@@ -1,0 +1,41 @@
+<%= form_for [collection, @report_query_template]  do |f| %>
+  <div class="field w60">
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+    <% if f.object.errors[:name].present? %>
+      <%= f.label "Name #{f.object.errors[:name].join(', ')}", class: 'error' %>
+    <% end %>
+  </div>
+
+  <div class="field w60">
+    <%= f.label 'Insert Report Query' %>
+    <%= f.select :report_query_id, options_for_select(collection.report_queries.map{|r| [r.name, r.id]}, @report_query_template.report_query_id), prompt: 'Select a query' %>
+    <br />
+    <% if f.object.errors[:report_query].present? %>
+      <%= f.label "Report query #{f.object.errors[:report_query].join(', ')}", class: 'error' %>
+    <% end %>
+  </div>
+
+  <div class="row">
+    <%= f.text_area :template, class: "custom-tinymce", style: 'width: 1200px;' %>
+  </div>
+  <div class="row">
+    <%= f.button 'Save', class: 'white' %>
+    <%= link_to 'Cancel', collection_report_query_templates_path(collection), :class=> 'grey'%>
+  </div>
+<% end %>
+
+<script type="text/javascript">
+  $(function(){
+    var token = "{report}"
+    $("#report_query_template_report_query_id").on('change', function() {
+      var $this = $(this);
+      if($this.val()){
+        var editorContent = tinyMCE.activeEditor.getContent();
+        if(editorContent.indexOf(token) == -1) {
+          insertIntoEditor(token)
+        }
+      }
+    })
+  })
+</script>

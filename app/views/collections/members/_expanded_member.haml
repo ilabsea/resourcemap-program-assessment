@@ -29,7 +29,7 @@
     - ['None', 'Read', 'Update'].each do |permission|
       .permissionColumn
         %hr.underlineExpandedMember
-          %input{ko(disable: :admin, checked: "allLayers#{permission}", :attr => { "name" => "userId" }), :value => "all", :type => 'radio'}
+          %input{ko(disable: 'disableEdit()', checked: "allLayers#{permission}", :attr => { "name" => "userId" }), :value => "all", :type => 'radio'}
 
     .permissionColumn.admin
       %hr.underlineExpandedMember
@@ -41,50 +41,50 @@
     .memberHeaderColumn{ko(text: "layerName()")}
     - ['None', 'Read', 'Update'].each do |permission|
       .permissionColumn
-        %input{ko(disable: "$parent.admin()", checked: "#{permission.downcase}Checked"), :value => "true", :type => 'radio'}
+        %input{ko(disable: "$parent.disableEdit()", checked: "#{permission.downcase}Checked"), :value => "true", :type => 'radio'}
     .permissionColumn.admin
     .lastColumn
   //ko
   //ko
 
-  .customPermissionsTitleRow
-    .memberHeaderColumn
-      .frame
-        .memberDetailsTitle{ko(text: 'site_permissions_title')}
-    - ['None', 'Read', 'Update'].each do |permission|
-      .permissionColumn
-        .frame
-    .permissionColumn.admin
-      .frame
-    .lastColumn
-
-  /ko foreach: sitesWithCustomPermissions
-  .customPermissionRow
-    .memberHeaderColumn
-      .frame
-        .memberCustomPermissionsSiteName{ko(text: 'name')}
-        %button.clist-remove.memberRemoveCustomPermissionSite{ko(click: "$parent.removeCustomPermission")}
-        %hr.underlineExpandedMember{ko(visible: '$index() < $parent.sitesWithCustomPermissions().length - 1')}
-    - ['None', 'Read', 'Update'].each do |permission|
-      .permissionColumn
-        .frame
-          %input{ko(disable: "$parent.admin", checked: "#{permission.downcase}Checked"), :value => "true", :type => 'radio'}
-        %hr.underlineExpandedMember{ko(visible: '$index() < $parent.sitesWithCustomPermissions().length - 1')}
-    .permissionColumn.admin
-      .frame
-        %hr.underlineExpandedMember{ko(visible: '$index() < $parent.sitesWithCustomPermissions().length - 1')}
-    .lastColumn
-  //ko
-
-  .addCustomPermissionRow{ko(attr: { "id" => "customPermissionsAutocompleteId()" })}
-    .memberHeaderColumn
-      .frame
-        %input.autocomplete-site-input.ux-search{ ko(autocomplete: :customSite, value: :customSite, valueUpdate: :afterkeydown, source: "searchSitesUrl()", event: {keydown: :keyPress, blur: :save}), type: :text, placeholder: t('views.collections.members.add_custom_permissions_for_site') }
-        %button.clist-add{ko(click: :createCustomPermissionForSite)}
-    - ['None', 'Read', 'Update'].each do |permission|
-      .permissionColumn
-    .permissionColumn.admin
-    .lastColumn
+  -# .customPermissionsTitleRow
+  -#   .memberHeaderColumn
+  -#     .frame
+  -#       .memberDetailsTitle{ko(text: 'site_permissions_title')}
+  -#   - ['None', 'Read', 'Update'].each do |permission|
+  -#     .permissionColumn
+  -#       .frame
+  -#   .permissionColumn.admin
+  -#     .frame
+  -#   .lastColumn
+  -#
+  -# /ko foreach: sitesWithCustomPermissions
+  -# .customPermissionRow
+  -#   .memberHeaderColumn
+  -#     .frame
+  -#       .memberCustomPermissionsSiteName{ko(text: 'name')}
+  -#       %button.clist-remove.memberRemoveCustomPermissionSite{ko(click: "$parent.removeCustomPermission")}
+  -#       %hr.underlineExpandedMember{ko(visible: '$index() < $parent.sitesWithCustomPermissions().length - 1')}
+  -#   - ['None', 'Read', 'Update'].each do |permission|
+  -#     .permissionColumn
+  -#       .frame
+  -#         %input{ko(disable: "$parent.disableEdit()", checked: "#{permission.downcase}Checked"), :value => "true", :type => 'radio'}
+  -#       %hr.underlineExpandedMember{ko(visible: '$index() < $parent.sitesWithCustomPermissions().length - 1')}
+  -#   .permissionColumn.admin
+  -#     .frame
+  -#       %hr.underlineExpandedMember{ko(visible: '$index() < $parent.sitesWithCustomPermissions().length - 1')}
+  -#   .lastColumn
+  -# //ko
+  -#
+  -# .addCustomPermissionRow{ko(attr: { "id" => "customPermissionsAutocompleteId()" })}
+  -#   .memberHeaderColumn
+  -#     .frame
+  -#       %input.autocomplete-site-input.ux-search{ ko(disable: "disableEdit()", autocomplete: :customSite, value: :customSite, valueUpdate: :afterkeydown, source: "searchSitesUrl()", event: {keydown: :keyPress, blur: :save}), type: :text, placeholder: t('views.collections.members.add_custom_permissions_for_site') }
+  -#       %button.clist-add{ko(click: :createCustomPermissionForSite)}
+  -#   - ['None', 'Read', 'Update'].each do |permission|
+  -#     .permissionColumn
+  -#   .permissionColumn.admin
+  -#   .lastColumn
 
   .removeMemberRow
     .memberHeaderColumn

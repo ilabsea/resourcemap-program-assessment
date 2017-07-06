@@ -1,0 +1,12 @@
+<img src="http://theme.instedd.org/theme/images/header/logos/guisso.png" alt="logo" />
+
+<div style="color:black">
+  <h1>You are almost done!</h1>
+  <p>
+    To verify your account and complete the registration process, please click in the link below or copy paste the URL into your browser
+  </p>
+</div>
+
+<%= link_to 'Confirm my account', confirmation_url(@resource, :confirmation_token => @resource.confirmation_token) %>
+
+<p><%= link_to confirmation_url(@resource, :confirmation_token => @resource.confirmation_token), confirmation_url(@resource, :confirmation_token => @resource.confirmation_token) %></p>

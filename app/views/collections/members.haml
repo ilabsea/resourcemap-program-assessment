@@ -12,6 +12,11 @@
     %p= t('views.collections.members.description')
     %br/
 
+  %div
+    %div
+      = link_to t('views.collections.members.upload_it_for_bulk_members_updates'), collection_upload_members_path(collection), class: 'icon fexport black'
+
+  %br
   .tablewrapp
     %table.GralTable
       %colgroup
