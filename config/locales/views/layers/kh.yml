@@ -73,6 +73,7 @@ kh:
           value: "តំលៃ"
           add_attribute: "បន្ថែមនូវ គុណលក្ខណះ"
           mandatory: "សំខាន់"
+          parent: "Parent"
           this_field_must_be_report_on_every_report: "ហ្វៀល​​​នេះត្រូវតែបំពេញក្នុងរបាយការណ៏។"
           display_on_form_entry: "បង្ហាញនៅលើរបាយការណ៏"
           show_this_field_and_value_on_form_entry: "បង្ហាញហ្វៀល​​​នេះនិងតម្លៃនៅលើរបាយការណ៏"

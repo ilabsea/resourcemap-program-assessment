@@ -1,3 +1,12 @@
+%hr/
+%label
+  = t('views.layers.form.field.display_on_form_entry')
+%p.smalltext= t('views.layers.form.field.show_this_field_and_value_on_form_entry')
+= ko_check_box_tag :is_display_field, css: {error: :codeError}
+%hr/
+%label
+  = t('views.layers.form.field.dependent_field')
+
 <!-- ko with: impl() -->
 %select{"data-bind" => 'foreach: $root.selectLogicLayers(), value: $root.tmpSelectedField', style: 'width:240px !important;', id: 'calculation_field'}
   /ko if: $index() == 0

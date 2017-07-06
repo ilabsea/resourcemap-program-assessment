@@ -19,4 +19,3 @@ onLayers ->
 
     @find: (list, attribute) ->
       _.find list, (a) -> a.key() == attribute.key()
-
