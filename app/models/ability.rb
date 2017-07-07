@@ -8,7 +8,7 @@ class Ability
     ### Collection ###
 
     # Admin abilities
-    can [:destroy, :create_snapshot, :recreate_index, :update, :members,:send_new_member_sms, :register_gateways, :export], Collection, :memberships => { :user_id => user.id , :admin => true }
+    can [:destroy, :create_snapshot, :recreate_index, :update, :members,:send_new_member_sms, :register_gateways, :export, :print_template], Collection, :memberships => { :user_id => user.id , :admin => true }
     can :manage, Snapshot, :collection => {:memberships => { :user_id => user.id , :admin => true } }
 
     # User can read collection if she is a collection member or if the collection is public
@@ -29,7 +29,7 @@ class Ability
     can :read, Layer, :collection => {:layer_memberships => { :user_id => user.id , :write => true }}
 
     # Member Abilities
-    can [:csv_template, :upload_csv, :unload_current_snapshot, :load_snapshot, :register_gateways, :message_quota, :reminders, :settings, :quotas], Collection, :memberships => { :user_id => user.id }
+    can [:csv_template, :upload_csv, :unload_current_snapshot, :load_snapshot, :register_gateways, :message_quota, :reminders, :settings, :quotas, :upload_members, :print_template], Collection, :memberships => { :user_id => user.id }
 
     # In progress
     can :max_value_of_property, Collection, :memberships => { :user_id => user.id }

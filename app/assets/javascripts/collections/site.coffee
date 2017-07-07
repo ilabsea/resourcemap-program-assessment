@@ -45,13 +45,16 @@ onCollections ->
       @user_id = ko.observable data?.user_id
       @editable = ko.computed =>
         member = JSON.parse(collection.memberships().responseText)
-        if member.admin
-          return true
-        if member.can_edit_other
-          return true
-        if data.user_id == member.user_id
-          return true
+        if member
+          if member.admin
+            return true
+          if member.can_edit_other
+            return true
+          if data.user_id == member.user_id
+            return true
         return false
+
+      @allFieldLogics = ko.observableArray()
 
     hasLocation: => @position() != null
 
@@ -397,8 +400,12 @@ onCollections ->
       for field in @fields()
         field.editing(false)
         field.originalValue = field.value()
-        field.setFieldFocus() if field.kind in ["yes_no", "numeric", "select_one", "select_many"]
-        new CustomWidget(field).bindField() if field.custom_widgeted
+        field.bindWithCustomWidgetedField()
+
+      for field in @fields()
+        # if field.value()
+        field.disableDependentSkipLogicField()
+
       window.model.newOrEditSite().scrollable(false)
       $('#name').focus()
 
@@ -506,7 +513,7 @@ onCollections ->
         callback() if callback && typeof(callback) == 'function'
 
     copyPropertiesToFields: =>
-      if @properties()      
+      if @properties()
         for field in @fields()
           value = @properties()[field.esCode]
           field.setValueFromSite(value)

@@ -87,3 +87,6 @@ onCollections ->
       $.get "/gateways.json", (data) ->
         _self.isExist(true) if data.length > 0
         $('#profile-main').show()
+
+    findFieldByCode: (code) =>
+      (field for field in window.model.editingSite().fields() when field.code == code)[0]

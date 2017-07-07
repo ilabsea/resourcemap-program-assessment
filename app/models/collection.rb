@@ -51,6 +51,8 @@ class Collection < ActiveRecord::Base
   has_many :field_histories, dependent: :destroy
   has_many :messages, dependent: :destroy
   has_many :canned_queries, dependent: :destroy
+  has_many :report_queries, dependent: :destroy
+  has_many :report_query_templates, dependent: :destroy
 
   OPERATOR = {">" => "gt", "<" => "lt", ">=" => "gte", "<=" => "lte", "=>" => "gte", "=<" => "lte", "=" => "eq"}
 
@@ -175,11 +177,13 @@ class Collection < ActiveRecord::Base
 
   def visible_layers_for(user, options = {}, language = nil)
     target_fields = visible_fields_for(user, options, language)
-    layers = []
-    target_fields.map(&:layer).uniq.each do |layer|
-      layers << ({ id: layer.id, name: layer.name, ord: layer.ord}) if layer
+    layers = target_fields.map(&:layer).uniq.map do |layer|
+      {
+        id: layer.id,
+        name: layer.name,
+        ord: layer.ord,
+      }
     end
-
 
     membership = user.membership_in self
     if !user.is_guest && !membership.try(:admin?)
@@ -202,6 +206,7 @@ class Collection < ActiveRecord::Base
           is_mandatory: field.is_mandatory,
           is_display_field: field.is_display_field,
           is_enable_field_logic: field.is_enable_field_logic,
+          is_enable_custom_validation: field.is_enable_custom_validation,
           custom_widgeted: field.custom_widgeted,
           readonly_custom_widgeted: field.readonly_custom_widgeted,
           # field_logic_value: field.field_logic_value,

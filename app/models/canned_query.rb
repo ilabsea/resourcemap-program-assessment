@@ -15,7 +15,7 @@
 
 class CannedQuery < ActiveRecord::Base
   serialize :conditions, Array
-  belongs_to :collection 
+  belongs_to :collection
 
   def self.form_formula
     CannedQuery.transaction do
@@ -41,7 +41,7 @@ class CannedQuery < ActiveRecord::Base
         print "\."
       end
     end
-    print 'Done!'  	
+    print 'Done!'
   end
 
 end

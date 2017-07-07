@@ -42,6 +42,8 @@ class SiteAggregator
 
   #TODO handle duplicate records
   def search_ref_sites
+    return {} if ref_properties_value.empty?
+
     builder = {}
     # filter fields from other collections.
     conditions = []

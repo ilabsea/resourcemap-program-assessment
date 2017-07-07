@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160506015614) do
+ActiveRecord::Schema.define(:version => 20160921141840) do
 
   create_table "activities", :force => true do |t|
     t.integer  "user_id"
@@ -96,19 +96,20 @@ ActiveRecord::Schema.define(:version => 20160506015614) do
     t.string   "name"
     t.string   "code"
     t.string   "kind"
-    t.datetime "created_at",                                                        :null => false
-    t.datetime "updated_at",                                                        :null => false
-    t.binary   "config",                   :limit => 2147483647
+    t.datetime "created_at",                                                           :null => false
+    t.datetime "updated_at",                                                           :null => false
+    t.binary   "config",                      :limit => 2147483647
     t.integer  "ord"
     t.text     "metadata"
-    t.boolean  "is_mandatory",                                   :default => false
-    t.boolean  "is_enable_field_logic",                          :default => false
-    t.boolean  "is_enable_range",                                :default => false
+    t.boolean  "is_mandatory",                                      :default => false
+    t.boolean  "is_enable_field_logic",                             :default => false
+    t.boolean  "is_enable_range",                                   :default => false
     t.boolean  "is_display_field"
-    t.boolean  "custom_widgeted",                                :default => false
-    t.boolean  "is_custom_aggregator",                           :default => false
-    t.boolean  "is_criteria",                                    :default => false
-    t.boolean  "readonly_custom_widgeted",                       :default => false
+    t.boolean  "custom_widgeted",                                   :default => false
+    t.boolean  "is_custom_aggregator",                              :default => false
+    t.boolean  "is_criteria",                                       :default => false
+    t.boolean  "readonly_custom_widgeted",                          :default => false
+    t.boolean  "is_enable_custom_validation",                       :default => false
   end
 
   create_table "import_jobs", :force => true do |t|
@@ -120,7 +121,55 @@ ActiveRecord::Schema.define(:version => 20160506015614) do
     t.integer  "user_id"
     t.integer  "collection_id"
     t.text     "exception"
+    t.text     "kinds"
   end
+
+  create_table "instedd_telemetry_counters", :force => true do |t|
+    t.integer "period_id"
+    t.string  "bucket"
+    t.text    "key_attributes"
+    t.integer "count",               :default => 0
+    t.string  "key_attributes_hash"
+  end
+
+  add_index "instedd_telemetry_counters", ["bucket", "key_attributes_hash", "period_id"], :name => "instedd_telemetry_counters_unique_fields", :unique => true
+
+  create_table "instedd_telemetry_periods", :force => true do |t|
+    t.datetime "beginning"
+    t.datetime "end"
+    t.datetime "stats_sent_at"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+    t.string   "lock_owner"
+    t.datetime "lock_expiration"
+  end
+
+  create_table "instedd_telemetry_set_occurrences", :force => true do |t|
+    t.integer "period_id"
+    t.string  "bucket"
+    t.text    "key_attributes"
+    t.string  "element"
+    t.string  "key_attributes_hash"
+  end
+
+  add_index "instedd_telemetry_set_occurrences", ["bucket", "key_attributes_hash", "element", "period_id"], :name => "instedd_telemetry_set_occurrences_unique_fields", :unique => true
+
+  create_table "instedd_telemetry_settings", :force => true do |t|
+    t.string "key"
+    t.string "value"
+  end
+
+  add_index "instedd_telemetry_settings", ["key"], :name => "index_instedd_telemetry_settings_on_key", :unique => true
+
+  create_table "instedd_telemetry_timespans", :force => true do |t|
+    t.string   "bucket"
+    t.text     "key_attributes"
+    t.datetime "since"
+    t.datetime "until"
+    t.string   "key_attributes_hash"
+  end
+
+  add_index "instedd_telemetry_timespans", ["bucket", "key_attributes_hash"], :name => "instedd_telemetry_timespans_unique_fields", :unique => true
 
   create_table "languages", :force => true do |t|
     t.string   "name"
@@ -228,6 +277,37 @@ ActiveRecord::Schema.define(:version => 20160506015614) do
     t.text     "rule"
   end
 
+  create_table "report_queries", :force => true do |t|
+    t.string   "name"
+    t.text     "condition_fields"
+    t.text     "group_by_fields"
+    t.text     "aggregate_fields"
+    t.string   "condition"
+    t.text     "parse_condition"
+    t.integer  "collection_id"
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
+  end
+
+  add_index "report_queries", ["collection_id"], :name => "index_report_queries_on_collection_id"
+
+  create_table "report_query_templates", :force => true do |t|
+    t.string   "name"
+    t.text     "template"
+    t.integer  "collection_id"
+    t.integer  "report_query_id"
+    t.datetime "created_at",                          :null => false
+    t.datetime "updated_at",                          :null => false
+    t.string   "uuid"
+    t.boolean  "is_published",     :default => true
+    t.boolean  "pdf_in_progress",  :default => false
+    t.datetime "pdf_requested_at"
+    t.datetime "pdf_completed_at"
+  end
+
+  add_index "report_query_templates", ["collection_id"], :name => "index_report_query_templates_on_collection_id"
+  add_index "report_query_templates", ["report_query_id"], :name => "index_report_query_templates_on_report_query_id"
+
   create_table "share_channels", :force => true do |t|
     t.integer  "channel_id"
     t.integer  "collection_id"
@@ -252,8 +332,8 @@ ActiveRecord::Schema.define(:version => 20160506015614) do
     t.integer  "site_id"
     t.string   "uuid"
     t.integer  "user_id"
-    t.datetime "start_entry_date",                                              :default => '2016-03-01 07:17:27'
-    t.datetime "end_entry_date",                                                :default => '2016-03-01 07:17:27'
+    t.datetime "start_entry_date",                                              :default => '2016-05-24 02:28:03'
+    t.datetime "end_entry_date",                                                :default => '2016-05-24 02:28:03'
   end
 
   add_index "site_histories", ["site_id"], :name => "index_site_histories_on_site_id"
@@ -283,8 +363,8 @@ ActiveRecord::Schema.define(:version => 20160506015614) do
     t.string   "uuid"
     t.string   "device_id"
     t.string   "external_id"
-    t.datetime "start_entry_date",                                              :default => '2015-08-14 02:57:03'
-    t.datetime "end_entry_date",                                                :default => '2015-08-14 02:57:03'
+    t.datetime "start_entry_date",                                              :default => '2016-05-24 02:28:03'
+    t.datetime "end_entry_date",                                                :default => '2016-05-24 02:28:03'
     t.integer  "user_id"
   end
 

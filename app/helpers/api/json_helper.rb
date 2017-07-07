@@ -28,6 +28,7 @@ module Api::JsonHelper
       obj[:long] = source['location']['lon']
     end
 
+    obj[:uuid] = source['uuid']
     obj[:properties] = source['properties']
 
     obj

@@ -6,6 +6,7 @@ default_mail_sender: "test@example.com"
 devise_mail_sender: "test@example.com"
 mandrill_username: "MAINDRILL_USER"
 mandrill_password: "MAINDRILL_API_KEY"
+max_aggregate_result_size: 500
 
 plugins:
   public_collection: on

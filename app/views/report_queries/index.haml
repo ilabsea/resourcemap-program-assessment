@@ -1,0 +1,50 @@
+- content_for :head do
+  :css
+    .error { color: red; }
+
+= render '/tabs'
+
+-# Hierarchy item template
+%script{type: "text/html", id: "hierarchy-items-template"}
+  %div
+    %a{ko(click: :toggleExpand, style: {marginLeft: "'' + (level() * 20) + 'px'"}), href: 'javascript:void(0)'}
+      %img{ko(attr: {src: "'#{InsteddRails.url}/theme/images/icons/18/black/folder' + (expanded() ? '_open' : '') + '.png'"}), style: 'position:relative;top:2px'}
+      %span{ko(text: :name)}
+
+.tabsline
+  %div
+    %img{src: '/images/loading.gif',id: 'loadProgress', style: 'position: absolute; left: 0; top: 0; right: 0; bottom: 0;margin: auto; display: none'}
+  %br/
+  .report-query#report-queries-main.hidden-until-loaded
+    - if current_user_snapshot.at_present? && collection_admin?
+      %h2= t('views.report_queries.title')
+      %p= t('views.report_queries.description')
+
+      /ko foreach: reportQueries
+      /ko ifnot: isEditing
+      .box.grey.w60
+        .rightbuttons
+          %button.fdelete{ ko(click: '$root.removeReportQuery'), title: 'Remove query' }
+        .toptitle
+          %span{ko(text: :name)}
+        %button.farrow{ ko(click: '$root.editReportQuery'), title: 'Edit query' }
+          = t('views.report_queries.edit')
+      //ko
+
+      /ko if: isEditing
+      .box.w90
+        = render 'report_queries/new_report_query'
+      //ko
+      //ko
+
+      /ko with: newReportQuery
+      .box.w90
+        = render 'report_queries/new_report_query'
+      //ko
+
+      /ko ifnot: isEditing
+      .box.grey.add{ ko(click: '$root.addReportQuery')}
+        = t('views.report_queries.add_new_query')
+        %button.cadd.right{title: 'Add new report query'}
+        %br{clear: :all}
+      //ko

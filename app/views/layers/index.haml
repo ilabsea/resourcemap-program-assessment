@@ -52,6 +52,7 @@
               .rightbuttons{style:'width:250px;'}
                 /ko if: deletable()
                 %button.fdelete{ko(click: "$root.deleteField"), style:'margin-top:0px;float:right;', title: t('views.layers.form.remove_field') }
+                %button.farrange{ko(click: "$root.copyField"), style:'margin-top:0px;float:right;', title: t('views.layers.form.duplicate_field') }
                 //ko
                 /ko if: !deletable()
                 %button.fdelete{ko(click: "$root.alertCannotDelete"), style:'margin-top:0px;float:right;', title: t('views.layers.form.remove_field') }
@@ -76,8 +77,26 @@
 
             .feditor-bottom
 
-          //ko
+            /ko if: $data == $root.currentField()
+            .feditor-add
+              .feditor-add-top{ko(css: {empty: '$parent.fields().length == 0'})}
+              .feditor-add-container
+                .feditor-add-content
+                  %h1 Add form field
+                  - Field::BaseKinds.clone.concat(Field::plugin_kinds.map{|k,v| v}).in_groups_of(6).each do |field_row|
+                    .feditor-field-type-row
+                    - field_row.compact.each do |field|
+                      - if field
+                        %span{ko(click: "function() { $root.newField('#{field[:name]}') }")}
+                          %button{ style: "margin-left:10px; margin-bottom:4px;", class: field[:css_class], title: "Add new #{field[:name].titleize.downcase} field" }
+                          %br/
+                          = t("views.layers.fields.#{field[:name]}").titleize
+                    %br/
+                    %br/  
 
+            //ko
+          //ko
+          /ko if: fields().length == 0
           .feditor-add
             .feditor-add-top{ko(css: {empty: 'fields().length == 0'})}
             .feditor-add-container
@@ -93,6 +112,7 @@
                         = t("views.layers.fields.#{field[:name]}").titleize
                   %br/
                   %br/
+          //ko
 
         = render 'layers/field_editor'
 
@@ -128,6 +148,7 @@
           / /ko
           / ko if: !$root.savingLayer() && !$root.currentLayer()
           - if current_user_snapshot.at_present? && collection_admin?
+            %button.farrange{ko(click: '$root.copyLayer'), title: t('views.layers.copy_layer') }
             %button.fdelete{ko(click: '$root.deleteLayer'), title: t('views.layers.remove_layer') }
           / /ko
 

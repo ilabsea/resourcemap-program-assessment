@@ -15,7 +15,7 @@ module Field::Base
    { name: 'calculation', css_class: 'lbutton lnumeral', small_css_class: 'snumeral'},
    { name: 'location', css_class: 'llocation', small_css_class: 'slocation'},
    { name: 'custom_widget', css_class: 'lcustom_widget', small_css_class: 'scustom_widget'},
-   { name: 'custom_aggregator', css_class: 'lcustom_aggregator', small_css_class: 'scustom_aggregator'},
+  #  { name: 'custom_aggregator', css_class: 'lcustom_aggregator', small_css_class: 'scustom_aggregator'},
  ]
 
   BaseKinds.each do |base_kind|
@@ -48,11 +48,11 @@ module Field::Base
     numeric? || select_one? || select_many?
   end
 
-  def stoted_as_double?
+  def stored_as_double?
     numeric?
   end
 
-  def storeed_as_long?
+  def stored_as_long?
     select_one? || select_many?
   end
 

@@ -136,9 +136,11 @@ class Search
   # Returns the results from ElasticSearch but with the location field
   # returned as lat/lng fields, and the date as a date object
   def ui_results
+    # return [] if @source.nil?
     fields_by_es_code = @collection.visible_fields_for(@current_user, snapshot_id: @snapshot_id).index_by &:es_code
 
     items = results()
+    return [] if items.empty?
     site_ids_permission = @collection.site_ids_permission(@current_user)
     items.each do |item|
       if item['_source']['location']

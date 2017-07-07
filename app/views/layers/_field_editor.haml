@@ -101,7 +101,6 @@
   //ko
 
   /ko if: $root.selectLogicLayers().length > 0
-  /ko if: kind() == 'numeric'
   %hr/
   = ko_check_box_tag :is_enable_field_logic, css: {error: :codeError}
   %label
@@ -110,37 +109,13 @@
     = render :partial => "field_logic_numeric"
   //ko
 
-  /ko if: kind() == 'yes_no'
+  /ko if: kind() == 'numeric'
   %hr/
-  = ko_check_box_tag :is_enable_field_logic, css: {error: :codeError}
+  = ko_check_box_tag :is_enable_custom_validation, css: {error: :codeError}
   %label
-    = t('views.layers.form.field.enable_skip_logic_for_this_field')
-
-  %div{ko(if: :is_enable_field_logic)}
-    = render :partial => "field_logic_yes_no"
-  //ko
-
-  /ko if: kind() == 'select_many'
-  %hr/
-  = ko_check_box_tag :is_enable_field_logic, css: {error: :codeError}
-  %label
-    = t('views.layers.form.field.enable_skip_logic_for_this_field')
-
-  %div{ko(if: :is_enable_field_logic)}
-    = render :partial => "field_logic_select_many"
-  //ko
-
-  /ko if: kind() == 'select_one'
-  /ko if: impl().options().length > 0
-  %hr/
-  = ko_check_box_tag :is_enable_field_logic, css: {error: :codeError}
-  %label
-    = t('views.layers.form.field.enable_skip_logic_for_this_field')
-
-  %div{ko(if: :is_enable_field_logic)}
-    = render :partial => "field_logic_select_one"
-  //ko
-  //ko
+    = t('views.layers.form.field.enable_custom_validation')
+  %div{ko(if: :is_enable_custom_validation)}
+    = render :partial => "field_custom_validation"
   //ko
 
   /ko if: kind() == 'custom_widget'
