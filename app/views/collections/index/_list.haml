@@ -1,0 +1,54 @@
+.tableheader
+  %div{style: 'padding-top:9px;padding-left:6px;'}= t('views.collections.index.my_collections')
+.tablescroll.sites
+  %table.GralTable.CleanTable
+    %tbody
+      <!-- ko foreach: collections -->
+      %tr
+        %td
+          %div{style: "width:230px;overflow:hidden;"}
+            %input{ko(checked: :checked, disable: '$root.showingAlert()? $root.showingAlert()== !checked() : false'), type: :checkbox, style: 'position:relative;'}
+            %span{ko(text: :name, click: '$root.enterCollection'), style: 'cursor:pointer;width:205px;overflow:hidden;display:block;float:right;text-overflow:ellipsis;white-space:nowrap'}"
+          <!-- ko if: currentSnapshot -->
+          .snapshot_on.right{style: 'padding-right:0'}
+            .i18g-snapshot
+            %button.farrow{ko(click: '$root.enterCollection'), type: :button, style: 'float:none'}
+          .clear
+          <!-- /ko -->
+          <!-- ko if: !currentSnapshot -->
+          %button.farrow{ko(click: '$root.enterCollection'), type: :button}
+          <!-- /ko -->
+      <!-- /ko -->
+  %br{:clear => "all"}/
+  - if Settings.is_on? :account_completeness
+    -# acount completeness
+    #profile-main{style: 'display:none'}
+      .box.plain.orange{ko(visible: 'collections().length < 1 || (!$root.isExist())'), :style => 'padding:5px; display:none;background-color: #B6D7A8;border: 0px'}
+        .sbox.grey.StateDisplay{style: 'margin: 0px;padding: 0px;background-color: #FFFFFF'}
+          .values{style: 'padding: 0px;margin: 4px 0 4px 0;font-size: 12px;line-height: 12px;width: 100%;'}
+
+            <!-- ko if: collections().length < 1 && (!$root.isExist()) -->
+            .M{style: 'padding: 0px; width: 75px; height: 15px; border: solid 1px; background-color: #FFFFFF; float: left;margin-left: 13px;'}
+              %span.Fill{style: 'width: 0%; background-color: #38761D; height: 15px'}/
+            .R
+              %span{style: 'font-weight:bold; color: #000000;letter-spacing: 0em; margin-top: 3px; font-size:10px;'}= t('views.collections.index.0_percent_account_setup_completeness')
+            <!-- /ko -->
+
+            <!-- ko if: (collections().length < 1 && $root.isExist()) || (collections().length > 0 && (!$root.isExist()))-->
+            .M{style: 'padding: 0px; width: 75px; height: 15px; border: solid 1px; background-color: #FFFFFF; float: left;margin-left: 13px;'}
+              %span.Fill{style: 'width: 50%; background-color: #38761D; height: 15px'}/
+            .R
+              %span{style: 'font-weight:bold; color: #000000;letter-spacing: 0em; margin-top: 3px; font-size:10px;'}= t('views.collections.index.50_percent_account_setup_completeness')
+            <!-- /ko -->
+            .L
+              <!-- ko if: collections().length < 1 -->
+              %button.fadd{ko(click: '$root.createCollection'),type: "button", style: 'width:250px'}
+                %span{style: 'float:left; font-size: 12px'}= t('views.collections.index.create_your_first_collection')
+              %br{:clear => "all"}/
+              <!-- /ko -->
+              <!-- ko if: !$root.isExist() -->
+              %button.fadd{onClick: "window.location='/gateways';return false;", type: "button", style: 'width:250px'}
+                %span{style: 'float:left; font-size: 12px'}= t('views.collections.index.configure_sms_gateway')
+              <!-- /ko -->
+- if can? :create, Collection
+  = render 'collections/index/create_collection'

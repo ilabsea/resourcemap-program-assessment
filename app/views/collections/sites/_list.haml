@@ -1,0 +1,38 @@
+<!-- ko with: currentCollection -->
+.tableheader
+  %div.navBack
+    - if can? :index, Collection
+      %button.pback{ko(click: '$root.goToRoot'), type: 'button'}
+    %span
+  %div
+    %span.colTitle{ko(text: :name,  attr: { title: :name })}
+    - if current_user && !current_user.is_guest
+      %button.fconfiguration.right{ko(click: '$root.editCollection'), type: 'button', style: 'margin-right:8px;margin-top:6px;'}
+
+
+.tablescroll.sites
+
+  %table.GralTable.CleanTable
+    %tbody
+      <!-- ko if: !isSearch() && $root.groupBy().esCode != '' -->
+      <!-- ko template: {name: 'map-hierarchy-items-template', with: $data} -->
+      <!-- /ko -->
+      <!-- /ko -->
+      <!-- ko template: {name: 'map-sites-template', with: $data} -->
+      <!-- /ko -->
+      <!-- ko if: hasMoreSites() && !loadingSites()-->
+      %tr
+        %td.loadmore
+          = ko_link_to t('views.collections.index.load_more_sites'), :loadMoreSites, style: 'margin-left: 23px'
+      <!-- /ko -->
+      <!-- ko if: hasMoreSites() && loadingSites() -->
+      %tr
+        %td.loadmore= t('views.collections.index.loading')
+      <!-- /ko -->
+.tablebottom
+  <!-- ko if: !currentSnapshot-->
+  - if current_user && !current_user.is_guest
+    = render 'collections/index/create_site'
+  <!-- /ko -->
+
+<!-- /ko -->
