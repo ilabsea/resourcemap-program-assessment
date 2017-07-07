@@ -12,7 +12,7 @@ namespace :index do
     collections.find_each(:batch_size => 5) do |collection|
       i += 1
       percentage = (100 * (i / count)).round
-      print "\rRecreating collection #{i.to_i}/#{count}: %#{percentage}"
+      print "\rRecreating collection(#{collection.id}) #{i.to_i}/#{count}: %#{percentage}"
       collection.recreate_index
     end
 

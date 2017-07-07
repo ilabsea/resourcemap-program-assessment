@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: snapshots
+#
+#  id            :integer          not null, primary key
+#  name          :string(255)
+#  date          :datetime
+#  collection_id :integer
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#
+
 class Snapshot < ActiveRecord::Base
   belongs_to :collection
   has_many :user_snapshots, dependent: :destroy

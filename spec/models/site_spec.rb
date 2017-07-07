@@ -1,3 +1,27 @@
+# == Schema Information
+#
+# Table name: sites
+#
+#  id               :integer          not null, primary key
+#  collection_id    :integer
+#  name             :string(255)
+#  lat              :decimal(10, 6)
+#  lng              :decimal(10, 6)
+#  parent_id        :integer
+#  hierarchy        :string(255)
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  properties       :text
+#  location_mode    :string(10)       default("automatic")
+#  id_with_prefix   :string(255)
+#  uuid             :string(255)
+#  device_id        :string(255)
+#  external_id      :string(255)
+#  start_entry_date :datetime         default(2015-08-14 02:57:03 UTC)
+#  end_entry_date   :datetime         default(2015-08-14 02:57:03 UTC)
+#  user_id          :integer
+#
+
 require 'spec_helper'
 
 describe Site do

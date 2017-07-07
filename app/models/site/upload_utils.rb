@@ -2,6 +2,14 @@ module Site::UploadUtils
   extend self
   require 'RMagick'
 
+  def uploadTinyMceFile(key, value)
+    img = Magick::Image::from_blob(value).first
+    path = "public/tinymce_photo/"
+    Dir.mkdir(path) unless File.exists?(path)
+    img.write(path + key)
+    return img
+  end
+
   def uploadSingleFile(key, value)
     img = Magick::Image::from_blob(value).first
     img.resize_to_fit!(800)

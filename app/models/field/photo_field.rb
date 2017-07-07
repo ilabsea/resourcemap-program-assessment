@@ -1,3 +1,29 @@
+# == Schema Information
+#
+# Table name: fields
+#
+#  id                       :integer          not null, primary key
+#  collection_id            :integer
+#  layer_id                 :integer
+#  name                     :string(255)
+#  code                     :string(255)
+#  kind                     :string(255)
+#  created_at               :datetime         not null
+#  updated_at               :datetime         not null
+#  config                   :binary(214748364
+#  ord                      :integer
+#  metadata                 :text
+#  is_mandatory             :boolean          default(FALSE)
+#  is_enable_field_logic    :boolean          default(FALSE)
+#  is_enable_range          :boolean          default(FALSE)
+#  is_display_field         :boolean
+#  custom_widgeted          :boolean          default(FALSE)
+#  is_custom_aggregator     :boolean          default(FALSE)
+#  is_criteria              :boolean          default(FALSE)
+#  readonly_custom_widgeted :boolean          default(FALSE)
+#
+require 'open-uri'
+
 class Field::PhotoField < Field
   def value_type_description
     "photos"
@@ -5,6 +31,16 @@ class Field::PhotoField < Field
 
   def value_hint
     "Path to photo."
+  end
+
+  def parse value
+    if value.present?
+      photo_ext = value.split('.').pop()
+      file_name = "#{DateTime.now.to_i}_#{self.id}." + photo_ext
+      file_content = Base64.encode64(open(value) { |io| io.read })
+      return [ file_name, file_content ]
+    end
+    return value
   end
 
   # params: value is 2-element array

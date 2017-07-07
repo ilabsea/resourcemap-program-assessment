@@ -1,3 +1,17 @@
+# == Schema Information
+#
+# Table name: memberships
+#
+#  id             :integer          not null, primary key
+#  user_id        :integer
+#  collection_id  :integer
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  admin          :boolean          default(FALSE)
+#  can_view_other :boolean          default(FALSE)
+#  can_edit_other :boolean          default(FALSE)
+#
+
 class Membership < ActiveRecord::Base
   include Membership::ActivityConcern
   include Membership::LayerAccessConcern
@@ -18,6 +32,18 @@ class Membership < ActiveRecord::Base
   after_save :touch_user_lifespan
   after_destroy :touch_user_lifespan
 
+  #TODO: refactor Name, Location, Site, and Layer permission into membership subclases
+  def can_update?(object)
+    if admin
+      true
+    elsif object == "name"
+      name_permission.can_update?
+    elsif object == "location"
+      location_permission.can_update?
+    else
+      raise "Undefined element #{object} for membership."
+    end
+  end
 
   def destroy_collection_memberships
     collection.layer_memberships.where(:user_id => user_id).destroy_all

@@ -1,6 +1,7 @@
 en:
   javascripts:
     layers:
+      successfully_copied: "Layer '%{name}' successfully copied"
       successfully_saved: "Layer '%{name}' successfully saved"
       successfully_created: "Layer '%{name}' successfully created"
       successfully_deleted: "Layer '%{name}' successfully deleted"

@@ -15,8 +15,13 @@ class ApplicationController < ActionController::Base
   expose(:threshold)
   expose(:reminders) { collection.reminders }
   expose(:reminder)
+
   expose(:queries) { collection.canned_queries}
   expose(:canned_query)
+
+  expose(:report_queries) { collection.report_queries}
+  expose(:report_query)
+
   expose(:language) { Language.find_by_code I18n.locale.to_s }
 
   expose(:new_search_options) do
@@ -41,8 +46,14 @@ class ApplicationController < ActionController::Base
   before_filter :store_location
   before_filter :set_request_header
 
+  rescue_from ActiveRecord::DeleteRestrictionError, with: :delete_restiction
+
+  def delete_restiction(ex)
+    render json: { message: "The data cannot be delete"}, status: 400
+  end
+
   def store_location
-    return unless request.get? 
+    return unless request.get?
     if (request.path != "/users/sign_in" &&
         request.path != "/users/sign_up" &&
         request.path != "/users/password/new" &&
@@ -50,7 +61,7 @@ class ApplicationController < ActionController::Base
         request.path != "/users/confirmation" &&
         request.path != "/users/sign_out" &&
         !request.xhr?)
-      session[:previous_url] = request.fullpath 
+      session[:previous_url] = request.fullpath
     end
   end
 
@@ -67,7 +78,7 @@ class ApplicationController < ActionController::Base
   end
 
   def setup_guest_user
-    u = User.new is_guest: true 
+    u = User.new is_guest: true
     # Empty membership for the current collection
     # This is used in SitesPermissionController.index
     # TODO: Manage permissions passing current_ability to client
@@ -83,7 +94,7 @@ class ApplicationController < ActionController::Base
     if user_signed_in?
       return if !current_user.try(:is_guest)
     end
-    
+
     if params.has_key? "collection"
       return if !Collection.find(params["collection"]).public
       u = User.find_by_is_guest true
@@ -151,19 +162,28 @@ class ApplicationController < ActionController::Base
   end
 
   def http_basic_authentication
-     authenticate_or_request_with_http_basic do |user, password|
+    authenticate_or_request_with_http_basic do |user, password|
       resource = User.find_by_email(user)
-      if resource && resource.valid_password?(password) 
+      if resource && resource.valid_password?(password)
         sign_in resource
         true
       else
-        false
+        head :forbidden
       end
     end
   end
 
   def set_request_header
-    headers['Access-Control-Allow-Origin'] = '*' 
+    headers['Access-Control-Allow-Origin'] = '*'
+  end
+
+  def render_json(object, options = {})
+    options = options.merge(text: object.to_json_oj, content_type: 'application/json')
+    render options
+  end
+
+  def ignore_public_attribute
+    params[:layer].delete(:public) if params[:layer] && params[:layer][:public]
   end
 
 end

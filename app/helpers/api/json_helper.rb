@@ -15,18 +15,21 @@ module Api::JsonHelper
 
     obj = {}
     obj[:id] = source['id']
+    obj[:id_with_prefix] = source['id_with_prefix']
     obj[:name] = source['name']
     obj[:createdAt] = Site.parse_time(source['created_at'])
     obj[:updatedAt] = Site.parse_time(source['updated_at'])
     obj[:startEntryDate] = Site.parse_time(source['start_entry_date'])
     obj[:endEntryDate] = Site.parse_time(source['end_entry_date'])
     obj[:user_id] = source['user_id'];
+    obj[:collection_id] = source['collection_id'];
 
     if source['location']
       obj[:lat] = source['location']['lat']
       obj[:long] = source['location']['lon']
     end
 
+    obj[:uuid] = source['uuid']
     obj[:properties] = source['properties']
 
     obj

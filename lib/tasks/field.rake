@@ -1,6 +1,5 @@
 namespace :field do
   desc "change calculation field variable from $x to ${x}"
-
   task :fix_calculation_field => :environment do
     Field.all.each do |f|
     	if f.kind == "calculation"
@@ -20,5 +19,10 @@ namespace :field do
     	end
     	f.save!
     end
+  end
+
+  desc "migrate invalid code to the valid code"
+  task :migrate_code => :environment do
+    Field.migrate_code
   end
 end

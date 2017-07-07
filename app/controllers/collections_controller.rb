@@ -1,3 +1,26 @@
+# == Schema Information
+#
+# Table name: collections
+#
+#  id                    :integer          not null, primary key
+#  name                  :string(255)
+#  description           :text
+#  public                :boolean
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  lat                   :decimal(10, 6)
+#  lng                   :decimal(10, 6)
+#  min_lat               :decimal(10, 6)
+#  min_lng               :decimal(10, 6)
+#  max_lat               :decimal(10, 6)
+#  max_lng               :decimal(10, 6)
+#  icon                  :string(255)
+#  quota                 :integer          default(0)
+#  is_aggregator         :boolean          default(FALSE)
+#  print_template        :text
+#  is_published_template :boolean          default(TRUE)
+#
+
 class CollectionsController < ApplicationController
   before_filter :setup_guest_user, :if => Proc.new { collection }
   before_filter :authenticate_user!, :except => [:render_breadcrumbs, :index, :alerted_collections], :unless => Proc.new { collection }
@@ -18,8 +41,10 @@ class CollectionsController < ApplicationController
 
   before_filter :show_collections_breadcrumb, :only => [:index, :new]
   before_filter :show_collection_breadcrumb, :except => [:index, :new, :create, :render_breadcrumbs]
-  before_filter :show_properties_breadcrumb, :only => [:members, :settings, :reminders, :quotas, :can_queries]
+  before_filter :show_properties_breadcrumb, :only => [:upload_members, :members, :settings, :reminders, :quotas, :can_queries]
 
+  expose(:import_job) { ImportJob.last_for current_user, collection }
+  expose(:failed_import_jobs) { ImportJob.where(collection_id: collection.id).where(status: 'failed').order('id desc').page(params[:page]).per_page(10) }
 
   def my_membership
     collection = Collection.find params[:collection_id]
@@ -82,9 +107,11 @@ class CollectionsController < ApplicationController
   def update
     if collection.update_attributes params[:collection]
       collection.recreate_index
-      redirect_to collection_settings_path(collection), notice: I18n.t('views.collections.form.collection_updated', name: collection.name)
+      tab_url = params[:tab] == "print" ? print_template_collection_path(collection) : collection_settings_path(collection)
+      redirect_to tab_url, notice: I18n.t('views.collections.form.collection_updated', name: collection.name)
     else
-      render :settings
+      template = params[:tab] == "print" ? :print_template : :settings
+      render template
     end
   end
 
@@ -97,8 +124,16 @@ class CollectionsController < ApplicationController
     end
   end
 
+  def upload_members
+    add_breadcrumb I18n.t('views.collections.tab.members'), collection_upload_members_path(collection)
+  end
+
   def members
     add_breadcrumb I18n.t('views.collections.tab.members'), collection_members_path(collection)
+  end
+
+  def upload_members
+    add_breadcrumb I18n.t('views.collections.tab.upload_members'), collection_members_path(collection)
   end
 
   def reminders
@@ -356,5 +391,14 @@ class CollectionsController < ApplicationController
     info[:new_site_properties] = collection.new_site_properties
 
     render json: info
+  end
+
+  def print_template
+    @fieldCodes = collection.fields.map{|f| f.code}
+  end
+
+  def copy
+    new_collection = collection.copy(current_user.id, params["new_collection_name"])
+    render json: new_collection
   end
 end

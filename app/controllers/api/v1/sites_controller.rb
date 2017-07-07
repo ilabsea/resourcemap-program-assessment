@@ -22,53 +22,37 @@ module Api::V1
 
     def show
       search = new_search
-
       search.id(site.id)
-      @result = search.api_results[0]
-      data = site_item_json(@result)
-      #parse date from formate %d%m%Y to %m%d%Y for the phone_gap data old version
-      if !params[:rm_wfp_version] 
-        fields = collection.fields.index_by &:code
-        site_item_json(@result)[:properties].each_pair do |es_code, value|
-          if fields[es_code].kind == 'date'
-            date = Time.strptime(value, '%d/%m/%Y')
-            data[:properties][es_code] = "#{date.strftime('%0m/%d/%Y')}"
-          end
-        end
-      end
+      @result = search.api_opt_results[0]
+
       respond_to do |format|
-        format.rss
-        format.json { render json:  data}
+        format.json { render json:  site_item_json(@result)}
       end
     end
 
     def update
       site.attributes = sanitized_site_params(false).merge(user: current_user)
-
-      if site.valid?
-        site.save!
+      site_aggregator = SiteAggregator.new(site)
+      if site_aggregator.save
         if params[:photosToRemove]
           Site::UploadUtils.purgePhotos(params[:photosToRemove])
         end
-        render json: site, :layout => false
+        render json: site_aggregator.site, :layout => false
       else
-        render json: site.errors.messages, status: :unprocessable_entity, :layout => false
+        render json: site_aggregator.site.errors.messages, status: :unprocessable_entity, :layout => false
       end
     end
 
     def create
       site = build_site
       create_state = site.id ? false : true #to create or update
-      site.user_id = current_user.id
-      if site.save
-        if create_state
-          current_user.site_count += 1
-          current_user.update_successful_outcome_status
-          current_user.save!(:validate => false)
-        end
-        render json: site, status: :created
+      site.user = current_user
+      site_aggregator = SiteAggregator.new(site)
+
+      if site_aggregator.save
+        render json: site_aggregator.site, status: :created
       else
-        render json: site.errors.messages, status: :unprocessable_entity
+        render json: site_aggregator.site.errors.messages, status: :unprocessable_entity
       end
     end
 
@@ -82,7 +66,7 @@ module Api::V1
       site_properties = parameters.delete("properties") || {}
 
       files = parameters.delete("files") || {}
-      
+
       decoded_properties = new_record ? {} : result.properties
       site_properties.each_pair do |es_code, value|
         value = [ value, files[value] ] if fields[es_code].kind_of? Field::PhotoField

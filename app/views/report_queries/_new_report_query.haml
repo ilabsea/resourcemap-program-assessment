@@ -1,0 +1,118 @@
+.control.clearfix
+  %label{ko(css: {error: 'nameError'})}
+    = t('views.report_queries.name')
+  %input.w60{ko(value: :name),type: :text}
+
+.control.clearfix
+  %label
+    = t('views.report_queries.condition_fields')
+  %div.select
+    /ko with: $root.newCondition()
+    %div
+      %select{"data-bind" => 'foreach: $root.layers(), value: field, selectedOptions: selectedField'}
+        /ko if: $index() == 0
+        %option{value: ""} (no value)
+        //ko
+        %optgroup{"data-bind" => "attr: {label: name}, foreach: whiteListConditionField", style: ''}
+          %option{"data-bind" => "text: name, option: name, value: $data"}
+
+
+
+      = render 'report_queries/new_condition_template'
+
+      -# %input{ko(value: :value), type: :text}
+
+    %div{style: 'margin-top:-2px'}
+      %button.padd{ ko(click: '$parent.addConditionField', enable: :valid), title: 'Add condition' }
+
+    //ko
+
+.control.clearfix
+  %label
+  %ul.list
+    /ko foreach :conditionFields
+    %li
+      .box.light-grey
+        %span{ko(text: :id)}
+      .box.light-grey.w30
+        = render 'report_queries/condition_template'
+      %button.pclose{ ko(click: '$parent.removeConditionField'), title: 'Remove condition' }
+    //ko
+
+.control.clearfix
+  %div{style: 'margin-left:170px; margin-bottom: 15px; color:grey'}
+    %i
+      = t('views.report_queries.expression')
+    %br
+    %input.w60{ko(value: :condition), type: :text, placeholder: "1 and 2"}
+
+.control.clearfix
+  %label
+    = t('views.report_queries.group_by_fields')
+  %div.select
+    %div
+      %select{"data-bind" => 'foreach: $root.layers(), value: selectedGroupByField, selectedOptions: groupByFieldsOptions'}
+        /ko if: $index() == 0
+        %option{value: ""} (no value)
+        //ko
+        %optgroup{"data-bind" => "attr: {label: name}, foreach: whiteListConditionField", style: ''}
+          %option{"data-bind" => "text: name, option: name, value: $data"}
+    %div{style: 'margin-top:-4px'}
+      %button.padd{ ko(click: :addGroupByField, enable: :groupByFieldValid)}
+
+.control.clearfix
+  %label
+  %ul.list
+    /ko foreach :groupByFields
+    %li
+      .box.light-grey
+        %span{ko(text: "($index() + 1)")}
+      .box.light-grey.w30
+        %span{ko(text: :name)}
+
+      %button.pclose{ ko(click: '$parent.removeGroupByField') }
+    //ko
+
+.control.clearfix
+  %label{ko(css: {error: 'aggregateFieldsError'})}
+    = t('views.report_queries.aggregate_fields')
+  %div.select
+    /ko with: $root.newAggregate()
+    %div
+      %select{"data-bind" => 'foreach: $root.layers(), value: field, selectedOptions: selectedField'}
+        /ko if: $index() == 0
+        %option{value: ""} (no value)
+        //ko
+        /ko if: fieldsNumericOnly.length > 0
+        %optgroup{"data-bind" => "attr: {label: name}, foreach: fieldsNumericOnly", style: ''}
+          %option{"data-bind" => "text: name, option: name, value: $data"}
+        //ko
+
+      %select{ko(value: :aggregator, options: :aggregatorOptions, optionsText: "'label'", optionsCaption: "'(no value)'")}
+    %div{style: 'margin-top:-4px'}
+      %button.padd{ ko(click: '$parent.addAggregatField', enable: :valid) }
+
+    //ko
+
+.control.clearfix
+  %label
+  %ul.list
+    /ko foreach :aggregateFields
+    %li
+      .box.light-grey
+        %span{ko(text: :id)}
+      .box.light-grey.w30
+        %span{ko(text: "aggregator().label +' : '+ field().name ")}
+      %button.pclose{ ko(click: '$parent.removeAggregateField') }
+    //ko
+
+.clearfix
+  %label
+  %div.list
+    %button.white{ ko(click: '$root.saveReportQuery', enable: :valid) }
+      =t('views.report_queries.save')
+    %a.tgrey{ ko(click: '$root.cancelReportQuery'), href: 'javascript:void(0)' }= t('views.plugins.alerts.form.cancel')
+    /ko if: !valid()
+    %span{ ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:20px' }
+      = t('views.report_queries.cannot_save')
+    //ko

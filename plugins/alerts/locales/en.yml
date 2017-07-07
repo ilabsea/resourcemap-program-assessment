@@ -65,6 +65,7 @@ en:
           please: "Please"
           add_layers: "add Layers"
           first_before_managing_your_thresholds: "first before managing your thresholds."
+          first_before_managing_your_report_query: "first before managing your report query."
           add_alert: "Add Alert"
           sample_phone_number: "85512345678"
           compare_to: "compare to"

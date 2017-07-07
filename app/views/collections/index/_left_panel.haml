@@ -1,0 +1,33 @@
+.left.w30.h50{style: 'position: relative'}
+  %img{src: '/images/progress.gif',id: 'uploadProgress', style: 'position: absolute; margin: auto; left: 0; top: 0; right: 0; bottom: 0; display: none'}
+  %img{src: '/images/loading.gif',id: 'loadProgress', style: 'position: absolute; margin: auto; left: 0; top: 0; right: 0; bottom: 0; display: none'}
+  #editorContent.left.w30.h50
+    <!-- ko if: !loadingSite() -->
+
+    -# Collections
+    <!-- ko if: !currentCollection() && !editingSite() -->
+    = render 'collections/index/list'
+    <!-- /ko -->
+
+    -# Collection sites
+    <!-- ko if: !editingSite() -->
+    = render 'collections/sites/list'
+    <!-- /ko -->
+
+    -# New Site or Edit Site form
+    <!-- ko if: newOrEditSite -->
+    = render 'collections/sites/new'
+    <!-- /ko -->
+
+    -# Show Site form
+    <!-- ko if: showSite -->
+    = render 'collections/sites/show'
+    <!-- /ko -->
+
+    <!-- /ko -->
+    -# Loading Site...
+    %form{ko(visible: :loadingSite)}
+      .tableheader.w30
+        %button.pback
+        %span
+        %span= t('views.collections.index.loading')

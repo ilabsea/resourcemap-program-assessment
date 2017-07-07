@@ -1,0 +1,48 @@
+/ko if: field().isInputField
+%span is
+%select{ko(value: :operator, options: :operatorOptions, optionsText: "'label'")}
+%input{ko(value: :value), type: :text}
+//ko
+
+/ko if: field().kind == 'numeric'
+%span is
+%select{ko(value: :operator, options: :operatorOptions, optionsText: "'label'", optionsCaption: "'(no value)'")}
+%input{ko(value: :value), type: :text}
+//ko
+
+/ko if: field().kind == 'date'
+%span is
+%select{ko(value: :operator, options: :operatorOptions, optionsText: "'label'")}
+%input.ux-datepicker{ 'data-bind' => 'value: valueUI', type: :text }
+//ko
+
+/ko if: field().kind == 'yes_no'
+%span is
+%select{ko(value: :operator, options: :operatorOptions, optionsText: "'label'")}
+%select{ko(value: :value)}
+  %option{value: 1} yes
+  %option{value: 0} no
+//ko
+
+/ko if: field().kind == 'select_one'
+%span is
+%select{ko(value: :operator, options: :operatorOptions, optionsText: "'label'")}
+%select{ko(value: :value, options: 'field().config.options', optionsValue: "'id'", optionsText: "'label'", optionsCaption: "'(no value)'")}
+//ko
+
+/ko if: field().kind == 'hierarchy'
+%span is
+%select{ko(value: :operator, options: :operatorOptions, optionsText: "'label'")}
+/ko with: field
+%div.hierarchy-container{ko(template: {name: "'refine-hierarchy-items-template'", with: 'config.hierarchy'})}
+//ko
+//ko
+
+/ko if: field().kind == 'location'
+%span is
+%select{ko(value: :operator, options: :operatorOptions, optionsText: "'label'")}
+%select{ko(value: :value, options: 'field().config.locations', optionsValue: "'code'", optionsText: "'name'", optionsCaption: "'(no value)'")}
+//ko
+
+
+= render 'report_queries/refine_hierarchy_items_template'

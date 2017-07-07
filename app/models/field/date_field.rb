@@ -1,3 +1,28 @@
+# == Schema Information
+#
+# Table name: fields
+#
+#  id                       :integer          not null, primary key
+#  collection_id            :integer
+#  layer_id                 :integer
+#  name                     :string(255)
+#  code                     :string(255)
+#  kind                     :string(255)
+#  created_at               :datetime         not null
+#  updated_at               :datetime         not null
+#  config                   :binary(214748364
+#  ord                      :integer
+#  metadata                 :text
+#  is_mandatory             :boolean          default(FALSE)
+#  is_enable_field_logic    :boolean          default(FALSE)
+#  is_enable_range          :boolean          default(FALSE)
+#  is_display_field         :boolean
+#  custom_widgeted          :boolean          default(FALSE)
+#  is_custom_aggregator     :boolean          default(FALSE)
+#  is_criteria              :boolean          default(FALSE)
+#  readonly_custom_widgeted :boolean          default(FALSE)
+#
+
 class Field::DateField < Field
 
   def value_type_description
@@ -16,7 +41,7 @@ class Field::DateField < Field
     validated_value[:date_to] = iso_date_to if valid_value?(iso_date_to)
     validated_value
 	end
-  
+
   def decode(m_d_y_value)
     begin
       m_d_y_value.present? ? convert_to_iso8601_string(m_d_y_value) : nil
@@ -44,7 +69,7 @@ class Field::DateField < Field
       time = Time.iso8601(value)
       iso_value = format_date_iso_string(time)
       raise "invalid" unless iso_value == value
-    rescue 
+    rescue
       raise invalid_field_message()
     end
     true
@@ -52,6 +77,22 @@ class Field::DateField < Field
 
   def parse_date(d_m_y_value)
     Time.strptime d_m_y_value, '%d/%m/%Y'
+  end
+
+  #convert date from 'yyyy/mm/dd’, ‘mm/dd/yyyy’, 'yyyy-mm-dd', 'mm-dd-yyyy' => ‘dd/mm/yyyy’ 
+  def parse date_value 
+    accepted_format = ['%Y/%m/%d', '%m/%d/%Y', '%d/%m/%Y', '%Y-%m-%d', '%m-%d-%Y']
+
+    date = nil
+    accepted_format.each do |format|
+      begin
+        date = Date.strptime(date_value, format)
+      rescue
+        next
+      end
+    end
+
+    date.strftime('%d/%m/%Y') if date
   end
 
 	private

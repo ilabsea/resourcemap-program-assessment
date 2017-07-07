@@ -1,3 +1,35 @@
+# == Schema Information
+#
+# Table name: users
+#
+#  id                     :integer          not null, primary key
+#  email                  :string(255)      default(""), not null
+#  encrypted_password     :string(255)      default(""), not null
+#  reset_password_token   :string(255)
+#  reset_password_sent_at :datetime
+#  remember_created_at    :datetime
+#  sign_in_count          :integer          default(0)
+#  current_sign_in_at     :datetime
+#  last_sign_in_at        :datetime
+#  current_sign_in_ip     :string(255)
+#  last_sign_in_ip        :string(255)
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  phone_number           :string(255)
+#  confirmation_token     :string(255)
+#  confirmed_at           :datetime
+#  confirmation_sent_at   :datetime
+#  unconfirmed_email      :string(255)
+#  is_super_user          :boolean
+#  authentication_token   :string(255)
+#  collection_count       :integer          default(0)
+#  layer_count            :integer          default(0)
+#  site_count             :integer          default(0)
+#  gateway_count          :integer          default(0)
+#  success_outcome        :boolean
+#  time_zone              :string(255)
+#
+
 class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
@@ -87,6 +119,11 @@ class User < ActiveRecord::Base
     return false unless membership
     return membership.admin if membership.admin?
   end
+
+  def ability(format = nil)
+    @ability ||= Ability.new(self, format)
+  end
+  delegate :can?, :cannot?, :authorize!, :to => :ability
 
   def validate_layer_write_permission(site, properties)
     properties.each do |prop|

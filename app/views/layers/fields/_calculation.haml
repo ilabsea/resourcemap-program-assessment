@@ -1,0 +1,39 @@
+%hr/
+%label
+  = t('views.layers.form.field.display_on_form_entry')
+%p.smalltext= t('views.layers.form.field.show_this_field_and_value_on_form_entry')
+= ko_check_box_tag :is_display_field, css: {error: :codeError}
+%hr/
+%label
+  = t('views.layers.form.field.dependent_field')
+
+<!-- ko with: impl() -->
+%select{"data-bind" => 'foreach: $root.selectLogicLayers(), value: $root.tmpSelectedField', style: 'width:240px !important;', id: 'calculation_field'}
+  /ko if: $index() == 0
+  %option{value: ""} (no value)
+  //ko
+  %optgroup{"data-bind" => "attr: {label: name}, foreach: fields", style: ''}
+    /ko if: id() && id() != $root.currentField().id()
+    %option{"data-bind" => "text: name, option: name, value: id"}
+    //ko
+%button.clist-add{ko(click: '$root.addDependentField'), title: 'Add another option'}
+/ko if: dependent_fields().length > 0
+.superblyTagfieldDiv{style: "border: 0 solid #dddddd; border-radius: 0; box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3) inset;"}
+  %ul.superblyTagItems
+    /ko foreach: dependent_fields
+    %li.superblyTagItem
+      %span{ko(text: :code)}
+      %a{ko(click: '$parent.removeDependentField')}x
+    //ko
+//ko
+%br
+%label
+  = t('views.layers.form.field.dependent_field')
+.superblyTagfieldDiv{style: "border: 0 solid #dddddd; border-radius: 0; box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3) inset;"}
+  %ul.superblyTagItems
+    /ko foreach: dependent_fields
+    %li.superblyTagItem
+      %a{ko(text: :code, click: '$parent.addFieldToCodeCalculation')}
+    //ko
+%textarea{ko(value: '$parent.impl().codeCalculation', valueUpdate: :afterkeydown), rows: 4, style: "width:275px !important;"}
+<!-- /ko -->

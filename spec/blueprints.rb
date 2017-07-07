@@ -118,8 +118,19 @@ ImportJob.blueprint do
   status
 end
 
+
 SiteReminder.blueprint do
 end
 
 SitesPermission.blueprint do
+end
+
+ReportQuery.blueprint do
+  name { Faker::Name.name }
+end
+
+ReportQueryTemplate.blueprint do
+  name { Faker::Name.name }
+  template {Faker::Name.name}
+  report_query
 end

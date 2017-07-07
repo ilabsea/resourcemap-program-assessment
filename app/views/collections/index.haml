@@ -17,19 +17,19 @@
     <!-- /ko -->
 <!-- /ko -->
 
-= render 'collections/index/refine_hierarchy_items_template'
-= render 'collections/index/field_hierarchy_items_template'
-= render 'collections/index/map_sites_template'
-= render 'collections/index/map_hierarchy_items_template'
-= render 'collections/index/table_sites_template'
-= render 'collections/index/table_hierarchy_items_template'
+= render 'collections/fields/field_hierarchy_items_template'
+= render 'collections/sites/map_sites_template'
+= render 'collections/sites/map_hierarchy_items_template'
+= render 'collections/sites/table_sites_template'
+= render 'collections/sites/table_hierarchy_items_template'
 
 #refine-container{style: 'display:none'}
   <!-- ko if: currentCollection() -->
-  = render 'collections/index/refine'
+  = render 'collections/index/canned_queries'
   <!-- /ko -->
 
 = render 'collections/index/download_dialog'
+= render 'collections/index/share_dialog_url'
 #collections-dummy{style: 'height:600px'}
 #collections-main.box.slightly-padded.h50{style: 'display:none'}
 
@@ -42,6 +42,3 @@
   <!-- /ko -->
 
   .clear
-<br/>
-%div{'align' => 'right'}
-  = link_to t('views.collections.index.mobile_version'), mobile_collections_path, {:style => 'color: #555555;'}

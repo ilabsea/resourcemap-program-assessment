@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <%= google_khmer_fonts %>
+    <style type="text/css"  rel="stylesheet">
+      .print-template-container{
+        width: 1000px;
+        margin: 0 auto;
+      }
+
+      table.tableview, table.tableview th, table.tableview td{
+        border: 1px solid #c3c3c3;
+      }
+
+      th, td {
+        padding: 3px 10px;
+      }
+
+      table.tableview{
+        border-collapse: collapse;
+      }
+
+      .table-head{
+        font-weight: bold;
+      }
+    </style>
+
+    <title></title>
+
+
+    <%= csrf_meta_tags %>
+  </head>
+
+  <body>
+
+    <div class='print-template-container'>
+
+      <%= yield %>
+
+    </div>
+
+
+  </body>
+
+</html>

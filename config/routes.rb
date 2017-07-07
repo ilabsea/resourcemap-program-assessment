@@ -22,6 +22,14 @@ ResourceMap::Application.routes.draw do
   get 'view_photo' => 'sites#view_photo'
   get 'collections/:collection_id/my_membership' => 'collections#my_membership'
 
+  post '/tinymce_assets' => 'tinymce_assets#create'
+
+  resources :site_pdfs, only: [ :create, :show]
+  resources :report_query_template_pdfs do
+    collection do
+      post 'report'
+    end
+  end
   resources :repeats
   resources :collections do
     post  :send_new_member_sms
@@ -29,15 +37,34 @@ ResourceMap::Application.routes.draw do
     get  :message_quota
     get :sites_by_term
 
-    resources :queries    
+    resources :report_query_templates do
+      member do
+        get 'report'
+        get 'share'
+      end
+    end
 
+    member do
+      get 'print_template'
+      get 'copy'
+    end
+
+    resources :report_queries
+    resources :queries
+    resources :basic_fields, only: ['index']
     resources :sites do
       get :visible_layers_for
+      member do
+        get :share
+      end
     end
 
     resources :layers do
       member do
         put :set_order
+      end
+      collection do
+        get 'list_layers'
       end
     end
     resources :fields
@@ -62,7 +89,9 @@ ResourceMap::Application.routes.draw do
     get 'members'
     get 'settings'
     get 'quotas'
-    
+
+    get 'upload_members'
+
     get 'csv_template'
     get 'max_value_of_property'
 
@@ -82,16 +111,24 @@ ResourceMap::Application.routes.draw do
     resource :import_wizard, only: [] do
        get 'index'
        post 'upload_csv'
+       post 'upload_members_csv'
        get 'adjustments'
+       get 'adjustments_members'
        get 'guess_columns_spec'
+       get 'get_columns_members_spec'
        post 'execute'
+       post 'execute_import_members'
        post 'validate_sites_with_columns'
+       post 'validate_members_with_columns'
        get 'get_visible_sites/:page' => 'import_wizards#get_visible_sites'
        get 'import_in_progress'
+       get 'import_members_in_progress'
        get 'import_finished'
        get 'import_failed'
        get 'job_status'
+       get 'job_member_status'
        get 'cancel_pending_jobs'
+       get 'cancel_pending_member_jobs'
        get 'logs'
      end
   end
@@ -111,7 +148,7 @@ ResourceMap::Application.routes.draw do
     post 'status', :on => :member
     post 'try'
   end
-  
+
   # resources :can_queries
 
   match 'terms_and_conditions' => redirect("http://instedd.org/terms-of-service/")
@@ -120,6 +157,7 @@ ResourceMap::Application.routes.draw do
     get 'collections/:id' => 'collections#show',as: :collection
     get 'collections/:id/download_location_csv' => 'collections#download_location_csv', as: :download_location_csv
     get 'collections/:id/sample_csv' => 'collections#sample_csv',as: :sample_csv
+    get 'collections/:id/sample_members_csv' => 'collections#sample_members_csv',as: :sample_members_csv
     get 'collections/:id/count' => 'collections#count',as: :count
     get 'collections/:id/geo' => 'collections#geo_json',as: :geojson
     get 'sites/:id' => 'sites#show', as: :site
@@ -128,8 +166,8 @@ ResourceMap::Application.routes.draw do
     # match 'collections/:id/update_sites_under_collection' => 'collections#update_sites_under_collection', :via => :put
     # put 'collections/:id/update_sites_under_collection' => 'collections#update_sites_under_collection', as: :collections
     resources :tokens, :only => [:index, :destroy]
-    resources :collections do      
-      member do 
+    resources :collections do
+      member do
         put 'update_sites'
         get 'get_fields'
         get 'get_sites_conflict'
@@ -137,12 +175,14 @@ ResourceMap::Application.routes.draw do
       end
       resources :fields, only: [:index]
       resources :sites
+      resources :site_permissions, only: [:index]
+      resources :layer_memberships, only: [:index]
     end
     match 'collections/:collection_id/memberships' => 'memberships#create', :via => :post
     match 'collections/:collection_id/memberships' => 'memberships#update', :via => :put
     match 'collections/:collection_id/register_new_member' => 'memberships#register_new_member', :via => :post
     match 'collections/:collection_id/destroy_member' => 'memberships#destroy_member', :via => :delete
-    
+
     devise_scope :user do
       post '/users' => 'registrations#create'
       post '/users/sign_in' => 'sessions#create'
@@ -155,6 +195,52 @@ ResourceMap::Application.routes.draw do
         resources :sites, only: [:create,:index,:update,:show]
         resources :fields, only: [:create,:index,:update,:show]
       end
+    end
+
+    # v2
+    namespace :v2 do
+      resources :collections, except: [:update] do
+        resources :memberships, only: [:index, :create, :destroy] do
+          member do
+            post :set_admin
+            post :unset_admin
+          end
+          collection do
+            get 'invitable'
+          end
+        end
+
+        resources :layers, except: [:show, :new, :edit] do
+          resources :fields, only: [:create]
+        end
+
+        resources :fields, only: [:index] do
+          collection do
+            get 'mapping'
+          end
+        end
+
+        member do
+          get 'sample_csv', as: :sample_csv
+          get 'count', as: :count
+          get 'geo', as: :geojson, to: "collections#geo_json"
+          post 'sites', to: 'sites#create'
+          post 'update_sites', to: 'collections#bulk_update'
+          get 'sites', to: 'sites#index'
+          get 'sites/feed', to: 'sites#feed'
+        end
+      end
+
+      resources :sites, only: [:show, :destroy, :update] do
+        member do
+          post :update_property
+          post :partial_update
+        end
+      end
+      get 'histogram/:field_id', to: 'collections#histogram_by_field', as: :histogram_by_field
+      get 'collections/:collection_id/sites/:id/histories' => 'sites#histories', as: :histories
+      get 'activity' => 'activities#index', as: :activity
+      resources :tokens, :only => [:index, :destroy]
     end
   end
 
@@ -186,7 +272,7 @@ ResourceMap::Application.routes.draw do
     match 'quota' => 'quota#index', via: :get
   end
 
-  offline = Rack::Offline.configure do  
+  offline = Rack::Offline.configure do
     cache "assets/mobile.js"
     cache "assets/mobile.css"
 
@@ -202,7 +288,7 @@ ResourceMap::Application.routes.draw do
     cache "images/favicon.ico"
     network "*"
   end
-  match "/application.manifest" => offline 
+  match "/application.manifest" => offline
 
   # TODO: deprecate later
   match 'collections/:collection_id/fred_api/v1/facilities/:id' => 'fred_api#show_facility', :via => :get

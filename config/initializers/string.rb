@@ -12,7 +12,7 @@ class String
     self.gsub(/\[[\w\s()]+\]/) do |template|
       option_hash.each do |key, value|
         if template == '['+ key+ ']'
-          if key == "Site Name" 
+          if key == "Site Name"
             template = value
           else
             template = value

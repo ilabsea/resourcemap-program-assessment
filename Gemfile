@@ -30,6 +30,16 @@ gem 'rubyzip', :require => 'zip/zip'
 gem "password_strength"
 gem "ruby-recaptcha"
 gem 'i18n-coffee'
+gem 'tinymce-rails'
+gem 'tinymce-rails-imageupload', github: 'PerfectlyNormal/tinymce-rails-imageupload'
+
+gem 'rails_serve_static_assets'
+
+gem 'wkhtmltopdf-binary-edge', '~> 0.12.2.1'
+gem 'oj'
+gem 'includes-count'
+
+gem 'dalli'
 
 gem 'instedd_telemetry', git: 'https://github.com/instedd/telemetry_rails.git'
 gem 'timecop'
@@ -62,6 +72,8 @@ group :development do
   gem 'dist', :git => 'https://github.com/manastech/dist.git'
   gem 'ruby-prof', :git => 'https://github.com/ruby-prof/ruby-prof.git'
   gem 'mailcatcher'
+  gem 'annotate'
+  gem 'pry-rails'
 end
 
 # Gems used only for assets and not required
@@ -77,4 +89,4 @@ group :assets do
   gem 'lodash-rails'
 end
 
-gem 'rails_12factor', group: :production
+# gem 'rails_12factor', group: :production
