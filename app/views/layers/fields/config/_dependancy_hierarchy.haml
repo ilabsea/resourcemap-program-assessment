@@ -4,7 +4,7 @@
 %p.smalltext This field will be rendering as the dependancy hierarchy select
 
 /ko if: isAllowDependancyHierarchyFieldConfig()
-%select{"data-bind" => 'foreach: $root.layersWithHierarchyFields(), value: impl().parentHiearchyFieldId'}
+%select{"data-bind" => 'foreach: $root.layersWithHierarchyFields(), value: impl().parentHierarchyFieldId'}
   /ko if: $index() == 0
   %option{value: ""} (no value)
   //ko

@@ -147,7 +147,7 @@ onLayers ->
     isParentOfOther: =>
       return false unless @id()
       for layer in model?.layers()
-        is_parent_of_other = layer.fields().filter((f) => "#{f.impl()?.parent_hiearchy_field_id?()}" == "#{@id()}").length > 0
+        is_parent_of_other = layer.fields().filter((f) => "#{f.impl()?.parentHierarchyFieldId?()}" == "#{@id()}").length > 0
         return true if is_parent_of_other
       return false
 
@@ -155,7 +155,7 @@ onLayers ->
       return false unless @id()
       layers = model?.layers().filter((l) => l != layer)
       for l in layers
-        is_parent_of_other = l.fields().filter((f) => "#{f.impl()?.parent_hiearchy_field_id?()}" == "#{@id()}").length > 0
+        is_parent_of_other = l.fields().filter((f) => "#{f.impl()?.parentHierarchyFieldId?()}" == "#{@id()}").length > 0
         return true if is_parent_of_other
       return false
 

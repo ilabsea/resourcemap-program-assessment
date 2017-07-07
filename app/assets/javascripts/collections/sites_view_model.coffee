@@ -90,7 +90,7 @@ onCollections ->
       window.model.newOrEditSite().scrollable(false)
       window.model.newOrEditSite().startEntryDate(new Date(Date.now()))
       for field in window.model.newOrEditSite().fields()
-        new CustomWidget(field).bindField() if field.custom_widgeted
+        new CustomWidget(field).bindField() if field.isForCustomWidget
         field.disableDependentSkipLogicField() if field.skippedState() == false && field.kind == 'yes_no'
         if field.field_logics
           for f in field.field_logics
@@ -127,7 +127,7 @@ onCollections ->
             @currentCollection(site.collection)
             @hideLoadingField()
             @loadBreadCrumb()
-            @rebindCustomWidgetView()
+            @reinitialFields()
             @allFieldLogics([])
             for field in @editingSite().fields()
               if field.field_logics
@@ -137,9 +137,10 @@ onCollections ->
 
           $('a#previewimg').fancybox()
 
-    @rebindCustomWidgetView: =>
+    @reinitialFields: =>
       for field in window.model.editingSite().fields()
         field.bindWithCustomWidgetedField()
+        field.dependentHierarchyItemList(field.initDependentHierarchyItemList()) if field.isDependentFieldHierarchy()
 
     @editSiteFromId: (siteId, collectionId) ->
       site = @siteIds[siteId]
@@ -227,7 +228,7 @@ onCollections ->
 
         if @editingSite().inEditMode()
           @editingSite().exitEditMode(true)
-          @rebindCustomWidgetView()
+          @reinitialFields()
         else
           @editingSite().deleteMarker()
           @exitSite()
@@ -254,7 +255,7 @@ onCollections ->
       field.exitEditing() for field in @currentCollection().fields()
       if @editingSite()?.inEditMode()
         @editingSite().exitEditMode()
-        @rebindCustomWidgetView()
+        @reinitialFields()
       else
         if @editingSite()
           # Unselect site if it's not on the tree
