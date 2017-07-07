@@ -110,12 +110,37 @@ class Search
     items
   end
 
+
+  def api_opt_results
+    visible_fields = @collection.visible_fields_for(@current_user, snapshot_id: @snapshot_id)
+    fields_by_es_code = visible_fields.index_by &:es_code
+    tire_result = results()
+
+    tire_result.each do |item|
+      properties = item['_source']['properties']
+      item['_source']['identifiers'] = []
+      item['_source']['properties'] = {}
+
+      properties.each_pair do |es_code, value|
+        field = fields_by_es_code[es_code]
+
+        if field
+          field_value = field.api_value(value)
+          item['_source']['properties'][es_code] = field_value
+        end
+      end
+    end
+    tire_result
+  end
+
   # Returns the results from ElasticSearch but with the location field
   # returned as lat/lng fields, and the date as a date object
   def ui_results
+    # return [] if @source.nil?
     fields_by_es_code = @collection.visible_fields_for(@current_user, snapshot_id: @snapshot_id).index_by &:es_code
 
     items = results()
+    return [] if items.empty?
     site_ids_permission = @collection.site_ids_permission(@current_user)
     items.each do |item|
       if item['_source']['location']

@@ -11,8 +11,8 @@ class @Membership extends Expandable
     else
       @userPhoneNumber = ""
     @admin = ko.observable data?.admin
-    @can_view_other = ko.observable data?.can_view_other
-    @can_edit_other = ko.observable data?.can_edit_other
+    @can_view_other = ko.observable data?.can_view_other ? false
+    @can_edit_other = ko.observable data?.can_edit_other ? false
     @collectionId = ko.observable root.collectionId()
 
     rootLayers = data?.layers ? []
@@ -44,14 +44,28 @@ class @Membership extends Expandable
     @isCurrentUser = ko.computed => window.userId == @userId()
 
     @admin.subscribe (newValue) =>
+      if newValue == true
+        @can_edit_other(newValue)
       $.post "/collections/#{root.collectionId()}/memberships/#{@userId()}/#{if newValue then 'set' else 'unset'}_admin.json"
 
     @can_view_other.subscribe (newValue) =>
-      @can_edit_other(false) if newValue == false
+      if newValue == false
+        @can_edit_other(false)
+        @allLayersNone(true)
+      else
+        # only update the layer to read when the user click on view_other_site
+        if @can_edit_other() == false
+          @allLayersRead(true)
       $.post "/collections/#{root.collectionId()}/memberships/#{@userId()}/#{if newValue then 'set' else 'unset'}_can_view_other.json"
 
     @can_edit_other.subscribe (newValue) =>
-      @can_view_other(true) if newValue == true
+
+      if newValue == true
+        @can_view_other(true)
+        @allLayersUpdate(true)
+      else
+        if @can_view_other() == true
+          @allLayersRead(true)
       $.post "/collections/#{root.collectionId()}/memberships/#{@userId()}/#{if newValue then 'set' else 'unset'}_can_edit_other.json"
 
     @someLayersNone = ko.computed => some nonePermission
@@ -106,7 +120,7 @@ class @Membership extends Expandable
       else if @sitesWithCustomPermissions().length == 1
         window.t('javascripts.collections.members.custom_permissions_for_1_site')
       else
-        window.t('javascripts.collections.members.custom_permissions_for_n_sites', { n: @sitesWithCustomPermissions().length })
+        window.t("javascripts.collections.members.custom_permissions_for_#{@sitesWithCustomPermissions().length}_sites ")
 
     @customPermissionsAutocompleteId = ko.computed => "autocomplete_#{@userId()}"
 
@@ -129,7 +143,7 @@ class @Membership extends Expandable
           # Check that a site with that name exists
           _.each data, (s) ->
             if s.name == _self.customSite()
-              new_permission = new SiteCustomPermission s.id, s.name, true, true, _self
+              new_permission = new SiteCustomPermission(s.id, s.name, true, true, _self)
               _self.sitesWithCustomPermissions.push new_permission
               _self.customSite ""
               _self.saveCustomSitePermissions()
@@ -177,3 +191,38 @@ class @Membership extends Expandable
 
   save: =>
   exit: =>
+
+  updatdNonePermission: (permission) =>
+    for layer_permission in @layers()
+      layer_permission.noneChecked(permission)
+      $.post "/collections/#{@collectionId()}/memberships/#{@userId()}/set_layer_access.json", { layer_id: layer_permission.layerId(), verb: 'read', access: false}
+    for site_permission in @sitesWithCustomPermissions()
+      site_permission.no_rights(true)
+      site_permission.can_read(false)
+      site_permission.can_write(false)
+      @saveCustomSitePermissions()
+
+  updateReadPermission: (permission) =>
+    for layer_permission in @layers()
+      layer_permission.read(permission)
+      layer_permission.write(false)
+      $.post "/collections/#{@collectionId()}/memberships/#{@userId()}/set_layer_access.json", { layer_id: layer_permission.layerId(), verb: 'read', access: true}
+    for site_permission in @sitesWithCustomPermissions()
+      site_permission.no_rights(false)
+      site_permission.can_read(permission)
+      site_permission.can_write(false)
+      @saveCustomSitePermissions()
+
+  updateWritePermission: (permission) =>
+    for layer_permission in @layers()
+      layer_permission.write(permission)
+      $.post "/collections/#{@collectionId()}/memberships/#{@userId()}/set_layer_access.json", { layer_id: layer_permission.layerId(), verb: 'write', access: true}
+    for site_permission in @sitesWithCustomPermissions()
+      site_permission.no_rights(false)
+      site_permission.can_write(permission)
+      @saveCustomSitePermissions()
+
+  disableEdit: =>
+    if @admin() || @can_view_other() || @can_edit_other()
+      return true
+    return false

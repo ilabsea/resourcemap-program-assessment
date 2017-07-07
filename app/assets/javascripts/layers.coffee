@@ -1,10 +1,10 @@
 #= require layers/on_layers
-#= require_tree ./layers/.
+#= require_tree ./layers
 
 # We do the check again so tests don't trigger this initialization
 onLayers -> if $('#layers-main').length > 0
   match = window.location.toString().match(/\/collections\/(\d+)\/layers/)
-  collectionId = parseInt(match[1])
+  window.collectionId = parseInt(match[1])
 
   $('.hierarchy_upload').live 'change', ->
     $('.hierarchy_form').submit()
@@ -17,11 +17,24 @@ onLayers -> if $('#layers-main').length > 0
   #show loading
   $('#loadProgress').show()
 
-  $.get "/collections/#{collectionId}/layers.json", {}, (layers) =>
-    window.model = new MainViewModel(collectionId, layers)
-    ko.applyBindings window.model
 
-    $('.hidden-until-loaded').show()
-    $('#loadProgress').hide() #hide loading
+  $.get "/collections.json", {}, (collections) =>
+    window.collectionList = collections.filter (collection) -> collection.id != parseInt(window.collectionId)
+    createBinding()
 
+  $.get "/collections/#{collectionId}/layers/list_layers.json", {}, (layers) =>
+    window.layerList = layers
+    createBinding()
 
+  window.collectionList = null
+  window.layerList = null
+  window.bindingCreated = false
+
+  createBinding = ->
+    if window.collectionList && window.layerList && !window.bindingCreated
+      window.model = new MainViewModel(window.collectionId, window.layerList)
+      ko.applyBindings window.model
+      window.bindingCreated = true
+
+      $('.hidden-until-loaded').show()
+      $('#loadProgress').hide() #hide loading

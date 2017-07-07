@@ -1,3 +1,28 @@
+# == Schema Information
+#
+# Table name: fields
+#
+#  id                       :integer          not null, primary key
+#  collection_id            :integer
+#  layer_id                 :integer
+#  name                     :string(255)
+#  code                     :string(255)
+#  kind                     :string(255)
+#  created_at               :datetime         not null
+#  updated_at               :datetime         not null
+#  config                   :binary(214748364
+#  ord                      :integer
+#  metadata                 :text
+#  is_mandatory             :boolean          default(FALSE)
+#  is_enable_field_logic    :boolean          default(FALSE)
+#  is_enable_range          :boolean          default(FALSE)
+#  is_display_field         :boolean
+#  custom_widgeted          :boolean          default(FALSE)
+#  is_custom_aggregator     :boolean          default(FALSE)
+#  is_criteria              :boolean          default(FALSE)
+#  readonly_custom_widgeted :boolean          default(FALSE)
+#
+
 require 'spec_helper'
 
 describe Field do
@@ -161,6 +186,77 @@ describe Field do
   it "should have kind 'email'" do
     Field::EmailField.make.should be_valid
   end
+
+  describe 'translate_value' do
+    context "HierarchyField" do
+      let(:config_hierarchy) {[{ id: 0, name: 'root', sub: [{id: 1, name: 'child'}]}] }
+      let(:field) {Field::HierarchyField.make config: { hierarchy: config_hierarchy }.with_indifferent_access}
+
+      it "return name attr from config hierarchy if found" do
+        field.translate_value(1).should eq "child"
+      end
+
+      it "return value not found in hierarchy" do
+        field.translate_value(2).should eq "2 not found in hierarchy"
+      end
+    end
+
+    context "SelectOneField" do
+      let(:config_options) {[{id: 1, code: 'one', label: 'One'}, {id: 2, code: 'two', label: 'Two'}] }
+      let(:field) { Field::SelectOneField.make config: { "options" => config_options} }
+
+      it "return label attr from config options if found" do
+        field.translate_value(2).should eq "Two"
+      end
+
+      it "return value not found in options" do
+        field.translate_value(3).should eq "3 is not found in options"
+      end
+    end
+
+    context "NumericField" do
+      it "return decimal number if it has config decimal enable" do
+        field = Field::NumericField.make "config" => {"allows_decimals" => "true"}
+        field.translate_value(2.75).should eq 2.75
+      end
+
+      it "return integer number if it has not config decimal enable" do
+        field = Field::NumericField.make "config" => {"allows_decimals" => nil}
+        field.translate_value(2.75).should eq 2
+      end
+    end
+
+    context "LocationField" do
+      let(:config_locations) do
+        [ {"code"=>"100", "name"=>"Leak", "latitude"=>"12.7237", "longitude"=>"104.893997"},
+          {"code"=>"200", "name"=>"Me", "latitude"=>"13.8067", "longitude"=>"104.958"}
+        ]
+      end
+      let(:field) { Field::LocationField.make( config: { "locations" => config_locations } ) }
+
+      it "return name attr from config locations if found" do
+        field.translate_value("100").should eq "Leak"
+      end
+
+      it "return value not found" do
+        field.translate_value("300").should eq "300 not found in locations"
+      end
+    end
+
+    context "YesNoField" do
+      let(:field) { Field::YesNoField.make }
+
+      it "return Yes if value if T" do
+        field.translate_value("T").should eq "Yes"
+      end
+
+      it "return No if value if F" do
+        field.translate_value("F").should eq "No"
+      end
+    end
+  end
+
+
 
   describe "generate hierarchy options" do
     it "for empty hierarchy" do

@@ -10,6 +10,9 @@
  *
  *= require_self
  *= require fixedheadertable
+ *= require editor/override
+ *= require editor/custom_widget
+ *= require editor/custom_aggregator
  *= require_tree .
  *= require instedd_telemetry
  *= require jquery.fancybox
@@ -303,14 +306,14 @@ a.lbutton{
 
 .hierarchy-container:focus, #editorContent input:focus:not(.error), textarea:focus:not(.error),select:focus:not(.error) {
   box-shadow: 0 0 5px rgba(81, 203, 238, 1);
-  border: 1px solid rgba(81, 203, 238, 1) !important;
+  border: 1px solid rgba(81, 203, 238, 1);
 }
 
 .focus{
   box-shadow: 0 0 5px rgba(81, 203, 238, 1) !important ;
   padding: 3px 0px 3px 3px !important;
   margin: 5px 1px 3px 0px !important;
-  border: 1px solid rgba(81, 203, 238, 1) !important;  
+  border: 1px solid rgba(81, 203, 238, 1) !important;
 }
 
 .BreadCrumb li a{
@@ -323,6 +326,29 @@ a.lbutton{
 
 .slocation {
   background: url("/assets/fields_small_icons/location.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+  display: inline-block;
+  height: 21px;
+  margin: 4px 2px 4px 5px;
+  min-width: 20px;
+  padding-left: 27px;
+  vertical-align: middle;
+ }
+
+.lcustom_widget {
+  background-image: url("/assets/fields_large_icons/custom_widget.png");
+  background-color: transparent;
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  border: medium none;
+  cursor: pointer;
+  display: inline-block;
+  height: 59px;
+  margin: 0 5px 0 0;
+  width: 59px;
+}
+
+.scustom_widget {
+  background: url("/assets/fields_small_icons/custom_widget.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
   display: inline-block;
   height: 21px;
   margin: 4px 2px 4px 5px;

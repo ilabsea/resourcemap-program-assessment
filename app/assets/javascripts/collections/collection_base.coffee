@@ -3,7 +3,7 @@
 #= require collections/sites_container
 #= require collections/sites_membership
 #= require collections/layer
-#= require collections/field
+#= require collections/fields/field
 #= require collections/query
 #= require collections/thresholds/condition
 onCollections ->
@@ -21,6 +21,7 @@ onCollections ->
       @id = data?.id
       @name = data?.name
       @icon = data?.icon
+      @isPublishedTemplate = data?.is_published_template
       @currentSnapshot = if data?.snapshot_name then data?.snapshot_name else ''
       @updatedAt = ko.observable(data?.updated_at)
       @showLegend = ko.observable(false)
@@ -32,7 +33,7 @@ onCollections ->
     loadSites: =>
       $.get @sitesUrl(), (data) =>
         for site in data
-          @addSite @createSite(site)    
+          @addSite @createSite(site)
 
     loadAllSites: =>
       @allSites = ko.observable()
@@ -53,7 +54,7 @@ onCollections ->
     findSiteIdByName: (value) =>
       id = (site for site in window.model.currentCollection().allSites() when site.name is value)[0]?.id
       id
-    
+
     fetchThresholds: (data) =>
       thresholds = []
       for threshold in data
@@ -73,7 +74,7 @@ onCollections ->
         callback() if callback && typeof(callback) == 'function'
 
     fetchFields: (callback) =>
-      if @fieldsInitialized        
+      if @fieldsInitialized
         callback() if callback && typeof(callback) == 'function'
         return
 
@@ -91,6 +92,29 @@ onCollections ->
         @refineFields(fields)
         window.model.loadingFields(false)
         window.model.enableCreateSite()
+
+    decodeField: (str) =>
+      dict = {}
+      data = (str + '').split('')
+      currChar = data[0]
+      oldPhrase = currChar
+      out = [ currChar ]
+      code = 256
+      phrase = undefined
+      i = 1
+      while i < data.length
+        currCode = data[i].charCodeAt(0)
+        if currCode < 256
+          phrase = data[i]
+        else
+          phrase = if dict[currCode] then dict[currCode] else oldPhrase + currChar
+        out.push phrase
+        currChar = phrase.charAt(0)
+        dict[code] = oldPhrase + currChar
+        code++
+        oldPhrase = phrase
+        i++
+      out.join ''
 
     findFieldByEsCode: (esCode) => (field for field in @fields() when field.esCode == esCode)[0]
 

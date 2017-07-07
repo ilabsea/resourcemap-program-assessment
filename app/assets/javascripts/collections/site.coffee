@@ -8,6 +8,7 @@ onCollections ->
 
     constructor: (collection, data) ->
       @constructorLocatable(data)
+      @uuid = data?.uuid
       @collection = collection
       @selected = ko.observable()
       @id = ko.observable data?.id
@@ -44,13 +45,16 @@ onCollections ->
       @user_id = ko.observable data?.user_id
       @editable = ko.computed =>
         member = JSON.parse(collection.memberships().responseText)
-        if member.admin
-          return true
-        if member.can_edit_other
-          return true
-        if data.user_id == member.user_id
-          return true
+        if member
+          if member.admin
+            return true
+          if member.can_edit_other
+            return true
+          if data.user_id == member.user_id
+            return true
         return false
+
+      @allFieldLogics = ko.observableArray()
 
     hasLocation: => @position() != null
 
@@ -58,8 +62,9 @@ onCollections ->
 
     hasInputMendatoryProperties: =>
       for field in @fields()
-        if field.is_mandatory() and !field.value()
-          return false
+        if field.writeable == true
+          if field.is_mandatory() and !field.value()
+            return false
       return true
 
     propertyValue: (field) =>
@@ -74,6 +79,9 @@ onCollections ->
         value = @findLocationLabelByCode(field)
       else
         field.valueUIFor(value)
+
+    customWidgetFields: =>
+      @fields().filter((f) -> f.isForCustomWidget == true)
 
     findLocationLabelByCode: (field) =>
       for location in field.locations
@@ -104,6 +112,7 @@ onCollections ->
         data: {es_code: esCode, value: value},
         success: ((data) =>
           field.errorMessage("")
+          window.model.resetLayerErrorState()
           @propagateUpdatedAt(data.updated_at)
           window.model.updateSitesInfo()
           window.model.currentCollection().reloadSites()
@@ -114,11 +123,15 @@ onCollections ->
         try
           responseMessage = JSON.parse(data.responseText)
           if data.status == 422 && responseMessage && responseMessage.error_message
-            field.errorMessage(responseMessage.error_message)
+            fieldKey = Object.keys(responseMessage.error_message)
+            fieldError = @findFieldByEsCode(fieldKey[0])
+            fieldError.errorMessage(responseMessage.error_message[fieldKey[0]])
+            layerError = window.model.findLayerById(fieldError.layer_id)
+            layerError.error(true)
           else
             $.handleAjaxError(data)
         catch error
-          $.handleAjaxError(data))
+      )
 
     fillPhotos: (collection) =>
       @photo = {}
@@ -167,11 +180,8 @@ onCollections ->
       collection.fetchFields =>
         if @fields().length == 0
           collection.clearFieldValues()
-          for field in collection.fields()
-            @fields.push(field)
-
-          for layer in collection.layers()
-            @layers.push(layer)
+          @fields(collection.fields())
+          @layers(collection.layers())
           @copyPropertiesToFields()
 
     update_site: (json, callback, callbackError) =>
@@ -214,6 +224,7 @@ onCollections ->
       data = {site: JSON.stringify json}
       if JSON.stringify(@photos) != "{}"
         data["fileUpload"] = @photos
+
       $.ajax({
           type: "POST",
           url: "/collections/#{@collection.id}/sites",
@@ -228,7 +239,7 @@ onCollections ->
             $.status.showNotice window.t('javascripts.collections.index.site_created', {name: @name()}), 2000
             callback(data) if callback && typeof(callback) == 'function' )
           error: ((request, status, error) =>
-            callbackError())
+            callbackError(request["responseText"]))
           global: false
         }).fail((data) =>
           try
@@ -244,7 +255,7 @@ onCollections ->
               $.handleAjaxError(data)
           catch error
             $.handleAjaxError(data))
-  
+
 
     propagateUpdatedAt: (value) =>
       @updatedAt(value)
@@ -392,13 +403,16 @@ onCollections ->
       window.model.initDatePicker()
       window.model.initAutocomplete()
       window.model.initControlKey()
-      
+      window.model.newOrEditSite().scrollable(false)
+      $('#name').focus()
+      @definedField()
+
+    definedField: =>
       for field in @fields()
         field.editing(false)
         field.originalValue = field.value()
-        field.setFieldFocus() if field.kind in ["yes_no", "numeric", "select_one", "select_many"]
-      window.model.newOrEditSite().scrollable(false)
-      $('#name').focus()
+        field.bindWithCustomWidgetedField()
+        field.disableDependentSkipLogicField()
 
     exitEditMode: (saved) =>
       @inEditMode(false)
@@ -494,6 +508,7 @@ onCollections ->
         for layer in @layers()
           for field in layer.fields
             fields.push(field)
+            new CustomWidget(field).bindField() if field.isForCustomWidget
         @fields(fields)
         @getLocationFieldOption()
 
@@ -511,74 +526,47 @@ onCollections ->
     clearFieldValues: =>
       field.value(null) for field in @fields()
 
-    prepareCalculatedField: ->
+    prepareCalculatedField: =>
       for layer in window.model.currentCollection().layers()
         for field in layer.fields
           if field["kind"] == "calculation"
-            # Replace $field code to actual jQuery object
-            if(field["dependentFields"])
-              length = 0
-              $.map(field["dependentFields"], (f) ->
-                length = length + 1
-              )
-              tmp = ""
-              i = 0
-              while i < (length - 1)
-                j = i + 1
-                while j < (length)
-                  if field["dependentFields"][i]["code"].length < field["dependentFields"][j]["code"].length
-                    tmp = field["dependentFields"][i]
-                    field["dependentFields"][i] = field["dependentFields"][j]
-                    field["dependentFields"][j] = tmp
-                  j++
-                i++
-              $.map(field["dependentFields"], (f) -> 
-                fieldName = "${" + f["code"]+"}"
-                fieldValue = "${" + f["code"]+"}"
-                switch f["kind"]
-                  when "text", "email", "phone"
-                    fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + "').val()"
-                  when "date"
-                    fieldValue = "$('#" + f["kind"] + "-input-" + f["id"] + "').val()"
-                    $("#" + f["kind"] + "-input-" + f["id"]).addClass('calculation')
-                  when "numeric"
-                    fieldValue = "parseFloat($('#" + f["kind"] + "-input-" + f["code"] + "').val())"
-                  when "select_one"
-                    fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + " option:selected').text()"
-                  when "yes_no"
-                    fieldValue = "$('#" + f["kind"] + "-input-" + f["code"] + "')[0].checked"
-                  when "calculation"
-                    fieldValue = "parseFloat($('#" + f["kind"] + "-input-" + f["code"] + "').val())"
+            if field["dependentFields"]
+              $.map(field["dependentFields"], (dependentField) ->
+                $dependentField = $("#" + dependentField["kind"] + "-input-" + dependentField["code"])
+                $dependentField.addClass('calculation')
 
-                field["codeCalculation"] = field["codeCalculation"].replace(new RegExp(fieldName.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'g'), fieldValue);
-              )
-              # Add change value to dependent field
+                calculationIds = $dependentField.attr('data-calculation-ids') || ""
+                if(calculationIds)
+                  calculationIds = calculationIds.split(',')
+                else
+                  calculationIds = []
 
-              $.map(field["dependentFields"], (f) -> 
-                $("#" + f["kind"] + "-input-" + f["code"]).addClass('calculation')
-                element_id = field["code"]
-                $.map(window.model.editingSite().fields(), (fi) ->
-                  if fi.code == element_id
-
-                    execute_code = field["codeCalculation"]
-                    $(".calculation").on("change keyup click", ->
-                      $.map(window.model.editingSite().fields(), (fi) ->
-                        value = $('#'+f['kind']+'-input-'+f['code']).val()
-                        if fi.code == element_id
-                          if value
-                            if fi.digitsPrecision
-                              result = Number((eval(execute_code)).toFixed(parseInt(fi.digitsPrecision)))
-                            else
-                              result = eval(execute_code)
-                            fi.value(result)
-                          else
-                            fi.value('')
-                          
-                      )
-                    )
-                )
+                calculationIds.push(field["esCode"])
+                $dependentField.attr('data-calculation-ids', calculationIds.join(","))
               )
 
+    updateField: (fieldId) =>
+      field = window.model.newOrEditSite().findFieldByEsCode("#{fieldId}")
+      if(!field ||  field.kind != 'calculation')
+        return
+      try
+        jsCode = @generateSyntax(field)
+        value = eval(jsCode)
+        new FieldView(field).setValue(value)
+      catch e then console.log e.message
+
+
+    generateSyntax: (field) =>
+      syntaxCal = field.codeCalculation
+      if syntaxCal
+        $.each field.dependentFields, (_, dependField) ->
+          dependFieldObj = window.model.newOrEditSite().findFieldByEsCode(dependField.id)
+          fieldValue = new FieldView(dependFieldObj).getValue()
+          pattern = '${' + dependField.code + '}'
+          escape = pattern.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+          regex = new RegExp(escape, 'g')
+          syntaxCal = syntaxCal.replace(regex, fieldValue)
+        return syntaxCal
     # Ary: I have no idea why, but without this here toJSON() doesn't work
     # in Firefox. It seems a problem with the bindings caused by the fat arrow
     # (=>), but I couldn't figure it out. This "solves" it for now.

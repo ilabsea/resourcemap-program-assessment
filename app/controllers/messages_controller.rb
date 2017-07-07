@@ -1,3 +1,24 @@
+# == Schema Information
+#
+# Table name: messages
+#
+#  id            :integer          not null, primary key
+#  guid          :string(255)
+#  country       :string(255)
+#  carrier       :string(255)
+#  channel       :string(255)
+#  application   :string(255)
+#  from          :string(255)
+#  to            :string(255)
+#  subject       :string(255)
+#  body          :string(255)
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  reply         :text
+#  collection_id :integer
+#  is_send       :boolean          default(FALSE)
+#
+
 class MessagesController < ApplicationController
 
 	expose(:collections) { 

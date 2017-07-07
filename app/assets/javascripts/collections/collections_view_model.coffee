@@ -48,7 +48,7 @@ onCollections ->
         else if condition.field_id == 'location_missing'
           filters.push(new FilterByLocationMissing(condition.id))
         else
-          
+
           if @currentCollection().fields().length > 0
             field = @currentCollection().findFieldByEsCode(condition.field_id)
             if field.kind == 'text' || field.kind == 'phone' || field.kind == 'email' || field.kind == 'user'
@@ -68,7 +68,7 @@ onCollections ->
               filters.push(new FilterBySiteProperty(field, condition.operator, condition.field_value, id, condition.id))
 
       @filters(filters)
-    
+
     @goToRoot: ->
       @filters([])
       @selectedQuery(null)
@@ -80,7 +80,7 @@ onCollections ->
       @cancelFilterAlertedSites()
       @search('')
       @lastSearch(null)
-      
+
       @sort(null)
       @sortDirection(null)
       @groupBy(@defaultGroupBy)
@@ -126,13 +126,13 @@ onCollections ->
 
       @currentCollection collection
       @unselectSite() if @selectedSite()
-      @exitSite() if @editingSite()   
+      @exitSite() if @editingSite()
       @currentCollection().checked(true)
       if @showingAlert()
         $.get "/collections/#{@currentCollection().id}/sites_by_term.json", _alert: true, (sites) =>
           @currentCollection().allSites(sites)
           window.adjustContainerSize()
-          
+
       else
         $.get "/collections/#{@currentCollection().id}/sites_by_term.json", (sites) =>
           @currentCollection().allSites(sites)
@@ -155,7 +155,7 @@ onCollections ->
         window.adjustContainerSize()
         if @currentCollection().fields()
           window.model.loadingFields(false)
-        if @currentCollection().sitesPermission  
+        if @currentCollection().sitesPermission
           window.model.loadingSitePermission(false)
         window.model.enableCreateSite()
 
@@ -163,7 +163,7 @@ onCollections ->
       window.adjustContainerSize()
       window.model.updateSitesInfo()
       @showRefindAlertOnMap()
-       
+
       if @filters().length == 0
         window.model.formula = undefined
         @filters([])
@@ -173,8 +173,26 @@ onCollections ->
 
     @editCollection: (collection) -> window.location = "/collections/#{collection.id}"
 
+    @openShareUrlDialog:  ->
+      path_share = "/collections/#{@currentCollection().id}/sites/#{@editingSite().uuid}/share"
+      share_url = "#{window.location.protocol}//#{window.location.host}#{path_share}"
+
+      path_pdf = "/collections/#{@currentCollection().id}/sites/#{@editingSite().uuid}/pdf"
+      download_url = "#{window.location.protocol}//#{window.location.host}#{path_pdf}"
+
+      $('#share-url-dialog').attr('href', share_url).text(share_url)
+      $('#download-pdf').attr('href', download_url)
+      $("#rm-share-url-dialog").rmDialog().show()
+
+    @getPdf: (event)->
+      path_pdf = "/site_pdfs"
+      data = {id: @editingSite().uuid}
+      $.post path_pdf, data,  ()=>
+        $.status.showNotice('System is generating PDF for your request, once it finishes we will send you a download link to your email.', 60*1000)
+      event.preventDefault()
+
     @openDialog:  ->
-      $(".rm-dialog").rmDialog().show()
+      $("#rm-download-history-dialog").rmDialog().show()
       $("#rm-colllection_id").val(@currentCollection().id)
 
     @tooglefullscreen: ->
@@ -227,7 +245,7 @@ onCollections ->
       $('#sites_whitout_location_alert').show()
 
     @createCollection: -> window.location = "/collections/new"
-    
+
     @getAlertConditions: ->
       if @currentCollection()
         $.get "/plugin/alerts/collections/#{@currentCollection().id}/thresholds.json", (data) =>
@@ -235,7 +253,7 @@ onCollections ->
           @currentCollection().thresholds(thresholds)
           window.model.selectedQuery(@setSelectedQuery()) if @filters().length > 0
       else
-        $.get "/plugin/alerts/thresholds.json", (data) =>   
+        $.get "/plugin/alerts/thresholds.json", (data) =>
           for collection in @collections()
             thresholds = collection.fetchThresholds(data)
             collection.thresholds(thresholds)

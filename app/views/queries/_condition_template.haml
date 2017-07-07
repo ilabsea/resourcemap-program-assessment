@@ -4,7 +4,7 @@
 /ko if: operator() == '='
 %span start with
 %span{ko(text: :fieldValue)}
-//ko 
+//ko
 /ko if: operator() == 'empty'
 %span has no value
 //ko
@@ -15,10 +15,10 @@
 /ko if: operator() == '='
 %span is
 %span{ko(text: :fieldValue)}
-//ko 
+//ko
 /ko if: operator() == 'empty'
 %span has no value
-//ko               
+//ko
 //ko
 
 
@@ -26,7 +26,7 @@
 %span{ko(text: 'field().name')}
 %span is
 %span{ko(text: :fieldValue)}
-//ko                
+//ko
 
 /ko if: field().kind == 'numeric'
 %span{ko(text: 'field().name')}
@@ -61,8 +61,8 @@
 %span is between
 %span{ko(text: :fieldDateFrom)}
 %span to
-%span{ko(text: :fieldDateTo)}                
-//ko 
+%span{ko(text: :fieldDateTo)}
+//ko
 /ko if: operator() == 'empty'
 %span has no value
 //ko
@@ -71,7 +71,7 @@
 /ko if: field().kind == 'select_one' || field().kind == 'select_many'
 %span{ko(text: 'field().name')}
 %span is
-%span{ko(text: '$root.bindOptionLabel(field(), fieldValue())')} 
+%span{ko(text: '$root.bindOptionLabel(field(), fieldValue())')}
 //ko
 
 /ko if: field().kind == 'hierarchy'
@@ -93,4 +93,3 @@
 //ko
 
 //ko
-

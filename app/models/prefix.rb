@@ -1,3 +1,13 @@
+# == Schema Information
+#
+# Table name: prefixes
+#
+#  id         :integer          not null, primary key
+#  version    :string(255)
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+
 class Prefix < ActiveRecord::Base
   validates_presence_of :version
   validates_uniqueness_of :version

@@ -4,7 +4,7 @@ require 'bundler/capistrano'
 set :whenever_command, "bundle exec whenever"
 require "whenever/capistrano"
 
-set :rvm_ruby_string, '1.9.3'
+set :rvm_ruby_string, '1.9.3-p545'
 set :rvm_type, :system
 set :application, "resourcemap_wfp"
 set :repository,  "https://github.com/ilabsea/resourcemap-program-assessment"
@@ -13,9 +13,9 @@ set :user, 'ilab'
 set :use_sudo, false
 set :group, 'ilab'
 set :deploy_via, :remote_cache
-set :branch, '1.3'
+set :branch, 'wfp_staging'
 
-server '54.169.173.164', :app, :web, :db, primary: true
+server '192.168.1.220', :app, :web, :db, primary: true
 
 default_run_options[:pty] = true
 default_environment['TERM'] = ENV['TERM']
@@ -34,13 +34,25 @@ namespace :deploy do
   end
 
   task :symlink_configs, :roles => :app do
-    %W(settings.yml google_maps.key nuntium.yml aws.yml).each do |file|
+    %W(settings.yml google_maps.key nuntium.yml aws.yml recaptcha.yml database.yml).each do |file|
       run "ln -nfs #{shared_path}/#{file} #{release_path}/config/"
     end
   end
 
   task :symlink_photo_field, :roles => :app do
-    run "ln -nfs #{shared_path}/photo_field #{release_path}/public/"
+    run "ln -nfs #{shared_path}/photo_field #{release_path}/public/photo_field"
+  end
+
+  task :symlink_print_pdf, :roles => :app do
+    run "ln -nfs #{shared_path}/print #{release_path}/public/print"
+  end
+
+  task :symlink_tinymce_photo, :roles => :app do
+    run "ln -nfs #{shared_path}/tinymce_photo #{release_path}/public/tinymce_photo"
+  end
+
+  task :symlink_production_env, :roles => :app do
+    run "ln -nfs #{shared_path}/environments/production.rb #{release_path}/config/environments/production.rb"
   end
 
   task :generate_revision_and_version do
@@ -78,6 +90,12 @@ before "deploy:restart", "deploy:migrate"
 after "deploy:update_code", "deploy:symlink_configs"
 
 after "deploy:update_code", "deploy:symlink_photo_field"
+
+after "deploy:update_code", "deploy:symlink_print_pdf"
+
+after "deploy:update_code", "deploy:symlink_tinymce_photo"
+
+after "deploy:update_code", "deploy:symlink_production_env"
 
 after "deploy:update", "foreman:export"    # Export foreman scripts
 
