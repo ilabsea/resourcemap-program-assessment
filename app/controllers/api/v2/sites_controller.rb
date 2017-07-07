@@ -89,7 +89,6 @@ module Api::V2
       render_update_response(site)
     end
 
-
     def index
       builder = Collection.filter_sites(params)
       sites_size = builder.size

@@ -1,5 +1,4 @@
 class ApiController < ApplicationController
-
   skip_before_filter :set_locale
   skip_before_filter :verify_authenticity_token
   before_filter :authenticate_api_user!, :except => [:show]
