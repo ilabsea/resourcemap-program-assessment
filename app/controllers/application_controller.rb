@@ -186,4 +186,13 @@ class ApplicationController < ActionController::Base
     params[:layer].delete(:public) if params[:layer] && params[:layer][:public]
   end
 
+  def render_json(object, options = {})
+    options = options.merge(text: object.to_json_oj, content_type: 'application/json')
+    render options
+  end
+
+  def ignore_public_attribute
+    params[:layer].delete(:public) if params[:layer] && params[:layer][:public]
+  end
+
 end
