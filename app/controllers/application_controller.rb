@@ -33,8 +33,6 @@ class ApplicationController < ActionController::Base
   end
   expose(:new_search) { collection.new_search new_search_options }
 
-  USER, PASSWORD = 'iLab', '1c4989610bce6c4879c01bb65a45ad43'
-
   rescue_from ActiveRecord::RecordNotFound do |x|
     render :file => '/error/doesnt_exist_or_unauthorized', :status => 404, :layout => true
   end
