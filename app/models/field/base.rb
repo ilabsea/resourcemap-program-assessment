@@ -74,21 +74,14 @@ module Field::Base
   def api_value(value)
     if yes_no?
       Field.yes?(value)
-    elsif select_one?
-      option = config['options'].find { |o| o['id'] == value }
-      return option ? option['code'] : value
     elsif select_many?
       if value.is_a? Array
-        return value.map do |val|
-          option = config['options'].find { |o| o['id'] == val }
-          option ? option['code'] : val
-        end
+        return value.map { |val| val }
       else
         return value
       end
     elsif hierarchy?
       return value
-      # return find_hierarchy_name_by_id(value)
     elsif date?
       return Site.iso_string_to_dmy(value)
     else
