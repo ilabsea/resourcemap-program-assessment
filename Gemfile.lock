@@ -1,4 +1,12 @@
 GIT
+  remote: git://github.com/PerfectlyNormal/tinymce-rails-imageupload.git
+  revision: d0b9a69bd25ac8ae4508cb291c5dd7df7efc5f50
+  specs:
+    tinymce-rails-imageupload (4.0.17.beta)
+      railties (>= 3.2, < 6)
+      tinymce-rails (~> 4.0)
+
+GIT
   remote: https://github.com/instedd/telemetry_rails.git
   revision: 8ddfee2b94a2c1bef837b0a583538dfa72781948
   specs:
@@ -6,14 +14,6 @@ GIT
       global_phone
       global_phone_dbgen
       rails
-
-GIT
-  remote: git://github.com/PerfectlyNormal/tinymce-rails-imageupload.git
-  revision: d0b9a69bd25ac8ae4508cb291c5dd7df7efc5f50
-  specs:
-    tinymce-rails-imageupload (4.0.17.beta)
-      railties (>= 3.2, < 6)
-      tinymce-rails (~> 4.0)
 
 GIT
   remote: https://github.com/manastech/dist.git

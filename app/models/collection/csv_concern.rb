@@ -56,6 +56,8 @@ module Collection::CsvConcern
               end
             end
           elsif field.kind == "hierarchy"
+            hierarchy_fields[field.id.to_s] = field.transform()
+            hierarchy_fields[field.id.to_s]["depth"] = field.get_longest_depth()
             field.config["hierarchy"] = hierarchy_fields[field.id.to_s]["hierarchy"]
             level = 0
             arr_level = []
