@@ -52,6 +52,9 @@ class User < ActiveRecord::Base
 
   attr_accessor :is_guest
 
+  after_save :touch_lifespan
+  after_destroy :touch_lifespan
+
   def create_collection(collection)
     return false unless collection.save
     memberships.create! collection_id: collection.id, admin: true
@@ -193,4 +196,10 @@ class User < ActiveRecord::Base
     end
     return display_name
   end
+
+  private
+
+    def touch_lifespan
+      Telemetry::Lifespan.touch_user self
+    end
 end

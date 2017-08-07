@@ -19,6 +19,9 @@ class Snapshot < ActiveRecord::Base
 
   after_create :create_index
 
+  after_save :touch_collection_lifespan
+  after_destroy :touch_collection_lifespan
+
   def create_index
     index = Tire::Index.new index_name
     index.create mappings: { site: site_mapping }

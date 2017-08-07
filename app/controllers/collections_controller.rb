@@ -93,6 +93,7 @@ class CollectionsController < ApplicationController
   end
 
   def create
+    p collection
     if current_user.create_collection collection
       current_user.collection_count += 1
       current_user.update_successful_outcome_status

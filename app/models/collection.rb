@@ -57,6 +57,9 @@ class Collection < ActiveRecord::Base
 
   attr_accessor :time_zone
 
+  after_save :touch_lifespan
+  after_destroy :touch_lifespan
+
   def max_value_of_property(es_code)
     search = new_tire_search
     search.sort { by es_code, 'desc' }
@@ -383,6 +386,12 @@ class Collection < ActiveRecord::Base
         field.reinitial_config_from_original_collection original_collection
       end
     end
+  end
+    
+  private 
+
+  def touch_lifespan
+    Telemetry::Lifespan.touch_collection self
   end
 
 end
