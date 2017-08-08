@@ -47,9 +47,16 @@ module Collection::CsvConcern
             else
               row << ""
             end
+          elsif field.kind == 'select_one'
+            field.config["options"].each do |option|
+              if source['properties'][field.code] == option["id"]
+                row << option["code"]
+                break
+              end
+            end
           elsif field.kind == "select_many"
             field.config["options"].each do |option|
-              if source['properties'][field.code] and source['properties'][field.code].include? option["code"]
+              if source['properties'][field.code] and source['properties'][field.code].include? option["id"]
                 row << "Yes"
               else
                 row << "No"
