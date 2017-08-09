@@ -8,7 +8,10 @@ onCollections ->
       super(collection)
       @field = field
       @hierarchyItemsMap = {}
-      @hierarchyItems = $.map field.hierarchy, (x) => new HierarchyItem(@, field, x)
+      @hierarchyItems = if field.hierarchy?
+                          $.map field.hierarchy, (x) => new HierarchyItem(@, field, x)
+                        else
+                          []
 
     isSearch: => false
 
