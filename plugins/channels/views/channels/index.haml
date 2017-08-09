@@ -3,16 +3,18 @@
 .tabsline
   #channels-main.hidden-until-loaded
     %h2= t('views.plugins.channels.title')
-    %p= t('views.plugins.channels.description') 
+    %p= t('views.plugins.channels.description')
     <!-- ko foreach: gateways -->
     %input{ko(checked: '$root.selectedGateways', value: :id), type: "checkbox" }
     %span{ko(text: :name )}
     %hr{style: "margin:0px;height:3px;background-color: #FFFFFF;"}
-    <!-- /ko --> 
-    %p 
-      = link_to t('views.plugins.channels.configure_sms_gateway'), gateways_path
-    .bottom-actions
-      %button.white{ ko(click: '$root.saveChannel') }= t('views.plugins.channels.save')
-      = link_to t('views.plugins.channels.cancel'), collection_channels_path, :class=> 'grey'
+    <!-- /ko -->
+    - if current_user_snapshot.at_present? && collection_admin?
+      %p
+        = link_to t('views.plugins.channels.configure_sms_gateway'), gateways_path
+      <!-- ko if: gateways().length > 0 -->
+      .bottom-actions
+        %button.white{ ko(click: '$root.saveChannel') }= t('views.plugins.channels.save')
+        = link_to t('views.plugins.channels.cancel'), collection_channels_path, :class=> 'grey'
+      <!-- /ko -->
   %br{clear: :all}
-
