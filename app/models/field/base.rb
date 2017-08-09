@@ -89,7 +89,6 @@ module Field::Base
       end
     elsif hierarchy?
       return value
-      # return find_hierarchy_name_by_id(value)
     elsif date?
       return Site.iso_string_to_dmy(value)
     else
@@ -145,11 +144,7 @@ module Field::Base
     elsif select_many?
       options = config['options']
       return '' if options.nil? or options.length == 0
-      if options.length == 1
-        value = [options[0]['id']]
-      else
-        value = [options[0]['id'], options[1]['id']]
-      end
+      value = 'Yes'
     elsif hierarchy?
       @hierarchy_items_map ||= create_hierarchy_items_map
       keys = @hierarchy_items_map.keys
@@ -159,6 +154,10 @@ module Field::Base
       return ''
     end
     api_value value
+  end
+
+  def csv_header
+    code
   end
 
   private

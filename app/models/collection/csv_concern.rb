@@ -22,25 +22,11 @@ module Collection::CsvConcern
     CSV.generate do |csv|
       header = ['resmap-id', 'name', 'lat', 'long']
       fields.each do |field|
-        if field.kind == "select_many"
-          field.config["options"].each do |option|
-            header << option["label"]
-          end
-        elsif field.kind == "hierarchy"
-          hierarchy_fields[field.id.to_s] = field.transform()
-          hierarchy_fields[field.id.to_s]["depth"] = field.get_longest_depth()
-          level = 0
-
-          if hierarchy_fields[field.id.to_s]["depth"] == 0
-            header << field.code + level.to_s
-          end
-
-          while level < hierarchy_fields[field.id.to_s]["depth"]
-            header << field.code + level.to_s
-            level = level + 1
-          end
+        field_header = field.csv_header
+        if field_header.kind_of?(Array)
+          header = header + field_header
         else
-          header << field.code
+          header << field.csv_header
         end
       end
       header << 'start entry date'
@@ -50,7 +36,7 @@ module Collection::CsvConcern
 
       elastic_search_api_results.each do |result|
         source = result['_source']
-        p source["uuid"]
+
         row = [source['id'], source['name'], source['location'].try(:[], 'lat'), source['location'].try(:[], 'lon')]
         fields.each do |field|
           if field.kind == 'yes_no'
@@ -120,11 +106,24 @@ module Collection::CsvConcern
     CSV.generate do |csv|
       header = ['name', 'lat', 'long']
       writable_fields = writable_fields_for(user)
-      writable_fields.each { |field| header << field.code }
+      writable_fields.each { |field|
+        field_header = field.csv_header
+        if field_header.kind_of?(Array)
+          header = header + field_header
+        else
+          header << field.csv_header
+        end
+      }
       csv << header
       row = ['Paris', 48.86, 2.35]
       writable_fields.each do |field|
-        row << Array(field.sample_value user).join(", ")
+        if field.csv_header.kind_of?(Array)
+          field.csv_header.each do |header|
+            row << Array(field.sample_value user).join(", ")
+          end
+        else
+          row << Array(field.sample_value user).join(", ")
+        end
       end
       csv << row
     end
@@ -281,11 +280,6 @@ module Collection::CsvConcern
 
           #Check unique name
           name = row[2].strip
-          # if items.any?{|item| item.second[:name] == name}
-          #   item[:error] = "Invalid name."
-          #   item[:error_description] = "Hierarchy name should be unique"
-          #   error = true
-          # end
 
           #Check unique id
           id = row[0].strip
@@ -321,4 +315,6 @@ module Collection::CsvConcern
   def csv_header
     ["Site ID", "Name", "Lat", "Lng"]
   end
+
+
 end

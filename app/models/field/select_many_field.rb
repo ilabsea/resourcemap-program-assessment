@@ -83,6 +83,14 @@ class Field::SelectManyField < Field
     return value.any? ? value : value_codes
   end
 
+  def csv_header
+    header = []
+    config["options"].each do |option|
+      header << option["label"]
+    end
+    return header
+  end
+
 	private
 
   # TODO: Integrate with decode used in update

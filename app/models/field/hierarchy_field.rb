@@ -49,6 +49,25 @@ class Field::HierarchyField < Field
     end
   end
 
+  def csv_header
+    hierarchy_fields = {}
+    hierarchy_fields[id.to_s] = self.transform()
+    hierarchy_fields[id.to_s]["depth"] = self.get_longest_depth()
+    level = 0
+    header = []
+
+    if hierarchy_fields[id.to_s]["depth"] == 0
+      header << code + level.to_s
+    end
+
+    while level < hierarchy_fields[id.to_s]["depth"]
+      header << code + level.to_s
+      level = level + 1
+    end
+
+    return header
+  end
+
   def invalid_field_message()
     "Invalid hierarchy option in field #{code}"
   end
@@ -137,7 +156,7 @@ class Field::HierarchyField < Field
     end
     option = hierarchy_options.find { |opt| opt[:id] == value }
     option if option
-  end  
+  end
 
   def find_hierarchy_by_name(value)
     if @cache_for_read
@@ -146,7 +165,7 @@ class Field::HierarchyField < Field
     end
     option = hierarchy_options.find { |opt| opt[:name] == value }
     option if option
-  end  
+  end
 
   def transform
     field_hierarchy = {}
