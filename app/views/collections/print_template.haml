@@ -22,6 +22,7 @@
   %div.row
     = f.check_box :is_published_template
     = f.label :is_published_template, "Anyone with the report's link can view the site with this template."
-  %div.row
-    = f.button 'Save', :class => 'white'
-    = link_to 'Cancel', collections_path, :class=> 'grey'
+  - if current_user_snapshot.at_present? && collection_admin?
+    %div.row
+      = f.button 'Save', :class => 'white'
+      = link_to 'Cancel', collections_path, :class=> 'grey'
