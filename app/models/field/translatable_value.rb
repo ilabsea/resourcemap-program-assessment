@@ -37,6 +37,8 @@ module Field::TranslatableValue
 
     elsif field_type == "yes_no"
       value == "T" ? "Yes" : "No"
+    elsif field_type == "date"
+      value = (Time.at(value.to_i/1000)).strftime("%d/%m/%Y")
     else
       value
     end
