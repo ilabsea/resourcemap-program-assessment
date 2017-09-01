@@ -26,9 +26,12 @@ onCollections ->
       @writeable = @originalWriteable = data?.writeable
 
       @allowsDecimals = ko.observable data?.config?.allows_decimals == 'true'
+      @configCustomValidations = ko.observable data?.config?.field_validations
       @originalIsMandatory = data.is_mandatory
       @value = ko.observable()
       @value.subscribe =>
+        if @kind == 'select_many'
+          @valid()
         @disableDependentSkipLogicField()
         @performCalculation()
 
@@ -62,14 +65,14 @@ onCollections ->
           @value()
 
       @valueUI =  ko.computed
-       read: =>  @valueUIFor(@value())
-       write: (value) =>
-         @value(@valueUIFrom(value))
+        read: => @valueUIFor(@value())
+        write: (value) =>
+          @value(@valueUIFrom(value))
 
       @field_logics = if data.config?.field_logics?
-                          $.map data.config.field_logics, (x) => new FieldLogic x
-                        else
-                          []
+                        $.map data.config.field_logics, (x) => new FieldLogic x
+                      else
+                        []
 
       if @kind == 'numeric'
         @digitsPrecision = data?.config?.digits_precision
@@ -138,6 +141,28 @@ onCollections ->
           field_object.block({message: ""})
         else
           field_object.unblock()
+
+    valid: => 
+      if(@is_mandatory()) 
+        $element = ''
+        if @kind == 'date'
+          $element = $('#'+@kind+'-input-'+ @esCode)
+        else if @kind == 'photo'
+          $element = $('#'+@code)
+        else if @kind == 'hierarchy'
+          $element = $('#'+@esCode)
+        else if @kind == 'select_many'
+          $element = $('#select-many-input-'+@code)
+        else
+          $element = $('#'+@kind+'-input-'+@code)
+
+        if !@value() || @value().length == 0
+          $element.addClass('error')
+        else 
+          $element.removeClass('error')
+
+      @validateRange()
+      @validateCustomValidation()
 
     replaceCustomWidget: (widgetContent, readonly) =>
       isReadonly = ''
@@ -326,6 +351,7 @@ onCollections ->
       @value(value)
 
     enableScrollFocusView: =>
+      @valid()
       if @field_logics.length > 0
         if @value() == ""
           @enableSkippedField @esCode
@@ -406,9 +432,6 @@ onCollections ->
         window.model.initAutocomplete()
         window.model.initControlKey()
 
-    validateRangeAndCustomeValidation: =>
-      @validateRange()
-      @validateCustomValidation()
 
     validateRangeAndDigitsPrecision: =>
       @validateRange()
@@ -440,15 +463,37 @@ onCollections ->
               @errorMessage('Invalid value, value must be greater than or equal '+@range.minimum)
             return
 
-    validateCustomValidation: =>
+    validateCustomValidation: => 
       if @is_enable_custom_validation()
-        $.map(@, (f) =>
-          if f.esCode == field_id
-            flag = true
-          if flag
-            @enableField f
-            return
+        $.map(@configCustomValidations(), (f) =>
+          field = window.model.newOrEditSite().findFieldByEsCode(f.field_id[0])
+          if f.condition_type == '='
+            if @value() != field.value()
+              @errorMessage('Invalid value, value must be equal to field '+ field.name)
+            else
+              @errorMessage('')
+          else if f.condition_type == '<'
+            if @value() >= field.value()
+              @errorMessage('Invalid value, value must be less than field '+ field.name)
+            else
+              @errorMessage('')
+          else if f.condition_type == '>'
+            if @value() <= field.value()
+              @errorMessage('Invalid value, value must be greater than field '+ field.name)
+            else
+              @errorMessage('')
+          else if f.condition_type == '>='
+            if @value() < field.value()
+              @errorMessage('Invalid value, value must be greater than and equal to field '+ field.name)
+            else
+              @errorMessage('')
+          else if f.condition_type == '<='
+            if @value() > field.value()
+              @errorMessage('Invalid value, value must be less than and equal to field '+ field.name)
+            else
+              @errorMessage('')
         )
+
     validate_integer_only: (keyCode) =>
       value = $('#'+@kind+'-input-'+@code).val()
       if value == null || value == ""
@@ -484,6 +529,8 @@ onCollections ->
             return false
 
       return true
+
+    
 
     keyPress: (field, event) =>
       switch event.keyCode
@@ -523,7 +570,9 @@ onCollections ->
       @value(arrayDiff(@value(), [optionId]))
       @value.valueHasMutated()
 
-    expand: => @expanded(true)
+    expand: => 
+      @expanded(true)
+      @valid()
 
     filterKeyDown: (model, event) =>
       switch event.keyCode
@@ -581,6 +630,7 @@ onCollections ->
 
     fileSelected: (data, event) =>
       fileUploads = $("#" + data.code)[0].files
+
       if fileUploads.length > 0
 
         photoExt = fileUploads[0].name.split('.').pop()
@@ -600,11 +650,14 @@ onCollections ->
         @photo = ''
         @value('')
 
+      @valid()
+
     removeImage: =>
       @photo = ''
       @value('')
       $("#" + @code).attr("value",'')
       $("#divUpload-" + @code).hide()
+      @valid()
 
     inputable: =>
       if (@kind == 'custom_widget' && @readonly_custom_widgeted == true) || @isForCustomWidget() || @kind == 'custom_aggregator'

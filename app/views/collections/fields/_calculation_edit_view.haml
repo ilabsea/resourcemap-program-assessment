@@ -8,5 +8,5 @@
   - if single_editing_mode
     = ko_text_field_tag :value, hasfocus: true, event: {keydown: :keyPress, keyup: :validateRangeAndDigitsPrecision, blur: :save}, css: { error: :error }, attr: {id: "'calculation-input-' + code"}, html: {readonly: "readonly"}
   - else
-    = ko_text_field_tag :value, html: {class: 'right w20', readonly: "readonly"}, css: {error: :error}, attr: {id: "'calculation-input-' + code"}
+    = ko_text_field_tag :value, html: {class: 'right w20', readonly: "readonly"}, event: {blur: :valid}, css: {error: :error}, attr: {id: "'calculation-input-' + code"}
     .clear
