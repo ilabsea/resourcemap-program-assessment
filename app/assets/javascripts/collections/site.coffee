@@ -37,6 +37,7 @@ onCollections ->
         owner: @
       @locationTextTemp = @locationText()
       @valid = ko.computed => @hasName() and @hasInputMendatoryProperties()
+      
       @highlightedName = ko.computed => window.model.highlightSearch(@name())
       @inEditMode = ko.observable(false)
       @scrollable = ko.observable(false)
@@ -58,7 +59,14 @@ onCollections ->
 
     hasLocation: => @position() != null
 
-    hasName: => $.trim(@name()).length > 0
+    hasName: => 
+      $.trim(@name()).length > 0
+
+    validName: => 
+      if(!@name()) 
+        $("#name").addClass('error') 
+      else 
+        $("#name").removeClass('error')
 
     hasInputMendatoryProperties: =>
       for field in @fields()
