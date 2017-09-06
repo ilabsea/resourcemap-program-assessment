@@ -24,6 +24,7 @@ onCollections ->
       @photoPath = '/photo_field/'
       @showInGroupBy = @kind in ['select_one', 'select_many', 'hierarchy']
       @writeable = @originalWriteable = data?.writeable
+      @config = ko.observable data?.config
 
       @allowsDecimals = ko.observable data?.config?.allows_decimals == 'true'
       @configCustomValidations = ko.observable data?.config?.field_validations
@@ -143,6 +144,7 @@ onCollections ->
           field_object.unblock()
 
     valid: => 
+      console.log('valid : ')
       if(@is_mandatory()) 
         $element = ''
         if @kind == 'date'
@@ -159,7 +161,14 @@ onCollections ->
         if !@value() || @value().length == 0
           $element.addClass('error')
         else 
-          $element.removeClass('error')
+          if(@kind == 'email')
+            re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            if(!re.test(@value()))
+              $element.addClass('error')
+            else 
+              $element.removeClass('error')
+          else
+            $element.removeClass('error')
 
       @validateRange()
       @validateCustomValidation()
@@ -191,6 +200,17 @@ onCollections ->
           field_code = field_wrapper.split("wrapper-custom-widget-")[1]
           field = window.model.findFieldByCode(field_code)
           new CustomWidget(field).bindField()
+
+    buildCompareFieldConfigOfCustomValidation: (fieldId, operator, compareField) =>
+      compare = {
+        field_id: fieldId,
+        condition_type: operator
+      }
+      if ( compareField.config().compare_custom_validations )
+        compareField.config().compare_custom_validations.push(compare)
+      else
+        compareField.config().compare_custom_validations = [compare]
+      console.log 'compareField : ', compareField.config()
 
     disableDependentSkipLogicField: =>
       if window.model.newOrEditSite()
@@ -467,32 +487,50 @@ onCollections ->
       if @is_enable_custom_validation()
         $.map(@configCustomValidations(), (f) =>
           field = window.model.newOrEditSite().findFieldByEsCode(f.field_id[0])
-          if f.condition_type == '='
-            if @value() != field.value()
-              @errorMessage('Invalid value, value must be equal to field '+ field.name)
-            else
-              @errorMessage('')
-          else if f.condition_type == '<'
-            if @value() >= field.value()
-              @errorMessage('Invalid value, value must be less than field '+ field.name)
-            else
-              @errorMessage('')
-          else if f.condition_type == '>'
-            if @value() <= field.value()
-              @errorMessage('Invalid value, value must be greater than field '+ field.name)
-            else
-              @errorMessage('')
-          else if f.condition_type == '>='
-            if @value() < field.value()
-              @errorMessage('Invalid value, value must be greater than and equal to field '+ field.name)
-            else
-              @errorMessage('')
-          else if f.condition_type == '<='
-            if @value() > field.value()
-              @errorMessage('Invalid value, value must be less than and equal to field '+ field.name)
-            else
-              @errorMessage('')
+          compareValue = field.value()
+          if(!compareValue)
+            compareValue = 0
+
+          @generateErrorMessage(f, @, compareValue, field.name)
         )
+
+      if @config().compare_custom_validations
+        $.map(@config().compare_custom_validations, (v) =>
+          field = window.model.newOrEditSite().findFieldByEsCode(v.field_id)
+
+          compareValue = @value()
+          if(!compareValue)
+            compareValue = 0
+
+          @generateErrorMessage(v, field, compareValue, @name)
+        )
+
+    generateErrorMessage: (fieldConfig, validateField, compareValue, fieldName)=> 
+      if fieldConfig.condition_type == '='
+        if validateField.value() != compareValue
+          validateField.errorMessage('Invalid value, value must be equal to field '+ fieldName)
+        else
+          validateField.errorMessage('')
+      else if fieldConfig.condition_type == '<'
+        if validateField.value() >= compareValue
+          validateField.errorMessage('Invalid value, value must be less than field '+ fieldName)
+        else
+          validateField.errorMessage('')
+      else if fieldConfig.condition_type == '>'
+        if validateField.value() <= compareValue
+          validateField.errorMessage('Invalid value, value must be greater than field '+ fieldName)
+        else
+          validateField.errorMessage('')
+      else if fieldConfig.condition_type == '>='
+        if validateField.value() < compareValue
+          validateField.errorMessage('Invalid value, value must be greater than and equal to field '+ fieldName)
+        else
+          validateField.errorMessage('')
+      else if fieldConfig.condition_type == '<='
+        if validateField.value() > compareValue
+          validateField.errorMessage('Invalid value, value must be less than and equal to field '+ fieldName)
+        else
+          validateField.errorMessage('')
 
     validate_integer_only: (keyCode) =>
       value = $('#'+@kind+'-input-'+@code).val()
@@ -673,6 +711,13 @@ onCollections ->
     init: =>
       if @kind == 'date'
         window.model.initDatePicker()
+      if @kind == 'numeric' && @is_enable_custom_validation
+        if @configCustomValidations()
+          console.log('f : ', @configCustomValidations())
+          $.map(@configCustomValidations(), (c) =>
+            compareField = window.model.newOrEditSite().findFieldByEsCode(c.field_id[0])
+            @buildCompareFieldConfigOfCustomValidation(@esCode, c.condition_type, compareField)
+          )
 
     performCalculation: =>
       $ele = new FieldView(@).domObject()
