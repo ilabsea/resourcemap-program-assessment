@@ -230,6 +230,7 @@ class CollectionsController < ApplicationController
     render json: results
   end
 
+
   def search
     search = new_search
 

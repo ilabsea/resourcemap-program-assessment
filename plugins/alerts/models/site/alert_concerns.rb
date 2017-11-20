@@ -40,5 +40,9 @@ module Site::AlertConcerns
     emails = collection.users.where(id: alert.email_notification[:members]).map(&:email).reject &:blank?
     emails |= alert.email_notification[:fields].to_a.map{|field| properties[field] }.reject &:blank?
     emails |= alert.email_notification[:users].to_a.map{|field| properties[field] }.reject(&:blank?)
+    if alert.email_notification[:to_reporter] == 'true'
+      reporter_email = User.where(id: self.user_id).map(&:email)
+      emails |= reporter_email
+    end
   end
 end
