@@ -19,6 +19,9 @@ onReportQueries ->
 
       if @kind == 'hierarchy'
         @hierarchy = data.config?.hierarchy
+        @parentHierarchyFieldId = data.config?.parent_hierarchy_field_id
+        @isEnableDependancyHierarchy = data?.is_enable_dependancy_hierarchy
+        @dependentHierarchyItemList = ko.observableArray(new FieldDependant(@).options())
 
       @buildHierarchyItems() if @hierarchy?
 
@@ -82,3 +85,22 @@ onReportQueries ->
         return false
       else
         return true
+
+    hierarchySet: (field=@, fields=[])=>
+      if field.isEnableDependancyHierarchy == true && field.parentHierarchyFieldId == ''
+        fields.push field
+        return fields
+      else
+        parentField = @layer.findFieldById(field.parentHierarchyFieldId)
+        @hierarchySet(parentField, fields)
+        fields.push field
+        return fields
+
+    updateDependentFieldsHierarchyItemList: (field)=>
+      if @isDependentFieldHierarchy && field
+        return (new FieldDependant(field).updateDependentFieldsHierarchyItemList())
+      else
+        return []
+
+    isDependentFieldHierarchy: =>
+      return @kind == 'hierarchy' && @isEnableDependancyHierarchy

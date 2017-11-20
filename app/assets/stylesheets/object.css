@@ -2,3 +2,16 @@
   margin-top: 10px;
   margin-bottom: 10px;
 }
+
+.hierarchySet{
+  clear: both;
+}
+
+.hierarchySetName{
+  width: 45px;
+  display: inline-block;
+  color: grey;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

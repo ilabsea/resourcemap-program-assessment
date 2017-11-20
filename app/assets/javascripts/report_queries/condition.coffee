@@ -91,3 +91,6 @@ onReportQueries ->
     initDatePicker: =>
       if @field().kind == 'date'
         window.model.initDatePicker()
+
+    isDependentFieldHierarchy: =>
+      return @field()?.kind == 'hierarchy' && @field()?.isEnableDependancyHierarchy
