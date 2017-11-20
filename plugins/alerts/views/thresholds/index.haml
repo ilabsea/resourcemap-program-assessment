@@ -153,6 +153,9 @@
               - collection.users.each do |user|
                 %input{ko(checked: 'membersEmail'), value: user.id, type: "checkbox"}= user.email
                 %br
+              %br 
+              %input{ko(checked: 'toReporter'), type: "checkbox" }= t('views.plugins.alerts.form.reporter')
+              %br
           .middlebuttons.w30{:style => "float: left;"}
             = t('views.plugins.alerts.form.send_text_messages_to')
             %p.list-box
