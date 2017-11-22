@@ -12,7 +12,7 @@ onQueries ->
       @expandedRefineProperty = ko.observable()
       @expandedRefinePropertyValue = ko.observable()
       @expandedRefinePropertyOperator = ko.observable()
-      
+
       @expandedRefinePropertyDateFrom = ko.observable()
       @expandedRefinePropertyDateTo = ko.observable()
       @expandedRefinePropertyHierarchy = ko.observable()
@@ -23,12 +23,16 @@ onQueries ->
         if field
           if field.kind == 'date'
             if @expandedRefinePropertyOperator() != 'empty' && @expandedRefinePropertyDateFrom() && @expandedRefinePropertyDateTo() then return true
+          else if field.isDependentFieldHierarchy()
+            if @expandedRefinePropertyValue() then return true
+          else if field.kind == 'hierarchy'
+            if @expandedRefinePropertyHierarchy() then return true
           else
             if @expandedRefinePropertyOperator() != 'empty' && @expandedRefinePropertyValue() then return true
           if @expandedRefinePropertyOperator() == 'empty' then return true
         else if @expandedRefineProperty() == 'update' && @expandedRefinePropertyValue() then return true
         return false
-      
+
     bindHierarchyLabel: (field, value) ->
       for key,item of field.fieldHierarchyItemsMap
         if key == value
@@ -42,7 +46,7 @@ onQueries ->
     toggleRefineProperty: (property) ->
       if @expandedRefineProperty() == property
         @expandedRefineProperty(null)
-        @newCondition(null)
+        @newCondition(new Condition)
       else
         @expandedRefineProperty(null)
         @expandedRefinePropertyValue(null)
@@ -63,7 +67,7 @@ onQueries ->
 
     saveCondition: =>
       @nextId =  @currentQuery().conditions()?.next_id || @currentQuery().conditions().length + 1
-      condition = new Condition()
+      condition = @newCondition()
       condition.id @nextId
       @nextId++
 
@@ -74,7 +78,10 @@ onQueries ->
           condition.fieldDateFrom(@expandedRefinePropertyDateFrom())
           condition.fieldDateTo(@expandedRefinePropertyDateTo())
         else if field.kind == 'hierarchy'
-          condition.fieldValue(@expandedRefinePropertyHierarchy().id)
+          if field.isEnableDependancyHierarchy == false
+            condition.fieldValue(@expandedRefinePropertyHierarchy().id)
+          else
+            condition.fieldValue(@expandedRefinePropertyValue())
         else
           condition.fieldValue(@expandedRefinePropertyValue())
       else if @expandedRefineProperty() == 'update'
@@ -120,9 +127,9 @@ onQueries ->
       @clearUnsavedQuery(@currentQuery())  if @originalQuery
       @originalQuery = new Query(query.toJSON())
       @expandedRefineProperty(null)
-      @expandedRefinePropertyValue(null)      
+      @expandedRefinePropertyValue(null)
       @newQuery(null)
-            
+
       @cancelEditingQuery()
       @currentQuery query
       @isEditing(true)
@@ -143,7 +150,7 @@ onQueries ->
       else
         @queries.push(@currentQuery())
         $.post "/collections/#{@collectionId}/queries.json", json, @saveQueryCallback
-    
+
     saveQueryCallback: (data) =>
       @currentQuery().id(data?.id)
       @currentQuery().isEditing(false)
@@ -151,7 +158,7 @@ onQueries ->
       @newQuery null
 
     afterkeydown: =>
-      alert 'down'    
+      alert 'down'
 
     initInsteddPlatform:  ->
       $.instedd.init_components() if $.instedd
@@ -165,4 +172,4 @@ onQueries ->
                                                                     yearRange: "-100:+5",
                                                                     changeMonth: true,
                                                                     changeYear: true
-                                                                  )      
+                                                                  )

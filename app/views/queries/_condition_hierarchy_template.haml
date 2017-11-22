@@ -1,0 +1,25 @@
+/ko if: isEnableDependancyHierarchy
+%div
+  /ko foreach: hierarchySet()
+  %div.hierarchySet{style: 'width: 280px'}
+    %span.hierarchySetName{ko(text: :name)}
+    /ko if: $index() < $parent.hierarchySet().length-1
+    %select.right.w20{ko(options: :dependentHierarchyItemList, optionsText: "'name'",
+                          optionsValue: "'id'", value: :value, optionsCaption: "'(no value)'",
+                          event: {change: :updateDependentFieldsHierarchyItemList} )}
+    //ko
+
+    /ko if: $index() == $parent.hierarchySet().length-1
+    %select.right.w20{ko(options: :dependentHierarchyItemList, optionsText: "'name'",
+                          optionsValue: "'id'", value: '$root.expandedRefinePropertyValue', optionsCaption: "'(no value)'" )}
+    //ko
+
+  //ko
+  %button.white{ko(click: '$root.saveCondition', enable: '$root.validCondition')} OK
+
+//ko
+
+/ko ifnot: isEnableDependancyHierarchy
+%div.hierarchy-container{ko(template: {name: "'refine-hierarchy-items-template'", with: 'config.hierarchy'})}
+%button.white{ko(click: '$root.saveCondition', enable: '$root.validCondition')} OK
+//ko
