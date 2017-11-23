@@ -103,6 +103,7 @@ onCollections ->
 
       if @kind == 'hierarchy'
         @hierarchy = data.config?.hierarchy
+        @parent_hierarchy_field_id = data.config?.parent_hierarchy_field_id
 
       @buildHierarchyItems() if @hierarchy?
 
