@@ -1,4 +1,4 @@
-module Collection::ElasticsearchConcern
+module Collection::ElasticSearchConcern
   extend ActiveSupport::Concern
 
   included do

@@ -24,7 +24,7 @@
 
 class FieldHistory < ActiveRecord::Base
   include Field::Base
-  include Field::TireConcern
+  include Field::ElasticSearchConcern
 
   belongs_to :field
   belongs_to :collection

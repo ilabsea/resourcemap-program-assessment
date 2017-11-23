@@ -26,7 +26,7 @@ class Collection < ActiveRecord::Base
   include Collection::ShpConcern
   include Collection::GeomConcern
   include Collection::KmlConcern
-  include Collection::ElasticsearchConcern
+  include Collection::ElasticSearchConcern
   include Collection::PluginsConcern
   include Collection::ImportLayersSchemaConcern
 

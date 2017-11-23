@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Collection::ElasticsearchConcern do
+describe Collection::ElasticSearchConcern do
   let(:collection) { Collection.make }
 
   it "creates index on create" do
