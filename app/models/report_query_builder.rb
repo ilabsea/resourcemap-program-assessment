@@ -66,7 +66,7 @@ module ReportQueryBuilder
     value = condition_field["value"]
     {
       "term" => {
-        field_id => value
+        "properties.#{field_id}" => value
       }
     }
   end
