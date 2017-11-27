@@ -13,6 +13,7 @@ class ReportQueryGroupByBuilder
 
   def facet_term_stats
     exp = {}
+
     # leave last field as built in aggr, the rest for combination condition
     fields_combination_conditions = @report_query.group_by_fields[0..-2]
 
@@ -28,7 +29,7 @@ class ReportQueryGroupByBuilder
     @report_query.aggregate_fields.each do |agg_field|
       value_field = agg_field["field_id"]
 
-      if(facet_filter_values.empty?)
+      if facet_filter_values.empty?
         facet_tag =  value_field # // KampongCham_2015
         exp[facet_tag] = facet_term_stats_by_field(value_field)
       else
@@ -38,6 +39,7 @@ class ReportQueryGroupByBuilder
         end
       end
     end
+
     exp
   end
 
@@ -63,6 +65,7 @@ class ReportQueryGroupByBuilder
         }
       }
     }
+
     query
   end
 
@@ -90,32 +93,9 @@ class ReportQueryGroupByBuilder
     # take last field as built in field
     key_field = @report_query.group_by_fields[-1]
 
-    aggregation_stats_query = {
-      "#{key_field}" => {
-        'terms' => { 'field' => "properties.#{key_field}" },
-        'aggs' => {
-          'term' => { 'stats' => { 'field' => "properties.#{value_field}" } }
-        }
-      }
-    }
+    aggregation_stats_query = fields_aggs(key_field, value_field)
 
-    filtered_aggregation_query = {}
-
-    if(!facet_filter_value.empty?)
-      terms = []
-      facet_filter_value.each do |field_id, field_value|
-        term = { "term" => { "properties.#{field_id}" => field_value }}
-        terms <<  term
-      end
-
-      filtered_aggregation_query['filtered_aggregation'] = {
-        'filter' => {
-          'bool' => {
-            'must' => terms
-          }
-        }
-      }
-    end
+    filtered_aggregation_query = filtered_aggs facet_filter_value
 
     unless filtered_aggregation_query.empty?
       aggregation_stats_query = filtered_aggregation_query['filtered_aggregation'].merge({ 'aggs' => aggregation_stats_query })
@@ -186,6 +166,51 @@ class ReportQueryGroupByBuilder
     end
 
     elements
+  end
+
+  def fields_aggs key_field, value_field
+    @report_query.group_by_fields.count == 1 ? single_field_aggs(key_field, value_field) : multi_field_aggs(key_field, value_field)
+  end
+
+  def single_field_aggs key_field, value_field
+    {
+      'terms' => { 'field' => "properties.#{key_field}" },
+      'aggs' => {
+        'term' => { 'stats' => { 'field' => "properties.#{value_field}" } }
+      }
+    }
+  end
+
+  def multi_field_aggs key_field, value_field
+    {
+      "#{key_field}" => {
+        'terms' => { 'field' => "properties.#{key_field}" },
+        'aggs' => {
+          'term' => { 'stats' => { 'field' => "properties.#{value_field}" } }
+        }
+      }
+    }
+  end
+
+  def filtered_aggs aggs_filter_value = {}
+    query = {}
+
+    unless aggs_filter_value.empty?
+      terms = []
+      aggs_filter_value.each do |field_id, field_value|
+        terms << { "term" => { "properties.#{field_id}" => field_value }}
+      end
+
+      query['filtered_aggregation'] = {
+        'filter' => {
+          'bool' => {
+            'must' => terms
+          }
+        }
+      }
+    end
+
+    query
   end
 
 end

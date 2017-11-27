@@ -18,7 +18,6 @@ class ReportQuerySearch
     client = Elasticsearch::Client.new
     # {"query"=>{"match_all"=>{}}, "facets"=>{"20530"=>{"terms"=>{"field"=>"20530", "size"=>500}}}}
     response = client.search(index: @index_name, body: result_query)
-    @result = response['hits']['hits'].map { |item| item["_source"]["properties"].values.join(", ")}
     @facet = response['aggregations']
     ReportQuerySearchResult.new(@report_query, @facet).as_table
   end

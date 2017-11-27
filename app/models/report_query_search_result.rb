@@ -120,9 +120,11 @@ class ReportQuerySearchResult
 
       agg_key_name = key_names[-1]
 
-      search_value.each do |k, v|
-        next if k == 'doc_count'
-        v['buckets'].each do |term|
+      if search_value.has_key?('buckets')
+        # 1 grouped by field
+        agg_key_name = key
+
+        search_value['buckets'].each do |term|
           builtin_aggre = term['key']
           record_key = (key_result + [builtin_aggre]).join(ReportQuerySearchResult::DELIMITER)  # [3, district5, 2012]
 
@@ -131,6 +133,22 @@ class ReportQuerySearchResult
           agg_function_type = agg_function_types[agg_key_name]
           agg_key_value = term['term'][agg_function_type] # type of aggr SUM, COUNT
           results[record_key][agg_key_name] = agg_key_value
+        end
+      else
+        # more than 1 grouped by field
+        search_value.each do |k, v|
+          next if k == 'doc_count'
+
+          v['buckets'].each do |term|
+            builtin_aggre = term['key']
+            record_key = (key_result + [builtin_aggre]).join(ReportQuerySearchResult::DELIMITER)  # [3, district5, 2012]
+
+            results[record_key] = results[record_key] || {}
+
+            agg_function_type = agg_function_types[agg_key_name]
+            agg_key_value = term['term'][agg_function_type] # type of aggr SUM, COUNT
+            results[record_key][agg_key_name] = agg_key_value
+          end
         end
       end
     end
