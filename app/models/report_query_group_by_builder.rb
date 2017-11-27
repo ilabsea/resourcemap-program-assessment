@@ -90,7 +90,7 @@ class ReportQueryGroupByBuilder
 
 
   def facet_statistical_by_field agg_field_id
-    { 'stats' => { 'field' => "properties.#{agg_field_id}" } }
+    { 'stats' => generate_stats_cond(agg_field_id) }
   end
 
   # facet_filter_value = { "province" => 'kpc', "year" => 2015}
@@ -181,7 +181,7 @@ class ReportQueryGroupByBuilder
     {
       'terms' => { 'field' => "properties.#{key_field}" },
       'aggs' => {
-        'term' => { 'stats' => { 'field' => "properties.#{value_field}" } }
+        'term' => { 'stats' => generate_stats_cond(value_field) }
       }
     }
   end
@@ -191,7 +191,7 @@ class ReportQueryGroupByBuilder
       "#{key_field}" => {
         'terms' => { 'field' => "properties.#{key_field}" },
         'aggs' => {
-          'term' => { 'stats' => { 'field' => "properties.#{value_field}" } }
+          'term' => { 'stats' => generate_stats_cond(value_field) }
         }
       }
     }
@@ -216,6 +216,16 @@ class ReportQueryGroupByBuilder
     end
 
     query
+  end
+
+  def generate_stats_cond(field_id)
+    properties_value = "properties.#{field_id}"
+    if(Field.find(field_id).kind != "numeric")
+      stats = { "script" => { "inline" => "Double.parseDouble(doc['#{properties_value}'].value)"} }
+    else
+      stats = { 'field' => "properties.#{field_id}" }
+    end
+    return stats
   end
 
 end
