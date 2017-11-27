@@ -76,9 +76,14 @@ class ReportQueryGroupByBuilder
     index_name = Collection.index_name(@report_query.collection_id)
 
     client = Elasticsearch::Client.new
-    response = client.search index: index_name, body: query
-    bucket_values = response['aggregations'][field_id]['buckets']
-    result[field_id] = bucket_values.map { |value| value['key'] }
+
+    begin
+      response = client.search index: index_name, body: query
+      bucket_values = response['aggregations'][field_id]['buckets']
+      result[field_id] = bucket_values.map { |value| value['key'] }
+    rescue Exception => e
+      Rails.logger.error e
+    end
 
     result
   end
