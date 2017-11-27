@@ -99,12 +99,12 @@ module SearchBase
   def where(properties = {})
     properties.each do |condition_id, fieldValue|
       fieldValue.each do |es_code, value|
-        case 
+        case
         when es_code == "location_missing" then location_missing(condition_id)
         when es_code == "updated_since" then after(value, condition_id)
         else
           field = check_field_exists es_code
-          
+
           if value.is_a? String
             case
             when value[0 .. 1] == '<=' then lte(condition_id, field, value[2 .. -1].strip)
@@ -156,6 +156,11 @@ module SearchBase
 
   def alerted_search(v)
     @search.filter :term, alert: v
+    self
+  end
+
+  def alerted_to_reporter(v)
+    @search.filter :term, reporter: v
     self
   end
 
@@ -306,7 +311,7 @@ module SearchBase
         expr = {t => [expr, nextExpr]}
         t = peek
       end
-    
+
       return expr
     end
 
@@ -322,7 +327,7 @@ module SearchBase
     self
   end
 
-  def apply_queries 
+  def apply_queries
     @search.query { |q|
       query = @queries.join " AND " if @queries
       case

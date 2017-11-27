@@ -33,7 +33,7 @@ class MapSearch
     listener = clusterer = Clusterer.new(@zoom)
     clusterer.highlight @hierarchy if @hierarchy
     listener = ElasticSearch::SitesAdapter::SkipIdListener.new(listener, @exclude_id) if @exclude_id
-    
+
     set_bounds_filter
     # apply_queries
 
@@ -58,10 +58,11 @@ class MapSearch
       @search.sort { by 'name_not_analyzed' }
     end
     @search.size 1_000_000
-    
+
     Rails.logger.debug @search.to_curl if Rails.logger.level <= Logger::DEBUG
 
     results = @search.perform.results
+
     sites = []
     results.each do |item|
       site = Hash.new
