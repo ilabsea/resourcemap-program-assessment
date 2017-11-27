@@ -9,6 +9,8 @@ module Site::AlertConcerns
     alert = collection.thresholds_test self unless self.is_a? SiteHistory
     if alert != nil
       extended_properties[:alert] = true
+      extended_properties[:alert_id] = alert.id
+      extended_properties[:notify_to] = {reporter: (alert.email_notification[:to_reporter] == "true")}
       extended_properties[:color] = alert.color
       extended_properties[:ord] = alert.ord
 
