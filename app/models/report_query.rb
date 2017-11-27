@@ -26,7 +26,7 @@ class ReportQuery < ActiveRecord::Base
   has_many :report_query_templates, dependent: :restrict
 
   attr_accessible :aggregate_fields, :condition,  :condition_fields,
-                  :group_by_fields, :name, :parse_condition, :collection_id
+                  :group_by_fields, :name, :parse_condition, :collection_id, :is_total_aggregate_field
 
   before_save :sanitize_condition
   after_save :build_report_caching

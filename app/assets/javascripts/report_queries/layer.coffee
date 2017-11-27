@@ -9,7 +9,7 @@ onReportQueries ->
                   $.map(data.fields, (x) => new Field(@, x))
                 else
                   []
-      @fieldsNumericOnly = @fields.filter (field) -> field.kind == 'numeric'
+      @fieldsNumericAndCalculationOnly = @fields.filter (field) -> field.kind == 'numeric' or field.kind == 'calculation'
 
       @expanded = ko.observable(false)
       @whiteListFieldType = ['text', 'numeric', 'yes_no', 'select_one', 'hierarchy', 'date', 'calculation', 'location', 'email', 'phone']
