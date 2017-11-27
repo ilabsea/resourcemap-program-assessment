@@ -70,39 +70,6 @@ module Api::V1
       end
     end
 
-    def search_alert_site
-      if params[:collection_ids]
-        data = []
-        params[:collection_ids].each do |id|
-          result = search_alert_site_by_collection id, params
-          data.concat result
-        end
-        render json: data
-      else
-        render json: []
-      end
-    end
-
-    def search_alert_site_by_collection collection_id, params
-      zoom = params[:z].to_i
-
-      search = MapSearch.new [collection_id], user: current_user
-
-      search.zoom = zoom
-      search.bounds = params if zoom >= 2
-      search.exclude_id params[:exclude_id].to_i if params[:exclude_id].present?
-      search.full_text_search params[:search] if params[:search].present?
-      search.alerted_search params[:_alert] if params[:_alert].present?
-      search.my_site_search current_user.id if current_user && !current_user.can_view_other?(collection_id)
-      if params[:selected_hierarchies].present?
-        search.selected_hierarchy params[:hierarchy_code], params[:selected_hierarchies]
-      end
-      search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :search, :hierarchy_code, :selected_hierarchies, :_alert)
-
-      search.prepare_filter
-      return search.sites_json
-    end
-
     private
     def sanitized_site_params new_record
       parameters = params[:site]
