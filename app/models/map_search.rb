@@ -3,7 +3,6 @@ class MapSearch
 
   def initialize(collection_ids, options = {})
     @collection_ids = Array(collection_ids)
-    # @search = Collection.new_tire_search(*@collection_ids, options)
     @search = Collection.index_names_with_options(*@collection_ids, options)
     @index_names = Collection.index_names_with_options(*@collection_ids, options)
     # @search.size 100000
@@ -157,6 +156,7 @@ class MapSearch
         io.close
       end
     end
+
     reader
   end
 end

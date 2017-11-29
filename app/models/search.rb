@@ -1,7 +1,7 @@
 class Search
   include SearchBase
 
-  class Search::Results
+  class Results
     include Enumerable
 
     attr_reader :sites
@@ -46,7 +46,6 @@ class Search
 
   def initialize(collection, options)
     @collection = collection
-    # @search = collection.new_tire_search(options)
     @index_names = collection.index_names_with_options(options)
     @snapshot_id = options[:snapshot_id]
     if options[:current_user]

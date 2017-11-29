@@ -38,7 +38,7 @@ module SearchBase
 
   def eq(condition_id , field, value)
     if value.blank?
-      add_filter missing: {field: field.es_code}
+      add_filter missing: { field: "properties.#{field.es_code}" }
       return self
     end
 
@@ -67,13 +67,6 @@ module SearchBase
     else
       { term: {query_key => validated_value} }
     end
-
-    # elsif field.select_kind?
-    #   {term: {query_key => validated_value}}
-    #   add_filter term: {query_key => validated_value}
-    # else
-    # end
-
   end
 
   def date_field_range(key, valid_value)
@@ -85,7 +78,7 @@ module SearchBase
 
   def under(field, value)
     if value.blank?
-      add_filter missing: {field: field.es_code}
+      add_filter missing: {field: "properties.#{field.es_code}" }
       return self
     end
 
@@ -104,8 +97,8 @@ module SearchBase
 
   def starts_with(condition_id, field, value)
     validated_value = field.apply_format_query_validation(value, @use_codes_instead_of_es_codes)
-    query_key = field.es_code
-    add_filter key: query_key, value: validated_value, type: :prefix, condition_id: condition_id
+    query_key = "properties.#{field.es_code}"
+    add_filter query: { match_phrase_prefix: { query_key => validated_value } }
     self
   end
 
@@ -213,7 +206,7 @@ module SearchBase
   end
 
   def alerted_search(v)
-    add_filter term: {alert: v}
+    add_filter term: { alert: v }
     self
   end
 
@@ -291,23 +284,23 @@ module SearchBase
 
   def eq_hierarchy(field, value)
     if value.blank?
-      @search.filter :missing, {field: field.es_code}
+      @search.filter :missing, { field: "properties.#{field.es_code}" }
       return self
     end
 
     validated_value = field.apply_format_query_validation(value, @use_codes_instead_of_es_codes)
-    query_key = field.es_code
+    query_key = "properties.#{field.es_code}"
 
     if field.kind == 'yes_no'
-      @search.filter :term, query_key => Field.yes?(value)
+      add_filter term: { query_key => Field.yes?(value) }
     elsif field.kind == 'date'
       date_field_range(query_key, validated_value)
     elsif field.kind == 'hierarchy' and value.is_a? Array
-      @search.filter :terms, query_key => validated_value
+      add_filter terms: { query_key => validated_value }
     elsif field.select_kind?
-      @search.filter :term, query_key => validated_value
+      add_filter term: { query_key => validated_value }
     else
-      @search.filter :term, query_key => value
+      add_filter term: { query_key => value }
     end
 
     self
@@ -318,7 +311,7 @@ module SearchBase
     if value.present?
       eq_hierarchy field, value
     else
-      add_filter not: {exists: {field: es_code}}
+      add_filter not: { exists: { field: "properties.#{es_code}" } }
     end
   end
 
