@@ -106,9 +106,7 @@ class Field::SelectManyField < Field
         end
       end
     else
-      config['options'].each do |option|
-        value_id = option['id'] if option['id'].to_s == value.to_s
-      end
+      value_id = value
     end
     raise "Invalid option in field #{code}" if value_id.nil?
     value_id
