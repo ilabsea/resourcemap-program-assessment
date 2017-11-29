@@ -256,8 +256,8 @@ class CollectionsController < ApplicationController
       obj[:color] = source['color']
       obj[:created_at] = Site.parse_time(source['created_at'])
       obj[:updated_at] = Site.parse_time(source['updated_at'])
-      obj[:start_entry_date] = Site.parse_time(source['start_entry_date']).strftime("%d/%m/%Y %H:%M:%S")
-      obj[:end_entry_date] = Site.parse_time(source['end_entry_date']).strftime("%d/%m/%Y %H:%M:%S")
+      obj[:start_entry_date] = Site.parse_time(source['start_entry_date']).strftime("%d/%m/%Y %H:%M:%S") if source['start_entry_date'].present?
+      obj[:end_entry_date] = Site.parse_time(source['end_entry_date']).strftime("%d/%m/%Y %H:%M:%S") if source['end_entry_date'].present?
 
       if source['location']
         obj[:lat] = source['location']['lat']
