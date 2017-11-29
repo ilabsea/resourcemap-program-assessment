@@ -4,7 +4,11 @@ onCollections ->
       @field = field
 
     domObject: ->
-      @fieldUI = $('#'+@field.kind+'-input-' + @field.code)
+      if(@field.isForCustomWidget())
+        @fieldUI = $('#custom-widget-' + @field.code)
+      else
+        @fieldUI = $('#'+@field.kind+'-input-' + @field.code)
+
       return @fieldUI
 
     getValue: ->
