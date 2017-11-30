@@ -9,5 +9,10 @@ module Api::V1
       fields = collection.visible_layers_for current_user
       render json: fields
     end
+
+    def show
+      field = Field.find(params[:id])
+      render json: field
+    end
   end
 end
