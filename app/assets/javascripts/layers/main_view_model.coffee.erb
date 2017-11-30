@@ -43,9 +43,6 @@ onLayers ->
 
       @tmpSelectedField = ko.observable()
 
-      # @fieldList = ko.computed =>
-      #   return @currentLayer()?.fields() ? []
-
       @customWidgetedFields = ko.computed =>
         @currentLayer()?.fields().filter (f) => f.custom_widgeted()
 
@@ -66,15 +63,15 @@ onLayers ->
       @fieldList = ko.computed =>
         fields = []
         for layer in @layers()
-          fields = fields.concat layer.fields()
+          fields = fields.concat layer.fields().filter((field) => typeof field.id() isnt 'undefined' )
         return fields
 
       @autoCompleteFieldList = ko.computed =>
         fields = []
         for layer in @layers()
-          fields = fields.concat layer.fields().map((f) => {
-              value: f.id(), label: f.name(),
-          })
+          layer_fields = layer.fields().filter((field) => typeof field.id() isnt 'undefined' )
+          fields = fields.concat layer_fields.map((f) => { value: f.id(), label: f.name()})
+
         return fields
 
 
