@@ -89,7 +89,7 @@
   = render 'layers/advanced_field_editor'
   //ko
 
-  /ko if: $root.selectLogicLayers().length > 0
+  /ko if: $root.layerList().length > 0
   /ko ifnot: custom_widgeted()
   %hr/
   = ko_check_box_tag :is_enable_field_logic, css: {error: :codeError}
