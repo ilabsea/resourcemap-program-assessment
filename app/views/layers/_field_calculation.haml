@@ -1,5 +1,5 @@
 <!-- ko with: impl() -->
-%input#field-search{"data-bind" => "value: autoCompleteValue, ko_autocomplete: { source: $root.autoCompleteFieldList(), select: selectField }", :type => "text"}
+%input#field-search.ux-search{"data-bind" => "value: autoCompleteValue, ko_autocomplete: { source: $root.autoCompleteFieldList(), select: selectField }", :type => "text"}
 
 /ko if: dependent_fields().length > 0
 .superblyTagfieldDiv{style: "border: 0 solid #dddddd; border-radius: 0; box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3) inset;"}

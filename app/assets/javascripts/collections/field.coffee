@@ -613,7 +613,7 @@ onCollections ->
         true
 
     visible: =>
-      if (@kind != "calculation" || (@kind == "calculation" && @is_display_field)) && !@isForCustomWidget()
+      if (@kind != "calculation" || (@kind == "calculation" && @is_display_field())) && !@isForCustomWidget()
         true
       else
         false
