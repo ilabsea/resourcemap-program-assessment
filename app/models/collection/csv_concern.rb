@@ -85,8 +85,8 @@ module Collection::CsvConcern
         end
 
         updated_at = Site.parse_time(source['updated_at']).strftime("%d/%m/%Y %H:%M:%S")
-        start_entry_date = Site.parse_time(source['start_entry_date']).strftime("%d/%m/%Y %H:%M:%S")
-        end_entry_date = Site.parse_time(source['end_entry_date']).strftime("%d/%m/%Y %H:%M:%S")
+        start_entry_date = Site.parse_time(source['start_entry_date']).strftime("%d/%m/%Y %H:%M:%S") if source['start_entry_date'].present?
+        end_entry_date = Site.parse_time(source['end_entry_date']).strftime("%d/%m/%Y %H:%M:%S") if source['end_entry_date'].present?
 
         row << start_entry_date
         row << end_entry_date

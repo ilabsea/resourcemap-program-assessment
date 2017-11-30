@@ -17,10 +17,10 @@ module Api::JsonHelper
     obj[:id] = source['id']
     obj[:id_with_prefix] = source['id_with_prefix']
     obj[:name] = source['name']
-    obj[:createdAt] = Site.parse_time(source['created_at'])
-    obj[:updatedAt] = Site.parse_time(source['updated_at'])
-    obj[:startEntryDate] = Site.parse_time(source['start_entry_date'])
-    obj[:endEntryDate] = Site.parse_time(source['end_entry_date'])
+    obj[:createdAt] = Site.parse_time(source['created_at']) if source['created_at'].present?
+    obj[:updatedAt] = Site.parse_time(source['updated_at']) if source['updated_at'].present?
+    obj[:startEntryDate] = Site.parse_time(source['start_entry_date']) if source['start_entry_date'].present?
+    obj[:endEntryDate] = Site.parse_time(source['end_entry_date']) if source['end_entry_date'].present?
     obj[:user_id] = source['user_id'];
     obj[:collection_id] = source['collection_id'];
 
