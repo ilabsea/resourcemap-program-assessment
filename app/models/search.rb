@@ -53,7 +53,7 @@ class Search
     else
       @current_user = User.find options[:current_user_id] if options[:current_user_id]
     end
-    @sort_list = {}
+    @sort_list = []
     @from = 0
     @page_size = 50
   end
@@ -75,20 +75,21 @@ class Search
 
   def sort(es_code, ascendent = true)
     if es_code == 'id' || es_code == 'name' || es_code == 'name_not_analyzed'
-      sort = es_code == 'name' ? 'name_not_analyzed' : es_code
+      sort_field = es_code == 'name' ? 'name_not_analyzed' : es_code
     else
-      sort = decode(es_code)
+      sort_field = "properties." + decode(es_code)
     end
-    @sort = true
+    
     ascendant = ascendent ? 'asc' : 'desc'
-    @sort_list[sort] = ascendant
+    @sort_list.push({sort_field => ascendant})
     self
   end
 
-  def sort_multiple(sort_list)
-    sort_list.each_pair do |es_code, ascendent|
+  def sort_multiple(sort_fields)
+    sort_fields.each_pair do |es_code, ascendent|
       sort(es_code, ascendent)
     end
+
     self
   end
 
@@ -100,8 +101,8 @@ class Search
   def get_body
     body = super
 
-    if @sorts
-      body[:sort] = @sorts
+    if @sort_list
+      body[:sort] = @sort_list
     else
       body[:sort] = 'name.downcase'
     end
