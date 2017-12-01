@@ -89,6 +89,7 @@ module Site::IndexUtils
       name: site.name,
       id_with_prefix: site.id_with_prefix,
       uuid: site.uuid,
+      name_not_analyzed: site.name,
       type: :site,
       properties: site.properties,
       created_at: site.created_at.utc.strftime(DateFormat),
@@ -96,6 +97,8 @@ module Site::IndexUtils
       start_entry_date: site.start_entry_date.utc.strftime(DateFormat),
       end_entry_date: site.end_entry_date.utc.strftime(DateFormat),
       icon: site.collection.icon,
+      user_id: site.user_id,
+      collection_id: site.collection_id,
       # If the migration to add the version in Sites is not runned, then calling site.version will cause some previous migration to fail
       version: (site.version rescue nil)
     }
@@ -130,6 +133,7 @@ module Site::IndexUtils
         },
         id_with_prefix: { type: :string },
         uuid: { type: :string, index: :not_analyzed },
+        name_not_analyzed: { type: :string, index: :not_analyzed },
         location: { type: :geo_point },
         lat_analyzed: { type: :string },
         lng_analyzed: { type: :string },
@@ -137,6 +141,8 @@ module Site::IndexUtils
         updated_at: { type: :date, format: :basic_date_time },
         start_entry_date: { type: :date, format: :basic_date_time },
         end_entry_date: { type: :date, format: :basic_date_time },
+        user_id: { type: :string },
+        collection_id: { type: :string },
         properties: { properties: fields_mapping(fields) },
         version: { type: :long }
       }
