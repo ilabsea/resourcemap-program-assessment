@@ -43,18 +43,15 @@ onLayers ->
 
       @tmpSelectedField = ko.observable()
 
-      @fieldList = ko.computed =>
-        return @currentLayer()?.fields() ? []
-
       @customWidgetedFields = ko.computed =>
-        @fieldList().filter (f) => f.custom_widgeted()
+        @currentLayer()?.fields().filter (f) => f.custom_widgeted()
 
       @selectedCustomWidgetField = ko.observable()
       @selectedCollectionCustomAggregator = ko.observable()
 
       @savingLayer = ko.observable(false)
 
-      @selectLogicLayers = ko.computed =>
+      @layerList = ko.computed =>
         if @currentLayer()
           if @currentLayer().id()
             @layers()
@@ -63,14 +60,20 @@ onLayers ->
         else
           []
 
-      @selectNumericLayers = ko.computed =>
-        if @currentLayer()
-          if @currentLayer().id()
-            @layers()
-          else
-            @layers().filter (layer) => typeof layer.id() isnt 'undefined'
-        else
-          []
+      @fieldList = ko.computed =>
+        fields = []
+        for layer in @layers()
+          fields = fields.concat layer.fields().filter((field) => typeof field.id() isnt 'undefined' )
+        return fields
+
+      @autoCompleteFieldList = ko.computed =>
+        fields = []
+        for layer in @layers()
+          layer_fields = layer.fields().filter((field) => typeof field.id() isnt 'undefined' )
+          fields = fields.concat layer_fields.map((f) => { value: f.id(), label: f.name()})
+
+        return fields
+
 
       @isAddNew = ko.observable(false)
       @isAddNewValidation = ko.observable(false)
@@ -155,7 +158,7 @@ onLayers ->
 
     addDependentField: (field) =>
       field_id =$("#calculation_field").val()
-      for l in @selectLogicLayers()
+      for l in @layerList()
         for f in l.fields()
           if parseInt(f.id()) == parseInt(field_id)
             @currentField().impl().addDependentField(f)
@@ -437,6 +440,7 @@ onLayers ->
         @currentField(new Field(@currentLayer(), kind: kind, ord: @currentLayer().fields().length + 1))
         @currentLayer().fields.push(@currentField())
         @currentField().hasFocus(true)
+
     selectField: (field) =>
       @isAddNew(false)
       @currentField(field)

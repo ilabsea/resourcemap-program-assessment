@@ -20,9 +20,9 @@ onCollections ->
 
     setValue: (value)->
       if (@field.allowsDecimals() && !isNaN(value))
-        digitsPrecision = field.digitsPrecision
+        digitsPrecision = @field.digitsPrecision
+        value = parseFloat(value)
         if (digitsPrecision)
-          value = parseFloat(value)
           value = Number(value.toFixed(parseInt(digitsPrecision)))
       if ((typeof (value) == "string" && value.indexOf("NaN") > -1))
         value = value.replace("NaN", "");

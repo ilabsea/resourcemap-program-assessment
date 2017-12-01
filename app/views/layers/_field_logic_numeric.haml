@@ -5,7 +5,7 @@
     %div.box.grey.w25{style: 'padding-bottom:10px'}
       %div{style: 'padding-bottom:5px'}
         %span.smalltext.left Skip this field when
-        %select{"data-bind" => 'foreach: $root.selectLogicLayers(), value: field_id, selectedOptions: field_id', style: 'max-width:135px;background-color:white', disabled: "disabled"}
+        %select{"data-bind" => 'foreach: $root.layerList(), value: field_id, selectedOptions: field_id', style: 'max-width:135px;background-color:white', disabled: "disabled"}
           /ko if: $index() == 0
           %option{value: ""} (no value)
           //ko
@@ -37,7 +37,7 @@
     %div.box.grey.w25{style: 'padding-bottom:10px'}
       %div{style: 'padding-bottom:5px'}
         %span.smalltext.left Skip this field when
-        %select{"data-bind" => 'foreach: $root.selectLogicLayers(), value: field_id, selectedOptions: field_id', style: 'max-width:135px;background-color:white'}
+        %select{"data-bind" => 'foreach: $root.layerList(), value: field_id, selectedOptions: field_id', style: 'max-width:135px;background-color:white'}
           /ko if: $index() == 0
           %option{value: ""} (no value)
           //ko
@@ -69,7 +69,7 @@
     %div.box.grey.w25{style: 'padding-bottom:10px'}
       %div{style: 'padding-bottom:5px'}
         %span.smalltext.left Skip this field when
-        %select{"data-bind" => 'foreach: $root.selectLogicLayers(), value: field_id, selectedOptions: field_id', style: 'max-width:135px;background-color:white'}
+        %select{"data-bind" => 'foreach: $root.layerList(), value: field_id, selectedOptions: field_id', style: 'max-width:135px;background-color:white'}
           /ko if: $index() == 0
           %option{value: ""} (no value)
           //ko
