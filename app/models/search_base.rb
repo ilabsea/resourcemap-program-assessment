@@ -148,7 +148,7 @@ module SearchBase
           elsif value.is_a? Hash
             value.each { |pair| op(condition_id, field, pair[0], pair[1]) }
           else
-            eq(condition_id , field, value)
+            eq(condition_id, field, value)
           end
         end
       end
@@ -193,15 +193,16 @@ module SearchBase
   def after(time, condition_id)
     time = parse_time(time)
     updated_since_query(time, condition_id)
+    self
   end
 
   def updated_since(iso_string)
     time = Time.iso8601(iso_string)
     updated_since_query(time)
+    self
   end
 
   def updated_since_query(time, condition_id)
-    # add_filter key: :updated_at, value: {gte: Site.format_date(time)}, type: :range, condition_id: condition_id
     add_filter range: {updated_at: {gte: Site.format_date(time)}}
   end
 
@@ -280,6 +281,7 @@ module SearchBase
 
   def location_missing(condition_id)
     add_filter not: {exists: {field: :location}}
+    self
   end
 
   def eq_hierarchy(field, value)
@@ -428,17 +430,10 @@ module SearchBase
     self
   end
 
-  def add_filter(filter)
-    @filters ||= []
-    @filters.push filter
-  end
-
   def add_facet(name, value)
     @facets ||= {}
     @facets[name] = value
   end
-
-  private
 
   def decode(code)
     return code unless @use_codes_instead_of_es_codes

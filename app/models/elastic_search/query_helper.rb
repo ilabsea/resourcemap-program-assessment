@@ -43,7 +43,7 @@ module ElasticSearch::QueryHelper
           field = collection.fields.find { |x| x.code == key || x.name == key}
           next unless field
 
-          key = field.es_code
+          key = "properties." + field.es_code
           op, value = SearchParser.get_op_and_val value
 
           # Check if the user is searching a label instead of the code
@@ -53,15 +53,15 @@ module ElasticSearch::QueryHelper
 
         case op
         when '='
-          tire_search.filter :term, key => value
+          tire_search.add_filter term: { key => value }
         when '<'
-          tire_search.filter :range, key => {lt: value}
+          tire_search.add_filter range: { key => {lt: value} }
         when '<='
-          tire_search.filter :range, key => {lte: value}
+          tire_search.add_filter range: { key => {lte: value} }
         when '>'
-          tire_search.filter :range, key => {gt: value}
+          tire_search.add_filter range: { key => {gt: value} }
         when '>='
-          tire_search.filter :range, key => {gte: value}
+          tire_search.add_filter range: { key => {gte: value} }
         end
       end
       conditions.length > 0 ? (conditions.join " AND ") : nil
@@ -81,7 +81,7 @@ module ElasticSearch::QueryHelper
       regex = /#{text}/i
       fields_to_search.each do |field|
         option_id = search_value_id field, regex
-        codes[field.es_code] = option_id if option_id
+        codes["properties.#{field.es_code}"] = option_id if option_id
       end
       codes
     end
