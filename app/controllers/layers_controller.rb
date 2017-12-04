@@ -142,15 +142,7 @@ class LayersController < ApplicationController
             field[:config][:field_logics].each { |field_logic|
               field_logic['id'] = field_logic['id'].to_i
               field_logic['value'] = field_logic['value']
-              if field_logic['field_id']
-                field_logic['field_id'].each { |field_id|
-                  if field_id == ""
-                    field_logic['field_id'] = nil
-                  else
-                    field_logic['field_id'] = field_id
-                  end
-                }
-              end
+              field_logic['field_id'] = field_logic['field_id']
             }
           else
             field[:config][:field_logics] = []
@@ -281,10 +273,7 @@ class LayersController < ApplicationController
     json = layers.includes(:fields).all.as_json(:include => {:fields => {except: [:updated_at, :created_at]}}).each { |layer|
       total_field = layer[:fields].length
       all_fields = layer[:fields]
-      if( total_field > 50)
-        layer[:fields] = layer[:fields][0..9]
-      end
-      layer[:fields] = layer[:fields][0..9]
+      layer[:fields] = layer[:fields]
       layer['total'] = total_field
       all_fields.each { |field|
         field['threshold_ids'] = get_associated_field_threshold_ids(field)

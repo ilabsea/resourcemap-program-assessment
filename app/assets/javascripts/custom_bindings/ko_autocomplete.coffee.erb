@@ -1,0 +1,11 @@
+ko.bindingHandlers.ko_autocomplete =
+  init: (element, params) ->
+    $(element).autocomplete params()
+    return
+  update: (element, params) ->
+      $(element).autocomplete
+        minLength : $(element).attr('minChar') ? 3
+        'option',
+        'source',
+        params().source
+      return

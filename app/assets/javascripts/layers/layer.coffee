@@ -12,6 +12,7 @@ onLayers ->
         @fields = ko.observableArray($.map(data.fields, (x) => new Field(@, x)))
       else
         @fields = ko.observableArray([])
+      @displayed_fields = ko.observableArray(@fields()[0..9])
       @numeric_fields = ko.observableArray($.map(@fields(), (f) => f if f.kind() == 'numeric'))
       @support_skiplogic_fields = ko.observableArray($.map(@fields(), (f) => f if (f.kind() == 'numeric' or f.kind() == 'yes_no' or f.kind() == 'select_one' or f.kind() == 'select_many')))
       @deletable = ko.observable(true)
@@ -51,6 +52,7 @@ onLayers ->
       $.get "/collections/#{collectionId}/layers/#{layer.id()}.json", {}, (l) =>
         f = ko.observableArray($.map(l["fields"], (x) => new Field(@, x)))
         layer.fields(f())
+        layer.displayed_fields(f())
         layer.total(null)
 
     modifyDependentFieldCustomWidget: (replace_fields) =>
