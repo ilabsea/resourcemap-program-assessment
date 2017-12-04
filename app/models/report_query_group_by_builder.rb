@@ -222,11 +222,6 @@ class ReportQueryGroupByBuilder
   def generate_stats_cond(field_id)
     properties_value = "properties.#{field_id}"
     if(Field.find(field_id).kind != "numeric")
-      if @report_query.aggregate_fields.empty? and report_query.group_by_fields.empty?
-
-      else
-
-      end
       stats = { "script" => { "inline" => "Double.parseDouble(doc['#{properties_value}'].value)"}}
     else
       stats = { 'field' => "#{properties_value}"}
