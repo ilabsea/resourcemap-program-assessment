@@ -12,6 +12,7 @@ onLayers ->
       @default_select = '(no value)'
       @newOption = ko.observable(new Option)
       @newFieldLogic = ko.observable(new FieldLogic)
+      @currentFieldLogic = ko.observable()
       @newFieldValidation = ko.observable(new FieldValidation)
       @newAttribute = ko.observable(new Attribute)
       @collectionList = window.collectionList
@@ -19,7 +20,12 @@ onLayers ->
         $.trim(@newOption().code()).length > 0 && $.trim(@newOption().label()).length > 0
 
       @fieldLogicValid = ko.computed =>
-        ($.trim(@newFieldLogic().value()).length > 0 || $.trim(@newFieldLogic().condition_type()).length > 0) && $.trim(@newFieldLogic().field_id()).length > 0
+        if @currentFieldLogic()
+          ($.trim(@currentFieldLogic().value()).length > 0 &&
+           $.trim(@currentFieldLogic().condition_type()).length > 0) &&
+           $.trim(@currentFieldLogic().field_id()).length > 0
+        else
+          false
 
       @fieldCustomValidationValid = ko.computed =>
         $.trim(@newFieldValidation().condition_type()).length > 0 && $.trim(@newFieldValidation().field_id()).length > 0
@@ -69,7 +75,7 @@ onLayers ->
       @autoCompleteFieldList = ko.computed =>
         fields = []
         for layer in @layers()
-          layer_fields = layer.fields().filter((field) => typeof field.id() isnt 'undefined' )
+          layer_fields = layer.fields().filter((field) => typeof field.id() isnt 'undefined' && field.id() != @currentField()?.id() )
           fields = fields.concat layer_fields.map((f) => { value: f.id(), label: f.name()})
 
         return fields
@@ -179,6 +185,7 @@ onLayers ->
           numeric_fields = ko.observableArray($.map(l["fields"], (f) => f if f.kind == 'numeric'))
           support_skiplogic_fields = ko.observableArray($.map(l["fields"], (f) => f if (f.kind == 'numeric' or f.kind == 'yes_no' or f.kind == 'select_one' or f.kind == 'select_many')))
           layer.fields(fields())
+          layer.displayed_fields(fields())
           layer.numeric_fields(numeric_fields())
           layer.support_skiplogic_fields(support_skiplogic_fields())
         else
@@ -231,7 +238,6 @@ onLayers ->
           field.layer().total(field.layer().total()+1)
           @currentLayer().fields.remove(field)
           # i does not change because we just removed an element
-
       @currentLayer().total(@currentLayer().fields().length)
       @reloadOrder(layer) for layer in layersToReloadOrder
 
@@ -314,13 +320,15 @@ onLayers ->
 
     modifyFieldLogic: (field) =>
       if field.is_enable_field_logic
-        if field.config
+        if field.config && field.config.field_logics
           fieldLogics = field.config.field_logics
           $.map(fieldLogics, (f) =>
-            if f.field_id.length == 1
-              f.field_id = f.field_id[0].toString()
-            else
-              f.field_id = f.field_id.toString()
+            if typeof f.field_id != 'undefined'
+              if (typeof f.field_id == 'object') && f.field_id.length > 0
+                f.field_id = f.field_id[0].toString()
+              else
+                f.field_id = f.field_id.toString()
+
           )
       return field
 
@@ -439,6 +447,7 @@ onLayers ->
       else
         @currentField(new Field(@currentLayer(), kind: kind, ord: @currentLayer().fields().length + 1))
         @currentLayer().fields.push(@currentField())
+        @currentLayer().displayed_fields.push(@currentField())
         @currentField().hasFocus(true)
 
     selectField: (field) =>
@@ -502,6 +511,7 @@ onLayers ->
     addFieldLogic: =>
       field_logic = new FieldLogic
       @newFieldLogic(field_logic)
+      @currentFieldLogic(@newFieldLogic())
       @isAddNew(true)
 
     addFieldValidation: =>
@@ -567,11 +577,8 @@ onLayers ->
 
     editFieldLogic: (field) =>
       field.editing(true)
-      @newFieldLogic(new FieldLogic)
-      @newFieldLogic().id(field.id())
-      @newFieldLogic().field_id(field.field_id())
-      @newFieldLogic().value(field.value())
-      @newFieldLogic().condition_type(field.condition_type())
+      @currentFieldLogic(field)
+      @originalFieldLogic = {id: field.id(), field_id: field.field_id(), condition_type: field.condition_type(), value: field.value(), autoCompleteValue: field.autoCompleteValue()}
 
     editFieldValidation: (field) =>
       field.editing(true)
@@ -590,15 +597,18 @@ onLayers ->
       field.editing(false)
 
     cancelFieldLogic: (field) =>
-      field_logic = @newFieldLogic()
-      if field_logic.id()?
-        field.value(field_logic.value())
-        field.field_id(field_logic.field_id())
-        field.condition_type(field_logic.condition_type())
+      field_logic = @originalFieldLogic
+      if field_logic?.id?
+        field.value(field_logic.value)
+        field.field_id(field_logic.field_id)
+        field.condition_type(field_logic.condition_type)
+        field.autoCompleteValue(field_logic.autoCompleteValue)
       else
         @isAddNew(false)
 
       field.editing(false)
+      @originalFieldLogic = null
+
     updateFieldLogic: (field) =>
       field.editing(false)
 
@@ -678,7 +688,7 @@ onLayers ->
 
     validateFieldLogic: (field_logic) =>
       error = {}
-      field_logic_id = field_logic.field_id()[0]
+      field_logic_id = field_logic.field_id()
       $.map(model.layers(), (x, index) =>
         fields = x.fields()
         $.map(fields, (f) =>
