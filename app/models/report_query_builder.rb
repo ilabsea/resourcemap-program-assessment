@@ -58,7 +58,7 @@ module ReportQueryBuilder
     operator_type = operator_types[operator]
     {
       "range" => {
-        field_id => {
+        "properties.#{field_id}" => {
           operator_type => value
         }
       }
@@ -75,4 +75,16 @@ module ReportQueryBuilder
     }
   end
 
+  def ignor_null_field builder
+    exists_query = []
+    @report_query.aggregate_fields.each do |agf|
+      if (Field.find(agf["field_id"]).kind != "numeric")
+        exists_query.push({"exists" => { "field" => "properties.#{agf['field_id']}"}})
+      end
+    end
+    builder["query"].delete("match_all")
+    builder["query"]["bool"] = {}
+    builder["query"]["bool"]["must"] = exists_query
+    builder
+  end
 end

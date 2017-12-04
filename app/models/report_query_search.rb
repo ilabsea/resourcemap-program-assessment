@@ -12,7 +12,9 @@ class ReportQuerySearch
     result_query = query_builder
     result_query['aggs'] = ReportQueryGroupByBuilder.new(@report_query).facet unless @report_query.aggregate_fields.empty?
     result_query['size'] = Settings.max_aggregate_result_size.to_i
-
+    if @report_query.condition_fields.empty? and @report_query.group_by_fields.empty?
+      result_query = ignor_null_field result_query
+    end
     query_log(result_query)
 
     client = Elasticsearch::Client.new
@@ -29,4 +31,5 @@ class ReportQuerySearch
   def query_log result_query
     Rails.logger.debug { result_query }
   end
+
 end

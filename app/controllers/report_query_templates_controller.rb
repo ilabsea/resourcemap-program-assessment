@@ -72,6 +72,7 @@ class ReportQueryTemplatesController < ApplicationController
   def show
     @template = collection.report_query_templates.find_by_uuid(params[:id])
     @report_query = @template.report_query
+    @report_result = @template.report_result
     add_breadcrumb @template.name
   end
 

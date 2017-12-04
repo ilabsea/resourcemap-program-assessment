@@ -31,7 +31,11 @@
         <% if @report_query.is_total_aggregate_field %>
           <tr>
             <% total.each do |col| %>
+              <% if col != 0.0 %>
               <td><%= col %></td>
+              <% else %>
+              <td></td>
+              <% end %>
             <% end %>
           </tr>
         <% end %>

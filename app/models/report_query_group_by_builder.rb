@@ -32,6 +32,7 @@ class ReportQueryGroupByBuilder
       if facet_filter_values.empty?
         facet_tag =  value_field # // KampongCham_2015
         exp[facet_tag] = facet_term_stats_by_field(value_field)
+        exp = generate_validate_exists_field(exp, facet_tag)
       else
         facet_filter_values.each do |facet_filter_value|
           facet_tag = facet_filter_value.values.join(ReportQuerySearchResult::DELIMITER) + "#{ReportQuerySearchResult::DELIMITER}#{value_field}" # // KampongCham_2015_aggrefieldx
@@ -49,6 +50,7 @@ class ReportQueryGroupByBuilder
       stat_field = agg_field["field_id"]
       facet_tag =  stat_field # // "province"
       exp[facet_tag] = facet_statistical_by_field(stat_field)
+      exp = generate_validate_exists_field(exp, stat_field)
     end
     exp
   end
@@ -65,7 +67,6 @@ class ReportQueryGroupByBuilder
         }
       }
     }
-
     query
   end
 
@@ -221,11 +222,40 @@ class ReportQueryGroupByBuilder
   def generate_stats_cond(field_id)
     properties_value = "properties.#{field_id}"
     if(Field.find(field_id).kind != "numeric")
-      stats = { "script" => { "inline" => "Double.parseDouble(doc['#{properties_value}'].value)"} }
+      if @report_query.aggregate_fields.empty? and report_query.group_by_fields.empty?
+
+      else
+
+      end
+      stats = { "script" => { "inline" => "Double.parseDouble(doc['#{properties_value}'].value)"}}
     else
-      stats = { 'field' => "properties.#{field_id}" }
+      stats = { 'field' => "#{properties_value}"}
     end
     return stats
+  end
+
+  def generate_filter_not_null(field_id)
+    {
+      "query" => {
+        "exists" => {
+          "field" => "properties.#{field_id}"
+        }
+      }
+    }
+  end
+
+  def generate_validate_exists_field(exp, field_id)
+    if @report_query.condition_fields.empty? and @report_query.group_by_fields.empty?
+      return exp
+    else
+      if(Field.find(field_id).kind != "numeric")
+        unless exp["exists_field_#{field_id}"]
+          exp["exists_field_#{field_id}"] = {}
+        end
+        exp["exists_field_#{field_id}"]['filter'] = generate_filter_not_null(field_id)
+      end
+      return exp   
+    end
   end
 
 end
