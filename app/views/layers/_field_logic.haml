@@ -1,0 +1,98 @@
+%ul{style: 'padding:0px; list-style:none'}
+  /ko foreach: impl().field_logics
+  /ko ifnot: editing
+  %li{style: 'padding-bottom:20px'}
+    %div.box.grey.w25{style: 'padding-bottom:10px'}
+      %div{style: 'padding-bottom:5px'}
+        %span.smalltext.left Skip this field when
+
+        %input#field-search{"data-bind" => "value: autoCompleteValue", :type => "text", disabled: 'disabled'}
+
+        %span.smalltext{style: 'padding-right:5px;padding-top:5px'} have value
+        %select{'data-bind' => 'value: condition_type, enable: editing', style: 'color:black;background-color:white', disabled: "disabled"}
+          %option{value: "="} equal to
+          %option{value: "<"} less than
+          %option{value: "<="} less than or equal to
+          %option{value: ">"} greater than
+          %option{value: ">="} greater than or equal to
+          %option{value: "!="} Not equal to
+      %div
+        /ko if: condition_type() != 'empty'
+        %input{ko(value: :value, enable: :editing), style: 'width:45px;text-align:center;color:black;'}
+        //ko
+
+
+      .rightbuttons{style: 'right: 0px; top: 0px'}
+        %button.fdelete{ ko(click: '$root.removeFieldLogic'), title: 'Remove logic' }
+      %br
+      %button.farrow{ko(click: '$root.editFieldLogic'), style:'margin-bottom:0px;margin-top:0px', title: t('views.layers.edit_layer')}= t('views.layers.edit')
+  //ko
+  /ko if: editing
+  %li{style: 'padding-bottom:20px'}
+    %div.box.grey.w25{style: 'padding-bottom:10px'}
+      %div{style: 'padding-bottom:5px'}
+        %span.smalltext.left Skip this field when
+        %input.field-search.ux-search{"data-bind" => "value: autoCompleteValue,
+          ko_autocomplete: { source: $root.autoCompleteFieldList(), select: selectField,
+          focus: selectField}", minChar: 3, :type => "text", placeholder: 'Type field name'}
+
+        %span.smalltext{style: 'padding-right:5px;padding-top:5px'} have value
+        %select{'data-bind' => 'value: condition_type, enable: editing', style: 'color:black;background-color:white'}
+          %option{value: "="} equal to
+          /ko if: is_numeric
+          %option{value: "<"} less than
+          %option{value: "<="} less than or equal to
+          %option{value: ">"} greater than
+          %option{value: ">="} greater than or equal to
+          //ko
+      %div
+        /ko if: condition_type() != 'empty'
+        %input{ko(value: :value, enable: :editing), style: 'width:45px;text-align:center;color:black;'}
+        //ko
+
+
+      .rightbuttons{style: 'right: 0px; top: 0px'}
+        %button.fdelete{ ko(click: '$root.removeFieldLogic'), title: 'Remove logic' }
+      %br
+      %button.white{ko(click: '$root.saveFieldLogic', enable: '$root.fieldLogicValid'), type: :button, title: 'Save'}= t('views.layers.form.field.save')
+      %button.white{ko(click: '$root.cancelFieldLogic'), type: :button, title: 'Save'}= t('views.layers.form.field.cancel')
+  //ko
+  //ko
+  /ko if: $root.isAddNew
+  %li{ko(with: '$root.newFieldLogic()')}
+    %div.box.grey.w25{style: 'padding-bottom:10px'}
+      %div{style: 'padding-bottom:5px'}
+        %span.smalltext.left Skip this field when
+        %input#field-search.ux-search{"data-bind" => "value: autoCompleteValue,
+          ko_autocomplete: { source: $root.autoCompleteFieldList(), select: selectField,
+          focus: selectField}", minChar: 3, :type => "text", placeholder: 'Type field name'}
+        %span.smalltext{style: 'padding-right:5px;padding-top:5px'} have value
+        %select{'data-bind' => 'value: condition_type', style: 'background-color:white'}
+          %option{value: "="} equal to
+          /ko if: is_numeric
+          %option{value: "<"} less than
+          %option{value: "<="} less than or equal to
+          %option{value: ">"} greater than
+          %option{value: ">="} greater than or equal to
+          //ko
+
+      %div
+        /ko if: condition_type() != 'empty'
+        %input{ko(value: :value), style: 'width:45px;text-align:center'}
+        //ko
+      / ko ifnot: valid()
+      %span{ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:0px'}
+      %br
+      //ko
+      %button.white{ko(click: '$root.saveFieldLogic', enable: '$root.fieldLogicValid'), type: :button, title: 'Save'}= t('views.layers.form.field.save')
+      %button.white{ko(click: '$root.cancelFieldLogic'), type: :button, title: 'Save'}= t('views.layers.form.field.cancel')
+
+  //ko
+  /ko ifnot: $root.isAddNew
+  %div.box.grey.add{ko(click: '$root.addFieldLogic'), :style => 'width:270px;'}
+    %span
+      %a
+        = t('views.layers.form.field.add_skip_logic')
+    %button.cadd.right
+    %br{clear: :all}
+  //ko
