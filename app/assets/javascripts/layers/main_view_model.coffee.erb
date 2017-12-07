@@ -361,7 +361,7 @@ onLayers ->
         f.name(f.name() + appendName)
         f.code(f.code() + appendName)
         f.id(undefined)
-        if(f.kind() == "numeric" or f.kind() == "select_one")
+        if(f.custom_widgeted() == true)
           track_field.push({"old_field" : old_code, "new_field" : f.code()})
       )
       return {"layer": @bufferNewLayer(), "changed_fields" : track_field()}
