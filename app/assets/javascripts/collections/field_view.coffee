@@ -14,6 +14,8 @@ onCollections ->
     getValue: ->
       value = @field.value()
       if value
+        if @field.kind == 'select_one'
+          value = @valueForSelectOne(value)
         return value
       else
         if @field.kind == 'numeric'
@@ -35,3 +37,10 @@ onCollections ->
       $fieldUI = if @fieldUI then @fieldUI else @domObject()
       @field.value(value)
       return $fieldUI.val(value)
+
+    valueForSelectOne: (value) ->
+      selectedOptions = @field.options.filter((option) => option.id == value)
+      if selectedOptions.length > 0
+        return "'"+selectedOptions[0].code+"'"
+      else
+        return ''
