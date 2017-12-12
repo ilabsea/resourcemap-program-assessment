@@ -7,19 +7,19 @@ GIT
       tinymce-rails (~> 4.0)
 
 GIT
-  remote: https://github.com/manastech/dist.git
-  revision: 44e5deadb0d9f63919fd68de5fce4ffdae2728a7
+  remote: http://github.com/manastech/dist.git
+  revision: 570e2bd1c90104df8880edc93cf8a1a659fcf093
   specs:
-    dist (0.0.1)
+    dist (0.0.2)
 
 GIT
-  remote: https://github.com/ruby-prof/ruby-prof.git
-  revision: 8b248d16b12fc8c0ddbdf7ff2666d7b422690206
+  remote: http://github.com/ruby-prof/ruby-prof.git
+  revision: d6867cf1133bc6602058166a6c1d3301b9b0529c
   specs:
-    ruby-prof (0.13.0)
+    ruby-prof (0.16.2)
 
 GEM
-  remote: https://rubygems.org/
+  remote: http://rubygems.org/
   specs:
     actionmailer (3.2.17)
       actionpack (= 3.2.17)
@@ -160,7 +160,7 @@ GEM
     json (1.8.1)
     knockoutjs-rails (2.2.1)
       railties (>= 3.1, < 4.1)
-    libv8 (3.16.14.7)
+    libv8 (3.16.14.19)
     listen (1.1.3)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
@@ -249,7 +249,7 @@ GEM
     redis (3.0.4)
     redis-namespace (1.3.0)
       redis (~> 3.0.0)
-    ref (1.0.5)
+    ref (2.0.0)
     resque (1.24.1)
       mono_logger (~> 1.0)
       multi_json (~> 1.0)
@@ -316,8 +316,8 @@ GEM
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
     sqlite3 (1.3.8)
-    therubyracer (0.12.1)
-      libv8 (~> 3.16.14.7)
+    therubyracer (0.12.3)
+      libv8 (~> 3.16.14.15)
       ref
     thin (1.5.1)
       daemons (>= 1.0.9)
@@ -429,4 +429,4 @@ DEPENDENCIES
   wkhtmltopdf-binary-edge (~> 0.12.2.1)
 
 BUNDLED WITH
-   1.12.4
+   1.16.0

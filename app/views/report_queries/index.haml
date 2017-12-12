@@ -51,8 +51,8 @@
       /ko if: $root.layers().length > 0
       /ko ifnot: isEditing
       .box.grey.add{ ko(click: '$root.addReportQuery')}
-        = t('views.report_queries.add_new_query')
-        %button.cadd.right{title: 'Add new report query'}
+        = t('views.report_queries.add_new_report_query')
+        %button.cadd.right{title: t('views.report_queries.add_new_report_query')}
         %br{clear: :all}
       //ko
       //ko

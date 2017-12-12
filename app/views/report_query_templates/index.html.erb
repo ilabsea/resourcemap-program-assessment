@@ -1,11 +1,11 @@
 <%= render '/tabs' %>
 
 <div class="tabsline settings-form" >
-  <h2>Report Template</h2>
+  <h2> <%= t('views.report_query_templates.title') %></h2>
   <% if current_user_snapshot.at_present? && collection_admin? %>
-    <p>Create Custom Template for report query</p>
+    <p><%= t('views.report_query_templates.create_custom_template_for_report_query') %></p>
     <div style="float:right">
-      <%= link_to 'Create Report Template', new_collection_report_query_template_path(collection), class: 'button white' %>
+      <%= link_to t('views.report_query_templates.create_report_template'), new_collection_report_query_template_path(collection), class: 'button white' %>
     </div>
   <% end %>
 </div>
@@ -15,9 +15,9 @@
   <table class="GralTable tableview">
     <tr>
       <th width="10"></th>
-      <th>Name</th>
-      <th>Report Query</th>
-      <th width="100">Action</th>
+      <th><%= t('views.report_query_templates.name') %></th>
+      <th><%= t('views.report_query_templates.title') %></th>
+      <th width="100"><%= t('views.report_query_templates.action') %></th>
     </tr>
     <% @report_query_templates.each do |template| %>
       <tr>
@@ -46,6 +46,6 @@
   </table>
   <%= hidden_field_tag 'collection_id', collection.id %>
   <div style='text-align: right' >
-    <button type="button" id='btn-generate-report'> Generate Report </button>
+    <button type="button" id='btn-generate-report'> <%= t('views.report_query_templates.generate_report') %> </button>
   </div>
 <% end %>
