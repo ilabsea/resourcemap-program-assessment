@@ -21,6 +21,10 @@ kh:
         report_queries: "ទាញទិន្ន័យ សម្រាប់ស្ថិតិ"
         report_template: "គំរូ ស្ថិតិ"
         print_template: "គំរូ សម្រាប់បោះពុម្ភ"
+      print_template:
+        print_template: "គំរូ សម្រាប់បោះពុម្ភ"
+        create_custom_template_for_site_rendering: "បង្កើតគំរូបោះពុម្ភ សំរាប់បង្ហាញទិន្ន័យ"
+        view_option: "នរណាម្មាក់ដែលមានតំណរភ្ជាប់ស្ថិតិ អាចមើលទិន្ន័យ ជាមួយគំរូនេះ។"
       index:
         'yes': "បាទ"
         'no': "ទេ"

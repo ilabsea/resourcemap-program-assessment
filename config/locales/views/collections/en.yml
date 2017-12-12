@@ -21,6 +21,10 @@ en:
         report_queries: "Report queries"
         report_template: "Report template"
         print_template: "Print template"
+      print_template:
+        print_template: "Print Template"
+        create_custom_template_for_site_rendering: "Create Custom Template for site rendering"
+        view_option: "Anyone with the report's link can view the site with this template."
       index:
         'yes': "Yes"
         'no': "No"
