@@ -1,7 +1,7 @@
 <%= render '/tabs' %>
 
 <div class="tabsline settings-form" >
-  <h2>Preview Report</h2>
+  <h2><%= t('views.report_query_templates.preview_report') %></h2>
   <textarea class= "custom-tinymce">
     <div class="container">
       <% render_result = render('result', template: @template ) %>
@@ -16,7 +16,7 @@
     <input type="hidden" name="text" value="" id='create-pdf-text' />
     <br/>
     <div style='text-align: right' >
-      <button type="button" id='btn-create-pdf'> Download PDF </button>
+      <button type="button" id='btn-create-pdf'> <%= t('views.report_query_templates.download_pdf') %> </button>
     </div>
   <% end %>
 </div>

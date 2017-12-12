@@ -1,6 +1,6 @@
 <%= form_for [collection, @report_query_template]  do |f| %>
   <div class="field w60">
-    <%= f.label :name %>
+    <%= f.label t('views.report_query_templates.form.name') %>
     <%= f.text_field :name %>
     <% if f.object.errors[:name].present? %>
       <%= f.label "Name #{f.object.errors[:name].join(', ')}", class: 'error' %>
@@ -8,8 +8,8 @@
   </div>
 
   <div class="field w60">
-    <%= f.label 'Insert Report Query' %>
-    <%= f.select :report_query_id, options_for_select(collection.report_queries.map{|r| [r.name, r.id]}, @report_query_template.report_query_id), prompt: 'Select a query' %>
+    <%= f.label t('views.report_query_templates.form.insert_report_query') %>
+    <%= f.select :report_query_id, options_for_select(collection.report_queries.map{|r| [r.name, r.id]}, @report_query_template.report_query_id), prompt: t('views.report_query_templates.form.select_query') %>
     <br />
     <% if f.object.errors[:report_query].present? %>
       <%= f.label "Report query #{f.object.errors[:report_query].join(', ')}", class: 'error' %>
@@ -20,8 +20,8 @@
     <%= f.text_area :template, class: "custom-tinymce", style: 'width: 1200px;' %>
   </div>
   <div class="row">
-    <%= f.button 'Save', class: 'white' %>
-    <%= link_to 'Cancel', collection_report_query_templates_path(collection), :class=> 'grey'%>
+    <%= f.button t('views.report_query_templates.form.save'), class: 'white' %>
+    <%= link_to t('views.report_query_templates.form.cancel'), collection_report_query_templates_path(collection), :class=> 'grey'%>
   </div>
 <% end %>
 

@@ -19,6 +19,8 @@ en:
         channels: "Channels"
         can_queries: "Canned queries"
         report_queries: "Report queries"
+        report_template: "Report template"
+        print_template: "Print template"
       index:
         'yes': "Yes"
         'no': "No"

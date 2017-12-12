@@ -1,4 +1,20 @@
 en:
   views:
-    report_queries:
+    report_query_templates:
       title: "Report Query Template"
+      create_custom_template_for_report_query: "Create custom template for report query"
+      create_report_template: "Create report template"
+      name: "Name"
+      title: "Report Query"
+      action: "Action"
+      generate_report: "Generate report"
+      preview_report: "Preview report"
+      download_pdf: "Download pdf"
+      form:
+        save: "Save"
+        cancel: "Cancel"
+        insert_report_query: "Insert report query"
+        name: "Name"
+        create_report_template: "Create report template"
+        edit_report_template: "Create report template"
+        select_query: "Select query"

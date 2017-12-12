@@ -1,4 +1,4 @@
-source 'https://rubygems.org'
+source 'http://rubygems.org'
 
 gem 'rails', '3.2.17'
 gem 'mysql2'
@@ -66,8 +66,8 @@ group :test, :development do
 end
 
 group :development do
-  gem 'dist', :git => 'https://github.com/manastech/dist.git'
-  gem 'ruby-prof', :git => 'https://github.com/ruby-prof/ruby-prof.git'
+  gem 'dist', :git => 'http://github.com/manastech/dist.git'
+  gem 'ruby-prof', :git => 'http://github.com/ruby-prof/ruby-prof.git'
   gem 'mailcatcher'
   gem 'annotate'
   gem 'pry-rails'

@@ -18,7 +18,9 @@ kh:
         report_user_submited_data: "របាយការណ៏អំពីអ្នកបញ្ជូនទិន្នន័យ"
         channels: "ឆាន់ណែល"
         can_queries: "សំណួរ"
-        report_queries: "សំណួរ"
+        report_queries: "ទាញទិន្ន័យ សម្រាប់ស្ថិតិ"
+        report_template: "គំរូ ស្ថិតិ"
+        print_template: "គំរូ សម្រាប់បោះពុម្ភ"
       index:
         'yes': "បាទ"
         'no': "ទេ"
