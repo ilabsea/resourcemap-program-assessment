@@ -2,7 +2,7 @@ class Api::SessionsController < Devise::SessionsController
   before_filter :check_params, :login_attempt, only: :create
   skip_before_filter :require_no_authentication
   skip_before_filter :verify_authenticity_token
-  
+
   ERRORS = {
     invalid: 'Error with your login or password.',
     invalid_token: 'Invalid authentication token.',
@@ -10,7 +10,10 @@ class Api::SessionsController < Devise::SessionsController
   }
 
   def create
-    render json: { success: true, auth_token: self.resource.authentication_token }, status: :created
+    render json: { success: true,
+                   auth_token: self.resource.authentication_token,
+                   userid: self.resource.id
+                }, status: :created
   end
 
   def destroy
