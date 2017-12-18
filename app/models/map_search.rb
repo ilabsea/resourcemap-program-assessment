@@ -13,6 +13,19 @@ class MapSearch
     @zoom = zoom
   end
 
+  def offset(offset)
+    @offset = offset
+  end
+
+  def limit(limit)
+    @limit = limit
+  end
+
+  def sort_by_updated_at()
+    @sort_list = {}
+    @sort_list[:updated_at] = 'desc'
+  end
+
   def bounds=(bounds)
     @bounds = bounds
     adjust_bounds_to_world_limits
@@ -33,7 +46,7 @@ class MapSearch
     listener = clusterer = Clusterer.new(@zoom)
     clusterer.highlight @hierarchy if @hierarchy
     listener = ElasticSearch::SitesAdapter::SkipIdListener.new(listener, @exclude_id) if @exclude_id
-
+    
     set_bounds_filter
     # apply_queries
 
@@ -52,17 +65,23 @@ class MapSearch
     set_bounds_filter
     apply_queries
     sort_list = @sort_list
-    if @sort
+
+    if sort_list
       @search.sort { by sort_list }
     else
       @search.sort { by 'name_not_analyzed' }
     end
-    @search.size 1_000_000
+
+    if @offset && @limit
+      @search.from @offset
+      @search.size @limit
+    else
+      @search.size 1_000_000
+    end
 
     Rails.logger.debug @search.to_curl if Rails.logger.level <= Logger::DEBUG
 
     results = @search.perform.results
-
     sites = []
     results.each do |item|
       site = Hash.new

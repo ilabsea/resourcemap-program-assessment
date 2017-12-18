@@ -15,7 +15,7 @@ onThresholds -
       @fieldsPhone  = ko.observableArray data?.phone_notification["fields"] ? []
       @usersPhone   = ko.observableArray data?.phone_notification["users"] ? []
       @membersPhone = ko.observableArray data?.phone_notification["members"] ? []
-      @toReporter = ko.observable data?.email_notification["to_reporter"] ? false
+      @toReporter = ko.computed => if data?.email_notification["to_reporter"]=='true' && @isNotify() == 'true' then true else false
 
       @alertedSitesNum = ko.observable alertedSites
       @alertSites = ko.observable $.map(data?.sites ? [], (site) -> new Site(site))
@@ -78,7 +78,7 @@ onThresholds -
         users: @usersEmail()
         fields: @fieldsEmail()
         members: @membersEmail()
-        to_reporter: @toReporter()
+        to_reporter: @toReporter
       phone_notification:
         users: @usersPhone()
         fields: @fieldsPhone()
