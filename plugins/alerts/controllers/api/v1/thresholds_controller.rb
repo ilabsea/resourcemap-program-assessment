@@ -4,7 +4,7 @@ module Api::V1
     skip_before_filter  :verify_authenticity_token
 
     def to_reporter
-      result = thresholds.select{|t| t.email_notification["to_reporter"] == 'true' }
+      result = thresholds.select{|t| t.notify_to_reporter? }
       render json: result
     end
 

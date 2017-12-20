@@ -10,7 +10,7 @@ module Site::AlertConcerns
     if alert != nil
       extended_properties[:alert] = true
       extended_properties[:alert_id] = alert.id
-      extended_properties[:notify_to] = {reporter: (alert.email_notification[:to_reporter] == "true")}
+      extended_properties[:notify_to] = {reporter: alert.notify_to_reporter?}
       extended_properties[:color] = alert.color
       extended_properties[:ord] = alert.ord
 
