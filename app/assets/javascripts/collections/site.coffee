@@ -37,7 +37,7 @@ onCollections ->
         owner: @
       @locationTextTemp = @locationText()
       @valid = ko.computed => @hasName() and @hasInputMendatoryProperties()
-      
+
       @highlightedName = ko.computed => window.model.highlightSearch(@name())
       @inEditMode = ko.observable(false)
       @scrollable = ko.observable(false)
@@ -59,13 +59,13 @@ onCollections ->
 
     hasLocation: => @position() != null
 
-    hasName: => 
+    hasName: =>
       $.trim(@name()).length > 0
 
-    validName: => 
-      if(!@name()) 
-        $("#name").addClass('error') 
-      else 
+    validName: =>
+      if(!@name())
+        $("#name").addClass('error')
+      else
         $("#name").removeClass('error')
 
     hasInputMendatoryProperties: =>
@@ -120,7 +120,6 @@ onCollections ->
         data: {es_code: esCode, value: value},
         success: ((data) =>
           field.errorMessage("")
-          window.model.resetLayerErrorState()
           @propagateUpdatedAt(data.updated_at)
           window.model.updateSitesInfo()
           window.model.currentCollection().reloadSites()

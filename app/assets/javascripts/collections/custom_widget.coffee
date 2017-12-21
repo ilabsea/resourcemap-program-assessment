@@ -39,7 +39,7 @@ onCollections ->
                   "<option value=\"#{option['id']}\">#{option['label']}</option>"
                   )
         node = """
-                <select data-bind="value: value" id="custom-widget-#{@field.code}">
+                <select  data-bind="value: value, css: {error: error}" id="custom-widget-#{@field.code}">
                   #{options}
                 </select>
                """

@@ -31,7 +31,7 @@ onCollections ->
       @originalIsMandatory = data.is_mandatory
       @value = ko.observable()
       @value.subscribe =>
-        if @kind == 'select_many'
+        if @kind == 'select_many' || @kind == 'hierarchy' ||  (@custom_widgeted && @kind == 'select_one')
           @valid()
         @disableDependentSkipLogicField()
         @performCalculation()
@@ -144,34 +144,25 @@ onCollections ->
           field_object.unblock()
 
     valid: =>
-      console.log('valid : ')
-      if(@is_mandatory())
-        $element = ''
-        if @kind == 'date'
-          $element = $('#'+@kind+'-input-'+ @esCode)
-        else if @kind == 'photo'
-          $element = $('#'+@code)
-        else if @kind == 'hierarchy'
-          $element = $('#'+@esCode)
-        else if @kind == 'select_many'
-          $element = $('#select-many-input-'+@code)
-        else
-          $element = $('#'+@kind+'-input-'+@code)
-
-        if !@value() || @value().length == 0
-          $element.addClass('error')
-        else
-          if(@kind == 'email')
-            re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            if(!re.test(@value()))
-              $element.addClass('error')
-            else
-              $element.removeClass('error')
-          else
-            $element.removeClass('error')
-
+      @validateMandatory()
+      @validateEmailFormat()
       @validateRange()
       @validateCustomValidation()
+
+    validateMandatory: =>
+      if @is_mandatory()
+        if !@value() || @value().length == 0
+          @errorMessage('This field is required !')
+        else
+          @errorMessage('')
+
+    validateEmailFormat: =>
+      if @kind == 'email' && @value()
+        re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if(!re.test(@value()))
+          @errorMessage('Invalid field format')
+        else
+          @errorMessage('')
 
     replaceCustomWidget: (widgetContent, readonly) =>
       isReadonly = ''
@@ -210,7 +201,6 @@ onCollections ->
         compareField.config().compare_custom_validations.push(compare)
       else
         compareField.config().compare_custom_validations = [compare]
-      console.log 'compareField : ', compareField.config()
 
     disableDependentSkipLogicField: =>
       if window.model.newOrEditSite()
@@ -713,9 +703,8 @@ onCollections ->
     init: =>
       if @kind == 'date'
         window.model.initDatePicker()
-      if @kind == 'numeric' && @is_enable_custom_validation
+      if window.model.newOrEditSite() && @kind == 'numeric' && @is_enable_custom_validation
         if @configCustomValidations()
-          console.log('f : ', @configCustomValidations())
           $.map(@configCustomValidations(), (c) =>
             compareField = window.model.newOrEditSite().findFieldByEsCode(c.field_id[0])
             @buildCompareFieldConfigOfCustomValidation(@esCode, c.condition_type, compareField)
