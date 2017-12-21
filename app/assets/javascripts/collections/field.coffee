@@ -143,9 +143,9 @@ onCollections ->
         else
           field_object.unblock()
 
-    valid: => 
+    valid: =>
       console.log('valid : ')
-      if(@is_mandatory()) 
+      if(@is_mandatory())
         $element = ''
         if @kind == 'date'
           $element = $('#'+@kind+'-input-'+ @esCode)
@@ -160,12 +160,12 @@ onCollections ->
 
         if !@value() || @value().length == 0
           $element.addClass('error')
-        else 
+        else
           if(@kind == 'email')
             re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             if(!re.test(@value()))
               $element.addClass('error')
-            else 
+            else
               $element.removeClass('error')
           else
             $element.removeClass('error')
@@ -483,7 +483,7 @@ onCollections ->
               @errorMessage('Invalid value, value must be greater than or equal '+@range.minimum)
             return
 
-    validateCustomValidation: => 
+    validateCustomValidation: =>
       if @is_enable_custom_validation()
         $.map(@configCustomValidations(), (f) =>
           field = window.model.newOrEditSite().findFieldByEsCode(f.field_id[0])
@@ -505,29 +505,31 @@ onCollections ->
           @generateErrorMessage(v, field, compareValue, @name)
         )
 
-    generateErrorMessage: (fieldConfig, validateField, compareValue, fieldName)=> 
+    generateErrorMessage: (fieldConfig, validateField, compareValue, fieldName)=>
+      compareValue = parseFloat(compareValue)
+      fieldValue = parseFloat(validateField.value())
       if fieldConfig.condition_type == '='
-        if validateField.value() != compareValue
+        if fieldValue != compareValue
           validateField.errorMessage('Invalid value, value must be equal to field '+ fieldName)
         else
           validateField.errorMessage('')
       else if fieldConfig.condition_type == '<'
-        if validateField.value() >= compareValue
+        if fieldValue >= compareValue
           validateField.errorMessage('Invalid value, value must be less than field '+ fieldName)
         else
           validateField.errorMessage('')
       else if fieldConfig.condition_type == '>'
-        if validateField.value() <= compareValue
+        if fieldValue <= compareValue
           validateField.errorMessage('Invalid value, value must be greater than field '+ fieldName)
         else
           validateField.errorMessage('')
       else if fieldConfig.condition_type == '>='
-        if validateField.value() < compareValue
+        if fieldValue < compareValue
           validateField.errorMessage('Invalid value, value must be greater than and equal to field '+ fieldName)
         else
           validateField.errorMessage('')
       else if fieldConfig.condition_type == '<='
-        if validateField.value() > compareValue
+        if fieldValue > compareValue
           validateField.errorMessage('Invalid value, value must be less than and equal to field '+ fieldName)
         else
           validateField.errorMessage('')
@@ -568,7 +570,7 @@ onCollections ->
 
       return true
 
-    
+
 
     keyPress: (field, event) =>
       switch event.keyCode
@@ -608,7 +610,7 @@ onCollections ->
       @value(arrayDiff(@value(), [optionId]))
       @value.valueHasMutated()
 
-    expand: => 
+    expand: =>
       @expanded(true)
       @valid()
 
