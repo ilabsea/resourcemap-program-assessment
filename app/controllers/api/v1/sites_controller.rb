@@ -19,6 +19,21 @@ module Api::V1
       render :json =>{:sites => search.ui_results.map { |x| x['_source'] }, :total => sites_size}
     end
 
+    def alerted_to_reporters
+      collection_ids = current_user.collections.map{|collection| collection.id }
+
+      search = MapSearch.new collection_ids, user: current_user
+      search.zoom = 0
+      search.alerted_search true
+      search.alerted_to_reporter true
+      search.my_site_search current_user.id if current_user
+
+      search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :search, :hierarchy_code, :selected_hierarchies, :_alert)
+
+      search.prepare_filter
+      render json: search.sites_json
+    end
+
     def show
       search = new_search
       search.id(site.id)
@@ -53,6 +68,39 @@ module Api::V1
       else
         render json: site_aggregator.site.errors.messages, status: :unprocessable_entity
       end
+    end
+
+    def search_alert_site
+      if params[:collection_ids]
+        data = []
+        params[:collection_ids].each do |id|
+          result = search_alert_site_by_collection id, params
+          data.concat result
+        end
+        render json: data
+      else
+        render json: []
+      end
+    end
+
+    def search_alert_site_by_collection collection_id, params
+      zoom = params[:z].to_i
+
+      search = MapSearch.new [collection_id], user: current_user
+
+      search.zoom = zoom
+      search.bounds = params if zoom >= 2
+      search.exclude_id params[:exclude_id].to_i if params[:exclude_id].present?
+      search.full_text_search params[:search] if params[:search].present?
+      search.alerted_search params[:_alert] if params[:_alert].present?
+      search.my_site_search current_user.id if current_user && !current_user.can_view_other?(collection_id)
+      if params[:selected_hierarchies].present?
+        search.selected_hierarchy params[:hierarchy_code], params[:selected_hierarchies]
+      end
+      search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :search, :hierarchy_code, :selected_hierarchies, :_alert)
+
+      search.prepare_filter
+      return search.sites_json
     end
 
     private

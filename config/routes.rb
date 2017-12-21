@@ -17,6 +17,7 @@ ResourceMap::Application.routes.draw do
   match 'get_user_auth_token' => "application#get_user_auth_token", :via => 'get'
   match 'load_app_cache' => 'home#load_app_cache', :via => 'get'
   get 'plugin/alerts/thresholds' => 'thresholds#index'
+  # get 'plugin/alerts/api/v1/thresholds' => 'api/v1/thresholds#index'
   get 'view_photo' => 'sites#view_photo'
   get 'collections/:collection_id/my_membership' => 'collections#my_membership'
 
@@ -192,6 +193,13 @@ ResourceMap::Application.routes.draw do
       resources :collections do
         resources :sites, only: [:create,:index,:update,:show]
         resources :fields, only: [:create,:index,:update,:show]
+        member do
+          get 'thresholds/to_reporter' => 'thresholds#to_reporter'
+        end
+      end
+      resources :sites do
+        get 'search_alert_site', :on => :collection
+        get 'alerted_to_reporters' , :on => :collection
       end
     end
 
@@ -240,6 +248,7 @@ ResourceMap::Application.routes.draw do
       get 'activity' => 'activities#index', as: :activity
       resources :tokens, :only => [:index, :destroy]
     end
+
   end
 
   namespace :mobile do

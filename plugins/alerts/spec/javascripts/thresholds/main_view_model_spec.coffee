@@ -15,7 +15,7 @@ describe 'Alerts plugin', ->
 
     describe 'cancel threshold', ->
       beforeEach ->
-        @threshold = new Threshold email_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, phone_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, conditions: [], is_all_site: "true", is_all_condition: "true", is_notify: "true", color: "#128e4e"
+        @threshold = new Threshold email_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"], to_reporter: 'true'}, phone_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, conditions: [], is_all_site: "true", is_all_condition: "true", is_notify: "true", color: "#128e4e"
         @model.thresholds.push @threshold
         @model.currentThreshold @threshold
         #@model.editThreshold(@threshold) commented this line because off add clearUnsavedThreshold method in threshold_main_view_model.editThreshold
@@ -33,7 +33,7 @@ describe 'Alerts plugin', ->
 
     describe 'clear threshold', ->
       beforeEach ->
-        @threshold = new Threshold email_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, phone_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, conditions: [], is_all_site: "true", is_all_condition: "true", is_notify: "true", color: "#128e4e" 
+        @threshold = new Threshold email_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"], to_reporter: 'true'}, phone_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, conditions: [], is_all_site: "true", is_all_condition: "true", is_notify: "true", color: "#128e4e" 
         @model.thresholds.push @threshold
 
       it 'should clear unsaved threshold', ->
@@ -42,19 +42,19 @@ describe 'Alerts plugin', ->
 
     describe 'save threshold', ->
       beforeEach ->
-        @threshold = new Threshold color: 'tomato', email_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, phone_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, conditions: [], ord: 1, is_all_site: true, is_all_condition: true, is_notify: true, message_notification: "alert_01", name: "beds"
+        @threshold = new Threshold color: 'tomato', email_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"], to_reporter: 'true'}, phone_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, conditions: [], ord: 1, is_all_site: true, is_all_condition: true, is_notify: true, message_notification: "alert_01", name: "beds"
         @model.thresholds.push @threshold
         @model.currentThreshold @threshold
         spyOn($, 'post')
 
       it "should post the threshold's json", ->
         @model.saveThreshold()
-        expect($.post).toHaveBeenCalledWith("/plugin/alerts/collections/#{@collectionId}/thresholds.json", {threshold: {conditions: [], color : 'tomato', ord: 1, name : 'beds', is_all_site : 'true', is_all_condition : 'true', is_notify : 'true', email_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, phone_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, message_notification : 'alert_01', sites : [ ]}}, @model.saveThresholdCallback)
+        expect($.post).toHaveBeenCalledWith("/plugin/alerts/collections/#{@collectionId}/thresholds.json", {threshold: {conditions: [], color : 'tomato', ord: 1, name : 'beds', is_all_site : 'true', is_all_condition : 'true', is_notify : 'true', email_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"], to_reporter: 'true'}, phone_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, message_notification : 'alert_01', sites : [ ]}}, @model.saveThresholdCallback)
 
       it "should put the threshold's json if it has an id", ->
         @threshold.id(1)
         @model.saveThreshold()
-        expect($.post).toHaveBeenCalledWith("/plugin/alerts/collections/#{@collectionId}/thresholds/1.json", {_method: 'put', threshold: {id: 1, color : 'tomato', name : 'beds', is_all_site : 'true', is_all_condition : 'true', is_notify : 'true', email_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, phone_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, message_notification : 'alert_01', sites : [ ], conditions : [ ], ord : 1}}, @model.saveThresholdCallback)
+        expect($.post).toHaveBeenCalledWith("/plugin/alerts/collections/#{@collectionId}/thresholds/1.json", {_method: 'put', threshold: {id: 1, color : 'tomato', name : 'beds', is_all_site : 'true', is_all_condition : 'true', is_notify : 'true', email_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"], to_reporter: 'true'}, phone_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, message_notification : 'alert_01', sites : [ ], conditions : [ ], ord : 1}}, @model.saveThresholdCallback)
 
       it 'should be saving', ->
         @model.saveThreshold()
@@ -94,7 +94,7 @@ describe 'Alerts plugin', ->
 
     describe 'edit threshold', ->
       beforeEach ->
-        @threshold = new Threshold id: 1, phone_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, email_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, conditions: [], color : 'tomato', is_all_site: true, is_all_condition: true, is_notify: true
+        @threshold = new Threshold id: 1, phone_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, email_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"], to_reporter: 'true'}, conditions: [], color : 'tomato', is_all_site: true, is_all_condition: true, is_notify: true
         @model.thresholds.push @threshold
         @model.editThreshold @threshold
 
@@ -111,7 +111,7 @@ describe 'Alerts plugin', ->
 
     describe 'delete threshold', ->
       beforeEach ->
-        @threshold = new Threshold email_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, phone_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, conditions: [], is_all_site: "true", is_all_condition: "true", is_notify: "true", color: "#128e4e"
+        @threshold = new Threshold email_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"], to_reporter: 'true'}, phone_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, conditions: [], is_all_site: "true", is_all_condition: "true", is_notify: "true", color: "#128e4e"
         @model.thresholds.push @threshold
 
       it 'should show confirm dialog', ->
@@ -127,8 +127,8 @@ describe 'Alerts plugin', ->
 
     describe 'move threshold', ->
       beforeEach ->
-        @threshold_1 = new Threshold id: 1, phone_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, email_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, ord: 1, collection_id: @collectionId, is_all_site: true, is_all_condition: true, is_notify: true, color: "#128e4e"
-        @threshold_2 = new Threshold id: 2, phone_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, email_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, ord: 2, collection_id: @collectionId, is_all_site: true, is_all_condition: true, is_notify: true, color: "#128e4e"
+        @threshold_1 = new Threshold id: 1, phone_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, email_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"], to_reporter: 'true'}, ord: 1, collection_id: @collectionId, is_all_site: true, is_all_condition: true, is_notify: true, color: "#128e4e"
+        @threshold_2 = new Threshold id: 2, phone_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, email_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"], to_reporter: 'true'}, ord: 2, collection_id: @collectionId, is_all_site: true, is_all_condition: true, is_notify: true, color: "#128e4e"
         @model.thresholds [ @threshold_1, @threshold_2 ]
         spyOn($, 'post')
 
