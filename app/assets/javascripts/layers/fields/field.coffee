@@ -132,7 +132,7 @@ onLayers ->
       return model?.layerList().length > 0 && !custom_widgeted() && @kind() != 'calculation'
 
     isAllowDependancyHierarchyFieldConfig: =>
-      return (@is_enable_dependancy_hierarchy() && model?.layersWithHierarchyFields().length > 0)
+      return (@is_enable_dependancy_hierarchy() && model?.layersWithDependentHierarchyFields().length > 0)
 
     isSelectable: =>
       return (@kind() in ['select_one', 'select_many'])
@@ -160,6 +160,9 @@ onLayers ->
         is_parent_of_other = l.fields().filter((f) => "#{f.impl()?.parentHierarchyFieldId?()}" == "#{@id()}").length > 0
         return true if is_parent_of_other
       return false
+
+    isDependentHierarchyField: =>
+      (@kind() == 'hierarchy' && @is_enable_dependancy_hierarchy() == true)
 
     toJSON: =>
       @code(@code()?.trim())

@@ -13,11 +13,11 @@ onLayers ->
                 else
                   ko.observableArray([])
 
-      @hierarchyFields = ko.computed =>
+      @dependentHierarchyFields = ko.computed =>
                             if model?.currentField()
-                              @fields().filter (f) => f.kind() == 'hierarchy' && f != model.currentField()
+                              @fields().filter (f) => f.isDependentHierarchyField() && f != model.currentField()
                             else
-                              @fields().filter (f) => f.kind() == 'hierarchy'
+                              @fields().filter (f) => f.isDependentHierarchyField()
 
       @displayed_fields = ko.observableArray(@fields()[0..9])
       @numeric_fields = ko.observableArray($.map(@fields(), (f) => f if f.kind() == 'numeric'))

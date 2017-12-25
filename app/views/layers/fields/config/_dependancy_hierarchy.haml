@@ -4,10 +4,10 @@
 %p.smalltext This field will be rendering as the dependancy hierarchy select
 
 /ko if: isAllowDependancyHierarchyFieldConfig()
-%select{"data-bind" => 'foreach: $root.layersWithHierarchyFields(), value: impl().parentHierarchyFieldId'}
+%select{"data-bind" => 'foreach: $root.layersWithDependentHierarchyFields(), value: impl().parentHierarchyFieldId'}
   /ko if: $index() == 0
   %option{value: ""} (no value)
   //ko
-  %optgroup{"data-bind" => "attr: {label: name}, foreach: hierarchyFields"}
+  %optgroup{"data-bind" => "attr: {label: name}, foreach: dependentHierarchyFields"}
     %option{"data-bind" => "text: name, option: name, value: id"}
 //ko
