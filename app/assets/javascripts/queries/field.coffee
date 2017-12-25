@@ -99,9 +99,12 @@ onQueries ->
         return fields
       else
         parentField = @layer.findFieldById(field.parentHierarchyFieldId)
-        @hierarchySet(parentField, fields)
-        fields.push field
-        return fields
+        if typeof parentField == 'undefined'
+          return []
+        else
+          @hierarchySet(parentField, fields)
+          fields.push field
+          return fields
 
     updateDependentFieldsHierarchyItemList: (field)=>
       if @isDependentFieldHierarchy && field

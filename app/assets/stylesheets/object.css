@@ -5,10 +5,11 @@
 
 .hierarchySet{
   clear: both;
+  padding-bottom: 10px;
 }
 
 .hierarchySetName{
-  width: 45px;
+  width: 120px;
   display: inline-block;
   color: grey;
   white-space: nowrap;

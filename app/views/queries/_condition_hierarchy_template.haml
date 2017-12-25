@@ -1,7 +1,7 @@
 /ko if: isEnableDependancyHierarchy
 %div
   /ko foreach: hierarchySet()
-  %div.hierarchySet{style: 'width: 280px'}
+  %div.hierarchySet{style: 'width: 380px'}
     %span.hierarchySetName{ko(text: :name)}
     /ko if: $index() < $parent.hierarchySet().length-1
     %select.right.w20{ko(options: :dependentHierarchyItemList, optionsText: "'name'",

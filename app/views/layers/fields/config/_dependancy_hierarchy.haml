@@ -1,6 +1,6 @@
 %hr/
-= ko_check_box_tag :is_enable_dependancy_hierarchy, css: {error: :codeError}
-%span Enable dependancy hierarchy
+= ko_check_box_tag :is_enable_dependancy_hierarchy
+%span{ko(css: {error: 'impl().dependencyError()'})} Enable dependancy hierarchy
 %p.smalltext This field will be rendering as the dependancy hierarchy select
 
 /ko if: isAllowDependancyHierarchyFieldConfig()
