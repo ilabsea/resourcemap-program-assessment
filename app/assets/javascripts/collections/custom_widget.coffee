@@ -29,7 +29,7 @@ onCollections ->
       if @field.kind == 'numeric' || @field.kind == 'text'
         node = """
                  <input type="text" name="custom-widget-#{@field.code}"
-                        data-bind="value: value, css: {error: error}, attr: {title: name}" id="custom-widget-#{@field.code}"
+                        data-bind="value: value, valueUpdate: 'keyup', css: {error: error}, attr: {title: name}" id="custom-widget-#{@field.code}"
                         class="custom key-map-integer" />
                  <span data-bind="text: errorMessage, validationPopover: errorMessage" style="display:none"></span>
                """
@@ -42,5 +42,10 @@ onCollections ->
                 <select data-bind="value: value" id="custom-widget-#{@field.code}">
                   #{options}
                 </select>
+               """
+      else if @field.kind == 'calculation' && @field.is_display_field()
+        node = """
+                <input type="text" id="custom-widget-#{@field.code}"
+                  data-bind="value: value" readonly='readonly' class='custom' />
                """
       @element.append(node)

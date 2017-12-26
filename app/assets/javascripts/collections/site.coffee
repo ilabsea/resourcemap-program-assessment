@@ -534,16 +534,19 @@ onCollections ->
           if field["kind"] == "calculation"
             if field["dependentFields"]
               $.map(field["dependentFields"], (dependentField) ->
-                $dependentField = $("#" + dependentField["kind"] + "-input-" + dependentField["code"])
+                refField = window.model.newOrEditSite().findFieldByEsCode(dependentField['id'])
+
+                if(refField.isForCustomWidget())
+                  $dependentField = $("#custom-widget-" + dependentField["code"])
+                else
+                  $dependentField = $("#" + dependentField["kind"] + "-input-" + dependentField["code"])
+
                 $dependentField.addClass('calculation')
 
                 calculationIds = $dependentField.attr('data-calculation-ids') || ""
-                if(calculationIds)
-                  calculationIds = calculationIds.split(',')
-                else
-                  calculationIds = []
-
+                calculationIds = if calculationIds then calculationIds.split(',') else []
                 calculationIds.push(field["esCode"])
+
                 $dependentField.attr('data-calculation-ids', calculationIds.join(","))
               )
 
