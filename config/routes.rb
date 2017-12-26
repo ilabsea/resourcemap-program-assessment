@@ -192,6 +192,13 @@ ResourceMap::Application.routes.draw do
       resources :collections do
         resources :sites, only: [:create,:index,:update,:show]
         resources :fields, only: [:create,:index,:update,:show]
+        member do
+          get 'thresholds/to_reporter' => 'thresholds#to_reporter'
+        end
+      end
+      resources :sites do
+        get 'search_alert_site', :on => :collection
+        get 'alerted_to_reporters' , :on => :collection
       end
     end
 
@@ -240,6 +247,7 @@ ResourceMap::Application.routes.draw do
       get 'activity' => 'activities#index', as: :activity
       resources :tokens, :only => [:index, :destroy]
     end
+
   end
 
   namespace :mobile do

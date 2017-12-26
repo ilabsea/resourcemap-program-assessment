@@ -9,7 +9,7 @@ describe 'Alerts plugin', ->
       window.model = new MainViewModel @collectionId
       @field_beds = new Field id: '1', code: 'beds', kind: 'numeric'
       window.model.fields [@field_beds]
-      @threshold = new Threshold { id: 1, email_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, phone_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, collection_id: @collectionId, ord: 1, color: 'tomato', name: "bed", sites: [], is_all_site: true, is_all_condition: true, is_notify: true, message_notification: "alert_01", conditions: [{ field: '1', op: 'lt', type: 'value', value: 10, compare_field: '1' }] }, @collectionIcon
+      @threshold = new Threshold { id: 1, email_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"], to_reporter: 'true'}, phone_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, collection_id: @collectionId, ord: 1, color: 'tomato', name: "bed", sites: [], is_all_site: true, is_all_condition: true, is_notify: true, message_notification: "alert_01", conditions: [{ field: '1', op: 'lt', type: 'value', value: 10, compare_field: '1' }] }, @collectionIcon
 
     it 'should have 1 condition', ->
       expect(@threshold.conditions().length).toEqual 1
@@ -37,6 +37,7 @@ describe 'Alerts plugin', ->
           fields: ["1","2"]
           users: ["1", "2"]
           members: ["1", "2"]
+          to_reporter: 'true'
         message_notification : 'alert_01'
         is_notify: 'true'
         name: "bed"
@@ -51,7 +52,8 @@ describe 'Alerts plugin', ->
 
     describe 'without data', ->
       beforeEach ->
-        @threshold = new Threshold {is_all_site: true, is_all_condition: true, is_notify: true, email_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, phone_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, color: "#128e4e"}
+        @threshold = new Threshold {is_all_site: true, is_all_condition: true, is_notify: true, email_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"], to_reporter: 'true
+        '}, phone_notification: {fields: ["1","2"], users: ["1", "2"], members: ["1", "2"]}, color: "#128e4e"}
 
       it 'should default threshold have no conditions', ->
         expect(@threshold.conditions().length).toEqual 0

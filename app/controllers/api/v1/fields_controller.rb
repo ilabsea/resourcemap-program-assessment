@@ -3,11 +3,16 @@ module Api::V1
     include Concerns::CheckApiDocs
 
     before_filter :authenticate_api_user!
-  skip_before_filter :verify_authenticity_token
+    skip_before_filter :verify_authenticity_token
 
     def index
       fields = collection.visible_layers_for current_user
       render json: fields
+    end
+
+    def show
+      field = Field.find(params[:id])
+      render json: field
     end
   end
 end

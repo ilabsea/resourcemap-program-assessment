@@ -30,6 +30,10 @@ class Threshold < ActiveRecord::Base
     end
   end
 
+  def notify_to_reporter?
+    self.is_notify && (self.email_notification[:to_reporter] == "true")
+  end
+
   def condition(hash, properties)
     Threshold::Condition.new hash, properties
   end
