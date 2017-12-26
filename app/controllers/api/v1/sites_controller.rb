@@ -49,7 +49,7 @@ module Api::V1
     end
 
     def update
-      site.attributes = sanitized_site_params(false).merge(user: current_user)
+      site.attributes = sanitized_site_params(false)
       site_aggregator = SiteAggregator.new(site)
       if site_aggregator.save
         if params[:photosToRemove]
