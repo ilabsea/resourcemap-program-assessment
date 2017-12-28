@@ -543,7 +543,11 @@ onCollections ->
         return true
 
     validate_decimal_key: (keyCode) =>
-      value = $('#'+@kind+'-input-'+@code).val()
+      value = ''
+      if @isForCustomWidget()
+        value = $('#custom-widget-'+@code).val()
+      else
+        value = $('#'+@kind+'-input-'+@code).val()
       dotcontains = value.indexOf(".") != -1
       if (dotcontains)
         if (keyCode == 190)
