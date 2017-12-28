@@ -75,7 +75,7 @@ onLayers ->
       @autoCompleteFieldList = ko.computed =>
         fields = []
         for layer in @layers()
-          layer_fields = layer.fields().filter((field) => typeof field.id() isnt 'undefined' && field.id() != @currentField()?.id() )
+          layer_fields = layer.fields().filter((field) => typeof field.id() isnt 'undefined' && field.id() != @currentField()?.id() && field.kind() != 'custom_widget' )
           fields = fields.concat layer_fields.map((f) => { value: f.id(), label: f.name()})
 
         return fields
