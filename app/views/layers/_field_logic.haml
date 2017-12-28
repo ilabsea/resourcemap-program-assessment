@@ -33,7 +33,7 @@
       %div{style: 'padding-bottom:5px'}
         %span.smalltext.left Skip this field when
         %input.field-search.ux-search{"data-bind" => "value: autoCompleteValue,
-          ko_autocomplete: { source: $root.autoCompleteFieldList(), select: selectField,
+          ko_autocomplete: { source: $root.autoCompleteFieldListForSkipLogic(), select: selectField,
           focus: selectField}", minChar: 3, :type => "text", placeholder: 'Type field name'}
 
         %span.smalltext{style: 'padding-right:5px;padding-top:5px'} have value
@@ -50,6 +50,10 @@
         %input{ko(value: :value, enable: :editing), style: 'width:45px;text-align:center;color:black;'}
         //ko
 
+      / ko ifnot: valid()
+      %span{ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:0px'}
+      %br
+      //ko
 
       .rightbuttons{style: 'right: 0px; top: 0px'}
         %button.fdelete{ ko(click: '$root.removeFieldLogic'), title: 'Remove logic' }
@@ -64,7 +68,7 @@
       %div{style: 'padding-bottom:5px'}
         %span.smalltext.left Skip this field when
         %input#field-search.ux-search{"data-bind" => "value: autoCompleteValue,
-          ko_autocomplete: { source: $root.autoCompleteFieldList(), select: selectField,
+          ko_autocomplete: { source: $root.autoCompleteFieldListForSkipLogic(), select: selectField,
           focus: selectField}", minChar: 3, :type => "text", placeholder: 'Type field name'}
         %span.smalltext{style: 'padding-right:5px;padding-top:5px'} have value
         %select{'data-bind' => 'value: condition_type', style: 'background-color:white'}

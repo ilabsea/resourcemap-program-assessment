@@ -72,14 +72,24 @@ onLayers ->
           fields = fields.concat layer.fields().filter((field) => typeof field.id() isnt 'undefined' )
         return fields
 
-      @autoCompleteFieldList = ko.computed =>
+      @autoCompleteFieldListForCalculation = ko.computed =>
         fields = []
         for layer in @layers()
-          layer_fields = layer.fields().filter((field) => typeof field.id() isnt 'undefined' && field.id() != @currentField()?.id() )
+          layer_fields = layer.fields().filter((field) =>
+            typeof field.id() isnt 'undefined' &&
+            field.id() != @currentField()?.id() &&
+            field.kind() != 'custom_widget' )
           fields = fields.concat layer_fields.map((f) => { value: f.id(), label: f.name()})
-
         return fields
 
+      @autoCompleteFieldListForSkipLogic = ko.computed =>
+        fields = []
+        for layer in @layers()
+          layer_fields = layer.fields().filter((field) =>
+            typeof field.id() isnt 'undefined' && field.id() != @currentField()?.id() &&
+            (field.kind() in ['numeric', 'yes_no', 'select_one', 'select_many']) )
+          fields = fields.concat layer_fields.map((f) => { value: f.id(), label: f.name()})
+        return fields
 
       @isAddNew = ko.observable(false)
       @isAddNewValidation = ko.observable(false)
