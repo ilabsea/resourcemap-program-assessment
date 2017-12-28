@@ -540,8 +540,7 @@ onCollections ->
             if field["dependentFields"]
               $.map(field["dependentFields"], (dependentField) ->
                 refField = window.model.newOrEditSite().findFieldByEsCode(dependentField['id'])
-
-                if(refField.isForCustomWidget())
+                if(refField?.isForCustomWidget())
                   $dependentField = $("#custom-widget-" + dependentField["code"])
                 else
                   $dependentField = $("#" + dependentField["kind"] + "-input-" + dependentField["code"])
