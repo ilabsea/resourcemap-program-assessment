@@ -189,7 +189,7 @@ onCollections ->
         for field_wrapper in arr_field_wrapper
           field_code = field_wrapper.split("wrapper-custom-widget-")[1]
           field = window.model.findFieldByCode(field_code)
-          new CustomWidget(field).bindField()
+          new CustomWidget(field).bindField() if field
 
     buildCompareFieldConfigOfCustomValidation: (fieldId, operator, compareField) =>
       compare = {
@@ -546,7 +546,11 @@ onCollections ->
         return true
 
     validate_decimal_key: (keyCode) =>
-      value = $('#'+@kind+'-input-'+@code).val()
+      value = ''
+      if @isForCustomWidget()
+        value = $('#custom-widget-'+@code).val()
+      else
+        value = $('#'+@kind+'-input-'+@code).val()
       dotcontains = value.indexOf(".") != -1
       if (dotcontains)
         if (keyCode == 190)

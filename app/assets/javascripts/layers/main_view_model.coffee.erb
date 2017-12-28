@@ -50,7 +50,10 @@ onLayers ->
       @tmpSelectedField = ko.observable()
 
       @customWidgetedFields = ko.computed =>
-        @currentLayer()?.fields().filter (f) => f.custom_widgeted()
+        if @currentLayer()
+          @currentLayer()?.fields().filter (f) => f.custom_widgeted()
+        else
+          []
 
       @selectedCustomWidgetField = ko.observable()
       @selectedCollectionCustomAggregator = ko.observable()
