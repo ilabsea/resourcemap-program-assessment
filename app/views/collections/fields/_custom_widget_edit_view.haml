@@ -1,4 +1,4 @@
 
-%div{style: "position: relative;  padding-left: 0px;", class: 'custom_widget-wrapper'}
+%div{ko(attr: {id: "'custom_widget-wrapper-' + code"}), style: "position: relative;  padding-left: 0px;", class: 'custom_widget-wrapper'}
   %div{style: " padding-left: 0px;", "data-bind" => "html: widgetContentViewAsInput"}
 .clear

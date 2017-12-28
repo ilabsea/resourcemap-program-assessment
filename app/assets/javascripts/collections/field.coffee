@@ -301,9 +301,12 @@ onCollections ->
         when 'photo'
           field_id = field.code
           field_object = $("#" + field_id).parent()
+        when 'custom_widget'
+          field_object = $("#custom_widget-wrapper-"+field.code)
         else
           field_id = field.kind + "-input-" + field.code
           field_object = $("#" + field_id).parent()
+
       field_object
 
     enableField: (field, by_field_id) =>
