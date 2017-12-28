@@ -12,6 +12,14 @@
   -webkit-border-radius: 3px;
 }
 
+.hierarchy-container.error{
+  border: 2px solid #ff6600;
+}
+
+.layer-name.error{
+  color: red !important;
+}
+
 .change_layer {
   position: absolute;
   right: 5px;

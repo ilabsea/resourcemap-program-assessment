@@ -30,7 +30,7 @@
 
 
   %hr/
-  /ko if: kind() != 'custom_widget' && kind() != 'custom_aggregator'
+  /ko if: kind() != 'calculation' && kind() != 'custom_widget' && kind() != 'custom_aggregator'
   = ko_check_box_tag :is_mandatory, css: {error: :codeError}
   %span
     =t('views.layers.form.field.mandatory')

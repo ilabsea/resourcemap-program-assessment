@@ -124,7 +124,7 @@
               %td
                 %div
                   = label_tag :name, t('views.collections.index.name')
-                  = text_field_tag :name, '', placeholder: 'Enter new site name', class: 'w20 right', 'data-bind' => kov(value: :name, valueUpdate: :afterkeydown, hasfocus: true), :autofocus => true
+                  = text_field_tag :name, '', placeholder: 'Enter new site name', class: 'w20 right', 'data-bind' => kov(value: :name, valueUpdate: :afterkeydown, hasfocus: true, event: {blur: :validName}), :autofocus => true
                   .clear
                 %div
                   %label Location:
@@ -134,9 +134,9 @@
                   %input{ko(value: :startEntryDate), type: :hidden, name: :startEntryDate}
                 / ko if: collection.readable($data)
                 <!-- ko foreach: layers -->
-                %div
+                %div.layer-name{ko(css: {error: :error})}
                   %img{ko(click: :toggleExpand, attr: {src: "'#{InsteddRails.url}/theme/images/icons/misc/grey/arrow' + (expanded() ? 'Down' : 'Right') + '.png'"}), style: "position:relative;top:1px;cursor:pointer", width: 11, height: 11}
-                  %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;color:grey;cursor:pointer'}
+                  %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;cursor:pointer'}
                 <!-- ko if: expanded() -->
                 <!-- ko foreach: fields -->
                 <!-- ko if: inputable() -->

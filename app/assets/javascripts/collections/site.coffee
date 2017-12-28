@@ -36,7 +36,8 @@ onCollections ->
         write: (value) => @locationTextTemp = value
         owner: @
       @locationTextTemp = @locationText()
-      @valid = ko.computed => @hasName() and @hasInputMendatoryProperties()
+      @valid = ko.computed => @hasName() and @validField()
+
       @highlightedName = ko.computed => window.model.highlightSearch(@name())
       @inEditMode = ko.observable(false)
       @scrollable = ko.observable(false)
@@ -58,13 +59,19 @@ onCollections ->
 
     hasLocation: => @position() != null
 
-    hasName: => $.trim(@name()).length > 0
+    hasName: =>
+      $.trim(@name()).length > 0
 
-    hasInputMendatoryProperties: =>
+    validName: =>
+      if(!@name())
+        $("#name").addClass('error')
+      else
+        $("#name").removeClass('error')
+
+    validField: =>
       for field in @fields()
-        if field.writeable == true
-          if field.is_mandatory() and !field.value()
-            return false
+        if field.error() == true
+          return false
       return true
 
     propertyValue: (field) =>
@@ -112,7 +119,6 @@ onCollections ->
         data: {es_code: esCode, value: value},
         success: ((data) =>
           field.errorMessage("")
-          window.model.resetLayerErrorState()
           @propagateUpdatedAt(data.updated_at)
           window.model.updateSitesInfo()
           window.model.currentCollection().reloadSites()
@@ -410,7 +416,6 @@ onCollections ->
         field.bindWithCustomWidgetedField()
 
       for field in @fields()
-        # if field.value()
         field.disableDependentSkipLogicField()
 
       window.model.newOrEditSite().scrollable(false)
