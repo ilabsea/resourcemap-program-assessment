@@ -1,6 +1,6 @@
 <!-- ko with: impl() -->
 %input#field-search.ux-search{"data-bind" => "value: autoCompleteValue,
-  ko_autocomplete: { source: $root.autoCompleteFieldList(), select: selectField}",
+  ko_autocomplete: { source: $root.autoCompleteFieldListForCalculation(), select: selectField}",
   minChar: 3, :type => "text", placeholder: 'Type field name'}
 
 /ko if: dependent_fields().length > 0
