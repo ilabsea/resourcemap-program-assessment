@@ -50,6 +50,10 @@
         %input{ko(value: :value, enable: :editing), style: 'width:45px;text-align:center;color:black;'}
         //ko
 
+      / ko ifnot: valid()
+      %span{ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:0px'}
+      %br
+      //ko
 
       .rightbuttons{style: 'right: 0px; top: 0px'}
         %button.fdelete{ ko(click: '$root.removeFieldLogic'), title: 'Remove logic' }
