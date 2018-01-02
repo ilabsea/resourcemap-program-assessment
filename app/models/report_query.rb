@@ -23,7 +23,7 @@ class ReportQuery < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :collection_id
 
   belongs_to :collection
-  has_many :report_query_templates, dependent: :restrict
+  has_many :report_query_templates, dependent: :destroy
 
   attr_accessible :aggregate_fields, :condition,  :condition_fields,
                   :group_by_fields, :name, :parse_condition
