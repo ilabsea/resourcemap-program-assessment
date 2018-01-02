@@ -298,6 +298,7 @@ onCollections ->
 
     disableField: (field, by_field_id) =>
       field.is_mandatory(false)
+      field.errorMessage('')
       field.skippedState(true)
       field.is_blocked_by([])
       unless field.is_mandatory()
@@ -344,8 +345,9 @@ onCollections ->
       field_object
 
     enableField: (field, by_field_id) =>
-      field.is_mandatory(field.originalIsMandatory) if field.skippedState() == false
       field.skippedState(false)
+      field.is_mandatory(field.originalIsMandatory)
+      field.valid()
       field.is_blocked_by([]) if (field.is_blocked_by() != undefined and field.is_blocked_by().length > 0)
 
     setValueFromSite: (value) =>

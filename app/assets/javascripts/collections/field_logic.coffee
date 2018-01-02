@@ -32,7 +32,7 @@ onCollections ->
             fieldLogicValue = @parseYesNoFieldLogicValue()
             return (fieldValue == fieldLogicValue)
           else if field.kind == 'numeric'
-            return (fieldValue == fieldLogicValue)
+            return (parseFloat(fieldValue) == parseFloat(fieldLogicValue))
           else if field.kind == 'select_one'
             return (fieldValue?.toString() == fieldLogicValue?.toString())
           else if field.kind == 'select_many'
