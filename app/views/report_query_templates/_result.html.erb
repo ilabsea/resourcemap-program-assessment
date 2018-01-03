@@ -41,9 +41,10 @@
         <% end %>
       </tbody>
     </table>
+  <% else %>
+    <%= render 'failed', errors: template.report_result %>
   <% end %>
 <% end %>
-
 <style media="screen">
   thead { display: table-row-group; }
   tfoot { display: table-row-group }

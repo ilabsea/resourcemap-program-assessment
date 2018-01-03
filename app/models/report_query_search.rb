@@ -22,7 +22,15 @@ class ReportQuerySearch
       # {"query"=>{"match_all"=>{}}, "facets"=>{"20530"=>{"terms"=>{"field"=>"20530", "size"=>500}}}}
       response = client.search(index: @index_name, body: result_query)
       @facet = response['aggregations']
-      ReportQuerySearchResult.new(@report_query, @facet).as_table
+      if(response["_shards"]["failed"] > 0)
+        errors = []
+        response["_shards"]["failures"].each do |failure|
+          errors.push(build_error_message(failure))
+        end
+        return errors.join("")
+      else
+        ReportQuerySearchResult.new(@report_query, @facet).as_table
+      end
     rescue Exception => e
       Rails.logger.error { e }
     end
@@ -30,6 +38,16 @@ class ReportQuerySearch
 
   def query_log result_query
     Rails.logger.debug { result_query }
+  end
+
+  def build_error_message failure
+    field_id = failure['reason']['reason'].split(".")[2].split("'")[0].to_i
+    field = Field.find field_id  
+    if field
+      return "<li> Field \"#{field.name}\" can't be aggregate #{failure['reason']['caused_by']['reason']} </li>"
+    else
+      return "<li> Error-#{failure['reason']['type']} #{failure['reason']['reason']} #{failure['reason']['caused_by']['reason']} that cause #{failure['reason']['caused_by']['type']} exception. </li>"
+    end
   end
 
 end
