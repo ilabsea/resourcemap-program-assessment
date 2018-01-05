@@ -3,7 +3,7 @@ onLayers ->
     constructor: (collectionId, layers, collectionList) ->
       @collectionId = collectionId
       @fields = ko.observableArray()
-      @layers = ko.observableArray $.map(layers, (x) => new Layer(x, @))
+      @layers = ko.observableArray($.map(layers, (x) => new Layer(x, @)))
       @updateLayerDeletable()
       @currentLayer = ko.observable()
       @bufferNewLayer = ko.observable()
@@ -107,6 +107,8 @@ onLayers ->
         return false
 
       @isShowingCopyForm = ko.observable(false)
+      @originalLayer = null
+      @initWarningMessageOnPageReload()
 
 
     addCustomWidgetedFieldItem: =>
@@ -189,8 +191,23 @@ onLayers ->
       layer.hasFocus(true)
       @isShowingCopyForm(false)
 
+    initWarningMessageOnPageReload: =>
+      window.addEventListener 'beforeunload', (e) ->
+        confirmationMessage = 'It looks like you have been editing some layer. ' + 'If you leave before saving, your changes will be lost.'
+        if window.model.currentLayer()
+          (e or window.event).returnValue = confirmationMessage
+          confirmationMessage
+
     editLayer: (layer) =>
+      #cancel current layer
+      if @currentLayer()
+        if confirm("Are you sure you want to leave this layer ?")
+          @cancelLayer(layer)
+        else
+          return
+
       @isShowingCopyForm(false)
+      @originalLayer = {name: layer.name(), fields: layer.fields()}
       $.get "/collections/#{collectionId}/layers/#{layer.id()}.json", {}, (l) =>
         @originalFields = $.map(l["fields"], (x) -> new Field(layer, x))
         if l["fields"]
@@ -211,6 +228,7 @@ onLayers ->
 
     cancelLayer: =>
       if @currentLayer().id()
+        @currentLayer().name(@originalLayer.name)
         @currentLayer().fields.removeAll()
         @currentLayer().fields.push(field) for field in @originalFields
       else
