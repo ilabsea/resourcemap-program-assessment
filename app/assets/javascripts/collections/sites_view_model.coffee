@@ -86,7 +86,6 @@ onCollections ->
       window.model.initDatePicker()
       window.model.initAutocomplete()
       window.model.initControlKey()
-      site.prepareCalculatedField()
       window.model.newOrEditSite().scrollable(false)
       window.model.newOrEditSite().startEntryDate(new Date(Date.now()))
       for field in window.model.newOrEditSite().fields()
@@ -96,7 +95,7 @@ onCollections ->
           for f in field.field_logics
             f["disable_field_id"] = field["esCode"]
             @allFieldLogics(@allFieldLogics().concat(f))
-
+      site.prepareCalculatedField()
 
       $('#name').focus()
       @hideLoadingField()

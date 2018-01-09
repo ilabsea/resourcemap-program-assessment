@@ -21,7 +21,6 @@ module Site::AlertConcerns
         # to be refactoring
         active_gateway = collection.active_gateway
         suggested_channel = active_gateway.nil?? Channel.default_nuntium_name : active_gateway.nuntium_channel_name
-
         Resque.enqueue SmsTask, phone_numbers, message_notification, suggested_channel, collection.id unless phone_numbers.empty?
         Resque.enqueue EmailTask, emails, message_notification, "[ResourceMap] Alert Notification" unless emails.empty?
       end
@@ -44,7 +43,8 @@ module Site::AlertConcerns
     emails |= alert.email_notification[:users].to_a.map{|field| properties[field] }.reject(&:blank?)
     if alert.email_notification[:to_reporter] == 'true'
       reporter_email = User.where(id: self.user_id).map(&:email)
-      emails |= reporter_email
+      return emails |= reporter_email
     end
+    return emails
   end
 end
