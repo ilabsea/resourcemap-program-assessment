@@ -13,7 +13,8 @@ onCollections ->
         ko.applyBindings(@field, @element.get(0) )
 
     createReadOnlyElement: ->
-      if @field.kind == 'numeric' || @field.kind == 'custom_aggregator'|| @field.kind == 'text'
+      if @field.kind == 'numeric' || @field.kind == 'custom_aggregator' ||
+          (@field.kind == 'calculation' && @field.is_display_field() )
         node = """
               <span data-bind="text: value" id="custom-widget-#{@field.code}" class="custom"></span>
             """
