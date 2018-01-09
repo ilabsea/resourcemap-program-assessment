@@ -405,7 +405,6 @@ onCollections ->
 
       @inEditMode(true)
       @startEditLocationInMap()
-      @prepareCalculatedField()
       window.model.initDatePicker()
       window.model.initAutocomplete()
       window.model.initControlKey()
@@ -418,6 +417,7 @@ onCollections ->
       for field in @fields()
         field.disableDependentSkipLogicField()
 
+      @prepareCalculatedField()
       window.model.newOrEditSite().scrollable(false)
       $('#name').focus()
 
