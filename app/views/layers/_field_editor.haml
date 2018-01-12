@@ -30,7 +30,7 @@
 
 
   %hr/
-  /ko if: kind() != 'calculation' && kind() != 'custom_widget' && kind() != 'custom_aggregator'
+  /ko if: kind() != 'calculation' && kind() != 'custom_widget' && kind() != 'custom_aggregator' && kind() != 'yes_no'
   = ko_check_box_tag :is_mandatory, css: {error: :codeError}
   %span
     =t('views.layers.form.field.mandatory')
@@ -90,7 +90,7 @@
   //ko
 
   /ko if: $root.layerList().length > 0
-  /ko ifnot: custom_widgeted() || kind() == 'calculation' 
+  /ko ifnot: custom_widgeted() || kind() == 'calculation'
   %hr/
   = ko_check_box_tag :is_enable_field_logic, css: {error: :codeError}
   %label
