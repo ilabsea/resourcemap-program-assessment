@@ -9,7 +9,12 @@ onCollections ->
       @name = data.name
       @kind = data.kind
       @ord = data.ord
-      @is_mandatory = ko.observable data?.is_mandatory ? false
+      @is_mandatory = ko.observable(
+                        if @kind == 'yes_no' #to ignore validation for field yes_no
+                          false
+                        else
+                          data?.is_mandatory ? false
+                      )
       @is_display_field = ko.observable data?.is_display_field ? false
       @is_enable_field_logic = data.is_enable_field_logic
       @is_enable_custom_validation = ko.observable data?.is_enable_custom_validation ? false
@@ -99,7 +104,7 @@ onCollections ->
                       $.map data.config.locations, (x) => new Location x
                      else
                       []
-
+        @locations = [{name: window.t('javascripts.collections.fields.no_value'), code: ''}].concat(@locations)
         @resultLocations = ko.observableArray([])
 
         @maximumSearchLength = data.config?.maximumSearchLength
@@ -143,25 +148,11 @@ onCollections ->
           field_object.unblock()
 
     valid: =>
-      @validateMandatory()
-      @validateEmailFormat()
-      @validateRangeAndDigitsPrecision()
-      @validateCustomValidation()
-
-    validateMandatory: =>
-      if @is_mandatory()
-        if !@value() || @value().length == 0
-          @errorMessage('This field is required !')
-        else
-          @errorMessage('')
-
-    validateEmailFormat: =>
-      if @kind == 'email' && @value()
-        re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        if(!re.test(@value().trim()))
-          @errorMessage('Invalid field format')
-        else
-          @errorMessage('')
+      fieldValidator = new FieldValidator(@)
+      fieldValidator.validateMandatory()
+      fieldValidator.validateFormat()
+      fieldValidator.validateRangeAndDigitsPrecision()
+      fieldValidator.validateCustomValidation()
 
     replaceCustomWidget: (widgetContent, readonly) =>
       isReadonly = ''
@@ -419,6 +410,7 @@ onCollections ->
 
     datePickerFormat: (date) =>
       month = date.getMonth() + 1
+      month = if month < 10 then '0'+month
       date.getDate() + '/' + month + '/' + date.getFullYear()
 
     buildHierarchyItems: =>
@@ -445,91 +437,6 @@ onCollections ->
         window.model.initDatePicker(optionsDatePicker)
         window.model.initAutocomplete()
         window.model.initControlKey()
-
-
-    validateRangeAndDigitsPrecision: =>
-      @validateRange()
-      @validateDigitsPrecision()
-
-    validateDigitsPrecision: =>
-      if @digitsPrecision and @value() != ""
-        value = parseInt(@value() * Math.pow(10, parseInt(@digitsPrecision))) / Math.pow(10, parseInt(@digitsPrecision))
-        if value then @value(value) else @value('')
-
-    validateRange: =>
-      if @range and @value()
-        if @range.minimum && @range.maximum
-          if parseFloat(@value()) >= parseFloat(@range.minimum) && parseFloat(@value()) <= parseFloat(@range.maximum)
-            @errorMessage('')
-          else
-            @errorMessage('Invalid value, value must be in the range of ('+@range.minimum+'-'+@range.maximum+")")
-        else
-          if @range.maximum
-            if parseFloat(@value()) <= parseFloat(@range.maximum)
-              @errorMessage('')
-            else
-              @errorMessage('Invalid value, value must be less than or equal '+@range.maximum)
-            return
-
-          if @range.minimum
-            if parseFloat(@value()) >= parseFloat(@range.minimum)
-              @errorMessage('')
-            else
-              @errorMessage('Invalid value, value must be greater than or equal '+@range.minimum)
-            return
-
-    validateCustomValidation: =>
-      if window.model.editingSite()
-        if @is_enable_custom_validation()
-          $.map(@configCustomValidations(), (f) =>
-            field = window.model.editingSite().findFieldByEsCode(f.field_id[0])
-            compareValue = field.value()
-            if(!compareValue)
-              compareValue = 0
-
-            @generateErrorMessage(f, @, compareValue, field.name)
-          )
-
-        if @config().compare_custom_validations
-          $.map(@config().compare_custom_validations, (v) =>
-            field = window.model.editingSite().findFieldByEsCode(v.field_id)
-
-            compareValue = @value()
-            if(!compareValue)
-              compareValue = 0
-
-            @generateErrorMessage(v, field, compareValue, @name)
-          )
-
-    generateErrorMessage: (fieldConfig, validateField, compareValue, fieldName)=>
-      compareValue = parseFloat(compareValue)
-      fieldValue = parseFloat(validateField.value())
-      if fieldConfig.condition_type == '='
-        if fieldValue != compareValue
-          validateField.errorMessage('Invalid value, value must be equal to field '+ fieldName)
-        else
-          validateField.errorMessage('')
-      else if fieldConfig.condition_type == '<'
-        if fieldValue >= compareValue
-          validateField.errorMessage('Invalid value, value must be less than field '+ fieldName)
-        else
-          validateField.errorMessage('')
-      else if fieldConfig.condition_type == '>'
-        if fieldValue <= compareValue
-          validateField.errorMessage('Invalid value, value must be greater than field '+ fieldName)
-        else
-          validateField.errorMessage('')
-      else if fieldConfig.condition_type == '>='
-        if fieldValue < compareValue
-          validateField.errorMessage('Invalid value, value must be greater than and equal to field '+ fieldName)
-        else
-          validateField.errorMessage('')
-      else if fieldConfig.condition_type == '<='
-        if fieldValue > compareValue
-          validateField.errorMessage('Invalid value, value must be less than and equal to field '+ fieldName)
-        else
-          validateField.errorMessage('')
-
 
     validate_integer_only: (keyCode) =>
       value = $('#'+@kind+'-input-'+@code).val()

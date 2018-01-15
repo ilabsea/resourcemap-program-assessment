@@ -37,7 +37,7 @@ onCollections ->
         fields = window.model.currentCollection().fields()
       for field in fields
         if field.kind == 'location'
-          result = []
+          result = [{name: window.t('javascripts.collections.fields.no_value'), code: ''}]
           for location in field.locations
             distance = @calculateDistance(fromLat, fromLng, location.latitude, location.longitude)
             if distance < parseFloat(field.maximumSearchLength)
