@@ -4,7 +4,7 @@ onCollections ->
       @field = field
 
     domObject: ->
-      if(@field.isForCustomWidget())
+      if(@field.isForCustomWidget)
         @fieldUI = $('#custom-widget-' + @field.code)
       else
         @fieldUI = $('#'+@field.kind+'-input-' + @field.code)

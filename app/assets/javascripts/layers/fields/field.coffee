@@ -55,6 +55,7 @@ onLayers ->
       @code.subscribe =>
         unless @editableCode()
           @changeCodeInCalculationField()
+
       @custom_widgeted.subscribe =>
         if @custom_widgeted() == true
           @is_enable_field_logic(false)
@@ -129,7 +130,7 @@ onLayers ->
       return (@kind() in ['numeric', 'calculation'])
 
     isAllowFieldLogicConfig: =>
-      return model?.layerList().length > 0 && !custom_widgeted() && @kind() != 'calculation'
+      return model?.layerList().length > 0 && !@custom_widgeted() && @kind() != 'calculation'
 
     isAllowDependancyHierarchyFieldConfig: =>
       return (@is_enable_dependancy_hierarchy() && model?.layersWithDependentHierarchyFields().length > 0)
@@ -138,7 +139,7 @@ onLayers ->
       return (@kind() in ['select_one', 'select_many'])
 
     isWidgetable: =>
-      return  (@kind() in ['numeric', 'select_one'])
+      return  (@kind() in ['numeric', 'select_one', 'calculation'])
 
     isRemovable: =>
       is_dependency_of_other = ( @isHavingRelationWithOther() || @isParentOfOther())
@@ -148,9 +149,10 @@ onLayers ->
 
     isParentOfOther: =>
       return false unless @id()
-      for layer in model?.layers()
-        is_parent_of_other = layer.fields().filter((f) => "#{f.impl()?.parentHierarchyFieldId?()}" == "#{@id()}" || "#{f.config?.parent_hierarchy_field_id}" == "#{@id()}").length > 0
-        return true if is_parent_of_other
+      if model?.layers().length > 0
+        for layer in model.layers()
+          is_parent_of_other = layer.fields().filter((f) => "#{f.impl()?.parentHierarchyFieldId?()}" == "#{@id()}" || "#{f.config?.parent_hierarchy_field_id}" == "#{@id()}").length > 0
+          return true if is_parent_of_other
       return false
 
     isDependentHierarchyField: =>

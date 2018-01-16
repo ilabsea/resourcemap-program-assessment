@@ -184,11 +184,10 @@ onCollections ->
 
     copyPropertiesToCollection: (collection) =>
       collection.fetchFields =>
-        if @fields().length == 0
-          collection.clearFieldValues()
-          @fields(collection.fields())
-          @layers(collection.layers())
-          @copyPropertiesToFields()
+        collection.clearFieldValues()
+        @fields(collection.fields())
+        @layers(collection.layers())
+        @copyPropertiesToFields()
 
     update_site: (json, callback, callbackError) =>
       data = {site: JSON.stringify json}
@@ -439,7 +438,7 @@ onCollections ->
       # and restore original field values if not saved
       for field in @fields()
         field.expanded(false)
-        field.filter('')
+        field.filter('') if field.kind == 'select_many'
 
         unless saved
           field.value(field.originalValue)
@@ -542,7 +541,7 @@ onCollections ->
             if field["dependentFields"]
               $.map(field["dependentFields"], (dependentField) ->
                 refField = window.model.newOrEditSite().findFieldByEsCode(dependentField['id'])
-                if(refField?.isForCustomWidget())
+                if(refField?.isForCustomWidget)
                   $dependentField = $("#custom-widget-" + dependentField["code"])
                 else
                   $dependentField = $("#" + dependentField["kind"] + "-input-" + dependentField["code"])

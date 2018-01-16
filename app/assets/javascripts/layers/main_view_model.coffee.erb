@@ -233,9 +233,6 @@ onLayers ->
         @currentField(layer.fields()[0]) if layer.fields().length > 0
         layer.hasFocus(true)
 
-    expandAllField: (layer) =>
-      console.log(layer)
-
     cancelLayer: =>
       if @currentLayer().id()
         @currentLayer().name(@originalLayer.name)

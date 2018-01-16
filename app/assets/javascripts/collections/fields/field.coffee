@@ -1,4 +1,6 @@
 #= require module
+#= require collections/fields/base/numeric
+#= require collections/fields/base/yes_no
 #= require collections/fields/base/select
 #= require collections/fields/base/select_many
 #= require collections/fields/base/hierarchy
@@ -7,13 +9,14 @@
 #= require collections/fields/base/calculation
 #= require collections/fields/base/custom_widget
 #= require collections/fields/config/field_skip_logic
-#= require collections/fields/config/field_validation
 
 onCollections ->
 
   # A Layer field
   class @Field extends Module
 
+    @include FieldNumeric
+    @include FieldYesNo
     @include FieldSelect
     @include FieldSelectMany
     @include FieldHierarchy
@@ -22,7 +25,6 @@ onCollections ->
     @include FieldCalculation
     @include FieldCustomWidget
     @include FieldSkipLogic
-    @include FieldValidation
 
     constructor: (data, layerId) ->
       @layer_id = layerId
@@ -35,22 +37,22 @@ onCollections ->
 
       @showInGroupBy = @kind in ['select_one', 'select_many', 'hierarchy']
       @writeable = @originalWriteable = data?.writeable
-      @allowsDecimals = ko.observable data?.config?.allows_decimals == 'true'
+      @config = ko.observable data?.config
       @is_mandatory = ko.observable data?.is_mandatory ? false
-      @originalIsMandatory = data.is_mandatory
-      @keyType = if @allowsDecimals() then 'decimal' else 'integer'
-      @editing = ko.observable false
-      @expanded = ko.observable false
       @is_display_field = ko.observable data?.is_display_field ? false
       @invisible = ko.computed => if @kind == "calculation" && !@is_display_field()
                                     return "invisible-div"
-
       @isForCustomWidget = data.custom_widgeted
       @is_enable_dependancy_hierarchy = ko.observable data?.is_enable_dependancy_hierarchy ? false
-      @filter = ->
+      @originalIsMandatory = data.is_mandatory
+      @allowsDecimals = ko.observable data?.config?.allows_decimals == 'true'
+
+      @editing = ko.observable false
+      @expanded = ko.observable false
 
       @value = ko.observable()
       @value.subscribe =>
+        @valid()
         @disableDependentSkipLogicField()
         @performCalculation()
         @updateDependentFieldsHierarchyItemList()
@@ -64,7 +66,18 @@ onCollections ->
       @error = ko.computed => !!@errorMessage()
       @errorClass = ko.computed => if @error() then 'error' else '' # For field number
 
-      @constructorFieldSelect(data) #if @kind in ['select_one', 'select_many']
+      @hasValue = ko.computed =>
+        if @kind == 'yes_no'
+          true
+        else if @kind == 'select_many'
+          @value() && @value().length > 0
+        else if @kind == 'numeric'
+          @value() != '' && @value() != null && @value() != undefined
+        else
+          @value()
+      @constructorFieldNumeric(data) if @kind == 'numeric'
+      @constructorFieldYesNo(data) if @kind == 'yes_no'
+      @constructorFieldSelect(data)
       @constructorFieldSelectMany(data) if @kind == 'select_many'
       @constructorFieldHierarchy(data) if @kind == 'hierarchy'
       @constructorFieldLocation(data) if @kind == 'location'
@@ -72,8 +85,13 @@ onCollections ->
       @constructorFieldCalculation(data) if @kind == 'calculation'
       @constructorFieldCustomWidget(data) if @kind == 'custom_widget'
       @constructorFieldSkipLogic(data)
-      @constructorFieldValidation(data)
 
+    valid: =>
+      fieldValidator = new FieldValidator(@)
+      fieldValidator.validateMandatory()
+      fieldValidator.validateFormat()
+      fieldValidator.validateRangeAndDigitsPrecision()
+      fieldValidator.validateCustomValidation()
 
     setValueFromSite: (value) =>
       if @kind == 'date' && $.trim(value).length > 0
@@ -88,6 +106,16 @@ onCollections ->
       value = '' if (value == null && value == '')
 
       @value(value)
+
+    buildCompareFieldConfigOfCustomValidation: (fieldId, operator, compareField) =>
+      compare = {
+        field_id: fieldId,
+        condition_type: operator
+      }
+      if ( compareField.config().compare_custom_validations )
+        compareField.config().compare_custom_validations.push(compare)
+      else
+        compareField.config().compare_custom_validations = [compare]
 
     codeForLink: (api = false) =>
       if api then @code else @esCode
@@ -139,8 +167,13 @@ onCollections ->
       @value.valueHasMutated()
 
     datePickerFormat: (date) =>
+      day = date.getDate()
+      day = if day < 10 then '0'+day else day
+
       month = date.getMonth() + 1
-      date.getDate() + '/' + month + '/' + date.getFullYear()
+      month = if month < 10 then '0'+month else month
+
+      day + '/' + month + '/' + date.getFullYear()
 
     edit: =>
       @editing(true)
@@ -162,6 +195,45 @@ onCollections ->
         window.model.initAutocomplete()
         window.model.initControlKey()
 
+    validate_integer_only: (keyCode) =>
+      value = $('#'+@kind+'-input-'+@code).val()
+      if value == null || value == ""
+        if(keyCode == 189 || keyCode == 173) && (@preKeyCode != 189 || @preKeyCode == null || @preKeyCode == 173) #allow '-' for both chrome & firefox
+          @preKeyCode = keyCode
+          return true
+      else
+        if(keyCode == 189 || keyCode == 173) && value.charAt(0) != '-'
+          @preKeyCode = keyCode
+          return true
+      if keyCode > 31 && (keyCode < 48 || keyCode > 57) && (keyCode != 8 && keyCode != 46) && keyCode != 37 && keyCode != 39  #allow right and left arrow key
+        return false
+      else
+        @preKeyCode = keyCode
+        return true
+
+    validate_decimal_key: (keyCode) =>
+      value = ''
+      if @isForCustomWidget
+        value = $('#custom-widget-'+@code).val()
+      else
+        value = $('#'+@kind+'-input-'+@code).val()
+      dotcontains = value.indexOf(".") != -1
+      if (dotcontains)
+        if (keyCode == 190)
+          return false
+
+      if (keyCode == 190)
+        return true
+
+      if (keyCode > 31 && (keyCode < 48 || keyCode > 57))
+        return false
+      return true
+
+    validate_number_key: (keyCode) =>
+      if keyCode > 31 && (keyCode < 48 || keyCode > 57)
+        return false
+      return true
+
     keyPress: (field, event) =>
       switch event.keyCode
         when 13 then @save()
@@ -169,7 +241,9 @@ onCollections ->
         else
           if field.kind == "numeric"
             if field.allowsDecimals()
-              return @validate_digit(event.keyCode)
+              return @validate_decimal_key(event.keyCode)
+            else
+              return @validate_number_key(event.keyCode)
           return true
 
     exit: =>
@@ -178,12 +252,14 @@ onCollections ->
       @filter('')
       delete @originalValue
 
-    save: =>
-      window.model.editingSite().updateProperty(@esCode, @value())
-      if !@error()
-        @editing(false)
-        @filter('')
-        delete @originalValue
+    save: (obj, event)=>
+      if (event.originalEvent)
+        window.model.editingSite().updateProperty(@esCode, @value())
+        if !@error()
+          @editing(false)
+          @filter('') if @kind == 'select_many'
+          delete @originalValue
+
 
     closeDatePickerAndSave: =>
       if $('#ui-datepicker-div:visible').length == 0
@@ -216,9 +292,16 @@ onCollections ->
         true
       else
         false
+
     init: =>
       if @kind == 'date'
         window.model.initDatePicker()
+      if window.model.newOrEditSite() && @kind == 'numeric' && @is_enable_custom_validation
+        if @configCustomValidations()
+          $.map(@configCustomValidations(), (c) =>
+            compareField = window.model.newOrEditSite().findFieldByEsCode(c.field_id[0])
+            @buildCompareFieldConfigOfCustomValidation(@esCode, c.condition_type, compareField)
+          )
 
     isShowingNonValue: =>
       return false if @kind == 'custom_widget'

@@ -25,9 +25,9 @@
               %input{ko(value: :startEntryDate), type: :hidden, name: :startEntryDate}
 
             <!-- ko foreach: layers -->
-            %div
+            %div.layer-name{ko(css: {error: :error})}
               %img{ko(click: :toggleExpand, attr: {src: "'#{InsteddRails.url}/theme/images/icons/misc/grey/arrow' + (expanded() ? 'Down' : 'Right') + '.png'"}), style: "position:relative;top:1px;cursor:pointer", width: 11, height: 11}
-              %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;color:grey;cursor:pointer'}
+              %span{ko(text: :name, click: :toggleExpand), style: 'font-weight:bold;cursor:pointer'}
 
             <!-- ko if: expanded() -->
             <!-- ko foreach: fields -->

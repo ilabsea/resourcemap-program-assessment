@@ -23,13 +23,13 @@ onCollections ->
 
 
     @disableDependentSkipLogicField: ->
-      if window.model.newOrEditSite()
+      if window.model.editingSite()
         fieldSkipIds = @getRelatedSkipFieldIds()
         for field_id in fieldSkipIds
-          field = window.model.newOrEditSite().findFieldByEsCode(field_id)
+          field = window.model.editingSite().findFieldByEsCode(field_id)
           skipFlag = false
           for field_logic in field.field_logics
-            dependentField = window.model.newOrEditSite().findFieldByEsCode(field_logic.field_id)
+            dependentField = window.model.editingSite().findFieldByEsCode(field_logic.field_id)
             skipFlag = field_logic.isSkip(dependentField)
             if skipFlag == true
               @disableField(field, field_logic.field_id)
@@ -48,7 +48,7 @@ onCollections ->
     #the disableField of that field_logic might have many related field_logics
     @relatedFieldLogics: ->
       if model.allFieldLogics().length > 0
-        return model.allFieldLogics().filter((x) => "#{x.field_id}" == @esCode)
+        return model.allFieldLogics().filter((x) => "#{x.field_id}" == "#{@esCode}")
       return []
 
     @enableSkippedField: (field_id, by_field_id) ->
@@ -63,6 +63,7 @@ onCollections ->
 
     @disableField: (field, by_field_id) ->
       field.is_mandatory(false)
+      field.errorMessage('')
       field.skippedState(true)
       field.is_blocked_by([])
       unless field.is_mandatory()
@@ -100,19 +101,21 @@ onCollections ->
         when 'photo'
           field_id = field.code
           field_object = $("#" + field_id).parent()
+        when 'custom_widget'
+          field_object = $("#custom_widget-wrapper-"+field.code)
         else
           field_id = field.kind + "-input-" + field.code
           field_object = $("#" + field_id).parent()
       field_object
 
-    @enableField: (field, by_field_id) ->
-      field.is_mandatory(field.originalIsMandatory) if field.skippedState() == false
+    @enableField: (field, by_field_id) =>
       field.skippedState(false)
+      field.is_mandatory(field.originalIsMandatory)
+      field.valid()
       field.is_blocked_by([]) if (field.is_blocked_by() != undefined and field.is_blocked_by().length > 0)
 
-    @enableScrollFocusView: ->
-      if @field_logics.length > 0
-        if @value() == ""
-          @enableSkippedField @esCode
-        else
-          window.model.newOrEditSite().scrollable(true)
+
+    @inititalFieldLogic: ->
+      for f in @field_logics
+        f["disable_field_id"] = @esCode
+        window.model.allFieldLogics(window.model.allFieldLogics().concat(f))

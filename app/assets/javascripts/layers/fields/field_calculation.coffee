@@ -10,10 +10,19 @@ onLayers ->
                             )
                           else
                             ko.observableArray()
-      @field = ko.observable()
       @codeCalculation = ko.observable field.config?.code_calculation ? ""
+      @autoCompleteValue = ko.observable()
+
+    selectField: (event, ui) =>
+      $(event.target).val("")
+      id = ui.item.value
+      fields = window.model.fieldList().filter (f) -> "#{f.id()}" == "#{id}"
+      if fields.length > 0
+        @addDependentField(fields[0])
+      return false
+
     addDependentField: (field) =>
-      fields = @dependent_fields().filter (f) -> f.id() is field.id()
+      fields = @dependent_fields().filter (f) -> "#{f.id()}" == "#{field.id()}"
       if fields.length == 0
         field.editableCode(false)
         @dependent_fields.push(new FieldDependant(field.toJSON()))

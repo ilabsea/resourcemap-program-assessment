@@ -112,7 +112,6 @@ onCollections ->
         else
           @goBackToTable = true unless @showingMap()
           @showMap =>
-
             site.copyPropertiesToCollection(site.collection)
 
             if @selectedSite() && @selectedSite().id() == site.id()
@@ -124,21 +123,22 @@ onCollections ->
             @hideLoadingField()
             @loadBreadCrumb()
             @reinitialFields()
-            @allFieldLogics([])
-            for field in @editingSite().fields()
-              field.valid() if field.is_enable_custom_validation
-              @getLocations(site.lat(), site.lng()) if field.kind == 'location'
-              if field.field_logics
-                for f in field.field_logics
-                  f["disable_field_id"] = field["esCode"]
-                  @allFieldLogics(@allFieldLogics().concat(f))
+            @processSkipLogic()
 
           $('a#previewimg').fancybox()
 
-    @reinitialFields: =>
-      for field in window.model.editingSite().fields()
+    @reinitialFields: ->
+      @allFieldLogics([])
+      for field in @editingSite().fields()
         field.bindWithCustomWidgetedField()
         field.dependentHierarchyItemList(field.initDependentHierarchyItemList()) if field.isDependentFieldHierarchy()
+        field.valid() if field.is_enable_custom_validation
+        @getLocations(@editingSite().lat(), @editingSite().lng()) if field.kind == 'location'
+        field.inititalFieldLogic() if field.field_logics.length > 0
+
+    @processSkipLogic: ->
+      for field in @editingSite().fields()
+        field.disableDependentSkipLogicField()
 
     @editSiteFromId: (siteId, collectionId) ->
       site = @siteIds[siteId]

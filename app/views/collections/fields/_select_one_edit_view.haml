@@ -1,6 +1,5 @@
 - if single_editing_mode
   %select{ko(value: :value, options: :optionsUIIds, optionsText: 'function(o){return $data.labelFor(o)}', hasfocus: true, event: {change: :save, blur: :save}, attr: {id: "'select_one-input-' + code"})}
 - else
-  %select.right.w20{ko(value: :value, options: :optionsUIIds, optionsText: 'function(o){return $data.labelFor(o)}',
-    event: {change: :enableScrollFocusView}, css: {error: :error }, attr: {id: "'select_one-input-' + code"})}
+  %select.right.w20{ko(value: :value, options: :optionsUIIds, optionsText: 'function(o){return $data.labelFor(o)}', css: {error: :error }, attr: {id: "'select_one-input-' + code"})}
   .clear

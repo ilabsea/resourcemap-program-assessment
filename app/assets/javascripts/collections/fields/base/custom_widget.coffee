@@ -1,6 +1,7 @@
 onCollections ->
   class @FieldCustomWidget
     @constructorFieldCustomWidget: (data) ->
+      @readonly_custom_widgeted = data.readonly_custom_widgeted
       @widgetContent = data.config?.widget_content
       @widgetContentViewAsInput = ko.computed =>
         if(@kind == "custom_widget" && @widgetContent != undefined)
@@ -36,4 +37,4 @@ onCollections ->
           for field_wrapper in arr_field_wrapper
             field_code = field_wrapper.split("wrapper-custom-widget-")[1]
             field = window.model.findFieldByCode(field_code)
-            new CustomWidget(field).bindField()
+            new CustomWidget(field).bindField() if field
