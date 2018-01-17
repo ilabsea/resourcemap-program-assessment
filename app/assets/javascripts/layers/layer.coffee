@@ -15,7 +15,7 @@ onLayers ->
 
       @dependentHierarchyFields = ko.computed =>
                             if model?.currentField()
-                              @fields().filter (f) => f.isDependentHierarchyField() && f != model.currentField()
+                              @fields().filter (f) => f.id() && f.isDependentHierarchyField() && f != model.currentField()
                             else
                               @fields().filter (f) => f.isDependentHierarchyField()
 
