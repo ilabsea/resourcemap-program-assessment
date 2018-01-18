@@ -543,6 +543,8 @@ onCollections ->
                 refField = window.model.newOrEditSite().findFieldByEsCode(dependentField['id'])
                 if(refField?.isForCustomWidget)
                   $dependentField = $("#custom-widget-" + dependentField["code"])
+                else if(refField.kind == 'hierarchy')
+                  $dependentField = $("#" + dependentField["id"])
                 else
                   $dependentField = $("#" + dependentField["kind"] + "-input-" + dependentField["code"])
 
