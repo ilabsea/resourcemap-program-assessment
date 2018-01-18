@@ -11,8 +11,10 @@ module Site::AlertConcerns
       extended_properties[:alert] = true
       extended_properties[:alert_id] = alert.id
       extended_properties[:notify_to] = {reporter: alert.notify_to_reporter?}
+      extended_properties[:conditions] = alert.conditions
       extended_properties[:color] = alert.color
       extended_properties[:ord] = alert.ord
+
 
       if alert.is_notify && Settings.notify_alert == true
         phone_numbers = notification_numbers alert
