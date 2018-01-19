@@ -118,7 +118,6 @@ onCollections ->
         url: "/sites/#{@id()}/update_property.json",
         data: {es_code: esCode, value: value},
         success: ((data) =>
-          field.errorMessage("")
           @propagateUpdatedAt(data.updated_at)
           window.model.updateSitesInfo()
           window.model.currentCollection().reloadSites()

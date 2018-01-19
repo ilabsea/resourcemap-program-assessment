@@ -253,12 +253,12 @@ onCollections ->
       delete @originalValue
 
     save: (obj, event)=>
-      if (event.originalEvent)
-        window.model.editingSite().updateProperty(@esCode, @value())
-        if !@error()
-          @editing(false)
-          @filter('') if @kind == 'select_many'
-          delete @originalValue
+      window.model.editingSite().updateProperty(@esCode, @value())
+      if !@error()
+        @editing(false)
+        @filter('') if @kind == 'select_many'
+        new FieldValidator(@).validateMandatory() #re-validate mandatory
+        delete @originalValue
 
 
     closeDatePickerAndSave: =>
