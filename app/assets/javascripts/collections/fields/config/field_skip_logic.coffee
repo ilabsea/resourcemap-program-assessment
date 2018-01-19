@@ -11,10 +11,13 @@ onCollections ->
 
       @blocked = ko.computed =>
         field_object = @get_dom_object(this)
-        if @is_blocked_by() != undefined and @is_blocked_by().length> 0
+        if @hasBlockedBy()
           field_object.block({message: ""})
         else
           field_object.unblock()
+
+    @hasBlockedBy: ->
+      @is_blocked_by() != undefined and @is_blocked_by().length > 0
 
     @refresh_skip: ->
       if(@is_blocked_by().length > 0)
@@ -32,10 +35,10 @@ onCollections ->
             dependentField = window.model.editingSite().findFieldByEsCode(field_logic.field_id)
             skipFlag = field_logic.isSkip(dependentField)
             if skipFlag == true
-              @disableField(field, field_logic.field_id)
+              @disableField(field)
               break
           if(skipFlag == false)
-            @enableField(field, dependentField.esCode)
+            @enableField(field)
 
     @getRelatedSkipFieldIds: ->
       fieldSkipIds = []
@@ -51,30 +54,12 @@ onCollections ->
         return model.allFieldLogics().filter((x) => "#{x.field_id}" == "#{@esCode}")
       return []
 
-    @enableSkippedField: (field_id, by_field_id) ->
-      flag = false
-      $.map(window.model.editingSite().fields(), (f) =>
-        if f.esCode == field_id
-          flag = true
-        if flag
-          @enableField(f, by_field_id)
-          return
-      )
-
-    @disableField: (field, by_field_id) ->
+    @disableField: (field) ->
       field.is_mandatory(false)
       field.errorMessage('')
       field.skippedState(true)
       field.is_blocked_by([])
-      unless field.is_mandatory()
-        if field.is_blocked_by() == undefined
-          field.is_blocked_by([])
-        index = field.is_blocked_by().indexOf(by_field_id)
-        if(index < 0 )
-          tmp = field.is_blocked_by()
-          tmp.push(by_field_id) if by_field_id != undefined
-        field.value(null)
-        field.is_blocked_by(tmp)
+      field.value(null)
 
     @get_dom_object: (field) ->
       switch field.kind
@@ -108,12 +93,11 @@ onCollections ->
           field_object = $("#" + field_id).parent()
       field_object
 
-    @enableField: (field, by_field_id) =>
+    @enableField: (field) =>
       field.skippedState(false)
       field.is_mandatory(field.originalIsMandatory)
       field.valid()
-      field.is_blocked_by([]) if (field.is_blocked_by() != undefined and field.is_blocked_by().length > 0)
-
+      field.is_blocked_by([]) if field.hasBlockedBy()
 
     @inititalFieldLogic: ->
       for f in @field_logics
