@@ -31,11 +31,7 @@
 //ko
 
 /ko if: field().kind == 'hierarchy'
-%span is
-%select{ko(value: :operator, options: :operatorOptions, optionsText: "'label'")}
-/ko with: field
-%div.hierarchy-container{ko(template: {name: "'refine-hierarchy-items-template'", with: 'config.hierarchy'})}
-//ko
+= render 'report_queries/condition_hierarchy_template'
 //ko
 
 /ko if: field().kind == 'location'

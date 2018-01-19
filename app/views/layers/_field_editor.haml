@@ -3,174 +3,54 @@
   %p.smalltext= t('views.layers.form.field.the_data_type_to_fill_in_this_field')
   %div{"data-bind" => "text: kind_titleize"}
 
-  /ko if: kind() == 'numeric' || kind() == "calculation"
-  %br/
-  %div
-    %label
-      %input{ko(checked: 'impl().allowsDecimals'), type: 'checkbox', style: 'float:left;'}
-      %div{style: 'width:200px; float:left; margin-top: 1px; color: #555555;'}= t('views.layers.form.field.allow_decimal_numbers')
-  %br/
-  /ko if: impl().allowsDecimals
-  %div
-    %br
-    %label= t('views.layers.form.field.number_of_digits_precision')
-    = ko_text_field_tag "impl().digitsPrecision", html: { id: 'digits_precision'}
-  //ko
+  /ko if: isAllowDigitPrecisionConfig()
+  = render 'layers/fields/config/digit_precision'
   //ko
 
-  %hr/
-  %label{ko(css: {error: :nameError})}= t('views.layers.form.field.name')
-  %p.smalltext= t('views.layers.form.field.the_name_of_this_field_as_it_is_presented')
-  = ko_text_field_tag :name, hasfocus: :hasFocus, css: {error: :nameError}, html: { id: 'field_name'}
+  = render 'layers/fields/base'
 
-  %hr/
-  %label{ko(css: {error: :codeError})}= t('views.layers.form.field.code')
-  %p.smalltext= t('views.layers.form.field.the_abbreviation_used_to_report_via_SMS.')
-  = ko_text_field_tag :code, valueUpdate: :afterblur, css: {error: :codeError}
-
-
-  %hr/
-  /ko if: kind() != 'calculation' && kind() != 'custom_widget' && kind() != 'custom_aggregator' && kind() != 'yes_no'
-  = ko_check_box_tag :is_mandatory, css: {error: :codeError}
-  %span
-    =t('views.layers.form.field.mandatory')
-  %p.smalltext= t('views.layers.form.field.this_field_must_be_report_on_every_report')
-
+  /ko if: isAllowMandatoryConfig()
+  = render 'layers/fields/config/mandatory'
   //ko
 
-  /ko if: kind() == 'numeric' || kind() == 'custom_aggregator' || kind() == 'select_one' || kind() == 'calculation'
-  = ko_check_box_tag :custom_widgeted, css: {error: :codeError}
-  %span
-    = t('views.layers.form.field.custom_widgeted')
-  %p.smalltext= t('views.layers.form.field.do_not_display_in_form_as_being_used_in_custom_widget')
+  /ko if: isWidgetable()
+  = render 'layers/fields/config/custom_widgeted'
   //ko
 
-  /ko if: kind() == 'custom_aggregator'
-  %hr/
-  =render 'field_aggregator'
-  //ko
-
-  /ko if: kind() == 'select_one' || kind() == 'select_many'
-  %hr/
-  %label{ko(css: {error: 'impl().optionsError'})}= t('views.layers.form.field.options')
-  %p.smalltext= t('views.layers.form.field.possible_values_for_this_field')
-  %ul.mclist.w40{style: 'width: 282px !important'}
-
-    /ko foreach: impl().options
-    %li
-      %input.arrowinput{ko(visible: :editing, hasfocus: true, value: :code, valueUpdate: :afterkeydown, event: {keypress: :keyPress, blur: '$root.optionBlur'}), type: :text, style: 'position:relative;top:1px'}
-      %span.arrowgrey{ko(visible: '!editing()', click: :edit, text: :code), style: 'cursor:pointer;position:relative;top:-1px'}
-      %input.ux-clist{ko(value: :label, valueUpdate: :afterkeydown, event: {blur: '$root.optionBlur'}), type: :text, style: 'width: 150px !important'}
-      %button.clist-remove{ko(click: '$root.removeOption'), title: t('views.layers.form.field.remove_option')}
-    //ko
-    %li{ko(with: '$root.newOption()')}
-      %input.arrowinput{ko(value: :code, hasfocus: :hasFocus, valueUpdate: :afterkeydown, event: {keypress: '$root.newOptionKeyPress', blur: '$root.addOption'}), placeholder: "Code", style: 'position:relative;top:2px'}
-      %input.ux-text{ko(value: :label, valueUpdate: :afterkeydown, event: {keypress: '$root.newOptionKeyPress', blur: '$root.addOption'}), placeholder: "Label", style: 'width: 150px !important'}
-      %button.clist-add{ko(click: '$root.addOption', enable: '$root.optionValid'), title: t('views.layers.form.field.add_option')}
-  //ko
-
-  /ko if: kind() == 'numeric'
-  %hr/
-  = ko_check_box_tag 'impl().is_enable_range', css: {error: :codeError}
-  %label
-    Enable Range
-
-  %div{ko(if: 'impl().is_enable_range'), style: 'width:275px'}
-    %br/
-    %p.smalltext Mininum
-    = ko_number_field_tag 'impl().minimum', css: {error: :error}, event: {keydown: 'impl().validate_number_only'}
-    %br/
-    %br/
-    %p.smalltext Maximum
-    = ko_number_field_tag 'impl().maximum', css: {error: :error}, event: {keydown: 'impl().validate_number_only'}
+  /ko if: isSelectable()
+  = render 'layers/fields/config/option'
   //ko
 
   /ko if: kind() == 'text'
-  = render 'layers/advanced_field_editor'
+  = render 'layers/fields/config/advanced_field_editor'
   //ko
 
-  /ko if: $root.layerList().length > 0
-  /ko ifnot: custom_widgeted() || kind() == 'calculation'
-  %hr/
-  = ko_check_box_tag :is_enable_field_logic, css: {error: :codeError}
-  %label
-    = t('views.layers.form.field.enable_skip_logic_for_this_field')
-  %div{ko(if: :is_enable_field_logic)}
-    = render :partial => "field_logic"
-  //ko
+  /ko if: isAllowFieldLogicConfig()
+  = render 'layers/fields/config/field_logic'
   //ko
 
   /ko if: kind() == 'numeric'
-  %hr/
-  = ko_check_box_tag :is_enable_custom_validation, css: {error: :error_skiplogic}
-  %label
-    = t('views.layers.form.field.enable_custom_validation')
-  %div{ko(if: :is_enable_custom_validation)}
-    = render :partial => "field_custom_validation"
-  //ko
-
-  /ko if: kind() == 'custom_widget'
-  %hr/
-  %div{"style" => "padding: 5px 0px;"}
-    %label Design custom field as you want
-    %span.smalltext.left{style: 'padding-right:18px;padding-top:10px;'}= t('views.layers.form.field.select_fields')
-    = select_tag nil, nil, 'data-bind'=> "options: $root.customWidgetedFields,
-                                             optionsText: 'name',
-                                             value: $root.selectedCustomWidgetField,
-                                             optionsCaption: window.model.default_select, css: { error: !$root.selectedCustomWidgetField() } ",
-                                             class: 'c-select m-select'
-
-    %button.clist-add{ko(click: '$root.addCustomWidgetedFieldItem',
-                         enable: '$root.customWidgetedFields().length >0'),
-                         title: 'Add another option'}
-
-    %textarea{"data-bind" => "tinymce: impl().widgetContent", class: 'tinymce'}
-    %br
-    %span.error{ko(text: :widgetMappingerror)}
-
-  //ko
-
-  /ko if: kind() == 'photo'
-
-  //ko
-
-  /ko if: kind() == 'calculation'
-  %hr/
-  %label
-    = t('views.layers.form.field.display_on_form_entry')
-  %p.smalltext= t('views.layers.form.field.show_this_field_and_value_on_form_entry')
-  = ko_check_box_tag :is_display_field, css: {error: :codeError}
-  %hr/
-  %label
-    = t('views.layers.form.field.dependent_field')
-  = render :partial => "field_calculation"
+  = render 'layers/fields/config/range'
+  = render 'layers/fields/config/custom_validation'
   //ko
 
   /ko if: kind() == 'hierarchy'
-  %hr/
-  %label{ko(css: {error: 'impl().hierarchyError'})}= t('views.layers.form.field.hierarchy')
-  %p.smalltext
-    = t('views.layers.form.field.upload_a_csv')
-    ID, ParentID, ItemName
-  %form.hierarchy_form{action: collection_decode_hierarchy_csv_path(collection), method: :post, enctype: 'multipart/form-data', target: 'hierarchy_iframe', style: 'margin-top:6px;margin-bottom:10px'}
-    %input{type: :hidden, name: 'authenticity_token', value: form_authenticity_token}
-    %input.hierarchy_upload{type: :file, name: :file, id: :hierarchy_upload}
-  %iframe#hierarchy_iframe{name: 'hierarchy_iframe', style: 'display:none'}
-  /ko if: impl().errorUploadingHierarchy()
-  %p
-    = t('views.layers.form.field.there_was')
-    = link_to t('views.layers.form.field.an_error'), "#", :class => 'error_description_bubble'
-    = t('views.layers.form.field.processing_the_hierarchy_file')
+  = render 'layers/fields/config/dependancy_hierarchy'
+  = render 'layers/fields/hierarchy'
   //ko
-  /ko if: impl().uploadingHierarchy()
-  = t('views.layers.form.field.uploading')
+
+  /ko if: kind() == 'calculation'
+  = render 'layers/fields/calculation'
   //ko
-  /ko if: !impl().uploadingHierarchy() && impl().hierarchy()
-  .hierarchy-container
-    /ko template: {name: 'hierarchy-items-template', foreach: impl().hierarchyItems}
-    //ko
+
+  /ko if: kind() == 'location'
+  = render 'layers/fields/location'
   //ko
+
+  /ko if: kind() == 'custom_widget'
+  = render 'layers/fields/custom_widget'
   //ko
+
   - Field::plugin_kinds.each do |name, kind|
     - if kind[:property_editor]
       <!-- ko if: kind() == '#{name}' -->
@@ -178,43 +58,5 @@
       <!-- /ko -->
   %br/
   %br/
-
-  /ko if: kind() == 'location'
-  %hr/
-  %label{ko(css: {error: 'impl().maximumSearchLengthError'})}= t('views.layers.form.field.maximum_search_length')
-  = ko_text_field_tag 'impl().maximumSearchLength', css: {error: 'impl().maximumSearchLengthError'}, html: { id: 'field_maximumSearchLength'}
-  %hr/
-  %label{ko(css: {error: 'impl().locationError'})}= t('views.layers.form.field.import_places')
-  %p.smalltext
-    = t('views.layers.form.field.upload_a_csv')
-    Code, LocationName, Latitude, Longitude
-    /ko ifnot: impl().errorUploadingLocation()
-    /ko if: config  && config.locations
-    %a{ko(attr: {href: "'/api/collections/'+$root.collectionId+'/download_location_csv?field='+id()"}), style: 'color:blue'} Download location csv
-    //ko
-    //ko
-  %form.location_form{action: collection_decode_location_csv_path(collection), method: :post, enctype: 'multipart/form-data', target: 'location_iframe', style: 'margin-top:6px;margin-bottom:10px'}
-    %input{type: :hidden, name: 'authenticity_token', value: form_authenticity_token}
-    %input.location_upload{type: :file, name: :file, id: :location_upload}
-  %iframe#location_iframe{name: 'location_iframe', style: 'display:none'}
-  /ko if: impl().errorUploadingLocation()
-  %p
-    = t('views.layers.form.field.there_was')
-    = link_to t('views.layers.form.field.an_error'), "#", :class => 'error_description_bubble'
-    = t('views.layers.form.field.processing_the_location_file')
-  //ko
-  /ko if: impl().uploadingLocation()
-  = t('views.layers.form.field.uploading')
-  //ko
-  /ko if: !impl().uploadingLocation() && impl().locations().length > 0 && !impl().errorUploadingLocation()
-  .hierarchy-container
-    %ul{ko(foreach: 'impl().locations'), style: "list-style-type:none; margin-left:-30px; font-size: 12px"}
-      %li
-        %span{ko(text: :code)}
-        %span ,
-        %span{ko(text: :name)}
-
-  //ko
-  //ko
 
 .clear

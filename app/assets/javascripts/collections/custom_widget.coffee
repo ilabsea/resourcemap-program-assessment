@@ -27,7 +27,7 @@ onCollections ->
 
 
     createEditableElement: ->
-      if @field.kind == 'numeric' || @field.kind == 'text'
+      if @field.kind == 'numeric'
         node = """
                  <input type="text" name="custom-widget-#{@field.code}"
                         data-bind="value: value, valueUpdate: 'afterkeydown', event: {keydown: keyPress}, css: {error: error}, attr: {title: name}" id="custom-widget-#{@field.code}"

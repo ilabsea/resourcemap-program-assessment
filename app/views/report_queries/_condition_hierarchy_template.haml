@@ -1,0 +1,29 @@
+/ko if: field().isEnableDependancyHierarchy
+%span is
+%select{ko(value: :operator, options: :operatorOptions, optionsText: "'label'")}
+%div{style: 'float: right'}
+  /ko foreach :field().hierarchySet()
+  %div.hierarchySet
+    %span.hierarchySetName{ko(text: :name)}
+    /ko if: $index() < $parent.field().hierarchySet().length-1
+    %select.right.w20{ko(options: :dependentHierarchyItemList, optionsText: "'name'",
+                          optionsValue: "'id'", value: :value, optionsCaption: "'(no value)'",
+                          event: {change: :updateDependentFieldsHierarchyItemList} )}
+    //ko
+
+    /ko if: $index() == $parent.field().hierarchySet().length-1
+    %select.right.w20{ko(options: :dependentHierarchyItemList, optionsText: "'name'",
+                          optionsValue: "'id'", value: 'model.newCondition().value', optionsCaption: "'(no value)'" )}
+    //ko
+
+  //ko
+
+//ko
+
+/ko ifnot: field().isEnableDependancyHierarchy
+%span is
+%select{ko(value: :operator, options: :operatorOptions, optionsText: "'label'")}
+/ko with: field
+%div.hierarchy-container{ko(template: {name: "'refine-hierarchy-items-template'", with: 'config.hierarchy'})}
+//ko
+//ko

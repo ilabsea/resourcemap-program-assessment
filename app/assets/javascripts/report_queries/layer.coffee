@@ -24,3 +24,7 @@ onReportQueries ->
       ord: @ord()
       public: @public()
       fields_attributes: $.map(@fields(), (x) -> x.toJSON())
+
+    findFieldById: (fieldId) =>
+      return if @fields == undefined
+      return field for field in @fields when "#{field.id}" == "#{fieldId}"

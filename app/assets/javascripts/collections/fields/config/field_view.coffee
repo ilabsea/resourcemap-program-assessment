@@ -4,8 +4,10 @@ onCollections ->
       @field = field
 
     domObject: ->
-      if(@field.isForCustomWidget())
+      if(@field.isForCustomWidget)
         @fieldUI = $('#custom-widget-' + @field.code)
+      else if(@field.kind == 'hierarchy')
+        @fieldUI = $('#' + @field.esCode)
       else
         @fieldUI = $('#'+@field.kind+'-input-' + @field.code)
 
@@ -21,7 +23,7 @@ onCollections ->
         if @field.kind == 'numeric'
           return 0
         else
-          return ''
+          return null
 
 
     setValue: (value)->

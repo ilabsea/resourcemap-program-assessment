@@ -177,6 +177,11 @@ class Field < ActiveRecord::Base
       self.save
     end
 
+    if self.is_enable_dependancy_hierarchy && self.config && self.config["parent_hierarchy_field_id"]
+      self.config["parent_hierarchy_field_id"] = reinitial_dependent_field_hierarchy_from_original_collection(collection)
+      self.save
+    end
+
     return self
   end
 
@@ -208,6 +213,14 @@ class Field < ActiveRecord::Base
       item["id"] = "#{target_ref_field.id}" if target_ref_field
     end
     return self.config["dependent_fields"]
+  end
+
+  def reinitial_dependent_field_hierarchy_from_original_collection collection
+    original_ref_field = collection.fields.find_by_id(self.config["parent_hierarchy_field_id"])
+    target_ref_field = self.collection.fields.find_by_code(original_ref_field.code) if original_ref_field
+    self.config["parent_hierarchy_field_id"] = "#{target_ref_field.id}" if target_ref_field
+
+    return self.config["parent_hierarchy_field_id"]
   end
 
   def migrate_skip_logic

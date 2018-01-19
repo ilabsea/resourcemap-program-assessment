@@ -88,7 +88,7 @@ onCollections ->
         field.valueUIFor(value)
 
     customWidgetFields: =>
-      @fields().filter((f) -> f.custom_widgeted == true)
+      @fields().filter((f) -> f.isForCustomWidget == true)
 
     findLocationLabelByCode: (field) =>
       for location in field.locations
@@ -184,11 +184,10 @@ onCollections ->
 
     copyPropertiesToCollection: (collection) =>
       collection.fetchFields =>
-        if @fields().length == 0
-          collection.clearFieldValues()
-          @fields(collection.fields())
-          @layers(collection.layers())
-          @copyPropertiesToFields()
+        collection.clearFieldValues()
+        @fields(collection.fields())
+        @layers(collection.layers())
+        @copyPropertiesToFields()
 
     update_site: (json, callback, callbackError) =>
       data = {site: JSON.stringify json}
@@ -408,13 +407,15 @@ onCollections ->
       window.model.initDatePicker()
       window.model.initAutocomplete()
       window.model.initControlKey()
+      window.model.newOrEditSite().scrollable(false)
+      $('#name').focus()
+      @definedField()
 
+    definedField: =>
       for field in @fields()
         field.editing(false)
         field.originalValue = field.value()
         field.bindWithCustomWidgetedField()
-
-      for field in @fields()
         field.disableDependentSkipLogicField()
 
       @prepareCalculatedField()
@@ -437,7 +438,7 @@ onCollections ->
       # and restore original field values if not saved
       for field in @fields()
         field.expanded(false)
-        field.filter('')
+        field.filter('') if field.kind == 'select_many'
 
         unless saved
           field.value(field.originalValue)
@@ -515,7 +516,7 @@ onCollections ->
         for layer in @layers()
           for field in layer.fields
             fields.push(field)
-            new CustomWidget(field).bindField() if field.custom_widgeted
+            new CustomWidget(field).bindField() if field.isForCustomWidget
         @fields(fields)
         @getLocationFieldOption()
 
@@ -540,8 +541,10 @@ onCollections ->
             if field["dependentFields"]
               $.map(field["dependentFields"], (dependentField) ->
                 refField = window.model.newOrEditSite().findFieldByEsCode(dependentField['id'])
-                if(refField?.isForCustomWidget())
+                if(refField?.isForCustomWidget)
                   $dependentField = $("#custom-widget-" + dependentField["code"])
+                else if(refField.kind == 'hierarchy')
+                  $dependentField = $("#" + dependentField["id"])
                 else
                   $dependentField = $("#" + dependentField["kind"] + "-input-" + dependentField["code"])
 

@@ -3,7 +3,7 @@
 #= require collections/sites_container
 #= require collections/sites_membership
 #= require collections/layer
-#= require collections/field
+#= require collections/fields/field
 #= require collections/query
 #= require collections/thresholds/condition
 onCollections ->

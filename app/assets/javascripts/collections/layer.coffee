@@ -6,7 +6,7 @@ onCollections ->
       @fields = $.map data.fields, (x) => new Field(x, @id)
       @expanded = ko.observable(false)
       @error = ko.computed =>
-        fieldError = @fields.filter((f) => (f.error() == true && typeof f.value() != 'undefined') )
+        fieldError = @fields.filter((f) => f.error() == true )
         if fieldError.length > 0 then 'error' else ''
 
     toggleExpand: =>

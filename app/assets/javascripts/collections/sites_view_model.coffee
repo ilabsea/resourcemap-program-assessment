@@ -89,7 +89,7 @@ onCollections ->
       window.model.newOrEditSite().scrollable(false)
       window.model.newOrEditSite().startEntryDate(new Date(Date.now()))
       for field in window.model.newOrEditSite().fields()
-        new CustomWidget(field).bindField() if field.custom_widgeted
+        new CustomWidget(field).bindField() if field.isForCustomWidget
         field.disableDependentSkipLogicField() if field.skippedState() == false && field.kind == 'yes_no'
         if field.field_logics
           for f in field.field_logics
@@ -112,7 +112,6 @@ onCollections ->
         else
           @goBackToTable = true unless @showingMap()
           @showMap =>
-
             site.copyPropertiesToCollection(site.collection)
 
             if @selectedSite() && @selectedSite().id() == site.id()
@@ -123,21 +122,23 @@ onCollections ->
             @currentCollection(site.collection)
             @hideLoadingField()
             @loadBreadCrumb()
-            @rebindCustomWidgetView()
-            @allFieldLogics([])
-            for field in @editingSite().fields()
-              field.valid() if field.is_enable_custom_validation
-              @getLocations(site.lat(), site.lng()) if field.kind == 'location'
-              if field.field_logics
-                for f in field.field_logics
-                  f["disable_field_id"] = field["esCode"]
-                  @allFieldLogics(@allFieldLogics().concat(f))
+            @reinitialFields()
+            @processSkipLogic()
 
           $('a#previewimg').fancybox()
 
-    @rebindCustomWidgetView: =>
-      for field in window.model.editingSite().fields()
+    @reinitialFields: ->
+      @allFieldLogics([])
+      for field in @editingSite().fields()
         field.bindWithCustomWidgetedField()
+        field.dependentHierarchyItemList(field.initDependentHierarchyItemList()) if field.isDependentFieldHierarchy()
+        field.valid() if field.is_enable_custom_validation
+        @getLocations(@editingSite().lat(), @editingSite().lng()) if field.kind == 'location'
+        field.inititalFieldLogic() if field.field_logics.length > 0
+
+    @processSkipLogic: ->
+      for field in @editingSite().fields()
+        field.disableDependentSkipLogicField()
 
     @editSiteFromId: (siteId, collectionId) ->
       site = @siteIds[siteId]
@@ -225,7 +226,7 @@ onCollections ->
 
         if @editingSite().inEditMode()
           @editingSite().exitEditMode(true)
-          @rebindCustomWidgetView()
+          @reinitialFields()
         else
           @editingSite().deleteMarker()
           @exitSite()
@@ -252,7 +253,7 @@ onCollections ->
       field.exitEditing() for field in @currentCollection().fields()
       if @editingSite()?.inEditMode()
         @editingSite().exitEditMode()
-        @rebindCustomWidgetView()
+        @reinitialFields()
       else
         if @editingSite()
           # Unselect site if it's not on the tree

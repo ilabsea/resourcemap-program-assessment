@@ -206,6 +206,7 @@ class Collection < ActiveRecord::Base
           is_display_field: field.is_display_field,
           is_enable_field_logic: field.is_enable_field_logic,
           is_enable_custom_validation: field.is_enable_custom_validation,
+          is_enable_dependancy_hierarchy: field.is_enable_dependancy_hierarchy,
           custom_widgeted: field.custom_widgeted,
           readonly_custom_widgeted: field.readonly_custom_widgeted,
           # field_logic_value: field.field_logic_value,

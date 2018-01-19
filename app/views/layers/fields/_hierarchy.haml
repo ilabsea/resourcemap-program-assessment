@@ -1,0 +1,23 @@
+%hr/
+%label{ko(css: {error: 'impl().hierarchyError'})}= t('views.layers.form.field.hierarchy')
+%p.smalltext
+  = t('views.layers.form.field.upload_a_csv')
+  ID, ParentID, ItemName
+%form.hierarchy_form{action: collection_decode_hierarchy_csv_path(collection), method: :post, enctype: 'multipart/form-data', target: 'hierarchy_iframe', style: 'margin-top:6px;margin-bottom:10px'}
+  %input{type: :hidden, name: 'authenticity_token', value: form_authenticity_token}
+  %input.hierarchy_upload{type: :file, name: :file, id: :hierarchy_upload}
+%iframe#hierarchy_iframe{name: 'hierarchy_iframe', style: 'display:none'}
+/ko if: impl().errorUploadingHierarchy()
+%p
+  = t('views.layers.form.field.there_was')
+  = link_to t('views.layers.form.field.an_error'), "#", :class => 'error_description_bubble'
+  = t('views.layers.form.field.processing_the_hierarchy_file')
+//ko
+/ko if: impl().uploadingHierarchy()
+= t('views.layers.form.field.uploading')
+//ko
+/ko if: !impl().uploadingHierarchy() && impl().hierarchy()
+.hierarchy-container
+  /ko template: {name: 'hierarchy-items-template', foreach: impl().hierarchyItems}
+  //ko
+//ko

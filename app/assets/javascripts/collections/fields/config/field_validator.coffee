@@ -20,12 +20,13 @@ onCollections ->
       return
 
     validateRangeAndDigitsPrecision: =>
-      @isValidateRange()
-      @isValidateDigitsPrecision()
+      if @field.kind == 'numeric'
+        @isValidateRange()
+        @isValidateDigitsPrecision()
 
     validateCustomValidation: =>
-      if window.model.editingSite()
-        if @field.is_enable_custom_validation()
+      if @field.kind == 'numeric' && window.model.editingSite()
+        if  @field.is_enable_custom_validation()
           $.map(@field.configCustomValidations(), (f) =>
             field = window.model.editingSite().findFieldByEsCode(f.field_id[0])
             compareValue = field.value()

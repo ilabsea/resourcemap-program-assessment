@@ -15,6 +15,9 @@ onQueries ->
       @ord = data?.ord
       if @kind == 'hierarchy'
         @hierarchy = data.config?.hierarchy
+        @parentHierarchyFieldId = data.config?.parent_hierarchy_field_id
+        @isEnableDependancyHierarchy = data?.is_enable_dependancy_hierarchy
+        @dependentHierarchyItemList = ko.observableArray(new FieldDependant(@).options())
 
       @buildHierarchyItems() if @hierarchy?
       @valueUI =  ko.computed
@@ -26,6 +29,7 @@ onQueries ->
       @fieldHierarchyItemsMap = {}
       @fieldHierarchyItems = ko.observableArray $.map(@hierarchy, (x) => new FieldHierarchyItem(@, x))
       @fieldHierarchyItems.unshift new FieldHierarchyItem(@, {id: '', name: '(no value)'})
+
     valueUIFor: (value) =>
       if @kind == 'yes_no'
         if value then 'yes' else 'no'
@@ -44,7 +48,7 @@ onQueries ->
         window.model.currentCollection()?.findSiteIdByName(value) || ""
       else
         value
-        
+
     toJSON: =>
       @code = @code.trim()
       json =
@@ -54,9 +58,9 @@ onQueries ->
         kind: @kind
         ord: @ord
         layer_id: @layer.id
-        is_mandatory: @is_mandatory      
+        is_mandatory: @is_mandatory
       json
-    
+
     validateFormat: (field,event) =>
       if @config.allows_decimals
         return @validate_decimal_only(event.keyCode)
@@ -76,7 +80,7 @@ onQueries ->
           return true
       if keyCode > 31 && (keyCode < 48 || keyCode > 57) && (keyCode != 8 && keyCode != 46) && keyCode != 37 && keyCode != 39  #allow right and left arrow key
         return false
-      else 
+      else
         @preKeyCode = keyCode
         return true
 
@@ -88,3 +92,25 @@ onQueries ->
         return false
       else
         return true
+
+    hierarchySet: (field=@, fields=[])=>
+      if field.isEnableDependancyHierarchy == true && field.parentHierarchyFieldId == ''
+        fields.push field
+        return fields
+      else
+        parentField = @layer.findFieldById(field.parentHierarchyFieldId)
+        if typeof parentField == 'undefined'
+          return []
+        else
+          @hierarchySet(parentField, fields)
+          fields.push field
+          return fields
+
+    updateDependentFieldsHierarchyItemList: (field)=>
+      if @isDependentFieldHierarchy && field
+        return (new FieldDependant(field).updateDependentFieldsHierarchyItemList())
+      else
+        return []
+
+    isDependentFieldHierarchy: =>
+      return @kind == 'hierarchy' && @isEnableDependancyHierarchy
