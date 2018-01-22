@@ -25,7 +25,7 @@ class ReportQueriesController < ApplicationController
         add_breadcrumb I18n.t('views.collections.index.properties'), collection_path(collection)
         add_breadcrumb I18n.t('views.report_queries.title'), collection_report_queries_path(collection)
       end
-      format.json { render json: report_queries.as_json(:include => { :report_query_templates => { :only => :id } }).as_json }
+      format.json { render json: report_queries.all.as_json(:include => { :report_query_templates => { :only => :id } }).as_json }
     end
   end
 

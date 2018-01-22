@@ -7,7 +7,8 @@ gem 'haml-rails'
 gem 'decent_exposure'
 gem "instedd-rails", '0.0.17'
 gem "breadcrumbs_on_rails"
-gem "tire"
+gem "elasticsearch"
+gem "elasticsearch-ruby"
 gem "valium"
 gem "resque", :require => "resque/server"
 gem 'resque-scheduler', :require => 'resque_scheduler'

@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe ReportQueryGroupByBuilder do
+  let!(:collection) { Collection.make }
   let!(:field_with_distinct_values) do
    [
       { "province" => ['Kpc', 'Pp' ] },
@@ -16,7 +17,7 @@ describe ReportQueryGroupByBuilder do
    ]
   end
 
-  let(:report_query) { ReportQuery.make(name: "3 fields",
+  let!(:report_query) { ReportQuery.create(name: "3 fields",
                                         condition_fields: [
                                           {"id"=>"1", "field_id"=>"1017", "operator"=>"=", "value"=>"3"},
                                           {"id"=>"2", "field_id"=> "1019", "operator"=>">", "value"=>"3"},
@@ -26,7 +27,7 @@ describe ReportQueryGroupByBuilder do
                                           {"id"=>"1", "field_id"=> "1019", "aggregator"=>"sum"},
                                           {"id"=>"2", "field_id"=> "1020", "aggregator"=>"sum"}],
                                         condition: "1 and ( 2 or 3 )",
-                                        collection_id: 219)}
+                                        collection_id: collection.id)}
 
   let(:group_by_builder) {
     ReportQueryGroupByBuilder.new(report_query)
@@ -70,92 +71,152 @@ describe ReportQueryGroupByBuilder do
     end
 
     it 'return facet filters for aggregate_fields' do
-      result = { "Kpc_2016_1019"=> {
-                    "terms_stats"=>{"key_field"=>"1022", "value_field"=>"1019"},
-                    "facet_filter"=>{
-                      "bool"=>{
-                        "must"=>[
-                          {"term"=> { "province" => "Kpc"} },
-                          {"term"=> {"year" => 2016} }
-                        ]
-                      }
-                    }
-                  },
-                "Pp_2016_1019"=>{
-                  "terms_stats"=>{"key_field"=>"1022", "value_field"=>"1019"},
-                  "facet_filter"=>{
-                    "bool"=>{
-                      "must"=>[
-                        {"term"=>{"province"=>"Pp"}},
-                        {"term"=>{"year"=>2016}}
-                      ]
-                    }
-                  }
-                },
-
-                "Kpc_2017_1019"=>{
-                  "terms_stats"=>{"key_field"=>"1022", "value_field"=>"1019"},
-                  "facet_filter"=>{
-                    "bool"=>{
-                      "must"=>[
-                        {"term"=>{"province"=>"Kpc"}},
-                        {"term"=>{"year"=>2017}}
-                      ]
-                    }
-                  }
-                },
-                "Pp_2017_1019"=>{
-                  "terms_stats"=>{"key_field"=>"1022", "value_field"=>"1019"},
-                  "facet_filter"=>{
-                    "bool"=>{
-                      "must"=>[
-                        {"term"=>{"province"=>"Pp"}},
-                        {"term"=>{"year"=>2017}}
-                      ]
-                    }
-                  }
-                },
-                "Kpc_2016_1020"=>{
-                  "terms_stats"=>{"key_field"=>"1022", "value_field"=>"1020"},
-                  "facet_filter"=>{
-                    "bool"=>{
-                      "must"=>[
-                        {"term"=>{"province"=>"Kpc"}},
-                        {"term"=>{"year"=>2016}}
-                      ]
-                    }
-                  }
-                },
-                "Pp_2016_1020"=>{
-                  "terms_stats"=>{"key_field"=>"1022", "value_field"=>"1020"},
-                  "facet_filter"=>{
-                    "bool"=>{
-                      "must"=>[
-                        {"term"=>{"province"=>"Pp"}},
-                        {"term"=>{"year"=>2016}}]}}},
-                "Kpc_2017_1020"=>{
-                  "terms_stats"=>{"key_field"=>"1022", "value_field"=>"1020"},
-                  "facet_filter"=>{
-                    "bool"=>{
-                      "must"=>[
-                        {"term"=>{"province"=>"Kpc"}},
-                        {"term"=>{"year"=>2017}}
-                      ]
-                    }
-                  }
-                },
-                "Pp_2017_1020"=>{
-                  "terms_stats"=>{"key_field"=>"1022", "value_field"=>"1020"},
-                  "facet_filter"=>{
-                    "bool"=>{
-                      "must"=>[
-                        {"term"=>{"province"=>"Pp"}},
-                        {"term"=>{"year"=>2017}}
-                      ]
-                    }
-                  }
-                }
+      result = {
+        "Kpc___2016___1019"=>{
+          "filter"=>{
+            "bool"=>{
+              "must"=>[
+                {"term"=>{"properties.province"=>"Kpc"}},
+                {"term"=>{"properties.year"=>2016}}
+              ]
+            }
+          },
+          "aggs"=>{
+            "1022"=>{
+              "terms"=>{"field"=>"properties.1022"},
+              "aggs"=>{
+                "term"=>{"stats"=>{"field"=>"properties.1019"}}
               }
+            }
+          }
+        },
+        "Pp___2016___1019"=>{
+          "filter"=>{
+            "bool"=>{
+              "must"=>[
+                {"term"=>{"properties.province"=>"Pp"}},
+                {"term"=>{"properties.year"=>2016}}
+              ]
+            }
+          },
+          "aggs"=>{
+            "1022"=>{
+              "terms"=>{"field"=>"properties.1022"},
+              "aggs"=>{
+                "term"=>{"stats"=>{"field"=>"properties.1019"}}
+              }
+            }
+          }
+        },
+        "Kpc___2017___1019"=>{
+          "filter"=>{
+            "bool"=>{
+              "must"=>[
+                {"term"=>{"properties.province"=>"Kpc"}},
+                {"term"=>{"properties.year"=>2017}}
+              ]
+            }
+          },
+          "aggs"=>{
+            "1022"=>{
+              "terms"=>{"field"=>"properties.1022"},
+              "aggs"=>{
+                "term"=>{"stats"=>{"field"=>"properties.1019"}}
+              }
+            }
+          }
+        },
+        "Pp___2017___1019"=>{
+          "filter"=>{
+            "bool"=>{
+              "must"=>[
+                {"term"=>{"properties.province"=>"Pp"}},
+                {"term"=>{"properties.year"=>2017}}
+              ]
+            }
+          },
+          "aggs"=>{
+            "1022"=>{
+              "terms"=>{"field"=>"properties.1022"},
+              "aggs"=>{
+                "term"=>{"stats"=>{"field"=>"properties.1019"}}
+              }
+            }
+          }
+        },
+        "Kpc___2016___1020"=>{
+          "filter"=>{
+            "bool"=>{
+              "must"=>[
+                {"term"=>{"properties.province"=>"Kpc"}},
+                {"term"=>{"properties.year"=>2016}}
+              ]
+            }
+          },
+          "aggs"=>{
+            "1022"=>{
+              "terms"=>{"field"=>"properties.1022"},
+              "aggs"=>{
+                "term"=>{"stats"=>{"field"=>"properties.1020"}}
+              }
+            }
+          }
+        },
+        "Pp___2016___1020"=>{
+          "filter"=>{
+            "bool"=>{
+              "must"=>[
+                {"term"=>{"properties.province"=>"Pp"}},
+                {"term"=>{"properties.year"=>2016}}
+              ]
+            }
+          },
+          "aggs"=>{
+            "1022"=>{
+              "terms"=>{"field"=>"properties.1022"},
+              "aggs"=>{
+                "term"=>{"stats"=>{"field"=>"properties.1020"}}
+              }
+            }
+          }
+        },
+        "Kpc___2017___1020"=>{
+          "filter"=>{
+            "bool"=>{
+              "must"=>[
+                {"term"=>{"properties.province"=>"Kpc"}},
+                {"term"=>{"properties.year"=>2017}}
+              ]
+            }
+          },
+          "aggs"=>{
+            "1022"=>{
+              "terms"=>{"field"=>"properties.1022"},
+              "aggs"=>{
+                "term"=>{"stats"=>{"field"=>"properties.1020"}}
+              }
+            }
+          }
+        },
+        "Pp___2017___1020"=>{
+          "filter"=>{
+            "bool"=>{
+              "must"=>[
+                {"term"=>{"properties.province"=>"Pp"}},
+                {"term"=>{"properties.year"=>2017}}
+              ]
+            }
+          },
+          "aggs"=>{
+            "1022"=>{
+              "terms"=>{"field"=>"properties.1022"},
+              "aggs"=>{
+                "term"=>{"stats"=>{"field"=>"properties.1020"}}
+              }
+            }
+          }
+        }
+      }
       expect(group_by_builder.facet_term_stats).to eq result
     end
   end
@@ -163,36 +224,73 @@ describe ReportQueryGroupByBuilder do
   describe "#facet_term_stats_by_field" do
     context "without facet field" do
       it "return term stats without facet filter" do
-        result = {"terms_stats"=>{"key_field"=>"1022", "value_field"=>"agg_field_id"}}
+        result = {
+          "1022" => {
+            'terms' => { 'field' => "properties.1022" },
+            'aggs' => {
+              'term' => { 'stats' => { 'field' => "properties.agg_field_id" } }
+            }
+          }
+        }
         expect(group_by_builder.facet_term_stats_by_field( 'agg_field_id', {})).to eq result
       end
     end
 
     context "with one facet field" do
       it "return term stats with facet filter" do
-        result = {"terms_stats"=>{"key_field"=>"1022", "value_field"=>"agg_field_id"},
-                  "facet_filter"=>{"bool"=>
-                                            {"must"=>[
-                                                        {"term"=>{"province"=>"Kpc"}}
-                                                    ]
-                                            }
-                                  }
-                  }
+        result = {
+          "filter"=>{
+            "bool"=>{
+              "must"=>[
+                {"term"=>{"properties.province"=>"Kpc"}}
+              ]
+            }
+          },
+          "aggs"=>{
+            "1022"=>{
+              "terms"=>{"field"=>"properties.1022"},
+              "aggs"=>{
+                "term"=>{"stats"=>{"field"=>"properties.agg_field_id"}}
+              }
+            }
+          }
+        }
+
         expect(group_by_builder.facet_term_stats_by_field( 'agg_field_id', { "province" => "Kpc" })).to eq result
       end
     end
 
     context "with two facet fields" do
       it "return term stats with facet filter" do
-        result = {"terms_stats"=>{"key_field"=>"1022", "value_field"=>"agg_field_id"},
-                  "facet_filter"=>{"bool"=>
-                                            {"must"=>[
-                                                        {"term"=>{"province"=>"Kpc"}},
-                                                        {"term"=>{"year"=>2016}}
-                                                    ]
-                                            }
-                                  }
-                  }
+        # result = {"terms_stats"=>{"key_field"=>"1022", "value_field"=>"agg_field_id"},
+        #           "facet_filter"=>{"bool"=>
+        #                                     {"must"=>[
+        #                                                 {"term"=>{"province"=>"Kpc"}},
+        #                                                 {"term"=>{"year"=>2016}}
+        #                                             ]
+        #                                     }
+        #                           }
+        #           }
+
+        result = {
+          "filter"=>{
+            "bool"=>{
+              "must"=>[
+                {"term"=>{"properties.province"=>"Kpc"}},
+                {"term"=>{"properties.year"=>2016}}
+              ]
+            }
+          },
+          "aggs"=>{
+            "1022"=>{
+              "terms"=>{"field"=>"properties.1022"},
+              "aggs"=>{
+                "term"=>{"stats"=>{"field"=>"properties.agg_field_id"}}
+              }
+            }
+          }
+        }
+
         expect(group_by_builder.facet_term_stats_by_field( 'agg_field_id', { "province" => "Kpc", "year" => 2016 })).to eq result
       end
     end
@@ -202,7 +300,18 @@ describe ReportQueryGroupByBuilder do
     it "return query for distinct_value for field" do
       group_by_builder.stub(:query_builder).and_return({ "query" => { "match_all" => {} }})
       result = group_by_builder.distinct_value_query("1018")
-      expected = {"query"=>{"match_all"=>{}}, "facets"=>{"1018"=>{"terms"=>{"field"=>"1018"}}}}
+      expected = {
+        "query"=>{"match_all"=>{}},
+        "aggs" => {
+          "1018" => {
+            'terms' => {
+              'field' => "properties.1018",
+              'size' => Settings.max_aggregate_result_size.to_i
+            }
+          }
+        }
+      }
+      # expected = {"query"=>{"match_all"=>{}}, "facets"=>{"1018"=>{"terms"=>{"field"=>"1018"}}}}
       expect(result).to eq expected
     end
   end

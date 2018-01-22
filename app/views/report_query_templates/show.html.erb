@@ -5,6 +5,7 @@
   <textarea class= "custom-tinymce">
     <div class="container">
       <% render_result = render('result', template: @template ) %>
+
       <div id='report-query-template'>
         <%= @template.translate_template(render_result).html_safe %>
       </div>

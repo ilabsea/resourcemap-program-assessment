@@ -10,7 +10,7 @@ class QueriesController < ApplicationController
         add_breadcrumb I18n.t('views.collections.index.properties'), collection_path(collection)
         add_breadcrumb I18n.t('views.collections.tab.can_queries'), collection_thresholds_path(collection)
       end
-      format.json { render json: queries }
+      format.json { render json: queries.to_a }
     end
 	end
 

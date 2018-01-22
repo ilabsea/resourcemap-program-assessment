@@ -218,11 +218,10 @@ class CollectionsController < ApplicationController
 
     search.full_text_search params[:term] if params[:term]
     search.alerted_search params[:_alert] if params[:_alert]
-    search.select_fields(['id', 'name', 'properties'])
-    search.apply_queries
+    # search.select_fields(['id', 'name', 'properties'])
+    # search.apply_queries
 
-    results = search.results.map{ |item| item["fields"]}
-
+    results = search.results.map{ |item| item["_source"]["properties"]}
     results.each do |item|
       item[:value] = item["name"]
     end
@@ -246,8 +245,7 @@ class CollectionsController < ApplicationController
     search.my_site_search current_user.id unless current_user.can_view_other? params[:collection_id]
     search.where params.except(:action, :controller, :format, :id, :collection_id, :search, :limit, :offset, :sort, :sort_direction, :hierarchy_code, :hierarchy_value, :_alert, :formula)
 
-    search.prepare_filter
-
+    # search.prepare_filter
     results = search.results.map do |result|
       source = result['_source']
 
@@ -258,8 +256,8 @@ class CollectionsController < ApplicationController
       obj[:color] = source['color']
       obj[:created_at] = Site.parse_time(source['created_at'])
       obj[:updated_at] = Site.parse_time(source['updated_at'])
-      obj[:start_entry_date] = Site.parse_time(source['start_entry_date']).strftime("%d/%m/%Y %H:%M:%S")
-      obj[:end_entry_date] = Site.parse_time(source['end_entry_date']).strftime("%d/%m/%Y %H:%M:%S")
+      obj[:start_entry_date] = Site.parse_time(source['start_entry_date']).strftime("%d/%m/%Y %H:%M:%S") if source['start_entry_date'].present?
+      obj[:end_entry_date] = Site.parse_time(source['end_entry_date']).strftime("%d/%m/%Y %H:%M:%S") if source['end_entry_date'].present?
 
       if source['location']
         obj[:lat] = source['location']['lat']
@@ -351,7 +349,7 @@ class CollectionsController < ApplicationController
     ids = collections.map do |c|
       s = c.new_search
       s.alerted_search true
-      s.apply_queries
+      # s.apply_queries
       c.id if s.results.length > 0
     end
     render json: ids.compact
@@ -377,13 +375,22 @@ class CollectionsController < ApplicationController
   def sites_info
     options = new_search_options
 
-    total = collection.new_tire_count(options).value
-    no_location = collection.new_tire_count(options) do
-      filtered do
-        query { all }
-        filter :not, exists: {field: :location}
-      end
-    end.value
+    total = collection.elasticsearch_count
+    no_location = collection.elasticsearch_count do
+      {
+        query: {
+          filtered: {
+            filter: {
+              not: {
+                filter: {
+                  exists: {field: :location}
+                }
+              }
+            }
+          }
+        }
+      }
+    end
 
     info = {}
     info[:total] = total

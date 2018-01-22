@@ -1,36 +1,50 @@
 <!-- calculate result only need if and only if there is a result parttern in the template -->
 <% if template.has_report_place_holder?  %>
-
-  <table style="width: 100%;border-color: #999; margin-left: auto; margin-right: auto;text-align:center; font-family: hanuman;"
-         border="1"
-         cellspacing="0"
-         cellpadding="4"
-         align="center" >
-    <thead>
-      <tr>
-        <% template.report_result.first.each do |col| %>
-          <th><font face='hanuman'><%= col %></font></th>
-        <% end %>
-      </tr>
-    </thead>
-
-    <tbody>
-      <% template.report_result[1..-1].sort{|a,b| a[0] <=> b[0] }.each do |row| %>
+  <% if template.report_result.kind_of?(Array) %>
+    <table style="width: 100%;border-color: #999; margin-left: auto; margin-right: auto;text-align:center; font-family: hanuman;"
+           border="1"
+           cellspacing="0"
+           cellpadding="4"
+           align="center" >
+      <thead>
         <tr>
-          <% row.each do |col| %>
-            <td><%= col %></td>
+          <% total = [] %>
+          <% index = 0 %>
+          <% template.report_result.first.each do |col| %>
+            <th><font face='hanuman'><%= col %></font></th>
+            <% total[index] = 0.0 %>
+            <% index = index + 1 %>
           <% end %>
         </tr>
-      <% end %>
-    </tbody>
-
-
-
-
-
-  </table>
+      </thead>
+      <tbody>
+        <% template.report_result[1..-1].sort { |a,b| a[0] <=> b[0] }.each do |row| %>
+          <tr>
+            <% index = 0 %>
+            <% row.each do |col| %>
+              <td><%= col %></td>
+              <% total[index] = total[index] + col.to_f %>
+              <% index = index + 1 %>
+            <% end %>
+          </tr>
+        <% end %>
+        <% if @report_query.is_total_aggregate_field %>
+          <tr>
+            <% total.each do |col| %>
+              <% if col != 0.0 %>
+              <td><%= col %></td>
+              <% else %>
+              <td></td>
+              <% end %>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <%= render 'failed', errors: template.report_result %>
+  <% end %>
 <% end %>
-
 <style media="screen">
   thead { display: table-row-group; }
   tfoot { display: table-row-group }

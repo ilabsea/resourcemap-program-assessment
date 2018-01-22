@@ -1,0 +1,10 @@
+<div class="tabsline settings-form" >
+  <h2>Failed to preview report</h2>
+  <% if current_user_snapshot.at_present? && collection_admin? %>
+    <p>There are some of errors happen during generate the report with the following errors : </p>
+    <ul>
+      <%= errors %>
+    </ul>
+    <p>Aggregation support only numeric field. Any field data that is not a numeric will cause problem when create report.</p>
+  <% end %>
+</div>

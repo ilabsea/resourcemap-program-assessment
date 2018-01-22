@@ -25,7 +25,7 @@
 
 class Field < ActiveRecord::Base
   include Field::Base
-  include Field::TireConcern
+  include Field::ElasticSearchConcern
   include Field::ValidationConcern
   include Field::ShpConcern
 
@@ -297,7 +297,6 @@ class Field < ActiveRecord::Base
         if(!code.ascii_only?)
           new_code = (0...16).map { ('A'..'Z').to_a[rand(26)] }.join
           field.migrate_related_code(new_code)
-          p "=> id:#{field.id} #{field.code} => #{new_code}"
           field.code = new_code
           field.save
           valid_code = true
@@ -309,7 +308,6 @@ class Field < ActiveRecord::Base
           end
           if(valid_code == true)
             field.migrate_related_code(new_code)
-            p "field* id:#{field.id} #{field.code} => #{new_code}"
             field.code = new_code
             field.save
           end
@@ -352,7 +350,6 @@ class Field < ActiveRecord::Base
     end
   end
 
-
   def add_option_to_options(options, option)
     if option["parent_id"] and option["level"]
       options << { id: option['id'], name: option['name'], parent_id: option['parent_id'], level: option['level']}
@@ -372,4 +369,5 @@ class Field < ActiveRecord::Base
       sanitize_hierarchy_items item['sub'] if item['sub']
     end
   end
+
 end

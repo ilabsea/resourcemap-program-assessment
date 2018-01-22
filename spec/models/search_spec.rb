@@ -12,7 +12,6 @@ describe Search do
     let!(:country) { layer.text_fields.make code: 'country' }
     let!(:hierarchy) { layer.hierarchy_fields.make code: 'hie', config: { "hierarchy" => [{ 'id' => 1, 'name' => 'root'}] } }
 
-
     let!(:site1) { collection.sites.make properties:
       {beds.es_code => 5, tables.es_code => 1, first_name.es_code => "peterin panini", country.es_code => "argentina"} }
     let!(:site2) { collection.sites.make properties:
@@ -24,66 +23,66 @@ describe Search do
 
     it "searches by equality" do
       search = collection.new_search
-      search.where beds.es_code => 10
+      search.where "1" => { beds.es_code => 10 }
       assert_results search, site2, site4
     end
 
     it "searches by equality with code" do
       search = collection.new_search
       search.use_codes_instead_of_es_codes
-      search.where 'beds' => 10
+      search.where "1" => { 'beds' => 10 }
       assert_results search, site2, site4
     end
 
     it "searches by equality with @code" do
       search = collection.new_search
       search.use_codes_instead_of_es_codes
-      search.where '@beds' => 10
+      search.where "1" => { 'beds' => 10 }
       assert_results search, site2, site4
     end
 
     it "searches by equality on hierarchy field" do
       search = collection.new_search
-      search.where hierarchy.es_code => [1]
+      search.where "1" => { hierarchy.es_code => [1] }
       assert_results search, site3, site4
     end
 
     it "searches by equality of two properties" do
       search = collection.new_search
-      search.where beds.es_code => 10, tables.es_code => 2
+      search.where({"1" => { beds.es_code => 10 }, "2" => { tables.es_code => 2 }})
       assert_results search, site2
     end
 
     it "searches by equality of two properties but doesn't find" do
       search = collection.new_search
-      search.where beds.es_code => 10, tables.es_code => 1
+      search.where({'1' => { beds.es_code => 10 }, '2' => { tables.es_code => 1 }})
       search.results.length.should eq(0)
     end
 
     it "searches by starts with" do
       search = collection.new_search
-      search.where first_name.es_code => "~=peter"
+      search.where '1' => { first_name.es_code => "~=peter" }
       assert_results search, site1, site2
     end
 
     it "searches by starts with and equality" do
       search = collection.new_search
-      search.where first_name.es_code => "~=peter"
-      search.where beds.es_code => 5
+      search.where '1' => { first_name.es_code => "~=peter" }
+      search.where '2' => { beds.es_code => 5 }
       assert_results search, site1
     end
 
     it "searches by starts with on two different fields" do
       search = collection.new_search
-      search.where first_name.es_code => "~=peter"
-      search.where country.es_code => "~=arg"
+      search.where '1' => { first_name.es_code => "~=peter" }
+      search.where '2' => { country.es_code => "~=arg" }
       assert_results search, site1
     end
 
     it "searches by two comparisons on the same field" do
       search = collection.new_search
-      search.where beds.es_code => "<=20"
-      search.where beds.es_code => ">7"
+      search.where '1' => { beds.es_code => "<=20" }
+      search.where '2' => { beds.es_code => ">7" }
       assert_results search, site2, site3, site4
     end
 
@@ -93,84 +92,84 @@ describe Search do
       it "searches by equality with text" do
         a_site = collection.sites.make :properties => {population_source.es_code => "National Census"}
         search = collection.new_search
-        search.where population_source.es_code => "National Census"
+        search.where '1' => { population_source.es_code => "National Census" }
         assert_results search, a_site
       end
 
       it "searches by equality with text doesn't confuse name" do
         a_site = collection.sites.make :name => "Census", :properties => {population_source.es_code => "National"}
         search = collection.new_search
-        search.where population_source.es_code => "National Census"
+        search.where '1' => { population_source.es_code => "National Census" }
         search.results.length.should eq(0)
       end
     end
 
     it "searches with lt" do
       search = collection.new_search
-      search.lt beds, 8
+      search.lt 1, beds, 8
       assert_results search, site1
     end
 
     it "searches with lte" do
       search = collection.new_search
-      search.lte beds, 10
+      search.lte 1, beds, 10
       assert_results search, site1, site2, site4
     end
 
     it "searches with gt" do
       search = collection.new_search
-      search.gt beds, 18
+      search.gt 1, beds, 18
       assert_results search, site3
     end
 
     it "searches with gte" do
       search = collection.new_search
-      search.gte beds, 10
+      search.gte 1, beds, 10
       assert_results search, site2, site3, site4
     end
 
     it "searches with combined properties" do
       search = collection.new_search
-      search.lt beds, 11
-      search.gte tables, 4
+      search.lt 1, beds, 11
+      search.gte 2, tables, 4
       assert_results search, site4
     end
 
     it "searches with ops" do
       search = collection.new_search
-      search.op beds, '<', 8
-      search.op tables, '>=', 1
+      search.op 1, beds, '<', 8
+      search.op 2, tables, '>=', 1
       assert_results search, site1
     end
 
     context "where with op" do
       it "searches where with lt" do
         search = collection.new_search
-        search.where beds.es_code => '< 8'
+        search.where '1' => {beds.es_code => '< 8'}
         assert_results search, site1
       end
 
       it "searches where with lte" do
         search = collection.new_search
-        search.where beds.es_code => '<= 5'
+        search.where '1' => {beds.es_code => '<= 5'}
         assert_results search, site1
       end
 
       it "searches where with gt" do
         search = collection.new_search
-        search.where beds.es_code => '> 19'
+        search.where '1' => {beds.es_code => '> 19'}
         assert_results search, site3
       end
 
       it "searches where with gte" do
         search = collection.new_search
-        search.where beds.es_code => '>= 20'
+        search.where '1' => {beds.es_code => '>= 20'}
         assert_results search, site3
       end
 
       it "searches where with eq" do
         search = collection.new_search
-        search.where beds.es_code => '= 10'
+        search.where '1' => {beds.es_code => '= 10'}
         assert_results search, site2, site4
       end
     end
@@ -178,7 +177,7 @@ describe Search do
     context "unknow field" do
       it "raises on unknown field" do
         search = collection.new_search
-        lambda { search.where '0' => 10 }.should raise_error(RuntimeError, "Unknown field: 0")
+        lambda { search.where('1' => {'0' => 10}) }.should raise_error(RuntimeError, "Unknown field: 0")
       end
     end
   end
@@ -194,34 +193,37 @@ describe Search do
 
   context "pagination" do
     it "paginates by 50 results by default" do
-      Search.page_size.should eq(50)
+      collection.new_search.page_size.should eq(50)
     end
 
     context "with another page size" do
+      let(:search) { collection.new_search }
+
       before(:each) do
-        @original_page_size = Search.page_size
-        Search.page_size = 2
+        @original_page_size = search.page_size
+        search.page_size = 2
       end
 
       after(:each) do
-        Search.page_size = @original_page_size
+        search.page_size = @original_page_size
       end
 
       it "gets first page" do
         sites = 3.times.map { collection.sites.make }
         sites.sort! { |s1, s2| s1.name <=> s2.name }
-        assert_results collection.new_search, sites[0], sites[1]
+        assert_results search, sites[0], sites[1]
       end
 
       it "gets second page" do
         sites = 3.times.map { collection.sites.make }
         sites.sort! { |s1, s2| s1.name <=> s2.name }
-        assert_results collection.new_search.page(2), sites[2]
+        assert_results search.page(2), sites[2]
       end
     end
   end
 
   context "after" do
+    let(:search) { collection.new_search }
     before(:each) do
       @site1 = collection.sites.make :updated_at => (Time.now - 3.days)
       @site2 = collection.sites.make :updated_at => (Time.now - 2.days)
@@ -229,19 +231,19 @@ describe Search do
     end
 
     it "gets results before a date" do
-      assert_results collection.new_search.before(@site2.updated_at + 1.second), @site1, @site2
+      assert_results search.before(@site2.updated_at + 1.second), @site1, @site2
     end
 
     it "gets results before a date as string" do
-      assert_results collection.new_search.before((@site2.updated_at + 1.second).to_s), @site1, @site2
+      assert_results search.before((@site2.updated_at + 1.second).to_s), @site1, @site2
     end
 
     it "gets results after a date" do
-      assert_results collection.new_search.after(@site2.updated_at - 1.second), @site2, @site3
+      assert_results search.after((@site2.updated_at - 1.second), 1), @site2, @site3
     end
 
     it "gets results after a date as string" do
-      assert_results collection.new_search.after((@site2.updated_at - 1.second).to_s), @site2, @site3
+      assert_results search.after((@site2.updated_at - 1.second).to_s, 1), @site2, @site3
     end
   end
 
@@ -273,7 +275,7 @@ describe Search do
     it "finds by value of select one property using where" do
       search = collection.new_search
       search.use_codes_instead_of_es_codes
-      assert_results search.where(prop.code => "A glass of water"), site1
+      assert_results search.where('a' => {prop.code => "A glass of water"}), site1
     end
 
     it "doesn't give false positives" do
@@ -284,9 +286,9 @@ describe Search do
       assert_results collection.new_search.full_text_search("Buenos Aires"), site2
     end
 
-    pending "searches by name property" do
-      assert_results collection.new_search.full_text_search('name:"Buenos Aires"'), site2
-    end
+    # it "searches by name property" do
+    #   assert_results collection.new_search.full_text_search('name:"Buenos Aires"'), site2
+    # end
 
     it "searches by numeric property" do
       assert_results collection.new_search.full_text_search('beds:8'), site1
@@ -357,8 +359,8 @@ describe Search do
       result = search.api_results[0]
       result['_source']['properties'][text.code].should eq('foo')
       result['_source']['properties'][numeric.code].should eq(1)
-      result['_source']['properties'][select_one.code].should eq('one')
-      result['_source']['properties'][select_many.code].should eq(['one', 'two'])
+      result['_source']['properties'][select_one.code].should eq(1) # currently, mobile is using id instead of code
+      result['_source']['properties'][select_many.code].should eq([1, 2])
     end
 
 
@@ -373,15 +375,15 @@ describe Search do
       result = search.api_results[0]
       result['_source']['properties'][text.code].should eq('foo2')
       result['_source']['properties'][numeric.code].should eq(2)
-      result['_source']['properties'][select_one.code].should eq('two')
-      result['_source']['properties'][select_many.code].should eq(['two'])
+      result['_source']['properties'][select_one.code].should eq(2)
+      result['_source']['properties'][select_many.code].should eq([2])
 
       search = collection.new_search current_user_id: user.id, snapshot_id: snapshot.id
       result = search.api_results[0]
       result['_source']['properties'][text.code].should eq('foo')
       result['_source']['properties'][numeric.code].should eq(1)
-      result['_source']['properties'][select_one.code].should eq('one')
-      result['_source']['properties'][select_many.code].should eq(['one', 'two'])
+      result['_source']['properties'][select_one.code].should eq(1)
+      result['_source']['properties'][select_many.code].should eq([1, 2])
     end
 
     it "gets ui results" do
@@ -438,6 +440,7 @@ describe Search do
 
     it "sorts by field asc" do
       result = search.sort(numeric.code).results
+
       result.map { |x| x['_id'].to_i } .should eq([site2.id, site1.id])
     end
 
@@ -468,7 +471,7 @@ describe Search do
     let!(:site2) { collection.sites.make :name => 'a' }
 
     it "should filter sites without location" do
-      result = collection.new_search.location_missing.results
+      result = collection.new_search.location_missing(1).results
       result.map { |x| x['_id'].to_i } .should eq([site1.id])
     end
 
@@ -497,25 +500,22 @@ describe Search do
 
     it "should search by range" do
       search = collection.new_search
-      search.where creation.es_code => "=09/06/2012,09/08/2012"
+      search.where '1' => { creation.es_code => "=06/09/2012,08/09/2012" }
       assert_results search, site1
     end
 
     it "should search by specific date" do
       search = collection.new_search
-      search.where inaguration.es_code => "=09/23/2012,09/23/2012"
+      search.where '1' => { inaguration.es_code => "=23/09/2012,23/09/2012" }
       assert_results search, site1, site2
     end
 
     it "searches by date with @code" do
       search = collection.new_search
       search.use_codes_instead_of_es_codes
-      search.where creation.code => "=09/06/2012,09/08/2012"
+      search.where '1' => { creation.code => "=06/09/2012,08/09/2012" }
       assert_results search, site1
     end
-
-
-
   end
 
   context 'filter by hierarchy' do
@@ -535,40 +535,41 @@ describe Search do
 
     it 'should filter sites inside some specified item by id' do
       search = collection.new_search
-      search.where unit.es_code => { under: 1 }
+      search.where '1' => { unit.es_code => { under: 1 } }
       assert_results search, site1, site2, site3
     end
 
     it 'should filter sites inside some specified item by id again' do
       search = collection.new_search
-      search.where unit.es_code => { under: 3 }
+      search.where '1' => { unit.es_code => { under: 3 } }
       assert_results search, site4
     end
 
-    it 'should filter sites inside some specified item by name' do
-      search = collection.new_search
-      search.use_codes_instead_of_es_codes
-      search.where unit.code => { under: 'Buenos Aires' }
-      assert_results search, site1, site2, site3
-    end
+    ### not applicable as elsticsearch store only value id of the selected item of hierarchy field
+    # it 'should filter sites inside some specified item by name' do
+    #   search = collection.new_search
+    #   search.use_codes_instead_of_es_codes
+    #   search.where '1' => { unit.code => { under: 'Buenos Aires' } }
+    #   assert_results search, site1, site2, site3
+    # end
 
     it "searches by hierarchy with @code" do
       search = collection.new_search
       search.use_codes_instead_of_es_codes
-      search.where unit.code => ['Buenos Aires']
+      search.where '1' => { unit.code => ['Buenos Aires'] }
       assert_results search, site1
     end
 
     it "searches by multiple hierarchy with @code" do
       search = collection.new_search
       search.use_codes_instead_of_es_codes
-      search.where unit.code => ['Buenos Aires', 'Vicente Lopez']
+      search.where '1' => { unit.code => ['Buenos Aires', 'Vicente Lopez'] }
       assert_results search, site1, site2, site3
     end
 
     it "searches by multiple hierarchy with @es_code" do
       search = collection.new_search
-      search.where unit.es_code => [1, 2]
+      search.where '1' => { unit.es_code => [1, 2] }
       assert_results search, site1, site2, site3
     end
   end
@@ -581,13 +582,13 @@ describe Search do
 
     it "should filter by 'yes'" do
       search = collection.new_search
-      search.where cool.es_code => 'yes'
+      search.where '1' => { cool.es_code => 'yes' }
       assert_results search, site1
     end
 
     it "should filter by 'no'" do
       search = collection.new_search
-      search.where cool.es_code => 'no'
+      search.where '1' => { cool.es_code => 'no' }
       assert_results search, site2
     end
   end
@@ -643,6 +644,6 @@ describe Search do
   end
 
   def assert_results(search, *sites)
-    search.results.map{|r| r['_id'].to_i}.should =~ sites.map(&:id)
+    search.results.map { |r| r['_id'].to_i }.should =~ sites.map(&:id)
   end
 end

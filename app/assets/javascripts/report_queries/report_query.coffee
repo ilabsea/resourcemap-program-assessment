@@ -30,6 +30,10 @@ onReportQueries ->
       @error = ko.computed => @nameError() || @nameExist() || @groupByFieldsError() || @aggregateFieldsError()
       @valid = ko.computed => !@error()
       @report_query_templates = data?.report_query_templates ? []
+      @isTotalAggregateField = if data?.is_total_aggregate_field
+                               ko.observable data.is_total_aggregate_field
+                             else
+                               ko.observable false
 
     nameExist: =>
       for reportQuery in window.model.reportQueries()
@@ -91,6 +95,7 @@ onReportQueries ->
       group_by_fields: $.map(@groupByFields(), (x) -> "#{x.id}")
       aggregate_fields: $.map(@aggregateFields(), (x) -> x.toJSON())
       condition: @condition()
+      is_total_aggregate_field: @isTotalAggregateField()
 
     tokenize: =>
       results = []

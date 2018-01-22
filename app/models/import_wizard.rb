@@ -3,7 +3,6 @@ class ImportWizard
 
   class << self
     def enqueue_job(user, collection, columns_spec)
-      # debugger
       mark_job_as_pending user, collection
 
       # Enqueue job with user_id, collection_id, serialized column_spec
@@ -11,7 +10,6 @@ class ImportWizard
     end
 
     def enqueue_member_job(user, collection, columns_spec)
-      # debugger
       mark_job_member_as_pending user, collection
 
       # Enqueue job with user_id, collection_id, serialized column_spec

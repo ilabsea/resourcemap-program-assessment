@@ -83,6 +83,7 @@ class Field::SelectOneField < Field
     end
 
     value_id = nil
+
     if use_codes_instead_of_es_codes
       if @cache_for_read
         value_id = @options_by_code_or_label_in_cache[value.to_s]
@@ -100,12 +101,12 @@ class Field::SelectOneField < Field
       if @cache_for_read
         value_id = @options_by_id_in_cache[value.to_s]
       else
-        config['options'].each do |option|
-          value_id = option['id'] if option['id'].to_s == value.to_s
-        end
+        value_id = value.to_s
       end
     end
+
     raise "Invalid option in field #{code}" if value_id.nil?
+
     value_id
   end
 
