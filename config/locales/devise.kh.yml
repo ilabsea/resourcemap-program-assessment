@@ -3,53 +3,53 @@
 kh:
   errors:
     messages:
-      expired: "has expired, please request a new one"
-      not_found: "not found"
-      already_confirmed: "was already confirmed, please try signing in"
-      not_locked: "was not locked"
+      expired: "បានផុតកំណត់ សូមស្នើសំណើថ្មី"
+      not_found: "មិនអាចរកឃេីញ"
+      already_confirmed: "បានបញ្ជាក់រួចហើយ សូមសាកល្បងចូលប្រេីប្រាស់"
+      not_locked: "មិនត្រូវបានចាក់សោ"
       not_saved:
         one: "1 error prohibited this %{resource} from being saved:"
         other: "%{count} errors prohibited this %{resource} from being saved:"
 
   devise:
     failure:
-      already_authenticated: 'You are already signed in.'
-      unauthenticated: 'You need to sign in or sign up before continuing.'
-      unconfirmed: 'You have to confirm your account before continuing.'
-      locked: 'Your account is locked.'
-      invalid: 'Invalid email or password.'
-      invalid_token: 'Invalid authentication token.'
-      timeout: 'Your session expired, please sign in again to continue.'
-      inactive: 'Your account was not activated yet.'
+      already_authenticated: 'អ្នកបានចូលប្រេីប្រាស់រួចហើយ។'
+      unauthenticated: 'អ្នកត្រូវចូលប្រេីប្រាស់ឬចុះឈ្មោះមុនពេលបន្ត។'
+      unconfirmed: 'អ្នកត្រូវបញ្ជាក់គណនីរបស់អ្នកមុនបន្តទៅមុខទៀត។'
+      locked: 'គណនីរបស់អ្នកជាប់សោ។'
+      invalid: 'អ៊ី​មែល​ឬ​ពាក្យសម្ងាត់​មិន​ត្រឹមត្រូវ'
+      invalid_token: 'ការផ្ទៀងផ្ទាត់មិនត្រឹមត្រូវ។'
+      timeout: 'វេនរបស់អ្នកបានផុតកំណត់សូមចូលម្តងទៀតដើម្បីបន្ត។'
+      inactive: 'គណនីរបស់អ្នកមិនទាន់បញ្ជាក់នៅឡើយទេ។'
       user:
         not_found_in_database: "អ្នកប្រើប្រាស់មិនមានក្នុងដេតាបេស"
     sessions:
       signed_in: 'ចូលប្រើប្រាស់ដោយជោគជ័យ។'
       signed_out: 'ចាកចេញដោយជោគជ័យ។'
     passwords:
-      send_instructions: 'You will receive an email with instructions about how to reset your password in a few minutes.'
-      updated: 'Your password was changed successfully. You are now signed in.'
-      updated_not_active: 'Your password was changed successfully.'
-      send_paranoid_instructions: "If your email address exists in our database, you will receive a password recovery link at your email address in a few minutes."
+      send_instructions: 'អ្នកនឹងទទួលបានអ៊ីមែលដែលមានការណែនាំអំពីរបៀបកំណត់ពាក្យសម្ងាត់របស់អ្នកឡើងវិញក្នុងរយៈពេលពីរឬបីនាទី។'
+      updated: 'ពាក្យសម្ងាត់របស់អ្នកត្រូវបានផ្លាស់ប្តូរដោយជោគជ័យ។ អ្នកបានចូលប្រេីប្រាស់ហើយ។'
+      updated_not_active: 'ពាក្យសម្ងាត់របស់អ្នកត្រូវបានផ្លាស់ប្តូរដោយជោគជ័យ។'
+      send_paranoid_instructions: "ប្រសិនបើអ៊ីមែលរបស់អ្នកមាននៅក្នុងដេតាបេសរបស់យើងអ្នកនឹងទទួលបានតំណរការសង្គ្រោះពាក្យសម្ងាត់នៅអ៊ីមែលរបស់អ្នកក្នុងរយៈពេលពីរបីនាទី។"
     confirmations:
-      send_instructions: 'You will receive an email with instructions about how to confirm your account in a few minutes.'
-      send_paranoid_instructions: 'If your email address exists in our database, you will receive an email with instructions about how to confirm your account in a few minutes.'
+      send_instructions: 'អ្នកនឹងទទួលបានអ៊ីមែលដែលមានការណែនាំអំពីរបៀបបញ្ជាក់គណនីរបស់អ្នកក្នុងរយៈពេលពីរបីនាទី។'
+      send_paranoid_instructions: 'ប្រសិនបើអ៊ីមែលរបស់អ្នកមាននៅក្នុងដេតាបេសរបស់យើងអ្នកនឹងទទួលបានអ៊ីមែលដែលមានសេចក្តីណែនាំអំពីរបៀបបញ្ជាក់គណនីរបស់អ្នកក្នុងរយៈពេលពីរបីនាទី។'
       confirmed: 'គណនីរបស់អ្នកត្រូវបានបញ្ជាក់ដោយជោគជ័យ។ ឥឡូវនេះអ្នកកំពុងចូលក្នុងប្រព័ន្ធ។'
     registrations:
-      signed_up: 'Welcome! You have signed up successfully.'
-      signed_up_but_unconfirmed: 'A message with a confirmation link has been sent to your email address. Please open the link to activate your account.'
-      signed_up_but_inactive: 'You have signed up successfully. However, we could not sign you in because your account is not yet activated.'
-      signed_up_but_locked: 'You have signed up successfully. However, we could not sign you in because your account is locked.'
-      updated: 'You updated your account successfully.'
-      update_needs_confirmation: "You updated your account successfully, but we need to verify your new email address. Please check your email and click on the confirm link to finalize confirming your new email address."
-      destroyed: 'Bye! Your account was successfully cancelled. We hope to see you again soon.'
+      signed_up: 'ស្វាគមន៍! អ្នកបានចុះឈ្មោះដោយជោគជ័យ។'
+      signed_up_but_unconfirmed: 'សារដែលមានតំណការបញ្ជាក់ត្រូវបានផ្ញើទៅអ៊ីមែលរបស់អ្នក។ សូមបើកតំណដើម្បីធ្វើឱ្យគណនីរបស់អ្នកសកម្ម។'
+      signed_up_but_inactive: 'អ្នកបានចុះឈ្មោះដោយជោគជ័យ។ ទោះយ៉ាងណាក៏ដោយអ្នកមិនទាន់អាចចូលប្រេីប្រាស់បានទេពីព្រោះគណនីរបស់អ្នកមិនទាន់ត្រូវបានបញ្ជាក់។'
+      signed_up_but_locked: 'អ្នកបានចុះឈ្មោះដោយជោគជ័យ។ ទោះជាយ៉ាងណាក៏ដោយយើងមិនអាចចូលប្រេីប្រាស់បានទេពីព្រោះគណនីរបស់អ្នកត្រូវបានចាក់សោ។'
+      updated: 'អ្នកបានធ្វើកែប្រែគណនីរបស់អ្នកដោយជោគជ័យ។'
+      update_needs_confirmation: "អ្នកបានធ្វើកែប្រែគណនីរបស់អ្នកដោយជោគជ័យប៉ុន្តែយើងត្រូវផ្ទៀងផ្ទាត់អ៊ីមែលថ្មីរបស់អ្នក។ សូមពិនិត្យអ៊ីមែលរបស់អ្នកហើយចុចលើតំណបញ្ជាក់ដើម្បីបញ្ជាកអ៊ីមែលថ្មីរបស់អ្នក។"
+      destroyed: 'លាហើយ! គណនីរបស់អ្នកត្រូវបានលុបចោលដោយជោគជ័យ។ យើងសង្ឃឹមថានឹងជួបអ្នកម្តងទៀតឆាប់ៗ។'
     unlocks:
-      send_instructions: 'You will receive an email with instructions about how to unlock your account in a few minutes.'
-      unlocked: 'Your account has been unlocked successfully. Please sign in to continue.'
-      send_paranoid_instructions: 'If your account exists, you will receive an email with instructions about how to unlock it in a few minutes.'
+      send_instructions: 'អ្នកនឹងទទួលបានអ៊ីមែលដែលមានការណែនាំអំពីរបៀបដោះសោគណនីរបស់អ្នកក្នុងរយៈពេលពីរបីនាទី។'
+      unlocked: 'គណនីរបស់អ្នកត្រូវបានដោះសោដោយជោគជ័យ។ សូមចូលប្រេីប្រាស់ដើម្បីបន្ត។'
+      send_paranoid_instructions: 'ប្រសិនបើគណនីរបស់អ្នកមានអ្នកនឹងទទួលបានអ៊ីមែលដែលមានការណែនាំអំពីរបៀបដោះសោវាក្នុងរយៈពេលពីរឬបីនាទី។'
     omniauth_callbacks:
-      success: 'Successfully authenticated from %{kind} account.'
-      failure: 'Could not authenticate you from %{kind} because "%{reason}".'
+      success: 'បានផ្ទៀងផ្ទាត់ដោយជោគជ័យពីគណនី %{kind} ។'
+      failure: 'មិនអាចផ្ទៀងផ្ទាត់ភាពត្រឹមត្រូវអ្នកពី %{kind} ព្រោះ "%{reason}" ។'
     mailer:
       confirmation_instructions:
         subject: 'Confirmation instructions'

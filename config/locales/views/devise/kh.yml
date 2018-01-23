@@ -4,6 +4,8 @@ kh:
       sessions:
         email: 'អ៊ុីមែល'
         password: 'លេខសំងាត់'
+        password_confirmation: "លេខសំងាត់ម្តងទៀត"
+        phone_number: "លេខទូរស័ព្ទ"
         remember_me: 'ចងចាំខ្ញុំ'
         login: 'ចូលប្រើប្រាស់'
         reset_it: 'កំណត់ឡើងវិញ'
@@ -13,3 +15,14 @@ kh:
         create_account: "បង្កើតគណនេយ្យ"
         forgot_your_password: "ភ្លេចលេខសំងាត់របស់អ្នកមែនទេ?"
         send_me_reset_password_instruction: "ផ្ញើរអោយខ្ញុំនូវរបៀបដាក់កំណត់លេខសំងាត់"
+        sign_up: "បង្កេីតគណនី"
+        refresh: "សារឡេីងវិញ"
+        enter_your_captcha_here: "បំពេញ captcha នៅទីនេះ"
+        edit_account: "កែប្រែគណនី"
+        current_password: "លេខសំងាត់​បច្ចុប្បន្ន"
+        time_zone: "ល្វែងម៉ោង"
+        current_password_info: "យើងត្រូវការលេខសំងាត់​បច្ចុប្បន្នរបស់អ្នកដើម្បីបញ្ជាក់ការផ្លាស់ប្តូររបស់អ្នក"
+        update: "កែប្រែ"
+
+
+    

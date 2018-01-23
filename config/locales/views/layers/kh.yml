@@ -15,6 +15,12 @@ kh:
       add_layer: "បន្ថែមស្រទាប់"
       add_new_layer: "បន្ថែមស្រទាប់ថ្​​​មី"
       copy_layer: "ចម្លង ស្រទាប់"
+      copy_layers_to_new_collection: "ចម្លង ស្រទាប់ទាំងអស់សំរាប់ទិន្នន័យថ្មី"
+      total_fields: "ហ្វៀលសរុប"
+      add_form_field: "បន្ថែមទំរង់ហ្វៀល"
+      input_new_collection_name: "បញ្ចូលឈ្មោះទិន្នន័យថ្មី"
+      copying: 'កំពុងតែចម្លង...'
+      copy: 'ចម្លង'
       fields:
         title: "ហ្វៀល"
         text: "អក្សរ"
@@ -96,6 +102,26 @@ kh:
           import_places: "នាំចូល កន្លែង"
           custom_widgeted: "custom widget (kh)"
           custom_aggregator: "custom aggregator (kh)"
-          do_not_display_in_form_as_being_used_in_custom_widget: "Do not display in form as being used in custom widget(kh)"
+          do_not_display_in_form_as_being_used_in_custom_widget: "កុំបង្ហាញក្នុងទំរង់ព្រោះបានប្រើ custom widget(kh)"
           select_fields: "Select fields(kh)"
           enable_custom_validation: "ការផ្ទៀងផ្ទាត់បន្ថែម"
+          skip_this_field_when: "រំលងហ្វៀលនេះនៅពេល"
+          have_value: "មានតម្លៃ"
+          equal_to: "ស្មើនឹង"
+          less_than: "តិច​ជាង"
+          less_than_or_equal_to: "តិចជាងឬស្មើ"
+          greater_than: "ធំជាង"
+          greater_than_or_equal_to: "ធំជាងឬស្មើ"
+          not_equal_to: "មិនស្មើ"
+          type_field_name: "បញ្ចូលឈ្មោះហ្វៀល"
+          enable_range: "បើកចន្លោះ"
+          minimum: "ឣប្បបរិមា"
+          maximum: "អតិបរមា"
+          this_field_should_have_value: "ហ្វៀលនេះគួរតែមានតម្លៃ"
+          field: "ហ្វៀល"
+          no_value: '(គ្មានតំលៃ)'
+          enable_dependancy_hierarchy: "បេីកឋានានុក្រមនៃភាពអាស្រ័យ"
+          this_field_will_be_rendering_as_the_dependancy_hierarchy_select: "ហ្វៀលនេះនឹងត្រូវបានបង្ហាញជាឋានានុក្រម select"
+  
+
+

@@ -25,16 +25,15 @@
 
     /ko if: isShowingCopyForm
     .box.grey.w60
-      %span Copy layers to new collection
+      %span=t('views.layers.copy_layers_to_new_collection')
 
       %div#copy_progress{style: 'padding-top: 30px; display:none'}
         %img{src: '/images/progress_bar.gif', style: 'position: absolute; top: 0; bottom: 0;margin: auto 0px; width: 20px'}
-        %span#copy_notice_message{style: 'color: #3b89bc'} Copying ...
-
+        %span#copy_notice_message{style: 'color: #3b89bc'}=t('views.layers.copying')  
       %div#form_copy{style: 'padding-top: 5px;'}
         %p#copy_error_message{style: 'color: red;'}
-        %input.w30#newCollectionName{placeholder: "input new collection's name"}
-        %button{ko(click: :copyLayerToNewCollection)} Copy
+        %input.w30#newCollectionName{placeholder: t('views.layers.input_new_collection_name')}
+        %button{ko(click: :copyLayerToNewCollection)}=t('views.layers.copy')
       %div#browse_copy_collection{style: 'padding-top: 10px; display:none'}
         %span#success_copy_notice_message{style: 'color: #3b89bc'}
         %br
@@ -45,7 +44,7 @@
     /ko ifnot: isShowingCopyForm
     - if current_user_snapshot.at_present? && collection_admin?
       %div.right{style:'padding-right:340px'}
-        %button{ko(click: :showCopyLayerForm)} Copy layers to new collection
+        %button{ko(click: :showCopyLayerForm)}=t('views.layers.copy_layers_to_new_collection')
     //ko
     - if !current_user_snapshot.at_present?
       = render '/current_snapshot_message'
@@ -181,7 +180,7 @@
         //ko
         %br/
         / ko if: total
-        Total field
+        =t('views.layers.total_fields')
         %b
           %a{ko(click: :expandAllField, text: :total), href: 'javascript:void(0)'}
         / /ko

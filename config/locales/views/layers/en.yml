@@ -15,6 +15,12 @@ en:
       add_layer: "Add layer"
       add_new_layer: "Add new layer"
       copy_layer: "Copy layer"
+      copy_layers_to_new_collection: "Copy layers to new collection"
+      total_fields: "Total fields"
+      add_form_field: "Add form field"
+      input_new_collection_name: "input new collection's name"
+      copying: 'Copying...'
+      copy: 'Copy'
       fields:
         title: "Fields"
         text: "Text"
@@ -100,3 +106,20 @@ en:
           do_not_display_in_form_as_being_used_in_custom_widget: "Do not display in form as being used in custom widget"
           select_fields: "Select fields"
           enable_custom_validation: "Enable custom validation"
+          skip_this_field_when: "Skip this field when"
+          have_value: "have value"
+          equal_to: "equal to"
+          less_than: "less than"
+          less_than_or_equal_to: "less than or equal to"
+          greater_than: "greater than"
+          greater_than_or_equal_to: "greater than or equal to"
+          not_equal_to: "not equal to"
+          type_field_name: "Type field name"
+          enable_range: "Enable range"
+          minimum: "Minimum"
+          maximum: "Maximum"
+          this_field_should_have_value: "This field should have value"
+          field: "field"
+          no_value: '(no value)'
+          enable_dependancy_hierarchy: "Enable dependancy hierarchy"
+          this_field_will_be_rendering_as_the_dependancy_hierarchy_select: "This field will be rendering as the dependancy hierarchy select"
