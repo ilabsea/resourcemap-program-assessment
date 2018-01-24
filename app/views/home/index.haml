@@ -1,40 +1,35 @@
 .homepage
   .right
     .illustration
-  %h1.home{:style => "margin-top: 0px;"} Make better decisions
-  %p.sub{:style => "font-size: 26px;"} by knowing where your resources are in real time
+  %h1.home{:style => "margin-top: 0px;"}=t('views.homepage.index.make_better_decisions')
+  %p.sub{:style => "font-size: 26px;"}=t('views.homepage.index.by_knowing_where_your_resources_are_in_real_time')
   
   %p{:style => "font-size: 16px;"}
     %span.r-arrow{:style => "margin-left: 4px"} 
-    %span{:style => "font-weight:bold;"}   
-      Free:
-    Use it for free in the cloud OR download the code, it’s open source!
+    %span{:style => "font-weight:bold;"}=t('views.homepage.index.free')
+    %span=t('views.homepage.index.free_description')
   %p{:style => "font-size: 16px;"}
     %span.r-arrow{:style => "margin-left: 4px"}
-    %span{:style => "font-weight:bold;"}   
-      Insightful: 
-    Gain insight into the location & distribution of your resources 
+    %span{:style => "font-weight:bold;"}=t('views.homepage.index.free')
+    %span=t('views.homepage.index.insightful_description')
   %p{:style => "font-size: 16px;"}
     %span.r-arrow{:style => "margin-left: 4px"}
-    %span{:style => "font-weight:bold;"}   
-      Collaborative: 
-    Your team can record, track and analyze resources 
+    %span{:style => "font-weight:bold;"}=t('views.homepage.index.collaborative')
+    %span=t('views.homepage.index.collaborative_description')
   %p{:style => "font-size: 16px;"}
     %span.r-arrow{:style => "margin-left: 4px"}
-    %span{:style => "font-weight:bold;"}   
-      SMS Enabled: 
-    Use SMS to query, update or receive alerts from the system 
+    %span{:style => "font-weight:bold;"}=t('views.homepage.index.sms_enabled')   
+    %span=t('views.homepage.index.sms_enabled_description')
   %p{:style => "font-size: 16px;"}
     %span.r-arrow{:style => "margin-left: 4px"}
-    %span{:style => "font-weight:bold;"}   
-      Map Ready: 
-    See everything on the map for a birds-eye view
+    %span{:style => "font-weight:bold;"}=t('views.homepage.index.map_ready')   
+    %span=t('views.homepage.index.map_ready_description')
 
   %br/
 
   - if current_user
     %p
-      =link_button_to 'View your collections', collections_path, :class => "orange" , :style => "font-size: 24px; height: 52px; width: 260px;margin: auto;"
+      =link_button_to t('views.homepage.index.view_your_collections'), collections_path, :class => "orange" , :style => "font-size: 24px; height: 52px; width: 260px;margin: auto;"
 
     %p
   - else
@@ -47,57 +42,57 @@
       %ul#benefits-container
         %li
           %span.get-update.left
-          %h3 Get updates
-          %p as they happen, using a live map or text message request
+          %h3=t('views.homepage.index.get_updates') 
+          %p=t('views.homepage.index.get_updates_description')
           %br{:clear => "all"}/
         %li
           %span.visualize-and-update.left
-          %h3 Visualize and update
-          %p resource allocations without a complex and expensive GIS
+          %h3=t('views.homepage.index.visualize_and_update')
+          %p=t('views.homepage.index.visualize_and_update_description')
           %br{:clear => "all"}/
         %li
           %span.update.left
-          %h3 Update
-          %p resource data from any text messaging-capable phone
+          %h3=t('views.homepage.index.update')
+          %p=t('views.homepage.index.update_description')
           %br{:clear => "all"}/
         %li
           %span.identify.left
-          %h3 Identify
-          %p distribution patterns and anomalies with visual mapping and trend analysis
+          %h3=t('views.homepage.index.identify')
+          %p=t('views.homepage.index.identify_description')
           %br{:clear => "all"}/
         %li
           %span.receive.left
-          %h3 Receive
-          %p important alerts instantly and address them proactively
+          %h3=t('views.homepage.index.receive')
+          %p=t('views.homepage.index.receive_description')
           %br{:clear => "all"}/
         %li
           %span.collaborate.left
-          %h3 Collaborate
-          %p easily on resource allocation decisions
+          %h3=t('views.homepage.index.collaborate') 
+          %p=t('views.homepage.index.collaborat_description')  
           %br{:clear => "all"}/
         %li
           %span.maintain.left
-          %h3 Maintain
-          %p complete control over the visibility of resource allocation data
+          %h3=t('views.homepage.index.maintain')
+          %p=t('views.homepage.index.maintain_description') 
           %br{:clear => "all"}/
         %li
           %span.i48grad-free.left
-          %h3 Free
-          %p for anyone to use to help increase their social impact
+          %h3=t('views.homepage.index.free1')
+          %p=t('views.homepage.index.free1_description') 
           %br{:clear => "all"}/
 
         %li
           %span.i48grad-openSource.left
-          %h3 Open Source
-          %p code for developers to use to improve its design and functionality
+          %h3=t('views.homepage.index.open_source') 
+          %p=t('views.homepage.index.open_source_description') 
           %br{:clear => "all"}/
       / #benefits-container
     / #benefits
   / #home-middle-bar
   #container
-    %h1 What can I use it for?
+    %h1=t('views.homepage.index.what_can_i_use_it_for') 
     %p.desc{:style => "margin:0 0 30px !important;"}
-      Accurately tracking and allocating resources is critical to getting the  most from every asset at your disposal. Resource Map can help you maximize your resource allocation and usage. 
+      =t('views.homepage.index.usage_information')
     %p
-      %a{:href => "/real-time-resource-tracking", :style => "font-weight:bold; font-size:30px; margin-left: auto; margin-right: auto; width: 230px; display:block;"}
-        Find out how →
+      %a{:href => "/real-time-resource-tracking", :style => "font-weight:bold; font-size:30px; margin-left: auto; margin-right: auto; width: 230px; display:block;"}=t('views.homepage.index.find_out_how')
+        

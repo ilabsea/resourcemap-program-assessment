@@ -2,7 +2,7 @@ en:
   views:
     report_queries:
       title: "Report Queries"
-      description: "Manage report_queries of this collection's sites"
+      description: "Manage report queries of this collection's sites"
       name: "Name"
       condition_fields: "Condition Fields"
       expression: "Expression"
@@ -12,3 +12,5 @@ en:
       save: "Save"
       cancel: "Cancel"
       add_new_report_query: "Add new report query"
+      no_value: "(no value)"
+      one_and_two: "1 and 2"

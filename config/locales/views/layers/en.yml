@@ -123,3 +123,4 @@ en:
           no_value: '(no value)'
           enable_dependancy_hierarchy: "Enable dependancy hierarchy"
           this_field_will_be_rendering_as_the_dependancy_hierarchy_select: "This field will be rendering as the dependancy hierarchy select"
+          this_field_is_required: "This field is required !"

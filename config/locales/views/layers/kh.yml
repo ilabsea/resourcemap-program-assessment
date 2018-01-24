@@ -122,6 +122,7 @@ kh:
           no_value: '(គ្មានតំលៃ)'
           enable_dependancy_hierarchy: "បេីកឋានានុក្រមនៃភាពអាស្រ័យ"
           this_field_will_be_rendering_as_the_dependancy_hierarchy_select: "ហ្វៀលនេះនឹងត្រូវបានបង្ហាញជាឋានានុក្រម select"
+          this_field_is_required: "ហ្វៀលនេះ​ត្រូវតែ​បំពេញ !"
   
 
 
