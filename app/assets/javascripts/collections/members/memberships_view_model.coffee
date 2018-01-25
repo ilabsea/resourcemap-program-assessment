@@ -16,7 +16,7 @@ class @MembershipsViewModel
     @secretCode = null
     @phoneExiste = ko.observable false
     @noChannelMsg = ko.observable("")
-    @codeVerificationMsg = ko.observable('<p>Click "Text Me!". You will receive an SMS pin code for verification.</p>')
+    @codeVerificationMsg = ko.observable window.t('javascripts.collections.members.code_verification')
     @emailError = ko.computed =>
       if @hasEmail()
         atPos = @email().indexOf('@')

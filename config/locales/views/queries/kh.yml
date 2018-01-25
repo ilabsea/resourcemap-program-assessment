@@ -1,4 +1,12 @@
 kh:
+  javascripts:
+    queries:
+      cant_save: "មិនអាចរក្សាទុក: %{error}"
+      errors:
+        name_is_missing: "បាត់ឈ្មោះសំណួរ"
+        must_have_at_least_one_condition_refined: "កម្រិតចាប់ផ្ដើមត្រូវតែមានលក្ខខណ្ឌយ៉ាងហោចណាស់មួយ"
+        the_formula_is_missing: "បាត់រូបមន្ត"
+        the_formula: "រូបមន្ត "
   views:
     queries:
       title: "សំណួរ"

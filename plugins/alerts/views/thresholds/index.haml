@@ -98,7 +98,7 @@
           .middlebuttons{ko(visible: 'isAllSite() == "false"' )}
             %input.sites{ko(autocompleteTagField: 'alertSites',objectType: "Site", valueUpdate: :afterkeydown), proxy: collection_sites_path(collection), valueField: 'id', displayField: 'name', type: :text}
         %br
-        %h1.header_text= t('views.plugins.alerts.conditions')
+        %h1.header_text= t('views.plugins.alerts.form.conditions')
         .middlebuttons
           %input{"data-bind" => "checked: isAllCondition", :value => "true", :name => "condition", :type => "radio"}
           %label= t('views.plugins.alerts.form.all_of_following_conditions')

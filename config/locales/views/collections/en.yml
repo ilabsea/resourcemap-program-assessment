@@ -151,7 +151,6 @@ en:
       settings:
         title: "Settings"
         description: "Change basic information about this collection"
-        
       members:
         title: "Members"
         description: "Manage who can see this collection and who can read/write its layers"
@@ -176,8 +175,10 @@ en:
         text_me: "Text Me!"
         submit: "Submit"
         cancel: "Cancel"
+        confirm: "Confirm"
         can_view_data_submit_by_other: "View data submitted by other user"
         can_edit_data_submit_by_other: "Edit data submitted by other user"
+        upload_it_for_bulk_members_updates: "Upload it for bulk members updates"
       quotas:
         title: "Quotas"
         messages_sent: "This collection sent"
@@ -188,6 +189,12 @@ en:
         year: "Year"
         remaining_messages: "this collection remain"
         message_quota: " message quota"
+      print_template:
+        title: "Print Template"
+        description: "Create custom template for site rendering"
+        is_published_template: "Anyone with the report's link can view the site with this template."
+        save: "Save"
+        cancel: "Cancel"
       import_members:
         title: "Import Member Wizard"
         description: "This wizard will guide you through importing a CSV file"

@@ -41,6 +41,7 @@ en:
           phone_number_is_required: "Phone number is required"
           phone_number_is_taken: "Phone number is taken"
           email_is_invalid: "Email is invalid"
+        code_verification: 'Click "Text Me!". You will receive an SMS pin code for verification.'
       index:
         name: "Name"
         waste_site: "Waste site"

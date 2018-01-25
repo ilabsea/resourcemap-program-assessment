@@ -1,4 +1,12 @@
 en:
+  javascripts:
+    queries:
+      cant_save: "Can't save: %{error}"
+      errors:
+        name_is_missing: "the query's name is missing"
+        must_have_at_least_one_condition_refined: "the query must have at least one condition refined"
+        the_formula_is_missing: "the formula is missing"
+        the_formula: "the formula "
   views:
     queries:
       title: "Queries"
@@ -34,5 +42,7 @@ en:
         is_greater_than: "is greater than"
         is_greater_than_or_equal_to: "is greater than or equal to"
         and: 'and'
+        
+
 
 
