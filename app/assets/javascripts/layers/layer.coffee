@@ -24,11 +24,11 @@ onLayers ->
       @support_skiplogic_fields = ko.observableArray($.map(@fields(), (f) => f if (f.kind() == 'numeric' or f.kind() == 'yes_no' or f.kind() == 'select_one' or f.kind() == 'select_many')))
       @deletable = ko.observable(true)
       @hasFocus = ko.observable(false)
-      @nameError = ko.computed => if @hasName() then null else "the layer's Name is missing"
+      @nameError = ko.computed => if @hasName() then null else window.t('javascripts.layers.fields.errors.the_layer_name_is_missing')
       @total = ko.observable(data?.total ? 0)
       @lastFieldOrd = data?.last_field_ord ? 0
       @fieldsError = ko.computed =>
-        return "the layer must have at least one field" if @fields().length == 0
+        return window.t('javascripts.layers.fields.errors.the_layer_must_have_at_least_one_field')  if @fields().length == 0
 
         codes = []
         names = []
@@ -37,8 +37,8 @@ onLayers ->
         for field in @fields()
           field_error = field.error()
           return field_error if field_error
-          return "duplicated field name '#{field.name()}'" if names.indexOf(field.name()) >= 0
-          return "duplicated field code '#{field.code()}'" if codes.indexOf(field.code()) >= 0
+          return window.t('javascripts.layers.fields.errors.duplicated_field_name') + " '#{field.name()}'" if names.indexOf(field.name()) >= 0
+          return window.t('javascripts.layers.fields.errors.duplicated_field_code') +" '#{field.code()}'" if codes.indexOf(field.code()) >= 0
           names.push field.name()
           codes.push field.code()
 
@@ -46,8 +46,8 @@ onLayers ->
         if window.model
           for layer in window.model.layers() when layer != @
             for field in layer.fields()
-              return "a field with name '#{field.name()}' already exists in the layer named #{layer.name()}" if names.indexOf(field.name()) >= 0
-              return "a field with code '#{field.code()}' already exists in the layer named #{layer.name()}"  if codes.indexOf(field.code()) >= 0
+              return window.t('javascripts.layers.fields.errors.a_field_with_name') + " '#{field.name()}' " + window.t('javascripts.layers.fields.errors.already_exists_in_the_layer_named') + " #{layer.name()}" if names.indexOf(field.name()) >= 0
+              return window.t('javascripts.layers.fields.errors.a_field_with_code') + " '#{field.code()}' " + window.t('javascripts.layers.fields.errors.already_exists_in_the_layer_named') + " #{layer.name()}"  if codes.indexOf(field.code()) >= 0
 
         null
       @error = ko.computed => @nameError() || @fieldsError()

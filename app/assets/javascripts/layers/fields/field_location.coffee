@@ -14,12 +14,12 @@ onLayers ->
         if @maximumSearchLength() && @maximumSearchLength().length >0
           null
         else
-          "the field #{@field.fieldErrorDescription()} is missing a maximum search length"
+          window.t('javascripts.layers.fields.errors.the_field') + " #{@field.fieldErrorDescription()} " + window.t('javascripts.layers.fields.errors.is_missing_a_maximum_search_length')
       @missingFileLocationError = ko.computed =>
         if @locations() && @locations().length > 0
           null
         else
-          "the field #{@field.fieldErrorDescription()} is missing the location file"
+          window.t('javascripts.layers.fields.errors.the_field') + " #{@field.fieldErrorDescription()} "+ window.t('javascripts.layers.fields.errors.is_missing_location_file')
 
       @error = ko.computed =>
         @missingFileLocationError() || @maximumSearchLengthError()

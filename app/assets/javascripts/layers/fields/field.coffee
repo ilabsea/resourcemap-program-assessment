@@ -42,14 +42,14 @@ onLayers ->
       @kind.subscribe => @impl eval("new Field_#{@kind()}(this)")
 
       @widgetMappingerror = ko.observable()
-      @nameError = ko.computed => if @hasName() then null else "the field #{@fieldErrorDescription()} is missing a Name"
+      @nameError = ko.computed => if @hasName() then null else window.t('javascripts.layers.fields.errors.the_field') + " #{@fieldErrorDescription()} " + window.t('javascripts.layers.fields.errors.is_missing_a_name')
       @codeError = ko.computed =>
-        if !@validCode() then return "the field #{@fieldErrorDescription()} has invalid code"
-        if !@hasCode() then return "the field #{@fieldErrorDescription()} is missing a Code"
-        if (@code() in ['lat', 'long', 'name', 'resmap-id', 'last updated']) then return "the field #{@fieldErrorDescription()} code is reserved"
+        if !@validCode() then return window.t('javascripts.layers.fields.errors.the_field') + " #{@fieldErrorDescription()} " + window.t('javascripts.layers.fields.errors.has_invalid_code')
+        if !@hasCode() then return window.t('javascripts.layers.fields.errors.the_field') + " #{@fieldErrorDescription()} " + window.t('javascripts.layers.fields.errors.is_missing_a_code')
+        if (@code() in ['lat', 'long', 'name', 'resmap-id', 'last updated']) then return window.t('javascripts.layers.fields.errors.the_field') + " #{@fieldErrorDescription()} " + window.t('javascripts.layers.fields.errors.code_is_reserved')
         null
 
-      @error = ko.computed => @nameError() || @codeError() || @impl().error()
+      @error = ko.computed => if @nameError() || @codeError() || @impl().error() then return window.t('javascripts.layers.fields.cant_save' , {error: @nameError() || @codeError() || @impl().error()})
       @valid = ko.computed => !@error()
       @oldcode = ko.observable data?.code
       @code.subscribe =>

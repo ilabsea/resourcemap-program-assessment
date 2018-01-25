@@ -1,4 +1,30 @@
 kh:
+  javascripts: 
+    layers:
+      fields:
+        cant_save: "មិនអាចរក្សាទុក: %{error}"
+        errors:
+          the_field: "ហ្វៀល "
+          is_missing_a_name: "បាត់ឈ្មោះ"
+          has_invalid_code: "មានកូដមិនត្រឹមត្រូវ"
+          is_missing_a_code: "បាត់កូដ"
+          code_is_reserved: "កូដត្រូវបានបម្រុងទុក"
+          is_missing_the_hierarchy: "បាត់រចនាសម្ព័ន"
+          has_to_be_the_dependent_hierarchy_fields: "ត្រូវតែជាហ្វៀលឋានានុក្រមពឹងផ្អែក"
+          is_missing_a_maximum_search_length: "បាត់ប្រវែងស្វែងរកអតិបរមា"
+          is_missing_location_file: "បាត់ឯកសារទីតាំង"
+          invalid_range_maximum_must_be_greater_than_minimun: "ចន្លោះមិនត្រឹមត្រូវអតិបរមាត្រូវតែធំជាងអប្បបរមា"
+          must_have_at_least_one_option: "ត្រូវមានយ៉ាងហោចណាស់ជម្រើសមួយ"
+          duplicated_option_code: "កូដជម្រើសស្ទួន"
+          duplicated_option_label: "ស្លាកជម្រើសស្ទួន"
+          for_field: "សម្រាប់ហ្វៀល"
+          the_layer_must_have_at_least_one_field: "ស្រទាប់ត្រូវតែមានយ៉ាងហោចណាស់មួយហ្វៀល"
+          the_layer_name_is_missing: "ឈ្មោះរបស់ស្រទាប់ត្រូវបានបាត់"
+          duplicated_field_name: "ឈ្មោះហ្វៀលស្ទួន"
+          duplicated_field_code: "កូដហ្វៀលស្ទួន"
+          a_field_with_name: "ហ្វៀលដែលមានឈ្មោះ"
+          a_field_with_code: "ហ្វៀលដែលមានកូដ"
+
   views:
     layers:
       title: "ស្រទាប់"
@@ -120,7 +146,7 @@ kh:
           this_field_should_have_value: "ហ្វៀលនេះគួរតែមានតម្លៃ"
           field: "ហ្វៀល"
           no_value: '(គ្មានតំលៃ)'
-          enable_dependancy_hierarchy: "បេីកឋានានុក្រមនៃភាពអាស្រ័យ"
+          enable_dependency_hierarchy: "បេីកឋានានុក្រមនៃភាពអាស្រ័យ"
           this_field_will_be_rendering_as_the_dependancy_hierarchy_select: "ហ្វៀលនេះនឹងត្រូវបានបង្ហាញជាឋានានុក្រម select"
           this_field_is_required: "ហ្វៀលនេះ​ត្រូវតែ​បំពេញ !"
   

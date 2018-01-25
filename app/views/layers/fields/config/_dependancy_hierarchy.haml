@@ -1,7 +1,7 @@
 %hr/
 = ko_check_box_tag :is_enable_dependancy_hierarchy
 %span{ko(css: {error: 'impl().dependencyError()'})}=t('views.layers.form.field.enable_dependancy_hierarchy') 
-%p.smalltext=t('views.layers.form.field.this_field_will_be_rendering_as_the_dependancy_hierarchy_select')
+%p.smalltext=t('views.layers.form.field.this_field_will_be_rendering_as_the_dependency_hierarchy_select')
 
 /ko if: isAllowDependancyHierarchyFieldConfig()
 %select{"data-bind" => 'foreach: $root.layersWithDependentHierarchyFields(), value: impl().parentHierarchyFieldId'}

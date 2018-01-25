@@ -304,13 +304,13 @@ onLayers ->
           $.status.showNotice("Layer '#{layer.name()}' successfully deleted", 2000)
       else
         if layer.threshold_ids.length > 0
-          $.status.showError("This layer's field is being used with #{layer.threshold_ids.length} alert(s), you are not allowed to delete", 2000)
+          $.status.showError(window.t('javascripts.layers.used_in_alert', {number: layer.threshold_ids.length}), 2000)
         else if layer.query_ids.length > 0
-          $.status.showError("This layer's field is being used with #{layer.query_ids.length} canned query(s), you are not allowed to delete", 2000)
+          $.status.showError(window.t('javascripts.layers.used_in_canned_query', {number: layer.query_ids.length}), 2000)
         else if layer.report_query_ids.length > 0
-          $.status.showError("This layer's field is being used with #{layer.report_query_ids.length} report query(s), you are not allowed to delete", 2000)
+          $.status.showError(window.t('javascripts.layers.used_in_report_query', {number: layer.report_query_ids.length}), 2000)
         else if layer.isParentFieldOfOtherLayerField()
-          $.status.showError("This layer's field is having the dependancy with other layer's field, you are not allowed to delete", 2000)
+          $.status.showError(window.t('javascripts.layers.dependency'), 2000)
 
 
     copyField: (field)=>
@@ -513,13 +513,13 @@ onLayers ->
           @currentField().hasFocus(true)
       else
         if field.threshold_ids.length > 0
-          $.status.showError("This field is being used with #{field.threshold_ids.length} alert(s), you are not allowed to delete", 2000)
+          $.status.showError(window.t('javascripts.layers.field_used_in_alert', {number: field.threshold_ids.length}), 2000)
         else if field.query_ids.length > 0
-          $.status.showError("This field is being used with #{field.query_ids.length} canned query(s), you are not allowed to delete", 2000)
+          $.status.showError(window.t('javascripts.layers.field_used_in_canned_query', {number: field.query_ids.length}), 2000)
         else if field.report_query_ids.length > 0
-          $.status.showError("This field is being used with #{field.report_query_ids.length} report query(s), you are not allowed to delete", 2000)
+          $.status.showError(window.t('javascripts.layers.field_used_in_report_query', {number: field.report_query_ids.length}), 2000)
         else if field.isParentOfOther()
-          $.status.showError("This field is the parent of other field, you are not allowed to delete", 2000)
+          $.status.showError(window.t('javascripts.layers.field_dependency'), 2000)
 
     newOptionKeyPress: (field, event) =>
       switch event.keyCode
@@ -786,7 +786,7 @@ onLayers ->
         $.get "/collections/#{collectionId}/copy", {new_collection_name: newCollectionName}, (data) =>
           @successCopyCollection(data)
       else
-        $('#copy_error_message').text("Please input the new collection's name")
+        $('#copy_error_message').text(window.t('javascripts.layers.please_input_the_new_collection_name'))
 
     progressCopyCollection: ->
       $('#copy_progress').show()

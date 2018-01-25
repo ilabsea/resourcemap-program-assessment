@@ -16,11 +16,11 @@ onLayers ->
         if @hierarchy() && @hierarchy().length > 0
           null
         else
-          "the field #{@field.fieldErrorDescription()} is missing the Hierarchy"
+          window.t('javascripts.layers.fields.errors.the_field') + " #{@field.fieldErrorDescription()} " + window.t('javascripts.layers.fields.errors.is_missing_the_hierarchy')  
 
       @dependencyError = ko.computed =>
         if @field.is_enable_dependancy_hierarchy() == false && @field.isParentOfOther()
-          return "the field #{@field.fieldErrorDescription()} has to be the dependent hierarchy fields"
+          return window.t('javascripts.layers.fields.errors.the_field') + " #{@field.fieldErrorDescription()} " + window.t('javascripts.layers.fields.errors.has_to_be_the_dependent_hierarchy_fields')
         else
           null
 
