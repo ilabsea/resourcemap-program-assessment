@@ -33,6 +33,7 @@ en:
         custom_permissions_for_sites: "Custom permissions for sites"
         custom_permissions_1_site: "Custom permissions for 1 site"
         custom_permissions_n_sites: "Custom permissions for %{n} sites"
+        text_me_you_will_receive_an_sms_pin_code_for_verification: "Click 'Text Me!'. You will receive an SMS pin code for verification."
         permissions:
           all: "All"
           some: "Some"

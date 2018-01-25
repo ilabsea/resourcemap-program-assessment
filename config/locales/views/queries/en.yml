@@ -12,5 +12,27 @@ en:
       save: "Save"
       cannot_save: "Can't save"
       add_new_query: "Add new query"
+      ok: "OK"
       conditions:
         description: "Find all sites where"
+        updated_within: "Updated within"
+        the_last_hour: "the last hour"
+        the_last_day: "the last day"
+        the_last_week: "the last week"
+        the_last_month: "the last month"
+        location_missing: "Location missing"
+        starts_with: "starts with"
+        has_no_value: "has no value"
+        is: "is"
+        is1: "is:"
+        is_between: "is between"
+        is_yes: "is 'yes'"
+        is_no: "is 'no'"
+        equals: 'equals'
+        is_less_than: "is less than"
+        is_less_than_or_equal_to: "is less than or equal to"
+        is_greater_than: "is greater than"
+        is_greater_than_or_equal_to: "is greater than or equal to"
+        and: 'and'
+
+

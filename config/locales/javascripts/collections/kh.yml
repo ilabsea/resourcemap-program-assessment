@@ -33,6 +33,7 @@ kh:
         custom_permissions_for_sites: "សិទ្ធិផ្ទាល់ខ្លួនសម្រាប់តំបន់"
         custom_permissions_1_site: "សិទ្ធិផ្ទាល់ខ្លួនសម្រាប់ 1 តំបន់"
         custom_permissions_n_sites: "សិទ្ធិផ្ទាល់ខ្លួនសម្រាប់ %{n} តំបន់"
+        text_me_you_will_receive_an_sms_pin_code_for_verification: "ចុច 'ផ្ញេីសារអោយខ្ញំុ!'. អ្នកនឹងទទួលបានកូដ PIN code ក្នុង SMS សម្រាប់ផ្ទៀងផ្ទាត់។"
         permissions:
           all: "ទាំងអស់"
           some: "មួយចំនួន"

@@ -11,6 +11,35 @@ kh:
       cancel: "បោះបង់ចោល"
       save: "រក្សាទុកសំណួរ"
       cannot_save: "មិនអាចរក្សាទុកសំណួរ"
-      add_new_query: "បន្ថែមសំណួរថ្មី"      
+      add_new_query: "បន្ថែមសំណួរថ្មី"   
+      ok: "យល់ព្រម"   
       conditions:
-        description: "រកតំបន់ទាំងអស់ដែល"      
+        description: "រកតំបន់ទាំងអស់ដែល" 
+        updated_within: "ធ្វើឱ្យទាន់សម័យនៅក្នុង"
+        the_last_hour: "ម៉ោងចុងក្រោយ"
+        the_last_day: "ថ្ងៃ​ចុងក្រោយ"
+        the_last_week: "សប្ដាហ៍​មុន"
+        the_last_month: "ខែមុន"
+        location_missing: "គ្មានទីតាំង"
+        starts_with: "ផ្តេីមដោយ"
+        has_no_value: "គ្មានតម្លៃ"
+        is: "គឺ"
+        is1: "គឺ៖"
+        is_between: "នៅចន្លោះ"
+        is_yes: "គឺ 'ចាស'"
+        is_no: "គឺ 'ទេ'"
+        equals: 'ស្មេីនឹង'
+        is_less_than: "គឺតិចជាង"
+        is_less_than_or_equal_to: "គឺតិចជាងឬស្មើនឹង"
+        is_greater_than: "គឺច្រេីនជាង"
+        is_greater_than_or_equal_to: "គឺច្រេីនជាងឬស្មើនឹង"
+        and: 'និង'
+
+
+
+
+
+
+
+
+
