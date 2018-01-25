@@ -4,7 +4,7 @@ $(function(){
     if(templates.length > 0){
       $("#form-create-report").submit();
     }else{
-      $.status.showError('Please select at least one report template to generate the report', 3000)
+      $.status.showError(window.t("javascripts.report_queries.at_least_one_report_template"), 3000)
     }
   });
 });
