@@ -12,6 +12,8 @@ onCollections ->
       @optionsUI = [new Option {id: '', label: window.t('javascripts.collections.fields.no_value') }].concat(@options)
       @optionsUIIds = $.map @optionsUI, (x) => x.id
 
+      @hierarchy = @options
+
     @labelFor: (id) ->
       for option in @optionsUI
         if option.id == id
