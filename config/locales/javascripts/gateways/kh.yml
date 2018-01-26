@@ -11,3 +11,4 @@ kh:
       client_disconnected: "អ្នកប្រើប្រាស់ បានកាត់ផ្តាច់"
       message_pending: "សារជាអក្សរ រងចាំការផ្ញើរ"
       are_you_sure_to_delete_this_gateway: "តើអ្នកពិតជាចង់លុបចោលផ្លូវចេញចូលនេះមែនទេ?"
+      successfully_setting_sms_gateways: "រៀបចំសារ SMS Gateways ដោយជោគជ័យ"

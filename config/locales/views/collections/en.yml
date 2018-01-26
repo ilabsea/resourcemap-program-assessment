@@ -2,6 +2,7 @@ en:
   javascripts:
     collections:
       index:
+        pdf_generating: 'System is generating PDF for your request, once it finishes we will send you a download link to your email.'
         site_created: "Site '%{name}' successfully created"
   views:
     collections:

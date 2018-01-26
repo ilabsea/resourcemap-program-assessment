@@ -1,6 +1,7 @@
 en:
   javascripts:
     collections:
+      unexpected_error: "Unexpected error"
       viewing_collection: "Viewing %{mapSitesCount} %{sitesText} out of %{sitesCount}"
       viewing: "Viewing %{mapSitesCount} %{sitesText}"
       site: "site"
@@ -45,3 +46,14 @@ en:
       index:
         name: "Name"
         waste_site: "Waste site"
+      validator: 
+        this_field_is_required: "This field is required ! "
+        invalid_field_format: 'Invalid field format'
+        value_must_be_equal_to_field: 'Invalid value, value must be equal to field '
+        value_must_be_less_than_field: 'Invalid value, value must be less than field '
+        value_must_be_greater_than_field: 'Invalid value, value must be greater than field '
+        value_must_be_greater_than_and_equal_to_field: 'Invalid value, value must be greater than and equal to field '
+        value_must_be_less_than_and_equal_to_field: 'Invalid value, value must be less than and equal to field '
+        value_must_be_less_than_or_equal_to: 'Invalid value, value must be less than or equal to '
+        value_must_be_greater_than_or_equal_to: 'Invalid value, value must be greater than or equal to '
+        value_must_be_in_the_range_of: 'Invalid value, value must be in the range of ( %{min} - %{max} )'

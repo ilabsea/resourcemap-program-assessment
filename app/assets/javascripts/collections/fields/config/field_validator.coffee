@@ -6,7 +6,7 @@ onCollections ->
     validateMandatory: =>
       if @field.is_mandatory()
         if !@field.value() || @field.value().length == 0
-          @field.errorMessage('This field is required !')
+          @field.errorMessage(window.t('javascripts.collections.validator.this_field_is_required'))
         else
           @field.errorMessage('')
       return
@@ -14,9 +14,9 @@ onCollections ->
     validateFormat: =>
       if @field.value()
         if @field.kind == 'date'
-          if @isValidDate() then @field.errorMessage('') else @field.errorMessage('Invalid field format')
+          if @isValidDate() then @field.errorMessage('') else @field.errorMessage(window.t('javascripts.collections.validator.invalid_field_format'))
         else if @field.kind == 'email'
-          if(@isValidEmail()) then @field.errorMessage('') else @field.errorMessage('Invalid field format')
+          if(@isValidEmail()) then @field.errorMessage('') else @field.errorMessage(window.t('javascripts.collections.validator.invalid_field_format'))
       return
 
     validateRangeAndDigitsPrecision: =>
@@ -52,27 +52,27 @@ onCollections ->
       fieldValue = parseFloat(validateField.value())
       if fieldConfig.condition_type == '='
         if fieldValue != compareValue
-          validateField.errorMessage('Invalid value, value must be equal to field '+ fieldName)
+          validateField.errorMessage(window.t('javascripts.collections.validator.value_must_be_equal_to_field') + fieldName)
         else
           validateField.errorMessage('')
       else if fieldConfig.condition_type == '<'
         if fieldValue >= compareValue
-          validateField.errorMessage('Invalid value, value must be less than field '+ fieldName)
+          validateField.errorMessage(window.t('javascripts.collections.validator.value_must_be_less_than_field') + fieldName)
         else
           validateField.errorMessage('')
       else if fieldConfig.condition_type == '>'
         if fieldValue <= compareValue
-          validateField.errorMessage('Invalid value, value must be greater than field '+ fieldName)
+          validateField.errorMessage(window.t('javascripts.collections.validator.value_must_be_greater_than_field') + fieldName)
         else
           validateField.errorMessage('')
       else if fieldConfig.condition_type == '>='
         if fieldValue < compareValue
-          validateField.errorMessage('Invalid value, value must be greater than and equal to field '+ fieldName)
+          validateField.errorMessage(window.t('javascripts.collections.validator.value_must_be_greater_than_and_equal_to_field') + fieldName)
         else
           validateField.errorMessage('')
       else if fieldConfig.condition_type == '<='
         if fieldValue > compareValue
-          validateField.errorMessage('Invalid value, value must be less than and equal to field '+ fieldName)
+          validateField.errorMessage(window.t('javascripts.collections.validator.value_must_be_less_than_and_equal_to_field') + fieldName)
         else
           validateField.errorMessage('')
 
@@ -87,20 +87,20 @@ onCollections ->
           if parseFloat(@field.value()) >= parseFloat(@field.range.minimum) && parseFloat(@field.value()) <= parseFloat(@field.range.maximum)
             @field.errorMessage('')
           else
-            @field.errorMessage('Invalid value, value must be in the range of ('+@field.range.minimum+'-'+@field.range.maximum+")")
+            @field.errorMessage(window.t('javascripts.collections.validator.value_must_be_in_the_range_of', {min: @field.range.minimum, max: @field.range.maximum}))
         else
           if @field.range.maximum
             if parseFloat(@field.value()) <= parseFloat(@field.range.maximum)
               @field.errorMessage('')
             else
-              @field.errorMessage('Invalid value, value must be less than or equal '+@field.range.maximum)
+              @field.errorMessage(window.t('javascripts.collections.validator.value_must_be_less_than_or_equal_to') +@field.range.maximum)
             return
 
           if @field.range.minimum
             if parseFloat(@field.value()) >= parseFloat(@field.range.minimum)
               @field.errorMessage('')
             else
-              @field.errorMessage('Invalid value, value must be greater than or equal '+@field.range.minimum)
+              @field.errorMessage(window.t('javascripts.collections.validator.value_must_be_greater_than_or_equal_to') +@field.range.minimum)
             return
 
     isValidDate: =>

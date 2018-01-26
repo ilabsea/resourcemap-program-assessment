@@ -301,7 +301,7 @@ onLayers ->
 
           @layers.remove(layer)
 
-          $.status.showNotice("Layer '#{layer.name()}' successfully deleted", 2000)
+          $.status.showNotice(window.t('javascripts.layers.layer_successfully_deleted', {name: layer.name()}), 2000)
       else
         if layer.threshold_ids.length > 0
           $.status.showError(window.t('javascripts.layers.used_in_alert', {number: layer.threshold_ids.length}), 2000)
@@ -738,11 +738,11 @@ onLayers ->
             if f.kind() == "numeric"
               if isNaN(fieldLogicValue)
                 error["status_failed"] = true
-                error["detail"] = "Field logic value is not numeric value."
+                error["detail"] = window.t('javascripts.layers.fields.errors.field_logic_value_is_not_numeric_value')
             if f.kind() == "yes_no"
               if parseInt(fieldLogicValue) != 1 and parseInt(fieldLogicValue) != 0 and fieldLogicValue.toUpperCase() != 'Y' and fieldLogicValue.toUpperCase() != 'YES' and fieldLogicValue.toUpperCase() != 'N' and fieldLogicValue.toUpperCase() != 'NO'
                 error["status_failed"] = true
-                error["detail"] = "Field logic value for Yes_No support only 1, 0, Yes, Y ,No ,and N."
+                error["detail"] = window.t('javascripts.layers.fields.errors.field_logic_value_unsupport_yes_no')
             if f.kind() == "select_one"
               status = false
               codeList = []
@@ -753,7 +753,7 @@ onLayers ->
               )
               if !status
                 error["status_failed"] = true
-                error["detail"] = "Field logic value for Select one support only #{codeList.join(',')}."
+                error["detail"] = window.t('javascripts.layers.fields.errors.field_logic_value_upsupport_select_one', {codeList: codeList.join(',')})
             if f.kind() == "select_many"
               status = true
               codeList = []
@@ -769,7 +769,7 @@ onLayers ->
               )
               if !status
                 error["status_failed"] = true
-                error["detail"] = "Field logic value for Select many support only #{codeList.join(',')}. The value #{errors.join(',')} is not support."
+                error["detail"] = window.t('javascripts.layers.fields.errors.field_logic_value_upsupport_select_many', {codeList: codeList.join(','), errors: errors.join(',')})
 
         )
       )
@@ -796,6 +796,6 @@ onLayers ->
     successCopyCollection: (data) =>
       $('#copy_progress').hide()
       $('#form_copy').hide()
-      $('#success_copy_notice_message').text("This collection's layers are successfully copied to collection '#{data["name"]}'")
+      $('#success_copy_notice_message').text(window.t('javascripts.layers.successfully_copied_collection_name', {name: data["name"]}))
       $("#btn_browse_collection").prop("href", "/collections?collection_id=#{data["id"]}")
       $('#browse_copy_collection').show()

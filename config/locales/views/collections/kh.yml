@@ -2,6 +2,7 @@ kh:
   javascripts:
     collections:
       index:
+        pdf_generating: 'ប្រព័ន្ធនេះត្រូវបានបង្កើតជា PDF សម្រាប់សំណើរបស់អ្នកនៅពេលដែលវាបញ្ចប់យើងនឹងផ្ញើតំណទាញយកទៅអ៊ីម៉ែលរបស់អ្នក។'
         site_created: "តំបន់ '%{name}' បានបង្កើតដោយជោគជ័យ"
   views:
     collections:

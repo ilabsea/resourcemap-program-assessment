@@ -47,6 +47,7 @@ en:
       input_new_collection_name: "input new collection's name"
       copying: 'Copying...'
       copy: 'Copy'
+      browse_copy_collection: 'Browse copied collection'
       fields:
         title: "Fields"
         text: "Text"

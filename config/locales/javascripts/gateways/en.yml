@@ -11,3 +11,4 @@ en:
       client_disconnected: "Client disconected"
       message_pending: "message pending"
       are_you_sure_to_delete_this_gateway: "Are you sure to delete this gateway?"
+      successfully_setting_sms_gateways: "Successfully setting SMS Gateways"

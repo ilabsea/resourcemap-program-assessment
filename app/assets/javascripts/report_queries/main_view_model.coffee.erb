@@ -81,7 +81,7 @@ onReportQueries ->
         @deleteReportQuery = reportQuery
         if reportQuery.report_query_templates.length == 0
           $.post "/collections/#{@collectionId}/report_queries/#{reportQuery.id}.json", { _method: 'delete' }, =>
-            $.status.showNotice("Report query '#{@deleteReportQuery.name()}' successfully deleted", 2000)
+            $.status.showNotice(window.t('javascripts.report_queries.report_query_successfully_deleted', {name: @deleteReportQuery.name()}), 2000)
             @reportQueries.remove @deleteReportQuery
             delete @deleteReportQuery
         else

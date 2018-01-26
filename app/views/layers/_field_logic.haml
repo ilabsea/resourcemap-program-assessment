@@ -51,7 +51,7 @@
         //ko
 
       / ko ifnot: valid()
-      %span{ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:0px'}
+      %span{ko(text: "error()"), style: 'color:red;margin-left:0px'}
       %br
       //ko
 
@@ -85,7 +85,7 @@
         %input{ko(value: :value), style: 'width:45px;text-align:center'}
         //ko
       / ko ifnot: valid()
-      %span{ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:0px'}
+      %span{ko(text: "error()"), style: 'color:red;margin-left:0px'}
       %br
       //ko
       %button.white{ko(click: '$root.saveFieldLogic', enable: '$root.fieldLogicValid'), type: :button, title: 'Save'}= t('views.layers.form.field.save')

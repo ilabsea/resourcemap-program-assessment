@@ -9,4 +9,4 @@ onChannels ->
       $.post "/collections/#{@collectionId()}/register_gateways.json", gateways: @selectedGateways(), @saveChannelCallback
 
     saveChannelCallback: (data) =>
-      $.status.showNotice("Successfully setting SMS Gateways", 2000)
+      $.status.showNotice(window.t('javascripts.gateways.successfully_setting_sms_gateways'), 2000)

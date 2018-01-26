@@ -1,7 +1,7 @@
 onThresholds ->
   class @ValueType
-    @VALUE      = new ValueType 'value', 'a value of', (value) -> value
-    @PERCENTAGE = new ValueType 'percentage', 'a percentage of', (value) -> "#{value}%"
+    @VALUE      = new ValueType 'value', window.t('javascripts.plugins.alerts.value_types.a_value_of'), (value) -> value
+    @PERCENTAGE = new ValueType 'percentage', window.t('javascripts.plugins.alerts.value_types.a_percentage_of'), (value) -> "#{value}%"
 
     @ALL        = [ @VALUE, @PERCENTAGE ]
 

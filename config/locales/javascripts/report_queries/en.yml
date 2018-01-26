@@ -3,3 +3,4 @@ en:
     report_queries:
       at_least_one_report_template: 'Please select at least one report template to generate the report'
       field_used_in_report_query: "This field is being used with %{n} report query template(s), you are not allowed to delete"
+      report_query_successfully_deleted: "Report query '%{name}' successfully deleted"

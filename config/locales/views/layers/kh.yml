@@ -1,6 +1,7 @@
 kh:
   javascripts: 
     layers:
+      successfully_copied_collection_name: "ស្រទាប់ទិន្នន័យទាំងនេះត្រូវបានចម្លងដោយជោគជ័យនៃទិន្នន័យ '%{name}'"
       fields:
         cant_save: "មិនអាចរក្សាទុក: %{error}"
         errors:
@@ -47,6 +48,7 @@ kh:
       input_new_collection_name: "បញ្ចូលឈ្មោះទិន្នន័យថ្មី"
       copying: 'កំពុងតែចម្លង...'
       copy: 'ចម្លង'
+      browse_copy_collection: 'ចូលមេីលទិន្ន័យចម្លង'
       fields:
         title: "ហ្វៀល"
         text: "អក្សរ"
