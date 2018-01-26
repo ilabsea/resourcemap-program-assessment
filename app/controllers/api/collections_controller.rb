@@ -13,7 +13,7 @@ class Api::CollectionsController < ApplicationController
   end
 
   def index
-    render json: current_user.collections
+    render json: current_user.collections.all
   end
 
   def show
