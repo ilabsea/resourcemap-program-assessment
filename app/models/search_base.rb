@@ -61,11 +61,11 @@ module SearchBase
     if field.kind == 'date'
       date_field_range(query_key, validated_value)
     elsif field.kind == 'yes_no' && !validated_value.is_a?(Array) && !Field.yes?(value)
-      { not: { :term => { query_key => true }}} # so we return false & nil values
+      { not: { term: { query_key => true }}} # so we return false & nil values
     elsif validated_value.is_a? Array
-      { terms: {query_key => validated_value} }
+      { terms: { query_key => validated_value } }
     else
-      { term: {query_key => validated_value} }
+      { term: { query_key => validated_value } }
     end
   end
 
@@ -212,12 +212,12 @@ module SearchBase
   end
 
   def alerted_to_reporter(v)
-    @search.filter :term, reporter: v
+    add_filter term: { "notify_to.reporter" => v }
     self
   end
 
   def my_site_search id
-    @search.filter :term, user_id: id
+    add_filter term: { user_id: id }
     self
   end
 
@@ -381,8 +381,8 @@ module SearchBase
   def prepare_filter
     if @filters
       expr = parse
-      @search.query { |q| q.all}
-      @search.filter expr.keys[0] , expr.values[0]
+      @search.query { |q| q.all }
+      @search.filter expr.keys[0], expr.values[0]
     end
     self
   end

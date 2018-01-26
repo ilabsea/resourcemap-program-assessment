@@ -64,7 +64,7 @@ class MapSearch
   end
 
   def sites_json
-    return {} if @collection_ids.empty?
+    return [] if @collection_ids.empty?
     sites = []
     data = JSON.parse(stream.read)
     data["hits"]["hits"].each do |item|

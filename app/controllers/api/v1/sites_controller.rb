@@ -34,7 +34,6 @@ module Api::V1
       search.offset 0
       search.limit 50
 
-      search.prepare_filter
       render json: search.sites_json
     end
 
