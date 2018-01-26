@@ -18,5 +18,5 @@
     %hr
   %div{style:'height:37px;'}
     %a{ko(click: :confirm), :class => "button white right"}
-      = 'Confirm'
-    %a.grey.right{ko(click: :close_confirm), :style => 'margin-top:13px; margin-right:10px;'} Cancel
+      =t('views.collections.members.confirm')
+    %a.grey.right{ko(click: :close_confirm), :style => 'margin-top:13px; margin-right:10px;'}=t('views.collections.members.cancel')

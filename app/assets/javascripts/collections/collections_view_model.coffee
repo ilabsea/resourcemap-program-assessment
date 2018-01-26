@@ -188,7 +188,7 @@ onCollections ->
       path_pdf = "/site_pdfs"
       data = {id: @editingSite().uuid}
       $.post path_pdf, data,  ()=>
-        $.status.showNotice('System is generating PDF for your request, once it finishes we will send you a download link to your email.', 60*1000)
+        $.status.showNotice(window.t('javascripts.collections.index.pdf_generating'), 60*1000)
       event.preventDefault()
 
     @openDialog:  ->

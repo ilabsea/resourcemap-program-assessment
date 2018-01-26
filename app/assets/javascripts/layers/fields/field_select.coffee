@@ -12,13 +12,13 @@ onLayers ->
           codes = []
           labels = []
           for option in @options()
-            return "duplicated option code '#{option.code()}' for field #{@field.name()}" if codes.indexOf(option.code()) >= 0
-            return "duplicated option label '#{option.label()}' for field #{@field.name()}" if labels.indexOf(option.label()) >= 0
+            return window.t('javascripts.layers.fields.errors.duplicated_option_code') + " '#{option.code()}' " + window.t('javascripts.layers.fields.errors.for_field') + " #{@field.name()}" if codes.indexOf(option.code()) >= 0
+            return window.t('javascripts.layers.fields.errors.duplicated_option_label') + " '#{option.label()}' " + window.t('javascripts.layers.fields.errors.for_field') + " #{@field.name()}" if labels.indexOf(option.label()) >= 0
             codes.push option.code()
             labels.push option.label()
           null
         else
-          "the field '#{@field.name()}' must have at least one option"
+          window.t('javascripts.layers.fields.errors.the_field') + " '#{@field.name()}' " + window.t('javascripts.layers.fields.errors.must_have_at_least_one_option')
 
 
     addOption: (option) =>

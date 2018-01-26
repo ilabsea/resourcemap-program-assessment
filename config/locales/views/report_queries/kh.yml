@@ -2,7 +2,7 @@ kh:
   views:
     report_queries:
       title: "ទាញទិន្ន័យ សម្រាប់ស្ថិតិ"
-      description: "Manage report_queries of this collection's sites"
+      description: "គ្រប់គ្រងការ ទាញទិន្ន័យ សម្រាប់ស្ថិតិ នែតំបន់ទាំងឡាយរបស់ទិន្នន័យនេះ"
       name: "ឈ្មោះ"
       condition_fields: "លក្ខ័ណ ហ្វៀល"
       expression: "កន្សោម"
@@ -12,3 +12,6 @@ kh:
       save: "រក្សាទុក"
       cancel: "បោះបង់ចោល"
       add_new_report_query: "បង្កើតការទាញទិន្ន័យសម្រាប់ស្ថិតិ"
+      no_value: "(គ្មានតំលៃ)"
+      one_and_two: "1 និង 2"
+

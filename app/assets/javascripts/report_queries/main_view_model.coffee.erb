@@ -81,11 +81,11 @@ onReportQueries ->
         @deleteReportQuery = reportQuery
         if reportQuery.report_query_templates.length == 0
           $.post "/collections/#{@collectionId}/report_queries/#{reportQuery.id}.json", { _method: 'delete' }, =>
-            $.status.showNotice("Report query '#{@deleteReportQuery.name()}' successfully deleted", 2000)
+            $.status.showNotice(window.t('javascripts.report_queries.report_query_successfully_deleted', {name: @deleteReportQuery.name()}), 2000)
             @reportQueries.remove @deleteReportQuery
             delete @deleteReportQuery
         else
-          $.status.showError("This field is being used with #{reportQuery.report_query_templates.length} report query template(s), you are not allowed to delete", 2000)
+          $.status.showError(window.t('javascripts.report_queries.field_used_in_report_query', {n: reportQuery.report_query_templates.length}), 2000)
 
     findFieldById: (id) =>
       for layer in @layers()

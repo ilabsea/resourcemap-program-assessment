@@ -68,7 +68,7 @@
           %a.tgrey{ ko(click: '$root.cancelQuery'), href: 'javascript:void(0)' }
             = t('views.queries.cancel')
           /ko if: !valid()
-          %span{ ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:20px' }
+          %span{ ko(text: "error()"), style: 'color:red;margin-left:20px' }
             = t('views.queries.cannot_save')
           //ko
       %br
@@ -146,7 +146,7 @@
             %a.tgrey{ ko(click: '$root.cancelQuery'), href: 'javascript:void(0)' }
               = t('views.queries.cancel')
             /ko if: !valid()
-            %span{ ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:20px' }
+            %span{ ko(text: "error()"), style: 'color:red;margin-left:20px' }
               = t('views.queries.cannot_save')
             //ko
       //ko

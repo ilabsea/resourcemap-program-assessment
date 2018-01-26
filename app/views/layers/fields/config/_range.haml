@@ -1,13 +1,11 @@
 %hr/
 = ko_check_box_tag 'impl().is_enable_range', css: {error: :codeError}
-%label
-  Enable Range
-
+%label=t('views.layers.form.field.enable_range') 
 %div{ko(if: 'impl().is_enable_range'), style: 'width:275px'}
   %br/
-  %p.smalltext Mininum
+  %p.smalltext=t('views.layers.form.field.minimum')
   = ko_number_field_tag 'impl().minimum', css: {error: :error}, event: {keydown: 'impl().validate_number_only'}
   %br/
   %br/
-  %p.smalltext Maximum
+  %p.smalltext=t('views.layers.form.field.maximum')
   = ko_number_field_tag 'impl().maximum', css: {error: :error}, event: {keydown: 'impl().validate_number_only'}

@@ -1,4 +1,31 @@
 kh:
+  javascripts: 
+    layers:
+      successfully_copied_collection_name: "ស្រទាប់ទិន្នន័យទាំងនេះត្រូវបានចម្លងដោយជោគជ័យនៃទិន្នន័យ '%{name}'"
+      fields:
+        cant_save: "មិនអាចរក្សាទុក: %{error}"
+        errors:
+          the_field: "ហ្វៀល "
+          is_missing_a_name: "បាត់ឈ្មោះ"
+          has_invalid_code: "មានកូដមិនត្រឹមត្រូវ"
+          is_missing_a_code: "បាត់កូដ"
+          code_is_reserved: "កូដត្រូវបានបម្រុងទុក"
+          is_missing_the_hierarchy: "បាត់រចនាសម្ព័ន"
+          has_to_be_the_dependent_hierarchy_fields: "ត្រូវតែជាហ្វៀលឋានានុក្រមពឹងផ្អែក"
+          is_missing_a_maximum_search_length: "បាត់ប្រវែងស្វែងរកអតិបរមា"
+          is_missing_location_file: "បាត់ឯកសារទីតាំង"
+          invalid_range_maximum_must_be_greater_than_minimun: "ចន្លោះមិនត្រឹមត្រូវអតិបរមាត្រូវតែធំជាងអប្បបរមា"
+          must_have_at_least_one_option: "ត្រូវមានយ៉ាងហោចណាស់ជម្រើសមួយ"
+          duplicated_option_code: "កូដជម្រើសស្ទួន"
+          duplicated_option_label: "ស្លាកជម្រើសស្ទួន"
+          for_field: "សម្រាប់ហ្វៀល"
+          the_layer_must_have_at_least_one_field: "ស្រទាប់ត្រូវតែមានយ៉ាងហោចណាស់មួយហ្វៀល"
+          the_layer_name_is_missing: "ឈ្មោះរបស់ស្រទាប់ត្រូវបានបាត់"
+          duplicated_field_name: "ឈ្មោះហ្វៀលស្ទួន"
+          duplicated_field_code: "កូដហ្វៀលស្ទួន"
+          a_field_with_name: "ហ្វៀលដែលមានឈ្មោះ"
+          a_field_with_code: "ហ្វៀលដែលមានកូដ"
+
   views:
     layers:
       title: "ស្រទាប់"
@@ -15,6 +42,13 @@ kh:
       add_layer: "បន្ថែមស្រទាប់"
       add_new_layer: "បន្ថែមស្រទាប់ថ្​​​មី"
       copy_layer: "ចម្លង ស្រទាប់"
+      copy_layers_to_new_collection: "ចម្លង ស្រទាប់ទាំងអស់សំរាប់ទិន្នន័យថ្មី"
+      total_fields: "ហ្វៀលសរុប"
+      add_form_field: "បន្ថែមទំរង់ហ្វៀល"
+      input_new_collection_name: "បញ្ចូលឈ្មោះទិន្នន័យថ្មី"
+      copying: 'កំពុងតែចម្លង...'
+      copy: 'ចម្លង'
+      browse_copy_collection: 'ចូលមេីលទិន្ន័យចម្លង'
       fields:
         title: "ហ្វៀល"
         text: "អក្សរ"
@@ -96,6 +130,27 @@ kh:
           import_places: "នាំចូល កន្លែង"
           custom_widgeted: "custom widget (kh)"
           custom_aggregator: "custom aggregator (kh)"
-          do_not_display_in_form_as_being_used_in_custom_widget: "Do not display in form as being used in custom widget(kh)"
+          do_not_display_in_form_as_being_used_in_custom_widget: "កុំបង្ហាញក្នុងទំរង់ព្រោះបានប្រើ custom widget(kh)"
           select_fields: "Select fields(kh)"
           enable_custom_validation: "ការផ្ទៀងផ្ទាត់បន្ថែម"
+          skip_this_field_when: "រំលងហ្វៀលនេះនៅពេល"
+          have_value: "មានតម្លៃ"
+          equal_to: "ស្មើនឹង"
+          less_than: "តិច​ជាង"
+          less_than_or_equal_to: "តិចជាងឬស្មើ"
+          greater_than: "ធំជាង"
+          greater_than_or_equal_to: "ធំជាងឬស្មើ"
+          not_equal_to: "មិនស្មើ"
+          type_field_name: "បញ្ចូលឈ្មោះហ្វៀល"
+          enable_range: "បើកចន្លោះ"
+          minimum: "ឣប្បបរិមា"
+          maximum: "អតិបរមា"
+          this_field_should_have_value: "ហ្វៀលនេះគួរតែមានតម្លៃ"
+          field: "ហ្វៀល"
+          no_value: '(គ្មានតំលៃ)'
+          enable_dependency_hierarchy: "បេីកឋានានុក្រមនៃភាពអាស្រ័យ"
+          this_field_will_be_rendering_as_the_dependancy_hierarchy_select: "ហ្វៀលនេះនឹងត្រូវបានបង្ហាញជាឋានានុក្រម select"
+          this_field_is_required: "ហ្វៀលនេះ​ត្រូវតែ​បំពេញ !"
+  
+
+

@@ -1,8 +1,8 @@
 = render '/tabs'
 
 .tabsline.settings-form
-  %h2= t('views.collections.print_template.print_template')
-  %p= t('views.collections.print_template.create_custom_template_for_site_rendering')
+  %h2=t('views.collections.print_template.title')
+  %p=t('views.collections.print_template.description')
 
 = form_for collection do |f|
 
@@ -21,8 +21,8 @@
     = f.text_area :print_template, class: "custom-tinymce"
   %div.row
     = f.check_box :is_published_template
-    = f.label :is_published_template, t('views.collections.print_template.view_option')
+    = f.label :is_published_template, t('views.collections.print_template.is_published_template')
   - if current_user_snapshot.at_present? && collection_admin?
     %div.row
-      = f.button t('views.collections.form.save'), :class => 'white'
-      = link_to t('views.collections.form.cancel'), collections_path, :class=> 'grey'
+      = f.button t('views.collections.print_template.save'), :class => 'white'
+      = link_to t('views.collections.print_template.cancel'), collections_path, :class=> 'grey'

@@ -11,7 +11,7 @@
     %div
       %select{"data-bind" => 'foreach: $root.layers(), value: field, selectedOptions: selectedField'}
         /ko if: $index() == 0
-        %option{value: ""} (no value)
+        %option{value: ""}=t('views.report_queries.no_value')
         //ko
         %optgroup{"data-bind" => "attr: {label: name}, foreach: whiteListConditionField", style: ''}
           %option{"data-bind" => "text: name, option: name, value: $data"}
@@ -44,7 +44,7 @@
     %i
       = t('views.report_queries.expression')
     %br
-    %input.w60{ko(value: :condition), type: :text, placeholder: "1 and 2"}
+    %input.w60{ko(value: :condition), type: :text, placeholder: t("views.report_queries.one_and_two")}
 
 .control.clearfix
   %label
@@ -53,7 +53,7 @@
     %div
       %select{"data-bind" => 'foreach: $root.layers(), value: selectedGroupByField, selectedOptions: groupByFieldsOptions'}
         /ko if: $index() == 0
-        %option{value: ""} (no value)
+        %option{value: ""}=t('views.report_queries.no_value')
         //ko
         %optgroup{"data-bind" => "attr: {label: name}, foreach: whiteListConditionField", style: ''}
           %option{"data-bind" => "text: name, option: name, value: $data"}
@@ -81,7 +81,7 @@
     %div
       %select{"data-bind" => 'foreach: $root.layers(), value: field, selectedOptions: selectedField'}
         /ko if: $index() == 0
-        %option{value: ""} (no value)
+        %option{value: ""}=t('views.report_queries.no_value')
         //ko
         /ko if: fieldsNumericAndCalculationOnly.length > 0
         %optgroup{"data-bind" => "attr: {label: name}, foreach: fieldsNumericAndCalculationOnly", style: ''}

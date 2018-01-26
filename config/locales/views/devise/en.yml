@@ -4,6 +4,8 @@ en:
       sessions:
         email: 'email'
         password: 'password'
+        password_confirmation: "Password confirmation"
+        phone_number: "Phone number"
         remember_me: 'Remember me'
         login: 'Log in'
         reset_it: 'Reset it'
@@ -11,5 +13,13 @@ en:
         didnot_receive_unlock_instruction: "Didn't receive unlock instructions?"
         sign_in_with: 'Sign in with'
         create_account: "Create account for Resource Map"
-        orgot_your_password: "Forgot your password?"
+        forgot_your_password: "Forgot your password?"
         send_me_reset_password_instruction: "Send me reset password instructions"
+        sign_up: "Sign up"
+        refresh: "Refresh"
+        enter_your_captcha_here: "Enter your captcha here"
+        edit_account: "Edit account"
+        current_password: "Current password"
+        time_zone: "Time zone"
+        current_password_info: "we need your current password to confirm your changes"
+        update: "update"

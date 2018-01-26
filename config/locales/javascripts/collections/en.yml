@@ -1,6 +1,7 @@
 en:
   javascripts:
     collections:
+      unexpected_error: "Unexpected error"
       viewing_collection: "Viewing %{mapSitesCount} %{sitesText} out of %{sitesCount}"
       viewing: "Viewing %{mapSitesCount} %{sitesText}"
       site: "site"
@@ -33,6 +34,7 @@ en:
         custom_permissions_for_sites: "Custom permissions for sites"
         custom_permissions_1_site: "Custom permissions for 1 site"
         custom_permissions_n_sites: "Custom permissions for %{n} sites"
+        text_me_you_will_receive_an_sms_pin_code_for_verification: "Click 'Text Me!'. You will receive an SMS pin code for verification."
         permissions:
           all: "All"
           some: "Some"
@@ -40,6 +42,18 @@ en:
           phone_number_is_required: "Phone number is required"
           phone_number_is_taken: "Phone number is taken"
           email_is_invalid: "Email is invalid"
+        code_verification: 'Click "Text Me!". You will receive an SMS pin code for verification.'
       index:
         name: "Name"
         waste_site: "Waste site"
+      validator: 
+        this_field_is_required: "This field is required ! "
+        invalid_field_format: 'Invalid field format'
+        value_must_be_equal_to_field: 'Invalid value, value must be equal to field '
+        value_must_be_less_than_field: 'Invalid value, value must be less than field '
+        value_must_be_greater_than_field: 'Invalid value, value must be greater than field '
+        value_must_be_greater_than_and_equal_to_field: 'Invalid value, value must be greater than and equal to field '
+        value_must_be_less_than_and_equal_to_field: 'Invalid value, value must be less than and equal to field '
+        value_must_be_less_than_or_equal_to: 'Invalid value, value must be less than or equal to '
+        value_must_be_greater_than_or_equal_to: 'Invalid value, value must be greater than or equal to '
+        value_must_be_in_the_range_of: 'Invalid value, value must be in the range of ( %{min} - %{max} )'

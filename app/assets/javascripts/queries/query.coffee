@@ -10,10 +10,11 @@ onQueries ->
                     else
                       ko.observableArray()
 
-      @nameError = ko.computed => if @hasName()  then null else "the query's name is missing"
-      @queryError = ko.computed => if @conditions().length > 0  then null else "the query must have at least one condition refined"
+      @nameError = ko.computed => if @hasName()  then null else window.t('javascripts.queries.errors.name_is_missing')
+      @queryError = ko.computed => if @conditions().length > 0  then null else window.t('javascripts.queries.errors.must_have_at_least_one_condition_refined')
       @formalaError = ko.computed => @hasFormulaError() || @LogicalOperatorError()
-      @error = ko.computed => @nameError() || @queryError() || @formalaError()
+      @errorAll = ko.computed => @nameError() || @queryError() || @formalaError()
+      @error = ko.computed => if @errorAll() then window.t('javascripts.queries.cant_save', {error: @errorAll()})
       @valid = ko.computed => !@error()
       @isEditing = ko.observable(false)
       @isRefineQuery = ko.observable(false)
@@ -22,7 +23,7 @@ onQueries ->
 
     hasFormula: => $.trim(@formula()).length > 0
 
-    hasFormulaError: => if @hasFormula() then null else "the formula is missing"
+    hasFormulaError: => if @hasFormula() then null else window.t('javascripts.queries.errors.the_formula_is_missing')
 
     LogicalOperatorError: => if @isLogicalOperatorExpr().status then null else "the formula #{@isLogicalOperatorExpr().msg}"
     

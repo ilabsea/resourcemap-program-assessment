@@ -1,10 +1,10 @@
 onThresholds ->
   class @Operator
-    @LT = new Operator('lt', 'is less than')
-    @GT = new Operator('gt', 'is greater than')
-    @EQ = new Operator('eq', 'is equal to')
-    @EQI = new Operator('eqi', 'is equal to')
-    @CON = new Operator('con', 'contains')
+    @LT = new Operator('lt', window.t('javascripts.plugins.alerts.operators.is_less_than'))
+    @GT = new Operator('gt', window.t('javascripts.plugins.alerts.operators.is_greater_than'))
+    @EQ = new Operator('eq', window.t('javascripts.plugins.alerts.operators.is_equal_to'))
+    @EQI = new Operator('eqi', window.t('javascripts.plugins.alerts.operators.is_equal_to'))
+    @CON = new Operator('con', window.t('javascripts.plugins.alerts.operators.contains'))
 
     constructor: (code, label) ->
       @code = ko.observable code

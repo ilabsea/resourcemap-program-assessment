@@ -1,4 +1,30 @@
 en:
+  javascripts: 
+    layers:
+      fields:
+        cant_save: "Can't save: %{error}"
+        errors:
+          the_field: "the field "
+          is_missing_a_name: "is missing a Name"
+          has_invalid_code: "has invalid Code"
+          is_missing_a_code: "is missing a Code"
+          code_is_reserved: "Code is reserved"
+          is_missing_the_hierarchy: "is missing the Hierarchy"
+          has_to_be_the_dependent_hierarchy_fields: "has to be the dependent hierarchy fields"
+          is_missing_a_maximum_search_length: "is missing a maximum search length"
+          is_missing_location_file: "is missing the location file"
+          invalid_range_maximum_must_be_greater_than_minimun: "Invalid range, maximum must be greater than minimum"
+          must_have_at_least_one_option: "must have at least one option"
+          duplicated_option_code: "duplicated option code"
+          duplicated_option_label: "duplicated option label"
+          for_field: "for field"
+          the_layer_must_have_at_least_one_field: "the layer must have at least one field"
+          the_layer_name_is_missing: "the layer's Name is missing"
+          duplicated_field_name: "duplicated field name"
+          duplicated_field_code: "duplicated field code"
+          a_field_with_name: "a field with name"
+          a_field_with_code: "a field with code"
+          already_exists_in_the_layer_named: "already exists in the layer named"
   views:
     layers:
       title: "Layers"
@@ -15,6 +41,13 @@ en:
       add_layer: "Add layer"
       add_new_layer: "Add new layer"
       copy_layer: "Copy layer"
+      copy_layers_to_new_collection: "Copy layers to new collection"
+      total_fields: "Total fields"
+      add_form_field: "Add form field"
+      input_new_collection_name: "input new collection's name"
+      copying: 'Copying...'
+      copy: 'Copy'
+      browse_copy_collection: 'Browse copied collection'
       fields:
         title: "Fields"
         text: "Text"
@@ -100,3 +133,21 @@ en:
           do_not_display_in_form_as_being_used_in_custom_widget: "Do not display in form as being used in custom widget"
           select_fields: "Select fields"
           enable_custom_validation: "Enable custom validation"
+          skip_this_field_when: "Skip this field when"
+          have_value: "have value"
+          equal_to: "equal to"
+          less_than: "less than"
+          less_than_or_equal_to: "less than or equal to"
+          greater_than: "greater than"
+          greater_than_or_equal_to: "greater than or equal to"
+          not_equal_to: "not equal to"
+          type_field_name: "Type field name"
+          enable_range: "Enable range"
+          minimum: "Minimum"
+          maximum: "Maximum"
+          this_field_should_have_value: "This field should have value"
+          field: "field"
+          no_value: '(no value)'
+          enable_dependency_hierarchy: "Enable dependency hierarchy"
+          this_field_will_be_rendering_as_the_dependancy_hierarchy_select: "This field will be rendering as the dependancy hierarchy select"
+          this_field_is_required: "This field is required !"

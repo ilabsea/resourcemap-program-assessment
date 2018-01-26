@@ -1,9 +1,26 @@
 en:
   javascripts:
     layers:
+      successfully_copied_collection_name: "This collection's layers are successfully copied to collection '%{name}'"
+      please_input_the_new_collection_name: "Please input the new collection's name"
       successfully_copied: "Layer '%{name}' successfully copied"
       successfully_saved: "Layer '%{name}' successfully saved"
       successfully_created: "Layer '%{name}' successfully created"
       successfully_deleted: "Layer '%{name}' successfully deleted"
       are_you_sure_to_delete: "Are you sure you want to delete this layer?"
       layer_is_being_used: "This layer is being used with %{n} alert(s), you are not allowed to delete"
+      used_in_alert: "This layer's field is being used with %{number} alert(s), you are not allowed to delete"
+      used_in_canned_query: "This layer's field is being used with %{number} canned query(s), you are not allowed to delete"
+      used_in_report_query: "This layer's field is being used with %{number} report query(s), you are not allowed to delete"
+      dependancy: "This layer's field is having the dependancy with other layer's field, you are not allowed to delete"
+      field_used_in_alert: "This field is being used with %{number} alert(s), you are not allowed to delete"
+      field_used_in_canned_query: "This field is being used with %{number} canned query(s), you are not allowed to delete"
+      field_used_in_report_query: "This field is being used with %{number} report query(s), you are not allowed to delete"
+      field_dependency: "This field is the parent of other field, you are not allowed to delete"
+      layer_successfully_deleted: "Layer '%{name}' successfully deleted"
+      fields:
+        errors:
+          field_logic_value_is_not_numeric_value: "Field logic value is not numeric value."
+          field_logic_value_unsupport_yes_no: "Field logic value for Yes_No support only 1, 0, Yes, Y ,No ,and N."
+          field_logic_value_upsupport_select_one: "Field logic value for Select one support only %{codeList}."
+          field_logic_value_upsupport_select_many: "Field logic value for Select many support only %{codeList}. The value %{errors} is not support."
