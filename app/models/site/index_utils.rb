@@ -106,6 +106,8 @@ module Site::IndexUtils
     alert = site.collection.thresholds_test site unless self.is_a? SiteHistory
     if alert != nil
       hash[:alert] = true
+      hash[:alert_id] = alert.id
+      hash[:notify_to] = {reporter: alert.notify_to_reporter?}
       hash[:color] = alert.color
       hash[:ord] = alert.ord
     else
