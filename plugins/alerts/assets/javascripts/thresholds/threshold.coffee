@@ -9,13 +9,39 @@ onThresholds -
       @messageNotification = ko.observable data?.message_notification
       @showingThreshold = ko.observable(false)
 
-      @fieldsEmail  = ko.observableArray data?.email_notification["fields"] ? []
-      @usersEmail   = ko.observableArray data?.email_notification["users"] ? []
-      @membersEmail = ko.observableArray data?.email_notification["members"] ? []
-      @fieldsPhone  = ko.observableArray data?.phone_notification["fields"] ? []
-      @usersPhone   = ko.observableArray data?.phone_notification["users"] ? []
-      @membersPhone = ko.observableArray data?.phone_notification["members"] ? []
-      @toReporter = ko.computed => if data?.email_notification["to_reporter"]=='true' && @isNotify() == 'true' then true else false
+      @fieldsEmail  = if data?.email_notification["fields"]?.length > 0
+                        ko.observableArray data.email_notification["fields"]
+                      else
+                        ko.observableArray []
+
+      @usersEmail   = if data?.email_notification["users"]?.length > 0
+                        ko.observableArray data.email_notification["users"]
+                      else
+                        ko.observableArray []
+
+      @membersEmail = if data?.email_notification["members"]?.length > 0
+                        ko.observableArray data.email_notification["members"]
+                      else
+                        ko.observableArray []
+
+      @fieldsPhone  = if data?.phone_notification["fields"]?.length > 0
+                        ko.observableArray data.phone_notification["fields"]
+                      else
+                        ko.observableArray []
+
+      @usersPhone   = if data?.phone_notification["users"]?.length > 0
+                        ko.observableArray data.phone_notification["users"]
+                      else
+                        ko.observableArray []
+      @membersPhone = if data?.phone_notification["members"]?.length > 0
+                        ko.observableArray data.phone_notification["members"]
+                      else
+                        ko.observableArray []
+
+      @toReporter = if data?.email_notification['to_reporter'] && @isNotify()
+                      ko.observable true
+                    else
+                      ko.observable false
 
       @alertedSitesNum = ko.observable alertedSites
       @alertSites = ko.observable $.map(data?.sites ? [], (site) -> new Site(site))
@@ -78,7 +104,7 @@ onThresholds -
         users: @usersEmail()
         fields: @fieldsEmail()
         members: @membersEmail()
-        to_reporter: @toReporter
+        to_reporter: @toReporter()
       phone_notification:
         users: @usersPhone()
         fields: @fieldsPhone()
