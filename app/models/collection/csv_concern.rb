@@ -171,21 +171,14 @@ module Collection::CsvConcern
 
     # First read all items into a hash
     # And validate it's content
-    items = validate_format(csv)
+    items = validate_format_hierarchy(csv)
 
-
-    # Add to parents
     items.each do |order, item|
       if item[:parent].present? && !item[:error].present?
-        parent_candidates = items.select{|key, hash| hash[:id] == item[:parent]}
-
-        if parent_candidates.any?
-          parent = parent_candidates.first[1]
-        end
-
-        if parent
-          parent[:sub] ||= []
-          parent[:sub] << item
+        parent_candidate = items[item[:parent].to_i]
+        if parent_candidate
+          parent_candidate[:sub] ||= []
+          parent_candidate[:sub] << item
         end
       end
     end
@@ -266,9 +259,11 @@ module Collection::CsvConcern
     items
   end
 
-  def validate_format(csv)
+  def validate_format_hierarchy(csv)
     i = 0
     items = {}
+    hierarchy_ids = csv.map{|item| "#{item[0]}"}
+
     csv.each do |row|
       item = {}
       if row[0] == 'ID'
@@ -281,34 +276,32 @@ module Collection::CsvConcern
           item[:error] = "Wrong format."
           item[:error_description] = "Invalid column number"
         else
-
-          #Check unique name
-          name = row[2].strip
-
           #Check unique id
           id = row[0].strip
-          if items.any?{|item| item.second[:id] == id}
+          if hierarchy_ids.count(id) > 1
             item[:error] = "Invalid id."
             item[:error_description] = "Hierarchy id should be unique"
             error = true
           end
 
           #Check parent id exists
-          parent_id = row[1]
-          if(parent_id.present? && !csv.any?{|csv_row| csv_row[0].strip == parent_id.strip})
-            item[:error] = "Invalid parent value."
-            item[:error_description] = "ParentID should match one of the Hierarchy ids"
-            error = true
+          if row[1].present?
+            parent_id = row[1].strip
+            if !(hierarchy_ids.include? parent_id)
+              item[:error] = "Invalid parent value."
+              item[:error_description] = "ParentID should match one of the Hierarchy ids"
+              error = true
+            end
           end
 
           if !error
             item[:id] = id
-            item[:parent] = row[1].strip if row[1].present?
-            item[:name] = name
+            item[:parent] = parent_id if parent_id
+            item[:name] = row[2].strip
           end
         end
 
-        items[item[:order]] = item
+        items[item[:id].to_i] = item
       end
     end
     items

@@ -28,7 +28,7 @@
             <% end %>
           </tr>
         <% end %>
-        <% if @report_query.is_total_aggregate_field %>
+        <% if template.report_query.is_total_aggregate_field %>
           <tr>
             <% total.each do |col| %>
               <% if col != 0.0 %>
