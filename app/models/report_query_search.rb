@@ -12,9 +12,7 @@ class ReportQuerySearch
     result_query = query_builder
     result_query['aggs'] = ReportQueryGroupByBuilder.new(@report_query).facet unless @report_query.aggregate_fields.empty?
     result_query['size'] = Settings.max_aggregate_result_size.to_i
-    if @report_query.condition_fields.empty? and @report_query.group_by_fields.empty?
-      result_query = ignor_null_field result_query
-    end
+
     query_log(result_query)
 
     client = Elasticsearch::Client.new
@@ -42,12 +40,8 @@ class ReportQuerySearch
 
   def build_error_message failure
     field_id = failure['reason']['reason'].split(".")[2].split("'")[0].to_i
-    field = Field.find field_id  
-    if field
-      return "<li> Field \"#{field.name}\" can't be aggregate #{failure['reason']['caused_by']['reason']} </li>"
-    else
-      return "<li> Error-#{failure['reason']['type']} #{failure['reason']['reason']} #{failure['reason']['caused_by']['reason']} that cause #{failure['reason']['caused_by']['type']} exception. </li>"
-    end
+    field = Field.find field_id
+    return "<li> Field \"#{field.name}\" can't be aggregate #{failure['reason']['caused_by']['reason']} </li>"
   end
 
 end
