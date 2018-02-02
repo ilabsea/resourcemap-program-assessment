@@ -222,7 +222,7 @@ class ReportQueryGroupByBuilder
   def generate_stats_cond(field_id)
     properties_value = "properties.#{field_id}"
     if(Field.find(field_id).kind != "numeric")
-      stats = { "script" => { "inline" => "Double.parseDouble(doc['#{properties_value}'].value)"}}
+      stats = { "script" => { "inline" => "doc['#{properties_value}'] ? Double.parseDouble(doc['#{properties_value}'].value) : 0"}}
     else
       stats = { 'field' => "#{properties_value}"}
     end
@@ -249,7 +249,7 @@ class ReportQueryGroupByBuilder
         end
         exp["exists_field_#{field_id}"]['filter'] = generate_filter_not_null(field_id)
       end
-      return exp   
+      return exp
     end
   end
 
