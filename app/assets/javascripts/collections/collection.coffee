@@ -29,8 +29,11 @@ onCollections ->
         $.get "/collections/#{data.id}/my_membership.json", {}, (data) =>
           return data
 
+      @fieldsForTableView = ko.computed =>
+        @fields().filter((f) -> f.kind != 'custom_widget' )
+
     isSearch: => false
-    
+
     sitesUrl: -> "/collections/#{@id}/sites.json"
 
     fetchLocation: => $.get "/collections/#{@id}.json", {}, (data) =>
@@ -49,7 +52,3 @@ onCollections ->
         )
       else if @position()
         window.model.map.panTo @position()
-
-
-
-

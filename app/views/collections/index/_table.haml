@@ -34,7 +34,7 @@
 <!-- ko if: !editingSite() -->
 <!-- ko with: currentCollection -->
 
-%img{src: '/images/loading.gif',id: 'loadProgress', style: 'position: absolute; margin: auto; left: 0; top: 0; right: 0; bottom: 0;display:none'} 
+%img{src: '/images/loading.gif',id: 'loadProgress', style: 'position: absolute; margin: auto; left: 0; top: 0; right: 0; bottom: 0;display:none'}
 
 .tableheader.expanded{style: 'height:34px;'}
   %div{style: "float:left"}
@@ -56,7 +56,7 @@
     %col{width: '300'}
     %col{width: '100'}
     %col{width: '100'}
-    <!-- ko foreach: $root.currentCollection().fields() -->
+    <!-- ko foreach: $root.currentCollection().fieldsForTableView() -->
     %col{ko(attr: { width: 'suggestedWidth()' })}
     <!-- /ko -->
     %col{width: '180'}
@@ -75,7 +75,7 @@
           %span{style: 'display:inline'}= t('views.collections.index.lat')
         %th
           %span{style: 'display:inline'}= t('views.collections.index.long')
-        <!-- ko foreach: $root.currentCollection().fields() -->
+        <!-- ko foreach: $root.currentCollection().fieldsForTableView() -->
         %th{ko(click: '$root.sortBy', style: {maxWidth: 'suggestedWidth()', minWidth: 'suggestedWidth()'}), style: 'overflow:hidden;cursor:pointer'}
           %span{ko(text: :name), style: 'display:inline'}
           <!-- ko if: $root.sort() == esCode -->

@@ -50,6 +50,8 @@ class Field::HierarchyField < Field
   end
 
   def csv_header
+    return code if is_enable_dependancy_hierarchy
+
     hierarchy_fields = {}
     hierarchy_fields[id.to_s] = self.transform()
     hierarchy_fields[id.to_s]["depth"] = self.get_longest_depth()
@@ -66,6 +68,37 @@ class Field::HierarchyField < Field
     end
 
     return header
+  end
+
+  def value_for_csv(value)
+    if is_enable_dependancy_hierarchy
+      item = find_hierarchy_by_id(value)
+      return item ? item[:name] : ''
+    end
+    hierarchy_fields = {}
+    row = []
+    hierarchy_fields["#{id}"] = transform()
+    hierarchy_fields["#{id}"]["depth"] = get_longest_depth()
+
+    level = 0
+    arr_level = []
+    if value
+      item = find_hierarchy_by_id(value)
+      while item
+        arr_level.insert(0, item[:name])
+        item = find_hierarchy_by_id item[:parent_id]
+      end
+    end
+
+    if hierarchy_fields["#{id}"]["depth"] == 0
+      row << arr_level[level] || ""
+    end
+
+    while level < hierarchy_fields["#{id}"]["depth"]
+      row << arr_level[level] || ""
+      level = level + 1
+    end
+    return row
   end
 
   def invalid_field_message()

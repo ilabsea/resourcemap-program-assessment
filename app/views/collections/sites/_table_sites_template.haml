@@ -1,7 +1,7 @@
 -# Sites template
 %script{type: "text/html", id: "table-sites-template"}
   <!-- ko foreach: sites -->
-  %tr{ko(style: {backgroundColor: :color})} 
+  %tr{ko(style: {backgroundColor: :color})}
     %td{style: 'overflow:auto'}
       %div{style: 'margin-top:5px'}
         %p{ko(style: {marginLeft: "'' + (($parent.level + 1) * 20) + 'px'"}, click: '$root.selectSite'), style: 'cursor: pointer'}
@@ -12,7 +12,7 @@
       %span{ko(text: :safe_lat)}
     %td.padded
       %span{ko(text: :safe_lng)}
-    <!-- ko foreach: $root.currentCollection().fields() -->
+    <!-- ko foreach: $root.currentCollection().fieldsForTableView() -->
     %td.padded
       <!-- ko if: kind == 'photo' -->
       <!-- ko if: $parent.propertyValue($data) -->

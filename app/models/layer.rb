@@ -164,6 +164,10 @@ class Layer < ActiveRecord::Base
     associated_query_ids
   end
 
+  def fields_for_csv
+    fields.where("kind != 'custom_widget'")
+  end
+
   private
 
   def field_hash(field)
