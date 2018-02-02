@@ -12,7 +12,7 @@ module Collection::CsvConcern
   def to_csv(elastic_search_api_results = new_search.unlimited.api_results, current_user)
     fields = []
     self.layers.all.each do |layer|
-      fields = fields + layer.fields
+      fields = fields + layer.fields_for_csv
     end
 
     CSV.generate do |csv|
