@@ -10,15 +10,11 @@ module Collection::CsvConcern
   end
 
   def to_csv(elastic_search_api_results = new_search.unlimited.api_results, current_user)
-    layers = self.layers.all
     fields = []
-    layers.each do |layer|
-      allFields = layer.fields
-      allFields.each do |field|
-        fields.push(field)
-      end
+    self.layers.all.each do |layer|
+      fields = fields + layer.fields
     end
-    hierarchy_fields = {}
+
     CSV.generate do |csv|
       header = ['resmap-id', 'name', 'lat', 'long']
       fields.each do |field|
@@ -58,26 +54,10 @@ module Collection::CsvConcern
               end
             end
           elsif field.kind == "hierarchy"
-            hierarchy_fields[field.id.to_s] = field.transform()
-            hierarchy_fields[field.id.to_s]["depth"] = field.get_longest_depth()
-            field.config["hierarchy"] = hierarchy_fields[field.id.to_s]["hierarchy"]
-            level = 0
-            arr_level = []
-            if source['properties'][field.code]
-               item = field.find_hierarchy_by_id source['properties'][field.code]
-              while item
-                arr_level.insert(0, item[:name])
-                item = field.find_hierarchy_by_id item[:parent_id]
-              end
-            end
-
-            if hierarchy_fields[field.id.to_s]["depth"] == 0
-              row << arr_level[level] || ""
-            end
-
-            while level < hierarchy_fields[field.id.to_s]["depth"]
-              row << arr_level[level] || ""
-              level = level + 1
+            if field.is_enable_dependancy_hierarchy
+              row << field.value_for_csv(source['properties'][field.code])
+            else
+              row = row + field.value_for_csv(source['properties'][field.code])
             end
           else
             row << Array(source['properties'][field.code]).join(", ")
