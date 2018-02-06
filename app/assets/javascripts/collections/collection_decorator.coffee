@@ -28,6 +28,7 @@ onCollections ->
       @showLegend = collection.showLegend
       @checked = collection.checked
       @showingCollectionAlert = collection.showingCollectionAlert
+      @fieldsForTableView = collection.fieldsForTableView
       @allSites(collection.allSites())
 
 
