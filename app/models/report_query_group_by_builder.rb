@@ -57,17 +57,18 @@ class ReportQueryGroupByBuilder
 
 
   def distinct_value_query(field_id)
-    query = query_builder
-
-    query['aggs'] = {
-      field_id => {
-        'terms' => {
-          'field' => "properties.#{field_id}",
-          'size' => Settings.max_aggregate_result_size.to_i
+    query = {
+      "query" =>{"match_all"=>{}},
+      "aggs" => {
+        field_id => {
+          'terms' => {
+            'field' => "properties.#{field_id}",
+            'size' => Settings.max_aggregate_result_size.to_i
+          }
         }
       }
     }
-    query
+
   end
 
   # {"province" => ['Kpc', 'PP']}

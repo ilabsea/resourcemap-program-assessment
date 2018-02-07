@@ -74,12 +74,14 @@ class ReportQuerySearchResult
     head_fields = []
     grouped_by_field_headers = {}
     first = true # contruct table head from the first record
+    total_aggr_fields = {}
 
     # query_normalized:
     # {"60809___60809___1493251200000"=>
     # {"13251"=>609.0,
     #  "13252"=>341.0 }
     #
+
     query_normalized.each do |key, agg_values|
       field_values = key.split(ReportQuerySearchResult::DELIMITER)
       row = []
@@ -90,6 +92,7 @@ class ReportQuerySearchResult
           # hash_mapping_result[field_id]
           head_fields << hash_mapping_result[field_id]
           grouped_by_field_headers[field_id] = hash_mapping_result[field_id]
+          total_aggr_fields[field_id] = ""
         end
 
         row << translate_field_value(head_fields[position], field_value)
@@ -99,8 +102,14 @@ class ReportQuerySearchResult
       hash_mapping_result = hash_mapping_result.delete_if { |field_id, _field| grouped_by_field_headers.key?(field_id)} if first
 
       hash_mapping_result.each do |field_id, field|
+
         head_fields << field if first
-        row << translate_field_value(head_fields[position], agg_values[field_id])
+
+        field_value = translate_field_value(head_fields[position], agg_values[field_id])
+        total_aggr_fields[field_id] = total_aggr_fields[field_id] ? (total_aggr_fields[field_id] + field_value) : field_value
+
+        row << field_value
+
         position += 1
       end
 
@@ -108,7 +117,8 @@ class ReportQuerySearchResult
       body << row
     end
     head = head_fields.map { |head_field| head_field.name }
-    body.unshift(head)
+    total = total_aggr_fields.map { |key, value| value }
+    body.unshift(head).push(total)
   end
 
   def normalize_term_stats

@@ -58,7 +58,7 @@ onCollections ->
       field.is_mandatory(false)
       field.errorMessage('')
       field.skippedState(true)
-      field.is_blocked_by([])
+      field.is_blocked_by([@])
       field.value(null)
 
     @get_dom_object: (field) ->
