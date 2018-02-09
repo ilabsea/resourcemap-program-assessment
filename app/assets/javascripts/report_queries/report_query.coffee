@@ -27,7 +27,7 @@ onReportQueries ->
       @groupByFieldValid = ko.computed => @hasGroupByFields() && @isValidToAddGroupByField()
       @groupByFieldsError = ko.computed => if @isValidNumOfGroupBy() then null else "not more than 3"
       @aggregateFieldsError = ko.computed => if @hasAggregateFields()  then null else "the query must have at least one aggregate"
-      @error = ko.computed => @nameError() || @nameExist() || @groupByFieldsError() || @aggregateFieldsError()
+      @error = ko.computed => @nameError() || @nameExist() || @logicalOperatorError() || @groupByFieldsError() || @aggregateFieldsError()
       @valid = ko.computed => !@error()
       @report_query_templates = data?.report_query_templates ? []
       @isTotalAggregateField = if data?.is_total_aggregate_field
@@ -48,7 +48,7 @@ onReportQueries ->
     isValidToAddGroupByField: => @groupByFields().length < 3
     isValidNumOfGroupBy: => @groupByFields().length <= 3
 
-    LogicalOperatorError: => if @isLogicalOperatorExpr().status then null else "the formula #{@isLogicalOperatorExpr().msg}"
+    logicalOperatorError: => if @condition().length == 0 || @isLogicalOperatorExpr().status then null else "the formula #{@isLogicalOperatorExpr().msg}"
 
     addConditionField: (condition) =>
       condition.id = @conditionId()
@@ -100,22 +100,21 @@ onReportQueries ->
     tokenize: =>
       results = []
       tokenRegExp = /\s*([A-Za-z]+|[0-9]+|\S)\s*/g
-      formula = @formula()
-      formula = formula.toLowerCase()
+      condition = @condition()
+      condition = condition.toLowerCase()
       m = undefined
-      while (m = tokenRegExp.exec(formula)) != null
+      while (m = tokenRegExp.exec(condition)) != null
         results.push m[1]
-
       results
 
     condition_ids: =>
       ids = []
-      for condition in @conditions()
-        ids.push(parseInt(condition.id()))
+      for condition in @conditionFields()
+        ids.push(parseInt(condition.id))
       ids
 
     isLogicalOperatorExpr: =>
-      tokens = @tokenize(@formula())
+      tokens = @tokenize(@condition())
       position = 0
       ids = @condition_ids()
 
