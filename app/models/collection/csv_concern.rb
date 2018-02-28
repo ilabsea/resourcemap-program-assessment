@@ -3,77 +3,33 @@ module Collection::CsvConcern
 
   def csv_template
     CSV.generate do |csv|
-      csv << csv_header
+      csv << sample_csv_header
       csv << [1, "Site 1", 1.234, 5.678]
       csv << [2, "Site 2", 3.456, 4.567]
     end
   end
 
-  def to_csv(elastic_search_api_results = new_search.unlimited.api_results, current_user)
-    fields = []
-    self.layers.all.each do |layer|
-      fields = fields + layer.fields_for_csv
-    end
+  def to_csv(current_user)
+    fields = fields_for_csv
+    csv_string = csv_header(fields)
 
-    CSV.generate do |csv|
-      header = ['resmap-id', 'name', 'lat', 'long']
-      fields.each do |field|
-        field_header = field.csv_header
-        if field_header.kind_of?(Array)
-          header = header + field_header
-        else
-          header << field.csv_header
-        end
-      end
-      header << 'start entry date'
-      header << 'end entry date'
-      header << 'last updated'
-      csv << header
+    search = new_search(current_user: current_user)
+    search.use_codes_instead_of_es_codes
+    pages = self.sites_count/search.page_size
 
-      elastic_search_api_results.each do |result|
-        source = result['_source']
-
-        row = [source['id'], source['name'], source['location'].try(:[], 'lat'), source['location'].try(:[], 'lon')]
-        fields.each do |field|
-          if field.kind == 'yes_no'
-            row << (Field.yes?(source['properties'][field.code]) ? 'yes' : 'no')
-          elsif field.kind == 'photo'
-            if source['properties'][field.code].present?
-              row << "http://#{Settings.host}/view_photo?uuid=#{source['uuid']}&file_name=#{source['properties'][field.code]}"
-            else
-              row << ""
-            end
-          elsif field.kind == "select_one"
-            row << field.value_for_csv(source['properties'][field.code])
-          elsif field.kind == 'select_many'
-            field.config["options"].each do |option|
-              if source['properties'][field.code] and source['properties'][field.code].include? option["id"]
-                row << "Yes"
-              else
-                row << "No"
-              end
-            end
-          elsif field.kind == "hierarchy"
-            if field.is_enable_dependancy_hierarchy
-              row << field.value_for_csv(source['properties'][field.code])
-            else
-              row = row + field.value_for_csv(source['properties'][field.code])
-            end
-          else
-            row << Array(source['properties'][field.code]).join(", ")
-          end
-        end
-
-        updated_at = Site.parse_time(source['updated_at']).strftime("%d/%m/%Y %H:%M:%S")
-        start_entry_date = Site.parse_time(source['start_entry_date']).strftime("%d/%m/%Y %H:%M:%S") if source['start_entry_date'].present?
-        end_entry_date = Site.parse_time(source['end_entry_date']).strftime("%d/%m/%Y %H:%M:%S") if source['end_entry_date'].present?
-
-        row << start_entry_date
-        row << end_entry_date
-        row << updated_at
-        csv << row
+    if pages == 0
+      elastic_search_api_results = search.api_results
+      csv_body = csv_body(elastic_search_api_results, fields)
+      csv_string = csv_string + csv_body.inject([]) { |csv, row|  csv << CSV.generate_line(row) }.join("")
+    else
+      (1..pages).each do |page|
+        search.page page
+        elastic_search_api_results = search.api_results
+        csv_body = csv_body(elastic_search_api_results, fields)
+        csv_string = csv_string + csv_body.inject([]) { |csv, row|  csv << CSV.generate_line(row) }.join("")
       end
     end
+    csv_string
   end
 
   def location_csv(locations)
@@ -289,9 +245,82 @@ module Collection::CsvConcern
 
   private
 
-  def csv_header
+  def sample_csv_header
     ["Site ID", "Name", "Lat", "Lng"]
   end
 
+  def fields_for_csv
+    fields = []
+    self.layers.each {|layer| fields = fields + layer.fields_for_csv}
+    return fields
+  end
+
+
+  def csv_header fields
+    CSV.generate do |csv|
+      header = ['resmap-id', 'name', 'lat', 'long']
+      fields.each do |field|
+        field_header = field.csv_header
+        if field_header.kind_of?(Array)
+          header = header + field_header
+        else
+          header << field.csv_header
+        end
+      end
+      header << 'start entry date'
+      header << 'end entry date'
+      header << 'last updated'
+      csv << header
+    end
+  end
+
+
+  def csv_body sites, fields
+    csv = []
+    sites.each do |result|
+      source = result['_source']
+
+      row = [source['id'], source['name'], source['location'].try(:[], 'lat'), source['location'].try(:[], 'lon')]
+      fields.each do |field|
+        if field.kind == 'yes_no'
+          row << (Field.yes?(source['properties'][field.code]) ? 'yes' : 'no')
+        elsif field.kind == 'photo'
+          if source['properties'][field.code].present?
+            row << "http://#{Settings.host}/view_photo?uuid=#{source['uuid']}&file_name=#{source['properties'][field.code]}"
+          else
+            row << ""
+          end
+        elsif field.kind == "select_one"
+          row << field.value_for_csv(source['properties'][field.code])
+        elsif field.kind == 'select_many'
+          field.config["options"].each do |option|
+            if source['properties'][field.code] and source['properties'][field.code].include? option["id"]
+              row << "Yes"
+            else
+              row << "No"
+            end
+          end
+        elsif field.kind == "hierarchy"
+          if field.is_enable_dependancy_hierarchy
+            row << field.value_for_csv(source['properties'][field.code])
+          else
+            row = row + field.value_for_csv(source['properties'][field.code])
+          end
+        else
+          row << Array(source['properties'][field.code]).join(", ")
+        end
+      end
+
+      updated_at = Site.parse_time(source['updated_at']).strftime("%d/%m/%Y %H:%M:%S")
+      start_entry_date = Site.parse_time(source['start_entry_date']).strftime("%d/%m/%Y %H:%M:%S") if source['start_entry_date'].present?
+      end_entry_date = Site.parse_time(source['end_entry_date']).strftime("%d/%m/%Y %H:%M:%S") if source['end_entry_date'].present?
+
+      row << start_entry_date
+      row << end_entry_date
+      row << updated_at
+      csv << row
+    end
+    return csv
+  end
 
 end

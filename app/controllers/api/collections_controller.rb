@@ -17,23 +17,24 @@ class Api::CollectionsController < ApplicationController
   end
 
   def show
-    options = [:sort]
-
-    if params[:format] == 'csv' || params[:page] == 'all'
-      options << :all
-      params.delete(:page)
-    elsif params[:format] == 'kml' || params[:format]  == 'shp'
-      options << :require_location
-      options << :page
-    else
-      options << :page
+    if params[:format] != 'csv'
+      options = [:sort]
+      if params[:page] == 'all'
+        options << :all
+        params.delete(:page)
+      elsif params[:format] == 'kml' || params[:format]  == 'shp'
+        options << :require_location
+        options << :page
+      else
+        options << :page
+      end
+      @results = perform_search *options
     end
-    @results = perform_search *options
-
     collection.time_zone = current_user.time_zone
+
     respond_to do |format|
       format.rss { render :show, layout: false }
-      format.csv { collection_csv(collection, @results) }
+      format.csv { collection_csv(collection) }
       format.json { render json: collection_json(collection, @results) }
       format.kml { collection_kml(collection, @results) }
       format.shp { collection_shp(collection, @results) }
@@ -213,8 +214,8 @@ class Api::CollectionsController < ApplicationController
     coords
   end
 
-  def collection_csv(collection, results)
-    sites_csv = collection.to_csv results, current_user
+  def collection_csv(collection)
+    sites_csv = collection.to_csv(current_user)
     send_data sites_csv, type: 'text/csv', filename: "#{collection.name}_sites.csv"
   end
 

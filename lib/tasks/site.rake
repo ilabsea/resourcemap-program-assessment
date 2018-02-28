@@ -18,7 +18,12 @@ namespace :site do
     user.create_collection(collection)
     create_fields(collection)
     create_sites(collection, args[:num_of_sites].to_i)
+  end
 
+
+  desc 'reset_counter'
+  task :reset_counter => :environment do
+    Collection.find_each { |collection| Collection.reset_counters(collection.id, :sites) }
   end
 
   def create_fields(collection)
