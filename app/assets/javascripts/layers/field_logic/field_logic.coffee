@@ -8,6 +8,7 @@ onLayers ->
       else
         @selected_options = ko.observableArray([])
       @label = ko.observable(data?.label)
+
       @field_id = if (typeof data?.field_id == 'object') && data?.field_id?.length > 0
                     ko.observable(data?.field_id[0])
                   else
@@ -18,21 +19,7 @@ onLayers ->
       @valid = ko.observable(true)
       @error = ko.observable()
       @is_numeric = ko.computed => return @fieldType(@field_id()) == "numeric"
-      @autoCompleteValue =  if data?.field_id
-                              ko.observable(@fieldName(@field_id()))
-                            else
-                              ko.observable()
 
-      @fieldUI = ko.computed =>
-        field_id = @fieldId(@autoCompleteValue())
-        @field_id(field_id)
-        if !field_id then @autoCompleteValue('')
-        return field_id
-
-    selectField: (event, ui) =>
-      @autoCompleteValue(ui.item.label)
-      @field_id(ui.item.value)
-      return false
 
     toJSON: =>
       id: @id()

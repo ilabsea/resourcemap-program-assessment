@@ -53,6 +53,22 @@ onLayers ->
       @error = ko.computed => @nameError() || @fieldsError()
       @valid = ko.computed => !@error()
 
+      @fieldsForSkipLogicConfig = ko.computed =>
+                                    fields = @fields().filter((field) =>
+                                                typeof field.id() isnt 'undefined' &&
+                                                (field.kind() in ['numeric', 'yes_no', 'select_one', 'select_many']) )
+                                    if window.model?.currentField()
+                                      fields = fields.filter((field) => field.id() != window.model.currentField()?.id())
+                                    return fields
+
+      @fieldsForCalculationConfig = ko.computed =>
+                                      fields = @fields().filter((field) =>
+                                                  typeof field.id() isnt 'undefined' &&
+                                                  field.kind() != 'custom_widget' )
+                                      if window.model?.currentField()
+                                        fields = fields.filter((field) => field.id() != window.model.currentField()?.id())
+                                      return fields
+
     hasName: => $.trim(@name()).length > 0
 
     expandAllField: (layer)=>
@@ -68,7 +84,6 @@ onLayers ->
           $.map(replace_fields, (item) =>
             field.config.widget_content = @replaceAll(field.config.widget_content, "{" + item["old_field"] + "}", "{" + item["new_field"] + "}")
             field.impl().widgetContent(field.config.widget_content)
-
           )
       )
 
