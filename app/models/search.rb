@@ -79,7 +79,7 @@ class Search
     else
       sort_field = "properties." + decode(es_code)
     end
-    
+
     ascendant = ascendent ? 'asc' : 'desc'
     @sort_list.push({sort_field => ascendant})
     self
@@ -152,7 +152,7 @@ class Search
         end
       end
     end
-    
+
     results = {sites: sites, total_count: total_count}
     if @page
       results[:page] = @page

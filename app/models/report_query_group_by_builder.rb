@@ -181,7 +181,7 @@ class ReportQueryGroupByBuilder
 
   def single_field_aggs key_field, value_field
     {
-      'terms' => { 'field' => "properties.#{key_field}" },
+      'terms' => { 'field' => "properties.#{key_field}", 'size' => Settings.max_aggregate_result_size.to_i },
       'aggs' => {
         'term' => { 'stats' => generate_stats_cond(value_field) }
       }
@@ -191,7 +191,7 @@ class ReportQueryGroupByBuilder
   def multi_field_aggs key_field, value_field
     {
       "#{key_field}" => {
-        'terms' => { 'field' => "properties.#{key_field}" },
+        'terms' => { 'field' => "properties.#{key_field}", 'size' => Settings.max_aggregate_result_size.to_i },
         'aggs' => {
           'term' => { 'stats' => generate_stats_cond(value_field) }
         }
