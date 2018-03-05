@@ -8,31 +8,30 @@
            align="center" >
       <thead>
         <tr>
-          <% total = [] %>
-          <% index = 0 %>
           <% template.report_result.first.each do |col| %>
             <th><font face='hanuman'><%= col %></font></th>
-            <% total[index] = 0.0 %>
-            <% index = index + 1 %>
           <% end %>
         </tr>
       </thead>
       <tbody>
         <% template.report_result[1..-2].sort { |a,b| a[0] <=> b[0] }.each do |row| %>
           <tr>
-            <% index = 0 %>
             <% row.each do |col| %>
               <td><%= col %></td>
-              <% total[index] = total[index] + col.to_f %>
-              <% index = index + 1 %>
             <% end %>
           </tr>
         <% end %>
 
         <% if template.report_query.is_total_aggregate_field %>
         <tr>
-          <% template.report_result[-1].each do |col| %>
-            <td><%= col %></td>
+          <% template.report_result[-1].each_with_index do |col, index| %>
+            <% if index == 0 %>
+              <td colspan="<%= template.report_query.group_by_fields.length %>">
+                <%= col %>
+              </td>
+            <% else %>
+              <td><%= col %></td>
+            <% end %>
           <% end %>
         </tr>
         <% end %>
