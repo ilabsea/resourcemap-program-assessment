@@ -108,8 +108,11 @@ module Site::IndexUtils
       hash[:alert] = true
       hash[:alert_id] = alert.id
       hash[:notify_to] = {reporter: alert.notify_to_reporter?}
+      hash[:conditions] = alert.conditions
       hash[:color] = alert.color
       hash[:ord] = alert.ord
+      hash[:message_notification] = alert.message_notification.render_template_string(site.get_template_value_hash)
+
     else
       hash[:alert] = false
     end

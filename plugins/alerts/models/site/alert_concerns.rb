@@ -15,11 +15,13 @@ module Site::AlertConcerns
       extended_properties[:color] = alert.color
       extended_properties[:ord] = alert.ord
 
+      message_notification = alert.message_notification.render_template_string(get_template_value_hash)
+      extended_properties[:message_notification] = message_notification
+
       if Settings.notify_alert && alert.is_notify
         phone_numbers = notification_numbers alert
         emails = notification_emails alert
-        message_notification = alert.message_notification.render_template_string(get_template_value_hash)
-        extended_properties[:message_notification] = message_notification
+
         # to be refactoring
         active_gateway = collection.active_gateway
         suggested_channel = active_gateway.nil?? Channel.default_nuntium_name : active_gateway.nuntium_channel_name
