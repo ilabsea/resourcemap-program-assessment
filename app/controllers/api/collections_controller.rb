@@ -167,7 +167,7 @@ class Api::CollectionsController < ApplicationController
     search.use_codes_instead_of_es_codes
 
     if options.include? :page
-      search.page params[:page].to_i if params[:page]
+      search.page (params[:page] || '1').to_i
       except_params << :page
     elsif options.include? :count
       search.offset 0
