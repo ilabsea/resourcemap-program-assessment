@@ -111,7 +111,7 @@ module Site::IndexUtils
       hash[:conditions] = alert.conditions
       hash[:color] = alert.color
       hash[:ord] = alert.ord
-      hash[:message_notification] = alert.message_notification.render_template_string(site.get_template_value_hash)
+      hash[:message_notification] = alert.message_notification.interpolate(site.get_template_value_hash) if alert.message_notification
 
     else
       hash[:alert] = false

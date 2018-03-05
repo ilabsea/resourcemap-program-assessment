@@ -14,8 +14,11 @@ module Site::AlertConcerns
       extended_properties[:conditions] = alert.conditions
       extended_properties[:color] = alert.color
       extended_properties[:ord] = alert.ord
-
-      message_notification = alert.message_notification.render_template_string(get_template_value_hash)
+      if alert.message_notification
+        message_notification = alert.message_notification.interpolate(get_template_value_hash)
+      else
+        message_notification = ''
+      end
       extended_properties[:message_notification] = message_notification
 
       if Settings.notify_alert && alert.is_notify
