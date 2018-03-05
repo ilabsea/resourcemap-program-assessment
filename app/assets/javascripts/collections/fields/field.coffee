@@ -112,10 +112,11 @@ onCollections ->
         field_id: fieldId,
         condition_type: operator
       }
-      if ( compareField.config().compare_custom_validations )
-        compareField.config().compare_custom_validations.push(compare)
-      else
-        compareField.config().compare_custom_validations = [compare]
+      if compareField
+        if ( compareField.config().compare_custom_validations )
+          compareField.config().compare_custom_validations.push(compare)
+        else
+          compareField.config().compare_custom_validations = [compare]
 
     codeForLink: (api = false) =>
       if api then @code else @esCode
