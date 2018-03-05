@@ -26,14 +26,15 @@ onCollections ->
 
     validateCustomValidation: =>
       if @field.kind == 'numeric' && window.model.editingSite()
-        if  @field.is_enable_custom_validation()
+        if  @field.is_enable_custom_validation() && @field.configCustomValidations()
           $.map(@field.configCustomValidations(), (f) =>
             field = window.model.editingSite().findFieldByEsCode(f.field_id[0])
-            compareValue = field.value()
-            if(!compareValue)
-              compareValue = 0
+            if field
+              compareValue = field.value()
+              if(!compareValue)
+                compareValue = 0
 
-            @generateErrorMessage(f, @field, compareValue, field.name)
+              @generateErrorMessage(f, @field, compareValue, field.name)
           )
 
         if @field.config().compare_custom_validations

@@ -8,9 +8,14 @@
   = t('views.layers.form.field.dependent_field')
 
 <!-- ko with: impl() -->
-%input#field-search.ux-search{"data-bind" => "value: autoCompleteValue,
-  ko_autocomplete: { source: $root.autoCompleteFieldListForCalculation(), select: selectField}",
-  minChar: 3, :type => "text", placeholder: 'Type field name'}
+%select{"data-bind" => 'foreach: $root.layerList(), value: $root.tmpSelectedField', style: 'width:240px !important;'}
+  /ko if: $index() == 0
+  %option{value: ""} (no value)
+  //ko
+  %optgroup{"data-bind" => "attr: {label: name}, foreach: fieldsForCalculationConfig"}
+    %option{"data-bind" => "text: name, option: name, value: id"}
+
+%button.clist-add{ko(click: '$root.addDependentField'), title: 'Add another option'}
 
 /ko if: dependent_fields().length > 0
 .superblyTagfieldDiv{style: "border: 0 solid #dddddd; border-radius: 0; box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3) inset;"}

@@ -85,25 +85,6 @@ onLayers ->
           fields = fields.concat layer.fields().filter((field) => typeof field.id() isnt 'undefined' )
         return fields
 
-      @autoCompleteFieldListForCalculation = ko.computed =>
-        fields = []
-        for layer in @layers()
-          layer_fields = layer.fields().filter((field) =>
-            typeof field.id() isnt 'undefined' &&
-            field.id() != @currentField()?.id() &&
-            field.kind() != 'custom_widget' )
-          fields = fields.concat layer_fields.map((f) => { value: f.id(), label: f.name()})
-        return fields
-
-      @autoCompleteFieldListForSkipLogic = ko.computed =>
-        fields = []
-        for layer in @layers()
-          layer_fields = layer.fields().filter((field) =>
-            typeof field.id() isnt 'undefined' && field.id() != @currentField()?.id() &&
-            (field.kind() in ['numeric', 'yes_no', 'select_one', 'select_many']) )
-          fields = fields.concat layer_fields.map((f) => { value: f.id(), label: f.name()})
-        return fields
-
       @isAddNew = ko.observable(false)
       @isAddNewValidation = ko.observable(false)
       @is_editing = ko.computed =>
@@ -187,13 +168,13 @@ onLayers ->
     findFieldById: (fieldId) =>
       return field for field in @fields() when field.id == fieldId
 
-    addDependentField: (field) =>
-      field_id =$("#calculation_field").val()
+    addDependentField: =>
       for l in @layerList()
         for f in l.fields()
-          if parseInt(f.id()) == parseInt(field_id)
+          if parseInt(f.id()) == parseInt(@tmpSelectedField())
             @currentField().impl().addDependentField(f)
             return
+
     newLayer: =>
       layer = new Layer ord: (@layers().length + 1)
       @layers.push(layer)
@@ -619,7 +600,7 @@ onLayers ->
     editFieldLogic: (field) =>
       field.editing(true)
       @currentFieldLogic(field)
-      @originalFieldLogic = {id: field.id(), field_id: field.field_id(), condition_type: field.condition_type(), value: field.value(), autoCompleteValue: field.autoCompleteValue()}
+      @originalFieldLogic = {id: field.id(), field_id: field.field_id(), condition_type: field.condition_type(), value: field.value()}
 
     editFieldValidation: (field) =>
       field.editing(true)
@@ -643,7 +624,6 @@ onLayers ->
         field.value(field_logic.value)
         field.field_id(field_logic.field_id)
         field.condition_type(field_logic.condition_type)
-        field.autoCompleteValue(field_logic.autoCompleteValue)
       else
         @isAddNew(false)
 
