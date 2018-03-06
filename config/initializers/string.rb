@@ -8,20 +8,14 @@ class String
     Float(self) rescue nil
   end
 
-  def render_template_string(option_hash)
+  def interpolate(option_hash)
     self.gsub(/\[[\w\s()]+\]/) do |template|
-      has_value = true
+      has_value = false
       option_hash.each do |key, value|
         if template == '['+ key+ ']'
-          if key == "Site Name"
-            template = value
-          else
-            template = value
-          end
+          template = value
           has_value = true
           break
-        else
-          has_value = false
         end
       end
       template = '' if has_value == false
