@@ -134,7 +134,17 @@ class MapSearch
 
     url = "#{protocol}://#{host}:#{port}/#{@index_names}/site/_search"
     body = get_body
-    body[:size] = 100_00
+
+    if @sort_list
+      body[:sort] = @sort_list
+    end
+
+    if @offset && @limit
+      body[:from] = @offset
+      body[:size] = @limit
+    else
+      body[:size] = 100_00
+    end
 
     if Rails.logger.level <= Logger::DEBUG
       Rails.logger.debug to_curl(client, body)

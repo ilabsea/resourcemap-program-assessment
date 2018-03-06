@@ -29,11 +29,10 @@ module Api::V1
       search.alerted_to_reporter true
       search.my_site_search current_user.id if current_user
       search.sort_by_updated_at()
-      search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :search, :hierarchy_code, :selected_hierarchies, :_alert)
-      
       search.offset 0
       search.limit 50
-
+      search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :search, :hierarchy_code, :selected_hierarchies, :_alert)
+      
       render json: search.sites_json
     end
 
