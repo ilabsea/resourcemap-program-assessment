@@ -25,7 +25,7 @@ kh:
       last_24h_truck_route: "ផ្លូវឡាន 24 ម៉ោងចុងក្រោយ"
       current_truck_location: "ទីតាំងឡានបច្ចុប្បន្ន"
       approve_report_field: "តម្រូវឲ្យ​ឣ្នកសំរបសំរួលត្រួតពិនិត្យ​និង​ឣនុម័តការរាយការណ៍នីមួយៗ"
-      use_field: "ប្រើប្រាស់ហ្វៀល"
+      use_field: "ប្រើប្រាស់សំណួរ"
       in_the_report_to_mark_the_approval_status: "នៅក្នុងរបាយការណ៍ដើម្បីសម្គាល់ស្ថានភាពនៃការអនុម័ត"
       save: "រក្សាទុក"
     registrations:

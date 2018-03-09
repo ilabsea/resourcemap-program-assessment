@@ -4,10 +4,10 @@ kh:
       title: "ទាញទិន្ន័យ សម្រាប់ស្ថិតិ"
       description: "គ្រប់គ្រងការ ទាញទិន្ន័យ សម្រាប់ស្ថិតិ នែតំបន់ទាំងឡាយរបស់ទិន្នន័យនេះ"
       name: "ឈ្មោះ"
-      condition_fields: "លក្ខ័ណ ហ្វៀល"
+      condition_fields: "លក្ខ័ណ សំណួរ"
       expression: "កន្សោម"
-      group_by_fields: "ផ្តុំដោយ ហ្វៀល"
-      aggregate_fields: "សរុប ហ្វៀល"
+      group_by_fields: "ផ្តុំដោយ សំណួរ"
+      aggregate_fields: "សរុប សំណួរ"
       edit: 'កែតម្រូវ'
       save: "រក្សាទុក"
       cancel: "បោះបង់ចោល"
