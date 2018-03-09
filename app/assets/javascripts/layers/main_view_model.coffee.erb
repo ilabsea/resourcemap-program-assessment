@@ -274,13 +274,14 @@ onLayers ->
 
     deleteLayer: (layer) =>
       if layer.isRemovable()
-        $.post "/collections/#{@collectionId}/layers/#{layer.id()}", {threshold_ids: layer.threshold_ids, _method: 'delete'}, =>
-          idx = @layers().indexOf(layer)
-          for nextLayer in @layers().slice(idx + 1)
-            nextLayer.ord(nextLayer.ord() - 1)
-            @saveLayerOrd(nextLayer)
+        if confirm("Are you sure you want to delete layer '#{layer.name()}' from the collection?")
+          $.post "/collections/#{@collectionId}/layers/#{layer.id()}", {threshold_ids: layer.threshold_ids, _method: 'delete'}, =>
+            idx = @layers().indexOf(layer)
+            for nextLayer in @layers().slice(idx + 1)
+              nextLayer.ord(nextLayer.ord() - 1)
+              @saveLayerOrd(nextLayer)
 
-          @layers.remove(layer)
+            @layers.remove(layer)
 
           $.status.showNotice(window.t('javascripts.layers.layer_successfully_deleted', {name: layer.name()}), 2000)
       else
