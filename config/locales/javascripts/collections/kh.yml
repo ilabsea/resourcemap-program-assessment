@@ -48,12 +48,12 @@ kh:
         waste_site: "ទីតាំងគំនរសំរាម"
       validator: 
         this_field_is_required: "ចន្លោះ​នេះ​ត្រូវតែ​បំពេញ ! "
-        invalid_field_format: 'ទំរង់ហ្វៀលមិនត្រឹមត្រូវ'
-        invalid_value_value_must_be_equal_to_field: 'តម្លៃមិនត្រឹមត្រូវ, តម្លៃត្រូវតែស្មើនឹងហ្វៀល '
-        value_must_be_less_than_field: 'តម្លៃមិនត្រឹមត្រូវ តំលៃត្រូវតិចជាងហ្វៀល '
-        value_must_be_greater_than_field: 'តម្លៃមិនត្រឹមត្រូវ តម្លៃត្រូវតែធំជាងហ្វៀល '
-        value_must_be_greater_than_and_equal_to_field: 'តម្លៃមិនត្រឹមត្រូវ តម្លៃត្រូវតែធំជាងនិងស្មើហ្វៀល '
-        value_must_be_less_than_and_equal_to_field: 'តម្លៃមិនត្រឹមត្រូវ តម្លៃត្រូវតែតិចជាងនិងស្មើហ្វៀល '
+        invalid_field_format: 'ទំរង់សំណួរមិនត្រឹមត្រូវ'
+        invalid_value_value_must_be_equal_to_field: 'តម្លៃមិនត្រឹមត្រូវ, តម្លៃត្រូវតែស្មើនឹងសំណួរ '
+        value_must_be_less_than_field: 'តម្លៃមិនត្រឹមត្រូវ តំលៃត្រូវតិចជាងសំណួរ '
+        value_must_be_greater_than_field: 'តម្លៃមិនត្រឹមត្រូវ តម្លៃត្រូវតែធំជាងសំណួរ '
+        value_must_be_greater_than_and_equal_to_field: 'តម្លៃមិនត្រឹមត្រូវ តម្លៃត្រូវតែធំជាងនិងស្មើសំណួរ '
+        value_must_be_less_than_and_equal_to_field: 'តម្លៃមិនត្រឹមត្រូវ តម្លៃត្រូវតែតិចជាងនិងស្មើសំណួរ '
         value_must_be_less_than_or_equal_to: 'តម្លៃមិនត្រឹមត្រូវ តម្លៃត្រូវតែតិចជាងឬស្មើ '
         value_must_be_greater_than_or_equal_to: 'តម្លៃមិនត្រឹមត្រូវ តម្លៃត្រូវតែធំជាងឬស្មើ'
         value_must_be_in_the_range_of: 'តម្លៃមិនត្រឹមត្រូវ, តម្លៃត្រូវតែនៅក្នុងចន្លោះ ( %{min} - %{max} )'
