@@ -103,7 +103,7 @@ module Site::IndexUtils
       version: (site.version rescue nil)
     }
 
-    alert = site.collection.thresholds_test site unless self.is_a? SiteHistory
+    alert = site.collection.thresholds_test site unless site.is_a? SiteHistory
     if alert != nil
       hash[:alert] = true
       hash[:alert_id] = alert.id
