@@ -132,7 +132,7 @@ module SearchBase
       fieldValue.each do |es_code, value|
         case
         when es_code == "location_missing" then location_missing(condition_id)
-        when es_code == "updated_since" then after(value, condition_id)
+        when es_code == "updated_since" then after(value)
         else
           field = check_field_exists es_code
           if value.is_a? String
@@ -155,14 +155,6 @@ module SearchBase
     end
     self
   end
-
-  # def date_field_range(key, valid_value, condition_id)
-  #   date_from = valid_value[:date_from]
-  #   date_to = valid_value[:date_to]
-
-  #   add_filter key: key, value: {gte: date_from, lte: date_to}, type: :range, condition_id: condition_id
-  #   self
-  # end
 
   def histogram_search(field_es_code, filters=nil)
     facets_hash = {
@@ -190,9 +182,9 @@ module SearchBase
     self
   end
 
-  def after(time, condition_id)
+  def after(time)
     time = parse_time(time)
-    updated_since_query(time, condition_id)
+    updated_since_query(time)
     self
   end
 
@@ -202,7 +194,7 @@ module SearchBase
     self
   end
 
-  def updated_since_query(time, condition_id)
+  def updated_since_query(time)
     add_filter range: {updated_at: {gte: Site.format_date(time)}}
   end
 
