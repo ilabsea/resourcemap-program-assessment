@@ -18,7 +18,7 @@ module Api::V1
 
       render :json =>{:sites => search.ui_results.map { |x| x['_source'] }, :total => sites_size}
     end
-    
+
     def alerted_to_reporters
       collection_ids = current_user.collections.map{|collection| collection.id }
 
@@ -28,11 +28,12 @@ module Api::V1
       search.alerted_search true
       search.alerted_to_reporter true
       search.my_site_search current_user.id if current_user
-      search.sort_by_updated_at()
+      search.after params[:date]
+      search.sort_by_updated_at
       search.offset 0
       search.limit 50
-      search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :search, :hierarchy_code, :selected_hierarchies, :_alert)
-      
+      search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :search, :hierarchy_code, :selected_hierarchies, :_alert, :date)
+
       render json: search.sites_json
     end
 
