@@ -198,6 +198,11 @@ module SearchBase
     add_filter range: {updated_at: {gte: Site.format_date(time)}}
   end
 
+  def updated_after(time)
+    time = parse_time(time)
+    add_filter range: {updated_at: {gte: Site.format_date(time+1)}}
+  end
+
   def alerted_search(v)
     add_filter term: { alert: v }
     self

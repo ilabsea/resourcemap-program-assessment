@@ -28,7 +28,7 @@ module Api::V1
       search.alerted_search true
       search.alerted_to_reporter true
       search.my_site_search current_user.id if current_user
-      search.after params[:date]
+      search.updated_after params[:date]
       search.sort_by_updated_at
       search.offset 0
       search.limit 50
