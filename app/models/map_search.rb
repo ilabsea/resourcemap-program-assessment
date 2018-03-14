@@ -47,7 +47,7 @@ class MapSearch
     listener = clusterer = Clusterer.new(@zoom)
     clusterer.highlight @hierarchy if @hierarchy
     listener = ElasticSearch::SitesAdapter::SkipIdListener.new(listener, @exclude_id) if @exclude_id
-    
+
     set_bounds_filter
     # apply_queries
 
@@ -73,6 +73,9 @@ class MapSearch
       item['_source'].each do |key, value|
         site[key] = value
       end
+
+      site['created_at'] = Time.parse(site['created_at'])
+      site['updated_at'] = Time.parse(site['updated_at'])
       sites.push site
     end
     sites
