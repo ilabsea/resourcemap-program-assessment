@@ -48,7 +48,7 @@ kh:
       input_new_collection_name: "បញ្ចូលឈ្មោះទិន្នន័យថ្មី"
       copying: 'កំពុងតែចម្លង...'
       copy: 'ចម្លង'
-      browse_copy_collection: 'ចូលមេីលទិន្ន័យចម្លង'
+      browse_copy_collection: 'ចូលមេីលទិន្នន័យចម្លង'
       fields:
         title: "សំណួរ"
         text: "អក្សរ"

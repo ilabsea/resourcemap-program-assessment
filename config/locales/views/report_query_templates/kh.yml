@@ -2,10 +2,10 @@ kh:
   views:
     report_query_templates:
       title: "គំរូ សម្រាប់បោះពុម្ភ"
-      create_custom_template_for_report_query: "បង្កើតគំរូ សម្រាប់ទាញទិន្ន័យដាក់ស្ថិតិ"
+      create_custom_template_for_report_query: "បង្កើតគំរូ សម្រាប់ទាញទិន្នន័យដាក់ស្ថិតិ"
       create_report_template: "បង្កើតគំរូស្ថិតិ"
       name: "ឈ្មោះ"
-      title: "ទាញទិន្ន័យ សម្រាប់ស្ថិតិ"
+      title: "ទាញទិន្នន័យ សម្រាប់ស្ថិតិ"
       action: "សកម្មភាព"
       generate_report: "បង្កើតស្ថិតិ"
       preview_report: "មើលស្ថិតិជាមុន"
@@ -13,10 +13,10 @@ kh:
       form:
         save: "រក្សាទុក"
         cancel: "បោះបង់ចោល"
-        insert_report_query: "ដាក់ការទាញទិន្ន័យសម្បរាប់ស្ថិតិ"
+        insert_report_query: "ដាក់ការទាញទិន្នន័យសម្បរាប់ស្ថិតិ"
         name: "ឈ្មោះ"
         create_report_template: "បង្កើតគំរូស្ថិតិ"
         edit_report_template: "កែតម្រូវគំរូស្ថិតិ"
-        select_query: "ជ្រើសរើស ការទាញទិន្ន័យ"
+        select_query: "ជ្រើសរើស ការទាញទិន្នន័យ"
 
 
