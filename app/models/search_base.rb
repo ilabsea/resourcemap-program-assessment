@@ -195,7 +195,12 @@ module SearchBase
   end
 
   def updated_since_query(time)
-    add_filter range: {updated_at: {gte: Site.format_date(time)}}
+    add_filter(range: {
+                        updated_at: {
+                                      gt: time,
+                                      format: "yyyy-MM-dd'T'HH:mm:ssZ"
+                                    }
+                      })
   end
 
   def alerted_search(v)
