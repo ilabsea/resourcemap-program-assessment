@@ -14,6 +14,7 @@ module Collection::CsvConcern
     csv_string = csv_header(fields)
 
     search = new_search(current_user: current_user)
+    search.my_site_search current_user.id unless current_user.can_view_other? self.id
     search.use_codes_instead_of_es_codes
     pages = self.sites_count/search.page_size
 
