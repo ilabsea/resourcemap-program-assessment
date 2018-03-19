@@ -273,8 +273,8 @@ onLayers ->
       $.post "/collections/#{@collectionId}/layers/#{layer.id()}/set_order.json", json
 
     deleteLayer: (layer) =>
-      if layer.isRemovable()
-        if confirm("Are you sure you want to delete layer '#{layer.name()}' from the collection?")
+      if confirm("Are you sure you want to delete layer '#{layer.name()}' from the collection?")
+        if layer.isRemovable()
           $.post "/collections/#{@collectionId}/layers/#{layer.id()}", {threshold_ids: layer.threshold_ids, _method: 'delete'}, =>
             idx = @layers().indexOf(layer)
             for nextLayer in @layers().slice(idx + 1)
@@ -284,15 +284,15 @@ onLayers ->
             @layers.remove(layer)
 
           $.status.showNotice(window.t('javascripts.layers.layer_successfully_deleted', {name: layer.name()}), 2000)
-      else
-        if layer.threshold_ids.length > 0
-          $.status.showError(window.t('javascripts.layers.used_in_alert', {number: layer.threshold_ids.length}), 2000)
-        else if layer.query_ids.length > 0
-          $.status.showError(window.t('javascripts.layers.used_in_canned_query', {number: layer.query_ids.length}), 2000)
-        else if layer.report_query_ids.length > 0
-          $.status.showError(window.t('javascripts.layers.used_in_report_query', {number: layer.report_query_ids.length}), 2000)
-        else if layer.isParentFieldOfOtherLayerField()
-          $.status.showError(window.t('javascripts.layers.dependency'), 2000)
+        else
+          if layer.threshold_ids.length > 0
+            $.status.showError(window.t('javascripts.layers.used_in_alert', {number: layer.threshold_ids.length}), 2000)
+          else if layer.query_ids.length > 0
+            $.status.showError(window.t('javascripts.layers.used_in_canned_query', {number: layer.query_ids.length}), 2000)
+          else if layer.report_query_ids.length > 0
+            $.status.showError(window.t('javascripts.layers.used_in_report_query', {number: layer.report_query_ids.length}), 2000)
+          else if layer.isParentFieldOfOtherLayerField()
+            $.status.showError(window.t('javascripts.layers.dependency'), 2000)
 
 
     copyField: (field)=>
