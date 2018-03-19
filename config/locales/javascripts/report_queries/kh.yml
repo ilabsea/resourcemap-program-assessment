@@ -4,3 +4,18 @@ kh:
       at_least_one_report_template: 'សូមជ្រើសរើសយ៉ាងហោចណាស់គំរូរបាយការណ៍មួយដើម្បីបង្កើតរបាយការណ៍'
       field_used_in_report_query: "សំណួរនេះកំពុងត្រូវបានប្រើជាមួយគំរូសំណួររបាយការណ៍ %{n} អ្នកមិនត្រូវបានអនុញ្ញាតឱ្យលុបឡើយ"
       report_query_successfully_deleted: "ទាញទិន្នន័យ សម្រាប់ស្ថិតិ '%{name}' ត្រូវបានលុបដោយជោគជ័យ"
+      no_value: '(គ្មានតំលៃ)'
+      the_aggregate_field_must_selected: "សំណួរសរុបត្រូវតែជ្រើស"
+      errors: 
+        cant_save: "មិនអាចរក្សាទុក: %{error}"
+        the_query_name_is_missing: "ឈ្មោះសំណួរមិនអាចទទេ"
+        not_more_than_3: "មិនលើសពី 3"
+        the_query_must_have_at_least_one_aggregate: "សំណួរត្រូវតែមានយ៉ាងហោចណាស់មួយ"
+        the_query_name_is_already_exist: "ឈ្មោះសំណួរមានរួចហើយ"
+        the_formula_logical_error: "រូបមន្ត %{formulaMeassage}"
+        number: "លេខ"
+        expected: "គួរតែមាន )"
+        expected_a_number_or_parentheses: "គួរតែមានលេខ, រឺ វង់ក្រចក"
+        expected_number_before_or_after: "គួរតែមានលេខ មុនឬក្រោយ %{beforeOrAfter}"
+        has_unexpected: "មិនត្រឹមត្រូវលេី %{peek}"
+

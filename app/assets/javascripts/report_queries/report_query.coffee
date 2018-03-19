@@ -23,11 +23,12 @@ onReportQueries ->
 
       @isEditing = ko.observable()
 
-      @nameError = ko.computed => if @hasName()  then null else "the query's name is missing"
+      @nameError = ko.computed => if @hasName()  then null else window.t('javascripts.report_queries.errors.the_query_name_is_missing')
       @groupByFieldValid = ko.computed => @hasGroupByFields() && @isValidToAddGroupByField()
-      @groupByFieldsError = ko.computed => if @isValidNumOfGroupBy() then null else "not more than 3"
-      @aggregateFieldsError = ko.computed => if @hasAggregateFields()  then null else "the query must have at least one aggregate"
-      @error = ko.computed => @nameError() || @nameExist() || @logicalOperatorError() || @groupByFieldsError() || @aggregateFieldsError()
+      @groupByFieldsError = ko.computed => if @isValidNumOfGroupBy() then null else window.t('javascripts.report_queries.errors.not_more_than_3')
+      @aggregateFieldsError = ko.computed => if @hasAggregateFields()  then null else window.t('javascripts.report_queries.errors.the_query_must_have_at_least_one_aggregate')
+      @hasError = ko.computed => @nameError() || @nameExist() || @logicalOperatorError() || @groupByFieldsError() || @aggregateFieldsError()
+      @error = ko.computed => if @hasError() then return window.t('javascripts.report_queries.errors.cant_save' , {error: @hasError()})
       @valid = ko.computed => !@error()
       @report_query_templates = data?.report_query_templates ? []
       @isTotalAggregateField = if data?.is_total_aggregate_field
@@ -38,7 +39,7 @@ onReportQueries ->
     nameExist: =>
       for reportQuery in window.model.reportQueries()
         if reportQuery.id != window.model.currentReportQuery()?.id && @name().trim() == reportQuery.name().trim()
-          return "the query'name is already exist"
+          return window.t('javascripts.report_queries.errors.the_query_name_is_already_exist')
 
     hasName: => $.trim(@name()).length > 0
     hasCondition: => $.trim(@condition()).length > 0
@@ -48,7 +49,7 @@ onReportQueries ->
     isValidToAddGroupByField: => @groupByFields().length < 3
     isValidNumOfGroupBy: => @groupByFields().length <= 3
 
-    logicalOperatorError: => if @condition().length == 0 || @isLogicalOperatorExpr().status then null else "the formula #{@isLogicalOperatorExpr().msg}"
+    logicalOperatorError: => if @condition().length == 0 || @isLogicalOperatorExpr().status then null else window.t('javascripts.report_queries.errors.the_formula_logical_error' , {formulaMeassage: @isLogicalOperatorExpr().msg})
 
     addConditionField: (condition) =>
       condition.id = @conditionId()
@@ -129,17 +130,17 @@ onReportQueries ->
         t = peek()
         if isValidNumber(t)
           position++
-          return {status: true, msg: "number"}
+          return {status: true, msg: window.t('javascripts.report_queries.errors.number')}
         else if t == '('
           position++
           expr = isExpr()
           if peek() != ')'
-            expr = {status: false, msg: "expected )"}
+            expr = {status: false, msg: window.t('javascripts.report_queries.errors.expected')}
           else
             position++
           return expr
         else
-          return {status: false, msg:"expected a number, or parentheses"}
+          return {status: false, msg: window.t('javascripts.report_queries.errors.expected_a_number_or_parentheses')}
 
       isExpr = ->
         expr = isPrimaryExpr()
@@ -148,7 +149,7 @@ onReportQueries ->
           position++
           nextExpr = isPrimaryExpr()
           if !expr.status || !nextExpr.status
-            expr = {status : false, msg: "expected number before or after \'"+ t + "\'"}
+            expr = {status : false, msg: window.t('javascripts.report_queries.errors.expected_number_before_or_after', {beforeOrAfter: t})}
             break
           expr = {status: true, msg: ""}
           t = peek()
@@ -157,6 +158,6 @@ onReportQueries ->
       result = isExpr()
 
       if position != tokens.length
-        result = {status: false, msg: "has unexpected \'" + peek() + "\'"}
+        result = {status: false, msg: window.t('javascripts.report_queries.errors.has_unexpected', {peek: peek()})}
 
       result
