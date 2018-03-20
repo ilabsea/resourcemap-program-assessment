@@ -10,13 +10,19 @@ kh:
       generate_report: "បង្កើតស្ថិតិ"
       preview_report: "មើលស្ថិតិជាមុន"
       download_pdf: "ទាញយកជា pdf"
+      report_template_has_been_created_successfully: 'គំរូស្ថិតិ ត្រូវបានបង្កើតដោយជោគជ័យ'
+      failed_to_create_report_template: 'មិនអាចបង្កើត គំរូស្ថិតិ'
       form:
         save: "រក្សាទុក"
         cancel: "បោះបង់ចោល"
-        insert_report_query: "ដាក់ការទាញទិន្នន័យសម្បរាប់ស្ថិតិ"
+        insert_report_query: "ដាក់ការទាញទិន្នន័យសម្រាប់ស្ថិតិ"
         name: "ឈ្មោះ"
         create_report_template: "បង្កើតគំរូស្ថិតិ"
         edit_report_template: "កែតម្រូវគំរូស្ថិតិ"
         select_query: "ជ្រើសរើស ការទាញទិន្នន័យ"
+      errors:
+        name_cant_be_blank: "ឈ្មោះមិនអាចទទេ"
+        report_query_cant_be_blank: "ទិន្នន័យ សម្រាប់ស្ថិតិ មិនអាចទទេ"
+        
 
 

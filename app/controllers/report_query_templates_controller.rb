@@ -38,10 +38,10 @@ class ReportQueryTemplatesController < ApplicationController
   def create
     @report_query_template = collection.report_query_templates.build params[:report_query_template]
     if @report_query_template.save
-      flash[:notice] = 'Report Template has been created successfully'
+      flash[:notice] = I18n.t('views.report_query_templates.report_template_has_been_created_successfully')
       redirect_to collection_report_query_templates_path(collection)
     else
-      flash[:alert] = 'Failed to create Report Template'
+      flash[:alert] = I18n.t('views.report_query_templates.failed_to_create_report_template')
       render :new
     end
   end
@@ -54,10 +54,10 @@ class ReportQueryTemplatesController < ApplicationController
   def update
     @report_query_template = collection.report_query_templates.find(params[:id])
     if @report_query_template.update_attributes(params[:report_query_template])
-      flash[:notice] = 'Report Template has been created successfully'
+      flash[:notice] = I18n.t('views.report_query_templates.report_template_has_been_created_successfully')
       redirect_to collection_report_query_templates_path(collection)
     else
-      flash[:alert] = 'Failed to create Report Template'
+      flash[:alert] = I18n.t('views.report_query_templates.failed_to_create_report_template')
       render :edit
     end
   end

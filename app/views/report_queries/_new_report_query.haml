@@ -88,7 +88,7 @@
           %option{"data-bind" => "text: name, option: name, value: $data"}
         //ko
 
-      %select{ko(value: :aggregator, options: :aggregatorOptions, optionsText: "'label'", optionsCaption: "'(no value)'")}
+      %select{ko(value: :aggregator, options: :aggregatorOptions, optionsText: "'label'", optionsCaption: "window.t('javascripts.report_queries.no_value')")}
     %div{style: 'margin-top:-4px'}
       %button.padd{ ko(click: '$parent.addAggregatField', enable: :valid) }
 
@@ -120,6 +120,5 @@
       =t('views.report_queries.save')
     %a.tgrey{ ko(click: '$root.cancelReportQuery'), href: 'javascript:void(0)' }= t('views.plugins.alerts.form.cancel')
     /ko if: !valid()
-    %span{ ko(text: "'Can\\'t save: ' + error()"), style: 'color:red;margin-left:20px' }
-      = t('views.report_queries.cannot_save')
+    %span{ ko(text: "error()"), style: 'color:red;margin-left:20px' }
     //ko

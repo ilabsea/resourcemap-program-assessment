@@ -4,3 +4,19 @@ en:
       at_least_one_report_template: 'Please select at least one report template to generate the report'
       field_used_in_report_query: "This field is being used with %{n} report query template(s), you are not allowed to delete"
       report_query_successfully_deleted: "Report query '%{name}' successfully deleted"
+      layer_successfully_deleted: "ស្រទាប់ '%{name}' បានលុបដោយជោគជ័យ"
+      no_value: '(no value)'
+      the_aggregate_field_must_selected: "the aggregate field must selected"
+      errors: 
+        cant_save: "Can't save: %{error}"
+        the_query_name_is_missing: "the query's name is missing"
+        not_more_than_3: "not more than 3"
+        the_query_must_have_at_least_one_aggregate: "the query must have at least one aggregate"
+        the_query_name_is_already_exist: "the query's name is already exist"
+        the_formula_logical_error: "the formula %{formulaMeassage}"
+        number: "number"
+        expected: "expected )"
+        expected_a_number_or_parentheses: "expected a number, or parentheses"
+        expected_number_before_or_after: "expected number before or after %{beforeOrAfter}"
+        has_unexpected: "has unexpected %{peek}"
+      

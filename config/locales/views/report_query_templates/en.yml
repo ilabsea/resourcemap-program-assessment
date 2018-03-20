@@ -10,6 +10,8 @@ en:
       generate_report: "Generate report"
       preview_report: "Preview report"
       download_pdf: "Download pdf"
+      report_template_has_been_created_successfully: 'Report Template has been created successfully'
+      failed_to_create_report_template: 'Failed to create Report Template'
       form:
         save: "Save"
         cancel: "Cancel"
@@ -18,3 +20,8 @@ en:
         create_report_template: "Create report template"
         edit_report_template: "Create report template"
         select_query: "Select query"
+      errors:
+        name_cant_be_blank: "Name can't be blank"
+        report_query_cant_be_blank: "Report query can't be blank"
+       
+

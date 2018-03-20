@@ -14,4 +14,5 @@ kh:
       add_new_report_query: "បង្កើតការទាញទិន្នន័យសម្រាប់ស្ថិតិ"
       no_value: "(គ្មានតំលៃ)"
       one_and_two: "1 និង 2"
-
+      total_aggregate_field: "សំណួរសរុបរួម"
+  

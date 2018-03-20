@@ -3,7 +3,7 @@
     <%= f.label t('views.report_query_templates.form.name') %>
     <%= f.text_field :name %>
     <% if f.object.errors[:name].present? %>
-      <%= f.label "Name #{f.object.errors[:name].join(', ')}", class: 'error' %>
+      <%= f.label t('views.report_query_templates.errors.name_cant_be_blank'), class: 'error' %>
     <% end %>
   </div>
 
@@ -12,7 +12,7 @@
     <%= f.select :report_query_id, options_for_select(collection.report_queries.map{|r| [r.name, r.id]}, @report_query_template.report_query_id), prompt: t('views.report_query_templates.form.select_query') %>
     <br />
     <% if f.object.errors[:report_query].present? %>
-      <%= f.label "Report query #{f.object.errors[:report_query].join(', ')}", class: 'error' %>
+      <%= f.label t('views.report_query_templates.errors.report_query_cant_be_blank'), class: 'error' %>
     <% end %>
   </div>
 
