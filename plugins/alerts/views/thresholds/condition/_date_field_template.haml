@@ -1,5 +1,5 @@
 %script{type: "text/html", id: "date-field-template"}
-  %select{ ko(options: 'field().operators', optionsText: "'label'", value: :op) }
+  %select{ ko(options: 'field().operators', optionsText: "'label'", optionsValue: "'code'", value: :selectedOperator) }
   %label{ ko(css: { error: '!valid()' }) }
     %span.w10
       %input.ux-datepicker{ 'data-bind' => 'value: valueUI, css: {error: !valid()}', type: :text }

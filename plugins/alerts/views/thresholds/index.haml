@@ -16,7 +16,7 @@
     %img{src: '/images/loading.gif',id: 'loadProgress', style: 'position: absolute; left: 0; top: 0; right: 0; bottom: 0;margin: auto; display: none'}
   %br/
   #thresholds-main.hidden-until-loaded{ ko(css: { ready: :isReady }) }
-    - if collection_admin? 
+    - if collection_admin?
       %h2= t('views.plugins.alerts.title')
       <!-- ko foreach :thresholds -->
       <!-- ko if: $data != $root.currentThreshold() -->
@@ -54,10 +54,10 @@
             <!-- /ko -->
             <!-- /ko -->
             %span{ ko(text: 'field().name()') }
-            %span{ ko(text: 'op().label()') }
+            %span{ ko(text: 'op().label') }
             %span{ ko(text: 'formattedValue') }
 
-            <!-- ko if: valueType().label() == 'a percentage of' -->
+            <!-- ko if: valueType().label == 'a percentage of' -->
             = t('views.plugins.alerts.of')
             %span{ ko(text: 'compareField().name()') }
             <!-- /ko -->
@@ -110,7 +110,7 @@
 
           /      ko template: {name: field().kind() + '-field-template', afterRender: $root.initDatePicker}
           /      /ko
-          
+
           %button.premove{ ko(click: '$parent.removeCondition') }
           %br
           <!--/ko -->
@@ -153,7 +153,7 @@
               - collection.users.each do |user|
                 %input{ko(checked: 'membersEmail'), value: user.id, type: "checkbox"}= user.email
                 %br
-              %br 
+              %br
               %input{ko(checked: 'toReporter'), type: "checkbox" }= t('views.plugins.alerts.form.reporter')
               %br
           .middlebuttons.w30{:style => "float: left;"}
@@ -176,14 +176,14 @@
             = t('views.plugins.alerts.form.use_the_following_expression')
             .template_text
               [
-              %span{ko(click: 'addSiteNameToMessageNotification')} Site Name                                               
+              %span{ko(click: 'addSiteNameToMessageNotification')} Site Name
               ]
               <!-- ko foreach: $root.fields -->
               [
               %span{ ko(text: :code, click: '$parent.addFieldNameToMessageNotification') }
               ]
               <!-- /ko -->
-          
+
           %textarea.ux-wajbar.w60{ko(value: :messageNotification, valueUpdate: :afterkeydown), placeholder: t('views.plugins.alerts.form.message_template'), maxlength: 140, rows: 4 }
         %hr/
         %br/
@@ -198,7 +198,7 @@
       %br/
       <!-- /ko -->
 
-      - if collection_admin? 
+      - if collection_admin?
         <!-- ko if: fields().length == 0 -->
         = t('views.plugins.alerts.form.please')
         %strong= t('views.plugins.alerts.form.add_layers')
