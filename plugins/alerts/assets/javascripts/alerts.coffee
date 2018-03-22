@@ -18,11 +18,14 @@ onThresholds -> if $('#thresholds-main').length > 0
   $('#loadProgress').show()
 
   $.get "/collections/#{collectionId}/fields.json", (layers) ->
-    fields = $.map(layers, (layer) -> layer.fields)
-    supportedFields = $.map(fields, (field) -> new Field field if !!~supportedKinds.indexOf field.kind)
+    for layer in layers
+      layer.fields = $.map(layer.fields, (field) -> new Field(field) if !!~supportedKinds.indexOf field.kind)
 
-    window.model.compareFields supportedFields
-    window.model.fields supportedFields
+    fields = $.map(layers, (layer) -> layer.fields)
+
+    window.model.layers layers
+    window.model.compareFields fields
+    window.model.fields fields
 
     $.get "/plugin/alerts/collections/#{collectionId}/thresholds.json", (thresholds) ->
       thresholds = $.map thresholds, (threshold) -> new Threshold threshold, window.model.collectionIcon

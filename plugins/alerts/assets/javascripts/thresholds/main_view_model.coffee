@@ -2,6 +2,7 @@ onThresholds ->
   class @MainViewModel
     constructor: (@collectionId) ->
       @fields = ko.observableArray()
+      @layers = ko.observableArray()
       @compareFields = ko.observableArray()
       @thresholds = ko.observableArray([])
       @sites = ko.observableArray([])
@@ -60,7 +61,7 @@ onThresholds ->
       delete @deletedThreshold
 
     findField: (esCode) =>
-      return field for field in @fields() when field.esCode() == esCode
+      return field for field in @fields() when "#{field.esCode()}" == "#{esCode}"
 
     nextOrd: =>
       ord = 0

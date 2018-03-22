@@ -106,8 +106,9 @@
           %label= t('views.plugins.alerts.form.any_of_the_following_conditions')
           %br
           <!-- ko foreach :conditions -->
-          %select{ ko(options: '$root.fields', optionsText: "'name'", value: :field, hasfocus: true) }
-
+          %select{"data-bind" => 'foreach: $root.layers(), value: field'}
+            %optgroup{"data-bind" => "attr: {label: name}, foreach: fields"}
+              %option{"data-bind" => "text: name, option: name, value: $data"}
           /      ko template: {name: field().kind() + '-field-template', afterRender: $root.initDatePicker}
           /      /ko
 
