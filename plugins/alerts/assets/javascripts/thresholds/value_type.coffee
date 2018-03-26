@@ -1,13 +1,17 @@
 onThresholds ->
   class @ValueType
-    @VALUE      = new ValueType 'value', window.t('javascripts.plugins.alerts.value_types.a_value_of'), (value) -> value
-    @PERCENTAGE = new ValueType 'percentage', window.t('javascripts.plugins.alerts.value_types.a_percentage_of'), (value) -> "#{value}%"
+    @VALUE: -> {code: 'value', label: window.t('javascripts.plugins.alerts.value_types.a_value_of')}
+    @PERCENTAGE: -> {code: 'percentage', label: window.t('javascripts.plugins.alerts.value_types.a_percentage_of')}
+    @ALL: -> [@VALUE(), @PERCENTAGE()]
 
-    @ALL        = [ @VALUE, @PERCENTAGE ]
-
-    constructor: (code, label, @format) ->
-      @code = ko.observable code
-      @label = ko.observable label
+    @format: (code, value) ->
+      if code == 'value' then return value
+      if code == 'percentage' then return "#{value}%"
 
     @findByCode: (code) ->
-      @[code?.toUpperCase()]
+      if code == 'value' then return @VALUE()
+      if code == 'percentage' then return @PERCENTAGE()
+
+    @findByLabel: (label) ->
+      if label == window.t('javascripts.plugins.alerts.value_types.a_value_of') then return @VALUE()
+      if label == window.t('javascripts.plugins.alerts.value_types.a_percentage_of') then return @PERCENTAGE()

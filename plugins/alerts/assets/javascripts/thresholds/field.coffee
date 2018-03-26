@@ -32,19 +32,19 @@ onThresholds ->
 
     format: (value) -> value
     getOptions: => []
-    getOperators: => [Operator.EQ]
+    getOperators: => [Operator.EQ()]
     encode: (value) -> value
     valid: (value) -> !!value
 
   class @FieldText extends @FieldImpl
     getOperators: =>
-      [Operator.EQI, Operator.CON]
+      [Operator.EQI(), Operator.CON()]
 
   class @Field_text extends @FieldText
 
   class @Field_numeric extends @FieldImpl
     getOperators: =>
-      [Operator.EQ, Operator.LT, Operator.GT]
+      [Operator.EQ(), Operator.LT(), Operator.GT()]
 
     valid: (value) ->
       value? and
@@ -76,7 +76,7 @@ onThresholds ->
       value?.toString().toDate()?.strftime '%d/%m/%Y'
 
     getOperators: =>
-      [Operator.EQ, Operator.LT, Operator.GT]
+      [Operator.EQ(), Operator.LT(), Operator.GT()]
 
     encode: (value) ->
       value?.toString().toDate()?.strftime '%d/%m/%Y'
