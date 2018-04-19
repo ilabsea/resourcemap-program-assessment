@@ -4,7 +4,7 @@ kh:
       reminders:
         cant_save: "មិនអាចរក្សាទុក: "
         name_is_missing: "បាត់ឈ្មោះរបស់កម្មវិធីរំលឹក"
-        sites_is_missing: "បាត់តំបន់"
+        sites_is_missing: "បាត់ទិន្នន័យ"
         date_is_missing: "បាត់កាលបរិច្ឆេទការរំលឹក"
         message_is_missing: "បាត់សារកម្មវិធីរំលឹក"
         repeats:
@@ -23,11 +23,11 @@ kh:
         add_reminder: "បន្ថែមកម្មវិធីរំលឹក"
         form:
           name: "ឈ្មោះ"
-          sites: "តំបន់"
-          site_owner_will_receive_this_reminder: "ម្ចាស់តំបន់នឹងទទួលបានកម្មវិធីរំលឹកនេះ"
+          sites: "ទិន្នន័យ"
+          site_owner_will_receive_this_reminder: "ម្ចាស់ទិន្នន័យនឹងទទួលបានកម្មវិធីរំលឹកនេះ"
           for: "សម្រាប់"
-          all_sites: "តំបន់ទាំងអស់"
-          some_sites: "តំបន់មួយចំនួន"
+          all_sites: "ទិន្នន័យទាំងអស់"
+          some_sites: "ទិន្នន័យមួយចំនួន"
           date: "កាលបរិច្ឆេទ"
           repeat: "ការរំលឹកឡើងវិញ"
           message: "សារ"
