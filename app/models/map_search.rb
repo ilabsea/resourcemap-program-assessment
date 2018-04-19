@@ -160,7 +160,9 @@ class MapSearch
         Net::HTTP.start(uri.host, uri.port) do |http|
           request = Net::HTTP::Get.new uri.request_uri
           http.request request, body.to_json do |response|
-            response.read_body { |segment| io.write segment.dup.encode('UTF-8', :invalid => :replace, :undef => :replace) }
+            response.read_body { |segment|
+              io.write segment.dup.force_encoding("UTF-8")
+            }
           end
         end
       rescue Exception => ex
