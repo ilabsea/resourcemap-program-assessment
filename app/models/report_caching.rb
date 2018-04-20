@@ -32,9 +32,15 @@ class ReportCaching < ActiveRecord::Base
     by_collection(collection_id).by_report_query(report_query_id)
   end
 
+  def self.clear_all_cache
+    self.all.each do |report_caching|
+      report_caching.clear_cache
+    end
+  end
+
   def fetch_cache
     report_result = Rails.cache.fetch(key) do
-       ReportQuerySearch.new(report_query).query
+      ReportQuerySearch.new(report_query).query
     end
 
     update_attributes(is_modified: false)
@@ -44,6 +50,10 @@ class ReportCaching < ActiveRecord::Base
 
   def modified?
     is_modified
+  end
+
+  def clear_cache
+    Rails.cache.delete(key)
   end
 
   private
@@ -56,12 +66,8 @@ class ReportCaching < ActiveRecord::Base
     report_query_id.present? ? where(report_query_id: report_query_id) : where("report_query_id is not ?", nil)
   end
 
-  def clear_cache
-    Rails.cache.delete(key)
-  end
-
   def key
-    "query:collection-#{collection.id}_query-#{report_query.id}"
+    "query:collection-#{collection.id}_query-#{report_query.id}_lang-#{I18n.locale}"
   end
 
 end
