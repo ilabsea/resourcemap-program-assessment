@@ -18,6 +18,9 @@
 
 class ReportQueryTemplate < ActiveRecord::Base
   REPORT_PLACE_HOLDER = "{report}"
+  ORIENTATION = [{label: I18n.t('views.report_query_templates.portrait'), value: 'portrait'},
+                  {label: I18n.t('views.report_query_templates.landscape'), value: 'landscape'}
+                ]
 
   belongs_to :collection
   belongs_to :report_query
@@ -44,11 +47,12 @@ class ReportQueryTemplate < ActiveRecord::Base
     @report_result = ReportCaching.fetch_cache(collection.id, report_query.id)
   end
 
-  def generate_pdf_from_text text
+  def generate_pdf_from_text text, orientation
     options = {collection_id: collection_id,
                name: name,
                text: text,
-               uuid: uuid}
+               uuid: uuid,
+               orientation: orientation}
     ReportQueryTemplatePdf.new(options).generate_pdf_from_text
   end
 

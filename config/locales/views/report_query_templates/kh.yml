@@ -9,9 +9,12 @@ kh:
       action: "សកម្មភាព"
       generate_report: "បង្កើតស្ថិតិ"
       preview_report: "មើលស្ថិតិជាមុន"
-      download_pdf: "ទាញយកជា pdf"
+      download_pdf: "ជ្រើសរើសទម្រង់ PDF ដើម្បីទាយយក"
       report_template_has_been_created_successfully: 'គំរូស្ថិតិ ត្រូវបានបង្កើតដោយជោគជ័យ'
       failed_to_create_report_template: 'មិនអាចបង្កើត គំរូស្ថិតិ'
+      total: "សរុប"
+      portrait: 'ទម្រង់បញ្ឈរ'
+      landscape: 'ទម្រង់ផ្តេក'
       form:
         save: "រក្សាទុក"
         cancel: "បោះបង់ចោល"
@@ -23,6 +26,3 @@ kh:
       errors:
         name_cant_be_blank: "ឈ្មោះមិនអាចទទេ"
         report_query_cant_be_blank: "ទិន្នន័យ សម្រាប់ស្ថិតិ មិនអាចទទេ"
-        
-
-
