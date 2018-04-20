@@ -2,7 +2,7 @@ module Threshold::ComparisonConcern
   extend ActiveSupport::Concern
 
   def eq(a, b)
-    a == b
+    a == b || a.to_f == b.to_f
   end
 
   # eqi - equal ignore case operator
@@ -11,19 +11,19 @@ module Threshold::ComparisonConcern
   end
 
   def lt(a, b)
-    a < b
+    a.to_f < b.to_f
   end
 
   def lte(a, b)
-    a <= b
+    a.to_f <= b.to_f
   end
 
   def gt(a, b)
-    a > b
+    a.to_f > b.to_f
   end
 
   def gte(a, b)
-    a >= b
+    a.to_f >= b.to_f
   end
 
   def con(a, b)

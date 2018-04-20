@@ -6,7 +6,7 @@ onThresholds -> if $('#thresholds-main').length > 0
   match = window.location.toString().match(/\/collections\/(\d+)\/thresholds/)
   collectionId = parseInt(match[1])
 
-  supportedKinds = ['text', 'numeric', 'yes_no', 'select_one', 'date', 'email', 'phone']
+  supportedKinds = ['text', 'numeric', 'yes_no', 'select_one', 'date', 'email', 'phone', 'calculation']
   supportedKindForMessageTemplate = ['text', 'numeric', 'yes_no', 'select_one', 'date', 'email', 'phone', 'hierarchy', 'calculation']
 
   window.model = new MainViewModel(collectionId)
@@ -23,7 +23,7 @@ onThresholds -> if $('#thresholds-main').length > 0
     for layer in layers
       tmpFields = $.map(layer.fields, (field) -> new Field(field) if field.kind in supportedKindForMessageTemplate)
       fieldListForMessageTemplate = fieldListForMessageTemplate.concat tmpFields
-      layer.fields = $.map(layer.fields, (field) -> new Field(field) if !!~supportedKinds.indexOf field.kind)
+      layer.fields = $.map(layer.fields, (field) -> new Field(field) if field.kind in supportedKinds)
 
     fields = $.map(layers, (layer) -> layer.fields)
 
