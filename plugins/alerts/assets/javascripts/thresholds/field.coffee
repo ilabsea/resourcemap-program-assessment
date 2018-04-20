@@ -87,3 +87,7 @@ onThresholds ->
   class @Field_email extends @FieldText
 
   class @Field_phone extends @FieldText
+
+  class @Field_hierarchy extends @FieldImpl
+
+  class @Field_calculation extends @FieldImpl

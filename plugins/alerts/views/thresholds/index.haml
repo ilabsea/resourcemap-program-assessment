@@ -179,7 +179,7 @@
               [
               %span{ko(click: 'addSiteNameToMessageNotification')} Site Name
               ]
-              <!-- ko foreach: $root.fields -->
+              <!-- ko foreach: $root.fieldListForMessageTemplate -->
               [
               %span{ ko(text: :code, click: '$parent.addFieldNameToMessageNotification') }
               ]

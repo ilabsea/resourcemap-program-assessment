@@ -156,9 +156,13 @@ module Field::Base
   private
 
   def find_hierarchy_value(value)
-    @hierarchy_items_map ||= create_hierarchy_items_map
-    item = @hierarchy_items_map[value]
-    item ? hierarchy_item_to_s(item) : value
+    if self.is_enable_dependancy_hierarchy
+      self.value_for_csv(value)
+    else
+      @hierarchy_items_map ||= create_hierarchy_items_map
+      item = @hierarchy_items_map[value]
+      item ? hierarchy_item_to_s(item) : value
+    end
   end
 
   def create_hierarchy_items_map(map = {}, items = config['hierarchy'] || [], parent = nil)
@@ -178,4 +182,5 @@ module Field::Base
     str << item['name']
     str
   end
+
 end
