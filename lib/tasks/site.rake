@@ -26,6 +26,14 @@ namespace :site do
     Collection.find_each { |collection| Collection.reset_counters(collection.id, :sites) }
   end
 
+  desc 'remove invalid control character'
+  task :remove_invalid_char => :environment do
+    Site.find_each { |site|
+      site.name = site.name.gsub(/[^[:print:]]/) {|x| ''}
+      site.save
+    }
+  end
+
   def create_fields(collection)
     layer = Layer.create(name: "Layer Test", collection_id: collection.id, ord: 1, user: collection.users.first)
     field_type = Field::BaseKinds.map{|item| item[:name]}
