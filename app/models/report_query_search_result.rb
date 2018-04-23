@@ -92,7 +92,7 @@ class ReportQuerySearchResult
           # hash_mapping_result[field_id]
           head_fields << hash_mapping_result[field_id]
           grouped_by_field_headers[field_id] = hash_mapping_result[field_id]
-          total_aggr_fields[field_id] = 'Total' if position == 0
+          total_aggr_fields[field_id] = "#{I18n.t('views.report_query_templates.total')}" if position == 0
         end
 
         row << translate_field_value(head_fields[position], field_value)

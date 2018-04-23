@@ -18,7 +18,7 @@ class ReportQueryTemplatePdf
       f.write(@options[:text])
     end
 
-    command = "wkhtmltopdf #{temp_store_file} #{pdf_store_file}"
+    command = "wkhtmltopdf -O #{@options[:orientation]} #{temp_store_file} #{pdf_store_file}"
     Rails.logger.debug {command}
     system command
   end
@@ -32,7 +32,7 @@ class ReportQueryTemplatePdf
       source_files = source_files + " " + url
     end
     destination_file = ReportQueryTemplatePdf.pdf_report_path(@options)
-    command = "wkhtmltopdf #{source_files} #{destination_file}"
+    command = "wkhtmltopdf -O #{@options[:orientation]} #{source_files} #{destination_file}"
     Rails.logger.debug {command}
     system command
   end

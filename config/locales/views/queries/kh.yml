@@ -10,7 +10,7 @@ kh:
   views:
     queries:
       title: "សំណួរ"
-      description: "គ្រប់គ្រងសំណួររបស់ទិន្នន័យតំបន់នេះ"
+      description: "គ្រប់គ្រងសំណួររបស់ទម្រង់ប្រមូលទិន្នន័យនេះ"
       name: "ឈ្មោះ"
       formula: "រូបមន្ត"
       refine_query: "បង្កេីតលក្ខខណ្ឌ"
@@ -19,10 +19,10 @@ kh:
       cancel: "បោះបង់ចោល"
       save: "រក្សាទុកសំណួរ"
       cannot_save: "មិនអាចរក្សាទុកសំណួរ"
-      add_new_query: "បន្ថែមសំណួរថ្មី"   
-      ok: "យល់ព្រម"   
+      add_new_query: "បន្ថែមសំណួរថ្មី"
+      ok: "យល់ព្រម"
       conditions:
-        description: "រកតំបន់ទាំងអស់ដែល" 
+        description: "រកទិន្នន័យទាំងអស់ដែល"
         updated_within: "ធ្វើឱ្យទាន់សម័យនៅក្នុង"
         the_last_hour: "ម៉ោងចុងក្រោយ"
         the_last_day: "ថ្ងៃ​ចុងក្រោយ"
@@ -42,12 +42,3 @@ kh:
         is_greater_than: "គឺច្រេីនជាង"
         is_greater_than_or_equal_to: "គឺច្រេីនជាងឬស្មើនឹង"
         and: 'និង'
-
-
-
-
-
-
-
-
-

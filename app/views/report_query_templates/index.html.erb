@@ -46,6 +46,7 @@
   </table>
   <%= hidden_field_tag 'collection_id', collection.id %>
   <div style='text-align: right' >
-    <button type="button" id='btn-generate-report'> <%= t('views.report_query_templates.generate_report') %> </button>
+    <%= select_tag 'orientation', options_for_select(ReportQueryTemplate::ORIENTATION.map { |o| [o[:label], o[:value]] }),
+     prompt: t('views.report_query_templates.download_pdf'), id: 'generate_multiple_report_with_orientation' %>
   </div>
 <% end %>

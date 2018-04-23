@@ -4,7 +4,7 @@ en:
       reminders:
         cant_save: "Can't save: "
         name_is_missing: "Reminder's name is missing"
-        sites_is_missing: "Sites is missing"
+        sites_is_missing: "Data is missing"
         date_is_missing: "Reminder's date is missing"
         message_is_missing: "Reminder's message is missing"
         repeats:
@@ -23,11 +23,11 @@ en:
         add_reminder: "Add Reminder"
         form:
           name: "Name"
-          sites: "Sites"
-          site_owner_will_receive_this_reminder: "site's owner will receive this reminder"
+          sites: "Data"
+          site_owner_will_receive_this_reminder: "data's owner will receive this reminder"
           for: "for"
-          all_sites: "All sites"
-          some_sites: "Some sites"
+          all_sites: "All data"
+          some_sites: "Some data"
           date: "Date"
           repeat: "repeat"
           message: "Message"

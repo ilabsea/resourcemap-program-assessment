@@ -4,9 +4,9 @@ kh:
       unexpected_error: "កំហុសដែលមិននឹកស្មានដល់"
       viewing_collection: "កំពង់បង្ហាញ %{mapSitesCount} %{sitesText} នៅក្នុង %{sitesCount}"
       viewing: "កំពង់បង្ហាញ %{mapSitesCount} %{sitesText}"
-      site: "តំបន់"
-      sites: "តំបន់"
-      show_sites: "បង្ហាញតំបន់ %{description}"
+      site: "ទិន្នន័យ"
+      sites: "ទិន្នន័យ"
+      show_sites: "បង្ហាញទិន្នន័យ %{description}"
       where_field: "ដែល %{field} "
       where_field_is: "ដែល %{field} គឺ \"%{value}\""
       where_field_starts_with: "ដែល %{field} ចាប់ផ្តើមជាមួយ \"%{value}\""
@@ -31,9 +31,9 @@ kh:
         'no': "គ្មាន"
         none: "គ្មាន"
       members:
-        custom_permissions_for_sites: "សិទ្ធិផ្ទាល់ខ្លួនសម្រាប់តំបន់"
-        custom_permissions_1_site: "សិទ្ធិផ្ទាល់ខ្លួនសម្រាប់ 1 តំបន់"
-        custom_permissions_n_sites: "សិទ្ធិផ្ទាល់ខ្លួនសម្រាប់ %{n} តំបន់"
+        custom_permissions_for_sites: "សិទ្ធិផ្ទាល់ខ្លួនសម្រាប់ទិន្នន័យ"
+        custom_permissions_1_site: "សិទ្ធិផ្ទាល់ខ្លួនសម្រាប់ 1 ទិន្នន័យ"
+        custom_permissions_n_sites: "សិទ្ធិផ្ទាល់ខ្លួនសម្រាប់ %{n} ទិន្នន័យ"
         text_me_you_will_receive_an_sms_pin_code_for_verification: "ចុច 'ផ្ញេីសារអោយខ្ញំុ!'. អ្នកនឹងទទួលបានកូដ PIN code ក្នុង SMS សម្រាប់ផ្ទៀងផ្ទាត់។"
         permissions:
           all: "ទាំងអស់"
@@ -46,7 +46,7 @@ kh:
       index:
         name: "ឈ្មោះ"
         waste_site: "ទីតាំងគំនរសំរាម"
-      validator: 
+      validator:
         this_field_is_required: "ចន្លោះ​នេះ​ត្រូវតែ​បំពេញ ! "
         invalid_field_format: 'ទំរង់សំណួរមិនត្រឹមត្រូវ'
         invalid_value_value_must_be_equal_to_field: 'តម្លៃមិនត្រឹមត្រូវ, តម្លៃត្រូវតែស្មើនឹងសំណួរ '
@@ -57,4 +57,3 @@ kh:
         value_must_be_less_than_or_equal_to: 'តម្លៃមិនត្រឹមត្រូវ តម្លៃត្រូវតែតិចជាងឬស្មើ '
         value_must_be_greater_than_or_equal_to: 'តម្លៃមិនត្រឹមត្រូវ តម្លៃត្រូវតែធំជាងឬស្មើ'
         value_must_be_in_the_range_of: 'តម្លៃមិនត្រឹមត្រូវ, តម្លៃត្រូវតែនៅក្នុងចន្លោះ ( %{min} - %{max} )'
-

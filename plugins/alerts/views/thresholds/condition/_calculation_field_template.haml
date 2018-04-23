@@ -1,0 +1,11 @@
+%script{type: "text/html", id: "calculation-field-template"}
+  %select{ ko(options: 'field().operators', optionsText: "'label'", optionsValue: "'code'", value: :selectedOperator) }
+  %select{ ko(options: 'ValueType.ALL()', optionsText: "'label'", optionsValue: "'label'", value: :selectedValueType) }
+  %label{ ko(css: { error: '!valid()' }) }
+  %span.w06
+    = ko_html_field_tag :value, css: { error: '!valid()' }
+
+  /  ko if: valueType().label == window.t('javascripts.plugins.alerts.value_types.a_percentage_of')
+  %span=t('views.plugins.alerts.form.compared_to')
+  %select{ ko(options: '$root.compareFields', optionsText: "'name'", value: :compareField, hasfocus: true) }
+  /  /ko

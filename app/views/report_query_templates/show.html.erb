@@ -17,7 +17,8 @@
     <input type="hidden" name="text" value="" id='create-pdf-text' />
     <br/>
     <div style='text-align: right' >
-      <button type="button" id='btn-create-pdf'> <%= t('views.report_query_templates.download_pdf') %> </button>
+      <%= select_tag 'orientation', options_for_select(ReportQueryTemplate::ORIENTATION.map { |o| [o[:label], o[:value]] }),
+       prompt: t('views.report_query_templates.download_pdf'), id: 'generate_report_with_orientation' %>
     </div>
   <% end %>
 </div>
@@ -29,14 +30,16 @@
     var style = '<style> thead { display: table-row-group; } tfoot { display: table-row-group } tr { page-break-inside: avoid }</style>';
     var heading = fonts + encoding + style ;
 
-    $("#btn-create-pdf").on('click', function(){
-      var text = $(tinyMCE.activeEditor.iframeElement).contents().find('html')[0].outerHTML;
-      var offset = text.indexOf("<head>") + "<head>".length;
-      var html = text.substr(0, offset) + heading + text.substr(offset);
+    $("#generate_report_with_orientation").on('change', function(){
+      if(this.value){
+        var text = $(tinyMCE.activeEditor.iframeElement).contents().find('html')[0].outerHTML;
+        var offset = text.indexOf("<head>") + "<head>".length;
+        var html = text.substr(0, offset) + heading + text.substr(offset);
 
-      $("#create-pdf-text").val(html);
+        $("#create-pdf-text").val(html);
 
-      $("#form-create-pdf").submit();
+        $("#form-create-pdf").submit();
+      }
     });
 
     $('ul.tabs li:nth-last-child(1)').addClass('active');

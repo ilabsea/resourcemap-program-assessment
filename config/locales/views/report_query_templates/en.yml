@@ -9,9 +9,12 @@ en:
       action: "Action"
       generate_report: "Generate report"
       preview_report: "Preview report"
-      download_pdf: "Download pdf"
+      download_pdf: "Select PDF orientation to download"
       report_template_has_been_created_successfully: 'Report Template has been created successfully'
       failed_to_create_report_template: 'Failed to create Report Template'
+      total: "Total"
+      portrait: 'Portrait'
+      landscape: 'Landscape'
       form:
         save: "Save"
         cancel: "Cancel"
@@ -23,5 +26,3 @@ en:
       errors:
         name_cant_be_blank: "Name can't be blank"
         report_query_cant_be_blank: "Report query can't be blank"
-       
-

@@ -8,6 +8,7 @@
 = render 'thresholds/condition/date_field_template'
 = render 'thresholds/condition/email_field_template'
 = render 'thresholds/condition/phone_field_template'
+= render 'thresholds/condition/calculation_field_template'
 
 = render '/tabs'
 
@@ -179,7 +180,7 @@
               [
               %span{ko(click: 'addSiteNameToMessageNotification')} Site Name
               ]
-              <!-- ko foreach: $root.fields -->
+              <!-- ko foreach: $root.fieldListForMessageTemplate -->
               [
               %span{ ko(text: :code, click: '$parent.addFieldNameToMessageNotification') }
               ]

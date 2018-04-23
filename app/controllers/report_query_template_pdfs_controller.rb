@@ -2,7 +2,7 @@ class ReportQueryTemplatePdfsController < ApplicationController
   def create
     report_query_template = ReportQueryTemplate.find_by_uuid(params[:id])
     if(params[:text].present?)
-      report_query_template.generate_pdf_from_text(params[:text])
+      report_query_template.generate_pdf_from_text(params[:text], params[:orientation])
       download_pdf
     else
       report_query_template.generate_pdf
