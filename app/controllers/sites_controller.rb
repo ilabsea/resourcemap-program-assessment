@@ -140,7 +140,7 @@ class SitesController < ApplicationController
 
     search.where params.except(:action, :controller, :format, :n, :s, :e, :w, :z, :collection_ids, :exclude_id, :search, :hierarchy_code, :selected_hierarchies, :_alert, :formula)
 
-    render_json search.sites_json, :root => false
+    render_json search.results, :root => false
   end
 
   # TODO remove this unuse function
