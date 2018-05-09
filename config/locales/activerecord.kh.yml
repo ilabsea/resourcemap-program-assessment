@@ -13,9 +13,13 @@ kh:
           attributes:
             email:
               taken: "អ៊ីម៉ែលត្រូវបានយករួចហើយ"
+              blank: "មិនអាចទទេ"
             password:
               confirmation: "ពាក្យសម្ងាត់មិនផ្គូផ្គងនឹងការបញ្ជាក់"
-              blank: "ពាក្យសម្ងាត់មិនអាចទទេ"
+              blank: "មិនអាចទទេ"
+              too_weak: "ខ្សោយខ្លាំង"
+            current_password:
+              blank: "មិនអាចទទេ"
         snapshot:
           attributes:
             name:
