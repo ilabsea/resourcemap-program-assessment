@@ -1,11 +1,11 @@
 development:
-  private_key: 6LcN3vISAAAAAJzuC3pxBIOpzNEqPaoaYqoSR2Yw
-  public_key: 6LcN3vISAAAAAHKgoSGmIX50Ws53T4h30ha1tyES 
+  secret_key: RECAPTCHA_SECRET_KEY
+  site_key: RECAPTCHA_SITE__KEY
 
 test:
-  private_key: 6LcnvvISAAAAALQsMdvjODS8VlqJRUAmHwelOrG-
-  public_key: 6LcnvvISAAAAAA994GoKxT6XUfpmE_k98Cvef26D
+  secret_key: RECAPTCHA_SECRET_KEY
+  site_key: RECAPTCHA_SITE__KEY
 
 production:
-  private_key: 6Ld-of4SAAAAANsuZf6azOc6KCpwgIc1APxCtqyS
-  public_key: 6Ld-of4SAAAAABHPc8zaPp9bJBI3lmMq-tTDZFFI
+  secret_key: RECAPTCHA_SECRET_KEY
+  site_key: RECAPTCHA_SITE__KEY

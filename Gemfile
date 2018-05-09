@@ -29,7 +29,7 @@ gem 'georuby'
 gem 'dbf', :require => 'dbf'
 gem 'rubyzip', :require => 'zip/zip'
 gem "password_strength"
-gem "ruby-recaptcha"
+gem "recaptcha", '4.6.6.ruby187', require: "recaptcha/rails"
 gem 'i18n-coffee'
 gem 'tinymce-rails'
 gem 'tinymce-rails-imageupload', github: 'PerfectlyNormal/tinymce-rails-imageupload'
