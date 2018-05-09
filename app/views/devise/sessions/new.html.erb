@@ -22,22 +22,8 @@
     </div>
   <% end -%>
 
-  <% if @captcha -%>
-    <input type="hidden" id="public_key" value="<%= RecaptchaSetting.public_key %>" />
-    <div style="padding-left:10px;padding-top:10px;padding-bottom:10px; border-radius:4px; background: none repeat scroll 0 0 #D0D0D0;">
-      <div id="recaptcha_main_widget" style="display:block; width:260px;">
-        <div id="recaptcha_image" style='margin:0px;padding:0px;'></div>
-        <div class="recaptcha_only_if_incorrect_sol" style="color:red"></div>
-        <span class="recaptcha_only_if_image" style='width:200px;'></span>
-        <input id="recaptcha_response_field" placeholder="Enter your captcha here" class="button" name="recaptcha_response_field" type="text" style="width: 274px;" />
-        <div>
-          <button type="button" onclick="javascript:Recaptcha.reload()" /> <%= t('views.devise.sessions.refresh') %> </button>
-        </div>
-      </div>
-    </div>
-    <script>
-      Recaptcha.create($("#public_key").val(),"recaptcha_widget",{theme: "custom"})
-    </script>
+  <% if @reached_max_failed_attemp -%>
+    <%= recaptcha_tags %>
   <% end -%>
 
   <div class="actions">

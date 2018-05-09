@@ -17,9 +17,13 @@ en:
         send_me_reset_password_instruction: "Send me reset password instructions"
         sign_up: "Sign up"
         refresh: "Refresh"
+        verify_recaptcha: "Please verify reCAPTCHA"
         enter_your_captcha_here: "Enter your captcha here"
         edit_account: "Edit account"
         current_password: "Current password"
         time_zone: "Time zone"
         current_password_info: "we need your current password to confirm your changes"
         update: "update"
+      registrations:
+        verify_recaptcha: "Please verify reCAPTCHA"
+        account_updated_successfully: "Account updated successfully"

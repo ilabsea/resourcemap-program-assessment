@@ -19,4 +19,3 @@ en:
         expected_a_number_or_parentheses: "expected a number, or parentheses"
         expected_number_before_or_after: "expected number before or after %{beforeOrAfter}"
         has_unexpected: "has unexpected %{peek}"
-      

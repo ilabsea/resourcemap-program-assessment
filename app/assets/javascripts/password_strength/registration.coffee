@@ -25,7 +25,7 @@ $(document).on "blur", "#user_password_confirmation", ->
 	password_confirmation = $('#user_password_confirmation').val()
 
 	if password != password_confirmation
-		$('#confirmMessage').html('Password does not match confirmation')
+		$('#confirmMessage').html(window.t('javascripts.users.errors.password_does_not_match'))
 	else
 		$('#confirmMessage').html('')
 

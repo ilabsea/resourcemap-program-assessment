@@ -1,0 +1,5 @@
+en:
+  javascripts:
+    users:
+      errors: 
+        password_does_not_match: "Password does not match confirmation"
