@@ -26,6 +26,8 @@ onCollections ->
       @sitesPermission = collection.sitesPermission
       @thresholds = collection.thresholds
       @showLegend = collection.showLegend
+      @isVisibleName = collection.isVisibleName
+      @isVisibleLocation = collection.isVisibleLocation
       @checked = collection.checked
       @showingCollectionAlert = collection.showingCollectionAlert
       @fieldsForTableView = collection.fieldsForTableView

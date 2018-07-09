@@ -21,17 +21,23 @@ onCollections ->
       @id = data?.id
       @name = data?.name
       @icon = data?.icon
+      @isVisibleName = data?.is_visible_name
+      @isVisibleLocation = data?.is_visible_location
       @isPublishedTemplate = data?.is_published_template
       @currentSnapshot = if data?.snapshot_name then data?.snapshot_name else ''
       @updatedAt = ko.observable(data?.updated_at)
       @showLegend = ko.observable(false)
       @showingCollectionAlert = ko.observable(false)
+      @showingCollectionAlert = ko.observable(false)
       @updatedAtTimeago = ko.computed => if @updatedAt() then $.timeago(@updatedAt()) else ''
       @loadCurrentSnapshotMessage()
       @loadAllSites()
+      @loading = ko.observable(false)
 
     loadSites: =>
+      @loading(true)
       $.get @sitesUrl(), (data) =>
+        @loading(false)
         for site in data
           @addSite @createSite(site)
 
@@ -115,6 +121,8 @@ onCollections ->
         oldPhrase = phrase
         i++
       out.join ''
+
+    findFieldByCode: (code) => (field for field in @fields() when field.code == code)[0]
 
     findFieldByEsCode: (esCode) => (field for field in @fields() when field.esCode == esCode)[0]
 

@@ -9,13 +9,14 @@
       @description = ko.observable data?.description
       @createdAt = ko.observable data?.created_at
       @expanded = ko.observable false
-      @canBeExpanded = ko.computed => @description().length > DESCRIPTION_LENGTH
+      @log = ko.observable(data?.log)
+      @canBeExpanded = ko.computed => @log().length > DESCRIPTION_LENGTH
 
-      @displayedDescription = ko.computed =>
+      @displayedLog = ko.computed =>
         if !@canBeExpanded() || @expanded()
-          @description()
+          @log()
         else
-          "#{@description().substring(0, DESCRIPTION_LENGTH)}..."
+          "#{@log().substring(0, DESCRIPTION_LENGTH)}..."
 
     expand: => @expanded(true)
 
@@ -35,6 +36,8 @@
       @selectedKinds.subscribe => @refreshActivities()
 
     pushActivities: (activities) =>
+      if activities.length == 0
+        return @activities([])
       if activities.length == 25
         activities = activities.slice(0, activities.length - 1)
       else
@@ -73,6 +76,11 @@
     checkAllCollectionIds: =>
       ids = $.map($('.collection_id'), (x) -> x.value)
       @selectedCollectionIds(ids) if @selectedCollectionIds().length != @collectionsCount
+      if ($("#check_all_collections")[0].checked)
+        @selectedCollectionIds(ids) if @selectedCollectionIds().length != @collectionsCount
+      else
+        @selectedCollectionIds([])
+        $("#check_all_collections")[0].checked = true
 
     uncheckAllCollectionIds: =>
       @selectedCollectionIds([]) if @selectedCollectionIds().length != 0
@@ -80,6 +88,11 @@
     checkAllKinds: =>
       kinds = <%= Activity::Kinds.to_json %>
       @selectedKinds(kinds) if @selectedKinds().length != @kindsCount
+      if ($("#check_all_events")[0].checked)
+        @selectedKinds(kinds) if @selectedKinds().length != @kindsCount
+      else
+        @selectedKinds([]) if @selectedKinds().length != 0
+      $("#check_all_events")[0].checked = true
 
     uncheckAllKinds: =>
       @selectedKinds([]) if @selectedKinds().length != 0
