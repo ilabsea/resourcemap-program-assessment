@@ -61,7 +61,7 @@ gem 'activerecord-deprecated_finders'
 
 group :test do
   gem 'shoulda-matchers'
-  gem 'ci_reporter'
+  gem 'ci_reporter', :git => 'git://github.com/nicksieger/ci_reporter.git'
   gem 'selenium-webdriver'
   gem 'nokogiri'
   gem 'capybara'
@@ -81,7 +81,7 @@ group :test, :development do
   # gem 'guard-jasmine'
   # gem 'pry'
   # gem 'pry-byebug'
-  # gem 'byebug'
+  gem 'byebug'
   # gem 'pry-debugger', '~>0.2.2'
 end
 

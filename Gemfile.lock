@@ -7,6 +7,13 @@ GIT
       tinymce-rails (~> 4.0)
 
 GIT
+  remote: git://github.com/nicksieger/ci_reporter.git
+  revision: 7f759602d491c60381d5fd459e8efac58e56b8df
+  specs:
+    ci_reporter (2.0.0)
+      builder (>= 2.1.2)
+
+GIT
   remote: https://github.com/instedd/poirot_rails.git
   revision: c3e8ceeacd07a226b941a8cabb2dd762fa73846f
   branch: master
@@ -664,6 +671,7 @@ GEM
       bert (>= 1.1.0, < 2.0.0)
     breadcrumbs_on_rails (3.0.1)
     builder (3.2.3)
+    byebug (10.0.2)
     cancancan (1.17.0)
     capybara (2.18.0)
       addressable
@@ -681,8 +689,6 @@ GEM
     childprocess (0.9.0)
       ffi (~> 1.0, >= 1.0.11)
     chronic (0.10.2)
-    ci_reporter (2.0.0)
-      builder (>= 2.1.2)
     coffee-rails (4.0.1)
       coffee-script (>= 2.2.0)
       railties (>= 4.0.0, < 5.0)
@@ -981,10 +987,11 @@ DEPENDENCIES
   activerecord-import
   aws-sdk
   breadcrumbs_on_rails
+  byebug
   cancancan (~> 1.9)
   capybara
   carrierwave
-  ci_reporter
+  ci_reporter!
   coffee-rails (~> 4.0.1)
   dalli
   database_cleaner
