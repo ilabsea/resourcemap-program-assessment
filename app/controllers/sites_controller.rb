@@ -39,7 +39,7 @@ class SitesController < ApplicationController
     search.offset params[:offset]
     search.limit params[:limit]
 
-    render json: search.ui_results.map { |x| x['_source'] }
+    render json: search.ui_results.map { |x| x['_source'] }, :root => false
   end
 
   def share
@@ -57,7 +57,7 @@ class SitesController < ApplicationController
     # If site does not exists, return empty objects
     result = search.ui_results.first['_source'] rescue {}
     # result = search.ui_results.first['_source']
-    render json: result
+    render json: result, :root => false
   end
 
   def create
@@ -211,7 +211,7 @@ class SitesController < ApplicationController
     site.user = current_user
     Site::UploadUtils.purgeUploadedPhotos(site)
     site.destroy
-    render json: site
+    render json: site, :root => false
   end
 
   def visible_layers_for
@@ -260,7 +260,7 @@ class SitesController < ApplicationController
     else
       layers = site.collection.visible_layers_for(current_user)
     end
-    render json: layers
+    render json: layers, :root => false
   end
 
   def view_photo
