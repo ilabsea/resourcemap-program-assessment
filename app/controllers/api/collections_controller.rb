@@ -13,7 +13,7 @@ class Api::CollectionsController < ApplicationController
   end
 
   def index
-    render json: current_user.collections.all
+    render json: current_user.collections.all, :root => false
   end
 
   def show

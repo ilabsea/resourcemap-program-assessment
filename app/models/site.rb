@@ -156,14 +156,17 @@ class Site < ActiveRecord::Base
     user_membership = user.membership_in(collection)
 
     if site_params.has_key?("name")
+      user.authorize! :update_name, user_membership, message: "Not authorized to update site name"
       self.name = site_params["name"]
     end
 
     if site_params.has_key?("lng")
+      user.authorize! :update_location, user_membership, message: "Not authorized to update site location"
       self.lng = site_params["lng"]
     end
 
     if site_params.has_key?("lat")
+      user.authorize! :update_location, user_membership, message: "Not authorized to update site location"
       self.lat = site_params["lat"]
     end
 

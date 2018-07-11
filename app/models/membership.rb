@@ -28,6 +28,19 @@ class Membership < ActiveRecord::Base
   validates :user_id, :uniqueness => { scope: :collection_id, message: "membership already exists" }
 
   #TODO: refactor Name, Location, Site, and Layer permission into membership subclases
+  def can_read?(object)
+    if admin
+      true
+    elsif object == "name"
+      name_permission.can_read?
+    elsif object == "location"
+      location_permission.can_read?
+    else
+      raise "Undefined element #{object} for membership."
+    end
+  end
+
+  #TODO: refactor Name, Location, Site, and Layer permission into membership subclases
   def can_update?(object)
     if admin
       true
