@@ -36,8 +36,8 @@ class Collection < ActiveRecord::Base
   has_many :layer_memberships, dependent: :destroy
   has_many :users, through: :memberships
   has_many :sites, dependent: :delete_all
-  has_many :layers, order: 'ord', dependent: :destroy
-  has_many :fields, :through => :layers, :order => 'layers.ord, fields.ord'
+  has_many :layers, -> { order('ord')}, dependent: :destroy
+  has_many :fields, -> { order('ord')}
   has_many :thresholds, dependent: :destroy
   has_many :reminders, dependent: :destroy
   has_many :share_channels, dependent: :destroy
@@ -172,7 +172,7 @@ class Collection < ActiveRecord::Base
       target_fields = target_fields.select { |f| lms[f.layer_id] && lms[f.layer_id].read }
 
     end
-    target_fields.sort! { |x, y| x[:ord] <=> y[:ord] }
+    target_fields = target_fields.sort { |x, y| x[:ord] <=> y[:ord] }
   end
 
   def visible_layers_for(user, options = {}, language = nil)
@@ -286,7 +286,7 @@ class Collection < ActiveRecord::Base
   end
 
   def register_gateways_under_user_owner(owner_user)
-    self.channels = owner_user.channels.find_all_by_is_enable true
+    self.channels = owner_user.channels.where(is_enable: true)
   end
 
   # Returns a dictionary of :code => :es_code of all the fields in the collection

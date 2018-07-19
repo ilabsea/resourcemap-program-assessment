@@ -64,4 +64,8 @@ class RemindersController < ApplicationController
     end
     arr
   end
+
+  def reminder_params
+    params.require(:reminder).permit(:name, :reminder_message, :reminder_date, :repeat_id, :collection_id, :time_zone, :is_all_site)
+  end
 end

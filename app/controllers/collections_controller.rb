@@ -93,6 +93,7 @@ class CollectionsController < ApplicationController
   end
 
   def create
+    debugger
     if current_user.create_collection collection
       current_user.collection_count += 1
       current_user.update_successful_outcome_status
@@ -407,4 +408,5 @@ class CollectionsController < ApplicationController
     new_collection = collection.copy(current_user.id, params["new_collection_name"])
     render json: new_collection
   end
+
 end

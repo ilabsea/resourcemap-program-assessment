@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '4.1.6'
+gem 'rails', '4.1.11'
 gem "elasticsearch"
 gem "elasticsearch-ruby"
 gem 'tinymce-rails'
@@ -8,8 +8,8 @@ gem 'tinymce-rails-imageupload', github: 'PerfectlyNormal/tinymce-rails-imageupl
 gem 'rails_serve_static_assets'
 gem 'wkhtmltopdf-binary-edge', '~> 0.12.2.1'
 gem 'dalli'
-
-gem 'mysql2'
+gem 'ffi-rzmq'
+gem 'mysql2', '0.3.21'
 gem 'devise'
 gem "valium"
 gem 'rmagick', '2.13.2', :require => false
@@ -20,7 +20,7 @@ gem 'dbf', :require => 'dbf'
 gem 'zip-zip'
 gem 'rubyzip', :require => 'zip/zip'
 gem "password_strength"
-gem "ruby-recaptcha"
+gem "recaptcha", '4.7.0', require: "recaptcha/rails"
 gem 'i18n-coffee'
 gem 'rack-offline'
 gem 'haml-rails', '~> 0.4'

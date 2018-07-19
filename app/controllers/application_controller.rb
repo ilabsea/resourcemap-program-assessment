@@ -212,4 +212,8 @@ class ApplicationController < ActionController::Base
     params[:layer].delete(:public) if params[:layer] && params[:layer][:public]
   end
 
+  def collection_params
+    params.require(:collection).permit!
+  end
+
 end

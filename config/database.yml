@@ -1,7 +1,7 @@
 development:
   adapter: mysql2
   encoding: utf8
-  database: resourcemap_wfp_development
+  database: resourcemap_development
   pool: 5
   username: root
   password: 
@@ -9,7 +9,7 @@ development:
 test:
   adapter: mysql2
   encoding: utf8
-  database: resourcemap_wfp_test
+  database: resourcemap_test
   pool: 5
   username: root
   password: 
@@ -18,7 +18,7 @@ production:
   adapter: mysql2
   encoding: utf8
   reconnect: false
-  database: resourcemap_wfp
+  database: resourcemap
   pool: 5
   username: root
   password: 

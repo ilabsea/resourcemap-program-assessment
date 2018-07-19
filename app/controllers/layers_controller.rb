@@ -73,7 +73,7 @@ class LayersController < ApplicationController
   end
 
   def create
-    layer = layers.new params[:layer]
+    layer = layers.new layer_params
     layer.collection_id = params[:collection_id]
     layer.user = current_user
     layer.save!

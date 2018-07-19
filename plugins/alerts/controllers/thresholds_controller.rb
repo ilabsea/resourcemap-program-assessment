@@ -74,6 +74,10 @@ class ThresholdsController < ApplicationController
 
   private
 
+  def threshold_params
+    params.require(:threshold).permit(:name, :color, :is_all_site, :is_all_condition, :is_notify, :ord , :message_notification, :email_notification => {:members=>[]} , :phone_notification =>{:members=>[]}, :conditions => [:field, :op, :value, :type, :kind])
+  end
+
   def fix_conditions
     params[:threshold][:conditions] = params[:threshold][:conditions].values
   end
