@@ -77,6 +77,7 @@ class Field < ActiveRecord::Base
 
   class << self
     def new_with_cast(*field_data, &b)
+      debugger
       hash = field_data.first
       kind = (field_data.first.is_a? Hash)? hash[:kind] || hash['kind'] || sti_name : sti_name
       klass = find_sti_class(kind)

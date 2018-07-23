@@ -830,7 +830,7 @@ GEM
     password_strength (1.1.4)
       activemodel
     polyglot (0.3.5)
-    protected_attributes (1.1.4)
+    protected_attributes (1.1.0)
       activemodel (>= 4.0.1, < 5.0)
     public_suffix (3.0.2)
     rack (1.5.5)
@@ -1040,7 +1040,7 @@ DEPENDENCIES
   poirot_rails!
   protected_attributes
   rack-offline
-  rails (= 4.1.11)
+  rails (~> 4.1.6)
   rails-observers
   rails_serve_static_assets
   recaptcha (= 4.7.0)

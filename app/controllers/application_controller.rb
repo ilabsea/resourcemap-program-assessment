@@ -33,8 +33,6 @@ class ApplicationController < ActionController::Base
   end
   expose(:new_search) { collection.new_search new_search_options }
 
-  USER, PASSWORD = 'iLab', '1c4989610bce6c4879c01bb65a45ad43'
-
   rescue_from ActiveRecord::RecordNotFound do |x|
     render :file => '/error/doesnt_exist_or_unauthorized', :status => 404, :layout => true
   end
@@ -66,8 +64,6 @@ class ApplicationController < ActionController::Base
       session[:previous_url] = request.fullpath
     end
   end
-
-
 
   def set_locale
     cookies.signed[:locale] = params[:locale]  || cookies.signed[:locale] || I18n.default_locale
@@ -152,6 +148,13 @@ class ApplicationController < ActionController::Base
   #   head :unauthorized
   # end
 
+  def authenticate_api_admin_user!
+    params.delete :auth_token if current_user
+    unless current_user
+      basic_authentication_admin_check
+    end
+  end
+
   def authenticate_collection_user!
     head :forbidden unless current_user.belongs_to?(collection)
   end
@@ -214,6 +217,10 @@ class ApplicationController < ActionController::Base
 
   def collection_params
     params.require(:collection).permit!
+  end
+
+  def field_params
+    params.require(:field).permit!
   end
 
 end

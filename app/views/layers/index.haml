@@ -52,6 +52,49 @@
 
     %br/
 
+    /ko if: $root.editingDefaultLayer
+    .box.grey.w60
+      .toptitle
+        %span= t('views.layers.defaults.default_layer')
+      %br/
+      %br/        
+      %label{style: 'width:150px; float:left'}= t('views.layers.defaults.name')
+      %input{ko(checked: 'isVisibleName'), type: 'checkbox', checked: 'checked'} visible
+      %br/
+      %br/
+      %label{style: 'width:150px; float:left'}= t('views.layers.defaults.location')
+      %input{ko(checked: 'isVisibleLocation'), type: 'checkbox', checked: 'checked'} visible
+      %br/
+      %br/      
+      .bottom-actions
+        %button.white{ko(click: '$root.saveDefaultLayer'), type: :button, title: 'Save layer'}= t('views.layers.save_layer')
+        %a.tgrey{ko(click: '$root.cancelDefaultLayer'), href: 'javascript:void(0)'}= t('views.layers.cancel')
+    //ko
+
+    /ko ifnot: $root.editingDefaultLayer
+    .box.grey.w60
+      .toptitle
+        %span= t('views.layers.defaults.default_layer')
+      %br/
+      %br/
+      %label{style: 'width:150px; float:left'}= t('views.layers.defaults.name')
+      / %input{ko(checked: 'isVisibleName'), type: 'checkbox', checked: 'checked'} visible
+      %label{"data-bind"=>"text: isVisibleName() ? 'visible' : 'invisible'"}
+      %br/
+      %br/
+      %label{style: 'width:150px; float:left'}= t('views.layers.defaults.location')
+      %label{"data-bind"=>"text: isVisibleLocation() ? 'visible' : 'invisible'"}
+      %br/
+      %br/
+      - if current_user_snapshot.at_present? && collection_admin?
+        /ko if: !$root.savingLayer()
+        .bottom-actions
+          %button.farrow{ko(click: '$root.editDefaultLayer'), style:'margin-bottom:0px;margin-top:0px', title: t('views.layers.edit_layer')}= t('views.layers.edit')
+          / %button.white{ko(click: '$root.saveDefaultLayer'), type: :button, title: 'Save layer'}= t('views.layers.save_layer')
+        //ko
+    //ko
+
+
     -# Layers
     /ko foreach: layers
     /ko if: $data == $root.currentLayer()

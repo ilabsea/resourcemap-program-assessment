@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '4.1.11'
+gem 'rails', '~> 4.1.6'
 gem "elasticsearch"
 gem "elasticsearch-ruby"
 gem 'tinymce-rails'

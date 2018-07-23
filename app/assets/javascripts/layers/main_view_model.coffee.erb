@@ -10,6 +10,11 @@ onLayers ->
       @bufferNewField = ko.observable()
       @currentField = ko.observable()
       @default_select = '(no value)'
+
+      @isVisibleName = ko.observable is_visible_name ? true
+      @isVisibleLocation = ko.observable is_visible_location ? true
+      @editingDefaultLayer = ko.observable(false)
+
       @newOption = ko.observable(new Option)
       @newFieldLogic = ko.observable(new FieldLogic)
       @currentFieldLogic = ko.observable()
@@ -232,6 +237,23 @@ onLayers ->
         $.post "/collections/#{@collectionId}/layers/#{@currentLayer().id()}.json", json, @saveLayerCallback
       else
         $.post "/collections/#{@collectionId}/layers.json", json, @saveLayerCallback
+
+    editDefaultLayer: =>
+      @clearUnsavedLayer()
+      @tmpVisibleName = @isVisibleName()
+      @tmpVisibleLocation = @isVisibleLocation()
+      @editingDefaultLayer(true)
+      @currentLayer(null)
+      @currentField(null)
+
+    saveDefaultLayer: =>
+      @tmpVisibleName = @isVisibleName()
+      @tmpVisibleLocation = @isVisibleLocation()
+      json = {collection: {is_visible_name: @isVisibleName(), is_visible_location: @isVisibleLocation()}}
+      json._method = 'put'
+      $.post "/collections/#{@collectionId}.json", json
+      @editingDefaultLayer(false)
+      @currentLayer(null)
 
     saveLayerCallback: (data) =>
       #if layer is new, we need to set id

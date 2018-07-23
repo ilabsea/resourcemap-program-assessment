@@ -145,10 +145,10 @@
           .middlebuttons.w30{:style => "float: left;"}
             = t('views.plugins.alerts.form.send_emails_to')
             %p.list-box
-              - collection.fields.find_all_by_kind('user').each  do |field|
+              - collection.fields.where("kind='user'").each  do |field|
                 %input{ko(checked: 'usersEmail'), value: field.es_code, type: "checkbox"}= field.name
                 %br
-              - collection.fields.find_all_by_kind('email').each do |field|
+              - collection.fields.where("kind='email'").each do |field|
                 %input{ko(checked: 'fieldsEmail'), value: field.es_code, type: "checkbox"}= field.name
                 %br
               %br
@@ -161,10 +161,10 @@
           .middlebuttons.w30{:style => "float: left;"}
             = t('views.plugins.alerts.form.send_text_messages_to')
             %p.list-box
-              - collection.fields.find_all_by_kind('user').each  do |field|
+              - collection.fields.where("kind='user'").each  do |field|
                 %input{ko(checked: 'usersPhone'), value: field.es_code, type: "checkbox"}= field.name
                 %br
-              - collection.fields.find_all_by_kind('phone').each do |field|
+              - collection.fields.where("kind='phone'").each do |field|
                 %input{ko(checked: 'fieldsPhone'), value: field.es_code, type: "checkbox"}= field.name
                 %br
               %br

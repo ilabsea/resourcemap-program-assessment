@@ -11,5 +11,4 @@ class ChannelsController < ApplicationController
       format.json { render json: collection.channels.all.as_json, :root => false }
     end
   end
-
-  end
+end

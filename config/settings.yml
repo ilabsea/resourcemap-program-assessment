@@ -9,7 +9,6 @@ mandrill_password: "YkXyniE49DI4vmmB1FbdNg"
 max_aggregate_result_size: 500
 notify_alert: on
 app_name: 'resourcemap-program-assessment'
-
 plugins:
   public_collection: on
   snapshot: on
@@ -18,3 +17,5 @@ plugins:
   alerts: on
   account_completeness: on
   fred_api: on
+  report_query: off
+  report_template: off

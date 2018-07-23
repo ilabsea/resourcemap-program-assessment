@@ -93,7 +93,6 @@ class CollectionsController < ApplicationController
   end
 
   def create
-    debugger
     if current_user.create_collection collection
       current_user.collection_count += 1
       current_user.update_successful_outcome_status
@@ -105,7 +104,11 @@ class CollectionsController < ApplicationController
   end
 
   def update
-    if collection.update_attributes params[:collection]
+    if params[:collection][:hierarchy_mode] == "0"
+      params[:collection][:field_identify] = ""
+      params[:collection][:field_parent] = ""
+    end
+    if collection.update_attributes collection_params
       collection.recreate_index
       tab_url = params[:tab] == "print" ? print_template_collection_path(collection) : collection_settings_path(collection)
       redirect_to tab_url, notice: I18n.t('views.collections.form.collection_updated', name: collection.name)

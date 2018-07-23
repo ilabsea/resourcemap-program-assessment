@@ -19,5 +19,7 @@
       = tab t('views.collections.tab.quotas'), collection_quotas_path(collection)
     = tab t('views.collections.tab.can_queries'), collection_queries_path(collection)
     = tab t('views.collections.tab.print_template'), print_template_collection_path(collection)
-    = tab t('views.collections.tab.report_queries'), collection_report_queries_path(collection)
-    = tab t('views.collections.tab.report_template'), collection_report_query_templates_path(collection)
+    - if Settings.is_on? :report_query
+      = tab t('views.collections.tab.report_queries'), collection_report_queries_path(collection)
+    - if Settings.is_on? :report_template
+      = tab t('views.collections.tab.report_template'), collection_report_query_templates_path(collection)

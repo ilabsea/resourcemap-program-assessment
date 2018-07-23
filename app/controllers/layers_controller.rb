@@ -25,7 +25,7 @@ class LayersController < ApplicationController
       end
       if current_user_snapshot.at_present?
         json = layers.includes(:fields).all.as_json(:include => {:fields => {except: [:updated_at, :created_at]}}).each { |layer|
-          layer[:fields].each { |field|
+          layer["fields"].each { |field|
             field['threshold_ids'] = get_associated_field_threshold_ids(field)
             field['query_ids'] = get_associated_field_query_ids(field)
             field['report_query_ids'] = get_associated_field_report_query_ids(field)
@@ -48,7 +48,7 @@ class LayersController < ApplicationController
   def show
     layers = Layer.where("id=?",params["id"])
     json = layers.includes(:fields).all.as_json(:include => {:fields => {except: [:updated_at, :created_at]}}).each { |layer|
-      layer[:fields].each { |field|
+      layer["fields"].each { |field|
         field['threshold_ids'] = get_associated_field_threshold_ids(field)
         field['query_ids'] = get_associated_field_query_ids(field)
         field['report_query_ids'] = get_associated_field_report_query_ids(field)
@@ -272,9 +272,9 @@ class LayersController < ApplicationController
 
   def apply_limit_field(layers, limit)
     json = layers.includes(:fields).all.as_json(:include => {:fields => {except: [:updated_at, :created_at]}}).each { |layer|
-      total_field = layer[:fields].length
-      all_fields = layer[:fields]
-      layer[:fields] = layer[:fields]
+      total_field = layer["fields"].length
+      all_fields = layer["fields"]
+      layer["fields"] = layer["fields"]
       layer['total'] = total_field
       all_fields.each { |field|
         field['threshold_ids'] = get_associated_field_threshold_ids(field)
@@ -294,6 +294,7 @@ class LayersController < ApplicationController
   end
 
   def layer_params
-    params.require(:layer).permit(:name, :ord, :fields_attributes => {})
+    # params.require(:layer).permit(:name, :ord, :fields_attributes => { :name => "text", :code => "text", :kind => "text", :ord => "text", :is_enable_field_logic => "text", :is_enable_range => "text", :is_enable_custom_validation => "text", :is_enable_dependancy_hierarchy => "text", :custom_widgeted => "text", :config => {}})
   end
+
 end
