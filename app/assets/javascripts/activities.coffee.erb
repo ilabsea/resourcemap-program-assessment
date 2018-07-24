@@ -42,7 +42,6 @@
         activities = activities.slice(0, activities.length - 1)
       else
         @hasMore false
-
       @activities.push new Activity(activity) for activity in activities
 
     loadMore: =>
