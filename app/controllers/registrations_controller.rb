@@ -1,7 +1,13 @@
 class RegistrationsController < Devise::RegistrationsController
   include Concerns::MobileDeviceDetection
+  include RecaptchaSetting
 
-  before_filter :prepare_for_mobile
+  helper_method :get_public_key
+  helper_method :get_private_key
+
+  def new
+    super
+  end
 
   def new
     super
@@ -38,6 +44,14 @@ class RegistrationsController < Devise::RegistrationsController
     else
       render "edit"
     end
+  end
+
+  def get_public_key
+    RecaptchaSetting.public_key
+  end
+
+  def get_private_key
+    RecaptchaSetting.private_key
   end
 
 end

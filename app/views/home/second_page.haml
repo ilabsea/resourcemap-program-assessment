@@ -79,7 +79,7 @@
     %br/
     .box.plain.grey.features
       %p{:style => "margin: 0px;"}
-        = link_button_to t('views.homepage.second_page.sign_up_for_free'), new_user_registration_path, :class => "orange", :style => "font-size: 18px; height: 46px; width: 200px;margin-left:auto; margin-right: auto; display:block;"
+        = link_button_to t('views.homepage.second_page.sign_up_for_free'), guisso_sign_up_path_for(:user), :class => "orange", :style => "font-size: 18px; height: 46px; width: 200px;margin-left:auto; margin-right: auto; display:block;"
 
     %br/ 
     %br/
@@ -128,5 +128,5 @@
     %br 
   .box.plain.grey.features
     %p{:style => "margin: 0px;"}
-      = link_button_to t('views.homepage.second_page.sign_up_for_free'), new_user_registration_path, :class => "orange", :style => "font-size: 18px; height: 46px; width: 200px;margin-left: auto; margin-right: auto;  display:block;"
+      = link_button_to t('views.homepage.second_page.sign_up_for_free'), guisso_sign_up_path_for(:user), :class => "orange", :style => "font-size: 18px; height: 46px; width: 200px;margin-left: auto; margin-right: auto;  display:block;"
 

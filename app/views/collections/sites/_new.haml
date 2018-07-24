@@ -13,14 +13,21 @@
       %tbody
         %tr
           %td
-            %div
-              = label_tag :name, t('views.collections.index.name')
-              = text_field_tag :name, '', placeholder: 'Enter new data name', class: 'w20 right', 'data-bind' => kov(value: :name, valueUpdate: :afterkeydown, hasfocus: true, event: {blur: :validName}), :autofocus => true
-              .clear
-            %div
-              %label Location:
-              = ko_text_field_tag :locationText, event: {keydown: :newLocationKeyPress, blur: :moveLocation}, html: {class: 'ux-search right w20', placeholder: t('views.collections.index.search_or_drug_the_pin'), readonly: true}
-              .clear
+            /ko if: collection.isVisibleName || collection.isVisibleLocation
+            .light-box{style: 'padding-bottom:10px !important'}
+              /ko if: collection.isVisibleName
+              %div
+                = label_tag :name, t('views.collections.index.name')
+                = text_field_tag :name, '', placeholder: 'Enter new site name', class: 'w25', 'data-bind' => kov(value: :name, valueUpdate: :afterkeydown, hasfocus: true), :autofocus => true
+                
+              //ko
+              /ko if: collection.isVisibleLocation
+              %div
+                %label= t('views.collections.index.location')
+                = ko_text_field_tag :locationText, event: {keydown: :newLocationKeyPress, blur: :moveLocation}, html: {class: 'ux-search w25', placeholder: t('views.collections.index.search_or_drug_the_pin')}
+                
+              //ko
+            //ko
             %div
               %input{ko(value: :startEntryDate), type: :hidden, name: :startEntryDate}
 

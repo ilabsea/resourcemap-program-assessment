@@ -32,9 +32,12 @@ onLayers -> if $('#layers-main').length > 0
 
   createBinding = ->
     if window.collectionList && window.layerList && !window.bindingCreated
-      window.model = new MainViewModel(window.collectionId, window.layerList)
-      ko.applyBindings window.model
-      window.bindingCreated = true
+      $.get "/collections/#{collectionId}.json", {}, (collection) =>
+        isVisibleName = collection.is_visible_name
+        isVisibleLocation = collection.is_visible_location
+        window.model = new MainViewModel(window.collectionId, window.layerList, isVisibleName, isVisibleLocation)
+        ko.applyBindings window.model
+        window.bindingCreated = true
 
-      $('.hidden-until-loaded').show()
-      $('#loadProgress').hide() #hide loading
+        $('.hidden-until-loaded').show()
+        $('#loadProgress').hide() #hide loading

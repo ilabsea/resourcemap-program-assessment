@@ -34,7 +34,9 @@ class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable, :confirmable
+         :recoverable, :rememberable, :trackable, :validatable, :confirmable,
+         :omniauthable
+
   before_create :reset_authentication_token
   # before_save :ensure_authentication_token
   # Setup accessible (or protected) attributes for your model attr_accessible :email, :password, :password_confirmation, :remember_me, :phone_number
@@ -42,12 +44,16 @@ class User < ActiveRecord::Base
   has_many :channels
   has_many :collections, -> { order('collections.name ASC')}, through: :memberships
   has_one :user_snapshot
+  has_many :identities, dependent: :destroy
 
   # owner of site
   has_many :sites
   
   validates_uniqueness_of :phone_number, :allow_blank => true
   validates_strength_of :password, :with => :email, :if => lambda {|u| u.password.present?}
+
+  after_save :touch_lifespan
+  after_destroy :touch_lifespan
 
   attr_accessor :is_guest
 
@@ -191,5 +197,9 @@ class User < ActiveRecord::Base
       display_name = user.email
     end
     return display_name
+  end
+
+  def touch_lifespan
+    Telemetry::Lifespan.touch_user self
   end
 end

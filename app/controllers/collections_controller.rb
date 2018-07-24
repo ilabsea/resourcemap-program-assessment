@@ -108,7 +108,7 @@ class CollectionsController < ApplicationController
       params[:collection][:field_identify] = ""
       params[:collection][:field_parent] = ""
     end
-    if collection.update_attributes collection_params
+    if collection.update_attributes params[:collection]
       collection.recreate_index
       tab_url = params[:tab] == "print" ? print_template_collection_path(collection) : collection_settings_path(collection)
       redirect_to tab_url, notice: I18n.t('views.collections.form.collection_updated', name: collection.name)
@@ -144,6 +144,10 @@ class CollectionsController < ApplicationController
   end
 
   def settings
+    @options_for_select = [["(no value)", ""]]
+    collection.fields.each do |field|
+      @options_for_select.push([field.name, field.id])
+    end
     add_breadcrumb I18n.t('views.collections.tab.settings'), collection_settings_path(collection)
   end
 

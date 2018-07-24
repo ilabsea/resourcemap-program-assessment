@@ -23,7 +23,7 @@ class @Membership extends Expandable
     super
 
     all = (permitted) ->
-      _.all _self.layers(), (l) => permitted l
+      (_.all _self.layers(), (l) => permitted l)
 
     some = (permitted) ->
       (_.some _self.layers(), (l) => permitted l) and not all permitted

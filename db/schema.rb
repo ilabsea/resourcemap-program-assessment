@@ -19,11 +19,14 @@ ActiveRecord::Schema.define() do
     t.integer  "layer_id"
     t.integer  "field_id"
     t.integer  "site_id"
-    t.binary   "data",          limit: 2147483647
+    t.binary   "data",            limit: 2147483647
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "item_type"
     t.string   "action"
+    t.text     "log"
+    t.string   "user_email"
+    t.string   "collection_name"
   end
 
   create_table "canned_queries", force: true do |t|
@@ -69,6 +72,7 @@ ActiveRecord::Schema.define() do
     t.text     "print_template"
     t.boolean  "is_published_template",                          default: true
     t.integer  "sites_count"
+    t.boolean  "is_visible_name",                                default: true
   end
 
   create_table "field_histories", force: true do |t|
@@ -121,6 +125,14 @@ ActiveRecord::Schema.define() do
     t.boolean  "is_enable_dependancy_hierarchy",                    default: false
   end
 
+  create_table "identities", force: true do |t|
+    t.integer  "user_id"
+    t.string   "provider"
+    t.string   "token"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "import_jobs", force: true do |t|
     t.string   "status"
     t.string   "original_filename"
@@ -132,6 +144,53 @@ ActiveRecord::Schema.define() do
     t.text     "exception"
     t.text     "kinds"
   end
+
+  create_table "instedd_telemetry_counters", force: true do |t|
+    t.integer "period_id"
+    t.string  "bucket"
+    t.text    "key_attributes"
+    t.integer "count",               default: 0
+    t.string  "key_attributes_hash"
+  end
+
+  add_index "instedd_telemetry_counters", ["bucket", "key_attributes_hash", "period_id"], name: "instedd_telemetry_counters_unique_fields", unique: true, using: :btree
+
+  create_table "instedd_telemetry_periods", force: true do |t|
+    t.datetime "beginning"
+    t.datetime "end"
+    t.datetime "stats_sent_at"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.string   "lock_owner"
+    t.datetime "lock_expiration"
+  end
+
+  create_table "instedd_telemetry_set_occurrences", force: true do |t|
+    t.integer "period_id"
+    t.string  "bucket"
+    t.text    "key_attributes"
+    t.string  "element"
+    t.string  "key_attributes_hash"
+  end
+
+  add_index "instedd_telemetry_set_occurrences", ["bucket", "key_attributes_hash", "element", "period_id"], name: "instedd_telemetry_set_occurrences_unique_fields", unique: true, using: :btree
+
+  create_table "instedd_telemetry_settings", force: true do |t|
+    t.string "key"
+    t.string "value"
+  end
+
+  add_index "instedd_telemetry_settings", ["key"], name: "index_instedd_telemetry_settings_on_key", unique: true, using: :btree
+
+  create_table "instedd_telemetry_timespans", force: true do |t|
+    t.string   "bucket"
+    t.text     "key_attributes"
+    t.datetime "since"
+    t.datetime "until"
+    t.string   "key_attributes_hash"
+  end
+
+  add_index "instedd_telemetry_timespans", ["bucket", "key_attributes_hash"], name: "instedd_telemetry_timespans_unique_fields", unique: true, using: :btree
 
   create_table "languages", force: true do |t|
     t.string   "name"

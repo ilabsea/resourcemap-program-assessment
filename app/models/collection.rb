@@ -57,6 +57,9 @@ class Collection < ActiveRecord::Base
 
   attr_accessor :time_zone
 
+  after_save :touch_lifespan
+  after_destroy :touch_lifespan
+
   def max_value_of_property(es_code)
     client = Elasticsearch::Client.new
     results = client.search index: index_name, type: 'site', body: {
@@ -384,6 +387,11 @@ class Collection < ActiveRecord::Base
         field.reinitial_config_from_original_collection original_collection
       end
     end
+  end
+
+  
+  def touch_lifespan
+    Telemetry::Lifespan.touch_collection self
   end
 
 end

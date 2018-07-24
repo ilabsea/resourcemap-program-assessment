@@ -52,11 +52,15 @@ gem 'rails-observers'
 gem 'actionpack-page_caching'
 gem "omniauth"
 gem "omniauth-openid"
+gem 'alto_guisso', github: "instedd/alto_guisso", branch: 'master'
+gem 'alto_guisso_rails', github: "instedd/alto_guisso_rails", branch: 'master'
 gem 'oj'
 gem 'activerecord-import'
 gem 'active_model_serializers'
 gem 'actionpack-action_caching'
 gem 'activerecord-deprecated_finders'
+
+gem 'instedd_telemetry', git: 'https://github.com/instedd/telemetry_rails.git'
 
 
 group :test do

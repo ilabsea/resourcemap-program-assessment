@@ -36,7 +36,12 @@ onCollections ->
         write: (value) => @locationTextTemp = value
         owner: @
       @locationTextTemp = @locationText()
-      @valid = ko.computed => @hasName() and @validField()
+      # @valid = ko.computed => @hasName() and @validField()
+      @valid = ko.computed =>
+        if collection.isVisibleName
+          @hasName() and @hasInputMendatoryProperties() and @validField()
+        else
+          @hasInputMendatoryProperties() and @validField()
 
       @highlightedName = ko.computed => window.model.highlightSearch(@name())
       @inEditMode = ko.observable(false)
@@ -61,6 +66,15 @@ onCollections ->
 
     hasName: =>
       $.trim(@name()).length > 0
+
+    hasInputMendatoryProperties: =>
+      for field in @fields()
+        if field.is_mandatory()
+          if field.kind == 'yes_no' && field.value() != null
+            return true
+          if !field.value() || (field.value() instanceof Array && field.value().length == 0)
+            return false
+      return true
 
     validName: =>
       if(!@name())

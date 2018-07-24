@@ -1,6 +1,6 @@
 onLayers ->
   class @MainViewModel
-    constructor: (collectionId, layers, collectionList) ->
+    constructor: (collectionId, layers, is_visible_name, is_visible_location, collectionList) ->
       @collectionId = collectionId
       @fields = ko.observableArray()
       @layers = ko.observableArray($.map(layers, (x) => new Layer(x, @)))
@@ -181,6 +181,7 @@ onLayers ->
             return
 
     newLayer: =>
+      @cancelDefaultLayer()
       layer = new Layer ord: (@layers().length + 1)
       @layers.push(layer)
       @currentLayer(layer)
@@ -196,6 +197,7 @@ onLayers ->
 
     editLayer: (layer) =>
       #cancel current layer
+      @clearUnsavedLayer()
       if @currentLayer()
         if confirm("Are you sure you want to leave this layer ?")
           @cancelLayer(layer)
@@ -238,6 +240,16 @@ onLayers ->
       else
         $.post "/collections/#{@collectionId}/layers.json", json, @saveLayerCallback
 
+    clearUnsavedLayer: =>
+      if @currentLayer()
+        if not @currentLayer().id() && @currentLayer().isPending() == false
+          @layers.remove(@currentLayer())
+        else
+          for field in @currentLayer().fields()
+            unless field.id()
+              @currentLayer().fields.remove(field) 
+              return
+
     editDefaultLayer: =>
       @clearUnsavedLayer()
       @tmpVisibleName = @isVisibleName()
@@ -252,6 +264,12 @@ onLayers ->
       json = {collection: {is_visible_name: @isVisibleName(), is_visible_location: @isVisibleLocation()}}
       json._method = 'put'
       $.post "/collections/#{@collectionId}.json", json
+      @editingDefaultLayer(false)
+      @currentLayer(null)
+
+    cancelDefaultLayer: =>
+      @isVisibleName(@tmpVisibleName)
+      @isVisibleLocation(@tmpVisibleLocation)
       @editingDefaultLayer(false)
       @currentLayer(null)
 
