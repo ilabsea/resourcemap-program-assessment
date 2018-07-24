@@ -23,5 +23,9 @@ Repeat.connection.execute %Q(insert into `repeats` values (9, 'Every 2 Weeks', 4
 monthly = IceCube::Rule.monthly
 Repeat.connection.execute %Q(insert into `repeats` values (10, 'Every Month', 5, now(), now(), '#{monthly.psych_to_yaml}'))
 
-Language.find_or_create_by_code({:code => "en", :name => "English"})
-Language.find_or_create_by_code({:code => "kh", :name => "ខ្មែរ"})
+Language.find_or_create_by(:code => "en") do |lang|
+	lang.name = "English"
+end
+Language.find_or_create_by(:code => "kh") do |lang|
+	lang.name = "ខ្មែរ"
+end

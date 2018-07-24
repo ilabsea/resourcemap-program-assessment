@@ -74,15 +74,15 @@ group :test do
 end
 
 group :test, :development do
-  gem 'rspec'
-  gem 'rspec-rails'
+  gem 'rspec', '3.0.0'
+  gem 'rspec-rails', '3.0.0'
   gem 'faker'
   gem 'machinist', '1.0.6'
-  # gem 'capistrano', '~> 2.15'
+  gem 'capistrano', '~> 2.15'
   gem 'rvm'
-  #gem 'rvm-capistrano', '1.2.2', :require => false
-  # gem 'jasminerice', '~> 0.1.0', :git => 'https://github.com/bradphelan/jasminerice'
-  # gem 'guard-jasmine'
+  gem 'rvm-capistrano', '1.2.2', :require => false
+  gem 'jasminerice', '~> 0.1.0', :git => 'https://github.com/bradphelan/jasminerice'
+  gem 'guard-jasmine'
   # gem 'pry'
   # gem 'pry-byebug'
   gem 'byebug'
