@@ -35,6 +35,13 @@ GIT
       builder (>= 2.1.2)
 
 GIT
+  remote: https://github.com/Thyda-Eng/valium.git
+  revision: 5483dd4b66c8efc2ebd45f9cc654b7bc5794bc44
+  specs:
+    valium (0.5.0)
+      activerecord (>= 3.0.2)
+
+GIT
   remote: https://github.com/bradphelan/jasminerice
   revision: 091349c27343bfa728b8e5745675f9ddbb7d9699
   specs:
@@ -1084,8 +1091,6 @@ GEM
       unf_ext
     unf_ext (0.0.7.5)
     uuidtools (2.1.5)
-    valium (0.5.0)
-      activerecord (>= 3.0.2)
     vegas (0.1.11)
       rack (>= 1.0.0)
     warden (1.2.7)
@@ -1182,11 +1187,11 @@ DEPENDENCIES
   treetop (= 1.4.15)
   uglifier (>= 2.5.0)
   uuidtools
-  valium
+  valium!
   whenever
   will_paginate
   wkhtmltopdf-binary-edge (~> 0.12.2.1)
   zip-zip
 
 BUNDLED WITH
-   1.16.2
+   1.16.3

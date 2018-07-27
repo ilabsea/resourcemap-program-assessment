@@ -11,7 +11,7 @@ gem 'dalli'
 gem 'ffi-rzmq'
 gem 'mysql2', '0.3.21'
 gem 'devise'
-gem "valium"
+gem "valium", git: 'https://github.com/Thyda-Eng/valium.git'
 gem 'rmagick', '2.13.2', :require => false
 gem 'aws-sdk'
 gem 'whenever', :require => false
