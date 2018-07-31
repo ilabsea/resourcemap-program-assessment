@@ -14,7 +14,7 @@
 class Layer < ActiveRecord::Base
   include Activity::AwareConcern
   include HistoryConcern
-  include Report::CachingConcern
+  include Caching::CachingConcern
 
   belongs_to :collection
   has_many :fields, -> { order('ord')}, dependent: :destroy

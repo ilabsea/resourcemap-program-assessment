@@ -30,7 +30,7 @@ class Site < ActiveRecord::Base
   include Site::PrefixConcern
   include Site::ElasticSearchConcern
   include HistoryConcern
-  include Report::CachingConcern
+  include Caching::CachingConcern
 
   belongs_to :collection, :counter_cache => true
   validates_presence_of :name

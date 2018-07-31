@@ -1,4 +1,4 @@
-module Report::CachingConcern
+module Caching::CachingConcern
   extend ActiveSupport::Concern
 
   included do
