@@ -18,9 +18,9 @@ class ChannelsAccessesController < ApplicationController
     #   collectionsUser.each do |c|
     #     @collections.push({
     #       user_id: u.id,
-    #       user_email: u.email, 
+    #       user_email: u.email,
     #       collection_id: c.id,
-    #       collection_name: c.name, 
+    #       collection_name: c.name,
     #       is_enabled_national_gateway: c.is_enabled_national_gateway})
     #   end
     # end
@@ -39,7 +39,7 @@ class ChannelsAccessesController < ApplicationController
     else
       flash.now[:alert] = "Failed to update collection"
       render :new
-    end    
+    end
   end
 
   def create
@@ -73,4 +73,3 @@ class ChannelsAccessesController < ApplicationController
     params.require(:collection).permit(:is_enabled_national_gateway)
   end
 end
-_

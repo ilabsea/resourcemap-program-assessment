@@ -1,6 +1,5 @@
 class RegistrationsController < Devise::RegistrationsController
   include Concerns::MobileDeviceDetection
-  include RecaptchaSetting
 
   helper_method :get_public_key
   helper_method :get_private_key
